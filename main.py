@@ -8,6 +8,7 @@ import ply.yacc as yacc
 
 from SymbolTable import *
 from FunctionDirectory import *
+from SemanticCube import *
 
 # List of token names.   This is always required
 tokens = [
@@ -89,7 +90,7 @@ t_ignore  = ' \t'
 
 def t_TYPE(t):
     # Currently defined as an ID; Look into how to implement actual types
-    r'(int)|(float)|(char)|(string)|(void)|(OBJ)'
+    r'(int)|(float)|(char)|(string)|(void)|(boolean)'
     t.type = reserved.get(t.value, 'TYPE')    # Check for reserved words
     return t
 
@@ -271,12 +272,12 @@ def p_assign(p):
     res =  SYMBOL_TABLE.OperandStack.pop()
     right_type  = SYMBOL_TABLE.TypeStack.pop()
     res_type = SYMBOL_TABLE.TypeStack.pop()
-    result_type = "int"#Semantics[left_type][operator][right_type]
-    if result_type != "err":
+    print(right_type, res_type)
+    if right_type != res_type:
+        raise Exception("Type Mismatch")
+    else:
         QUADS.append(op + " _ "  + right_operand +  " " + res)
         QUAD_POINTER += 1
-    else:
-        raise Exception("Type Mismatch")
 
 def p_seen_equals(p):
     ''' seen_equals  : '''
@@ -453,7 +454,7 @@ def generateExpressionQuad():
     left_operand = SYMBOL_TABLE.OperandStack.pop()
     left_type = SYMBOL_TABLE.TypeStack.pop()
     operator = SYMBOL_TABLE.OperatorStack.pop()
-    result_type = "int"#Semantics[left_type][operator][right_type]
+    result_type = SemanticCube[left_type][operator][right_type]
     if result_type != "err":
         result = SYMBOL_TABLE.Avail.next()
         QUADS.append(operator + " " + left_operand + " " + right_operand +  " " + result)

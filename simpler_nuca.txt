@@ -1,8 +1,9 @@
 program MYPROGRAM;
 
+res : boolean;
 a, b, c, d, e, f, i : float;
 
 main () {
-  a = a * (b + c / d - e) / f * i >  (a *  (b - c) / d) + e;
-  b = a;
+  res = a * (b + c / d - e) / f * i >  (a *  (b - c) / d) + e;
+
 }

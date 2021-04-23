@@ -13,4 +13,10 @@ Se implementaron de manera inicial; Es posible declarar y definir variables en e
 Tambien es posible declarar funciones en el scope global, las cuales se guardan con su tipo y ID en una FunctionDirectory.
 Ademas, al momento de declararlas, se genera un scope para sus parametros y variables en la SymbolTable, las cuales tambien se declaran y guardan apropriadamente.
 
+
+|-- Avance #3 --|
+
+En el tercer avance, se implemento la generacion del codigo intermedio (cuadruplos) para estatutos sencillos: expresiones aritmeticas y comparativas, ademas de asignaciones.
+Ademas, se implemento el cubo de semantica para asegurar de que no haya errores de tipo.
+
 Para probar: python main.py (usar simpler_nuca.txt como input)
