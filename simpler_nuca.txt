@@ -1,0 +1,7 @@
+program MYPROGRAM;
+
+k : float;
+
+main () {
+  k = 10.0;
+}

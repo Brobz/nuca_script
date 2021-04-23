@@ -1,0 +1,45 @@
+program MYPROGRAM;
+
+Class PERSON <derives OBJ> {
+
+  ATTR {
+      age : int;
+      name : char;
+  }
+
+  int UNO (x : int)
+  VARS{}
+  {
+    return ( age - x  );
+  }
+
+}
+
+
+i, j, p : int;
+
+
+int fact (j : int)
+VARS { i : int; }
+{
+  i = j + (p - j * 2 + j);
+  if (j == 1) then { return j; }
+  else { return j * fact(j - 1) ; }
+}
+
+void anotherFunc(param : float)
+VARS{}
+{
+  write(param, " being doubled!");
+  return param * 2;
+}
+
+main () {
+  j = 10;
+  i = fact(20);
+  while( j > 0 ){
+    write(i, 10 - j);
+    j = j - 1;
+  }
+
+}

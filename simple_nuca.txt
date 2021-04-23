@@ -1,0 +1,24 @@
+program MYPROGRAM;
+
+i, j, p : int;
+k : float;
+
+int func (paramInt : int, paramString : string)
+VARS {
+funcVar : string;
+a, b, c : int;
+}{}
+
+float func2 (paramInt : int, paramString : string)
+VARS {
+funcVar : string;
+a, b, c : int;
+}{}
+
+
+main () {
+  k = 10.0;
+  i = (5 + 5) * (2 + 5);
+  j = 15 + 10 - 5 + i;
+  p = 10 + 5 / 5 + j / j;
+}
