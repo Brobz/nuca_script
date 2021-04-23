@@ -1,7 +1,8 @@
 program MYPROGRAM;
 
-k : float;
+a, b, c, d, e, f, i : float;
 
 main () {
-  k = 10.0;
+  a = a * (b + c / d - e) / f * i >  (a *  (b - c) / d) + e;
+  b = a;
 }

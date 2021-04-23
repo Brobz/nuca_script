@@ -1,3 +1,5 @@
+from Avail import *
+
 class SymbolTable(object):
     """docstring for SymbolTable."""
 
@@ -6,6 +8,7 @@ class SymbolTable(object):
         self.OperatorStack = []
         self.OperandStack = []
         self.TypeStack = []
+        self.Avail = Avail()
 
     def add_scope(self, scope):
         if scope not in self.SYMBOLS:
@@ -28,5 +31,11 @@ class SymbolTable(object):
     def symbol_lookup(self, sym_id, scope = "GLOBAL"):
         if sym_id in self.SYMBOLS[scope]:
             return self.SYMBOLS[scope][sym_id][1]
+        else:
+            return sym_id
+
+    def type_lookup(self, sym_id, scope = "GLOBAL"):
+        if sym_id in self.SYMBOLS[scope]:
+            return self.SYMBOLS[scope][sym_id][0]
         else:
             return sym_id

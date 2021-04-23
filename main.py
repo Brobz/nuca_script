@@ -152,6 +152,8 @@ lexer = lex.lex()
 
 FUNC_DIR = FunctionDirectory()
 SYMBOL_TABLE = SymbolTable()
+QUAD_POINTER = 0
+QUADS = []
 
 # First lets define our grammar rules...
 
@@ -262,35 +264,61 @@ def p_statement(p):
                   | REPETITION '''
 
 def p_assign(p):
-    ''' ASSIGN : ID EQUALS EXPRESSION SEMI_COLON '''
-    SYMBOL_TABLE.define_symbol(p[1], p[3])
+    ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON '''
+    global QUAD_POINTER
+    op = SYMBOL_TABLE.OperatorStack.pop()
+    right_operand  = SYMBOL_TABLE.OperandStack.pop()
+    res =  SYMBOL_TABLE.OperandStack.pop()
+    right_type  = SYMBOL_TABLE.TypeStack.pop()
+    res_type = SYMBOL_TABLE.TypeStack.pop()
+    result_type = "int"#Semantics[left_type][operator][right_type]
+    if result_type != "err":
+        QUADS.append(op + " _ "  + right_operand +  " " + res)
+        QUAD_POINTER += 1
+    else:
+        raise Exception("Type Mismatch")
+
+def p_seen_equals(p):
+    ''' seen_equals  : '''
+    SYMBOL_TABLE.OperatorStack.append('=')
 
 def p_exp(p):
-    ''' EXP : TERM EXP_P '''
+    ''' EXP : TERM seen_term EXP_P '''
 
     p[0] = SYMBOL_TABLE.symbol_lookup(p[1])
     if p[2] != None:
         p[0] +=  SYMBOL_TABLE.symbol_lookup(p[2])
 
+
+def p_seen_term(p):
+    ''' seen_term :  '''
+    if len(SYMBOL_TABLE.OperatorStack) and  (SYMBOL_TABLE.OperatorStack[-1] == '+' or SYMBOL_TABLE.OperatorStack[-1] == '-'):
+        generateExpressionQuad()
+
+
 def p_exp_p(p):
-    ''' EXP_P : PLUS TERM EXP_P
-            | MINUS TERM EXP_P
+    ''' EXP_P : PLUS seen_term_op TERM seen_term EXP_P
+            | MINUS seen_term_op TERM seen_term EXP_P
             | empty '''
 
-    if p[1] == '+':
-        p[0] = SYMBOL_TABLE.symbol_lookup(p[2])
-
-    elif p[1] == '-':
-        p[0] = - SYMBOL_TABLE.symbol_lookup(p[2])
-
-    if len(p) > 3 and p[3] != None:
-        p[0] += SYMBOL_TABLE.symbol_lookup(p[3])
+def p_seen_term_op(p):
+    ''' seen_term_op :  '''
+    SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_expression(p):
     ''' EXPRESSION : EXP
-                   | EXP COMP EXP '''
+                   | EXP COMP seen_comp_op EXP seen_comp '''
     if len(p) == 2:
         p[0] = p[1]
+
+def p_seen_comp(p):
+    ''' seen_comp : '''
+    generateExpressionQuad()
+
+
+def p_seen_comp_op(p):
+    ''' seen_comp_op : '''
+    SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_comp(p):
     ''' COMP : BIGGER
@@ -303,15 +331,34 @@ def p_comp(p):
     p[0] = p[1]
 
 def p_factor(p):
-    ''' FACTOR : OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
+    ''' FACTOR : OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
                | FUNC_CALL
-               | ID
-               | CNST '''
+               | ID seen_id
+               | CNST seen_cnst '''
 
     if len(p) == 2:
         p[0] = p[1]
     else:
         p[0] = p[2]
+
+def p_seen_opar(p):
+    ''' seen_opar : '''
+    SYMBOL_TABLE.OperatorStack.append(p[-1])
+
+def p_seen_cpar(p):
+    ''' seen_cpar : '''
+    SYMBOL_TABLE.OperatorStack.pop()
+
+def p_seen_id(p):
+    ''' seen_id :  '''
+    SYMBOL_TABLE.OperandStack.append(p[-1])
+    SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
+
+def p_seen_cnst(p):
+    ''' seen_cnst :  '''
+    SYMBOL_TABLE.OperandStack.append(p[-1])
+    SYMBOL_TABLE.TypeStack.append("int")
+
 
 def p_cnst(p):
     ''' CNST : CTE_S
@@ -321,16 +368,22 @@ def p_cnst(p):
     p[0] = p[1]
 
 def p_term(p):
-    ''' TERM : FACTOR
-             | FACTOR STAR FACTOR
-             | FACTOR FWD_SLASH FACTOR '''
+    ''' TERM : FACTOR seen_factor TERM_P  '''
 
-    if len(p) == 2:
-        p[0] = SYMBOL_TABLE.symbol_lookup(p[1])
-    elif p[2] == '*':
-        p[0] = SYMBOL_TABLE.symbol_lookup(p[1]) * SYMBOL_TABLE.symbol_lookup(p[3])
-    elif p[2] == '/':
-        p[0] = SYMBOL_TABLE.symbol_lookup(p[1]) / SYMBOL_TABLE.symbol_lookup(p[3])
+def p_term_p(p):
+    ''' TERM_P :    STAR seen_factor_op FACTOR seen_factor TERM_P
+                 |  FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P
+                 |  empty '''
+
+
+def p_seen_factor(p):
+    ''' seen_factor :  '''
+    if len(SYMBOL_TABLE.OperatorStack) and (SYMBOL_TABLE.OperatorStack[-1] == '*' or SYMBOL_TABLE.OperatorStack[-1] == '/'):
+        generateExpressionQuad()
+
+def p_seen_factor_op(p):
+    ''' seen_factor_op :  '''
+    SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 
 def p_func_call(p):
@@ -393,6 +446,23 @@ def p_error(p):
     print(p)
 
 
+def generateExpressionQuad():
+    global QUAD_POINTER
+    right_operand = SYMBOL_TABLE.OperandStack.pop()
+    right_type = SYMBOL_TABLE.TypeStack.pop()
+    left_operand = SYMBOL_TABLE.OperandStack.pop()
+    left_type = SYMBOL_TABLE.TypeStack.pop()
+    operator = SYMBOL_TABLE.OperatorStack.pop()
+    result_type = "int"#Semantics[left_type][operator][right_type]
+    if result_type != "err":
+        result = SYMBOL_TABLE.Avail.next()
+        QUADS.append(operator + " " + left_operand + " " + right_operand +  " " + result)
+        QUAD_POINTER += 1
+        SYMBOL_TABLE.OperandStack.append(result)
+        SYMBOL_TABLE.TypeStack.append(result_type)
+    else:
+        raise Exception("Type Mismatch")
+
 # Build the parser
 parser = yacc.yacc()
 
@@ -407,3 +477,4 @@ with open(input_file) as f:
     result = parser.parse(s)
     print(SYMBOL_TABLE.SYMBOLS)
     print(FUNC_DIR.SYMBOLS)
+    print(QUADS)

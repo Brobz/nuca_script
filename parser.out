@@ -32,135 +32,159 @@ Rule 26    STATEMENT -> READ
 Rule 27    STATEMENT -> WRITE
 Rule 28    STATEMENT -> DECISION
 Rule 29    STATEMENT -> REPETITION
-Rule 30    ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON
-Rule 31    EXP -> TERM EXP_P
-Rule 32    EXP_P -> PLUS TERM EXP_P
-Rule 33    EXP_P -> MINUS TERM EXP_P
-Rule 34    EXP_P -> empty
-Rule 35    EXPRESSION -> EXP
-Rule 36    EXPRESSION -> EXP COMP EXP
-Rule 37    COMP -> BIGGER
-Rule 38    COMP -> SMALLER
-Rule 39    COMP -> DOUBLE_EQUALS
-Rule 40    COMP -> DIFFERENT
-Rule 41    COMP -> AND
-Rule 42    COMP -> OR
-Rule 43    FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-Rule 44    FACTOR -> FUNC_CALL
-Rule 45    FACTOR -> ID
-Rule 46    FACTOR -> CNST
-Rule 47    CNST -> CTE_S
-Rule 48    CNST -> CTE_F
-Rule 49    CNST -> CTE_I
-Rule 50    TERM -> FACTOR
-Rule 51    TERM -> FACTOR STAR FACTOR
-Rule 52    TERM -> FACTOR FWD_SLASH FACTOR
-Rule 53    FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-Rule 54    ARG_LIST -> ID_LIST ARG_LIST_P
-Rule 55    ARG_LIST -> EXPRESSION ARG_LIST_P
-Rule 56    ARG_LIST_P -> COMMA ID_LIST ARG_LIST_P
-Rule 57    ARG_LIST_P -> COMMA EXPRESSION ARG_LIST_P
-Rule 58    ARG_LIST_P -> empty
-Rule 59    FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON
-Rule 60    READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-Rule 61    WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-Rule 62    PRINTABLE -> CNST PRINTABLE_P
-Rule 63    PRINTABLE -> EXPRESSION PRINTABLE_P
-Rule 64    PRINTABLE_P -> COMMA CNST PRINTABLE_P
-Rule 65    PRINTABLE_P -> COMMA EXPRESSION PRINTABLE_P
-Rule 66    PRINTABLE_P -> empty
-Rule 67    DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-Rule 68    DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-Rule 69    DECISION_P -> empty
-Rule 70    REPETITION -> CONDITIONAL_REP
-Rule 71    REPETITION -> UNCONDITIONAL_REP
-Rule 72    CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-Rule 73    UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-Rule 74    empty -> <empty>
+Rule 30    ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+Rule 31    seen_equals -> <empty>
+Rule 32    EXP -> TERM seen_term EXP_P
+Rule 33    seen_term -> <empty>
+Rule 34    EXP_P -> PLUS seen_term_op TERM seen_term EXP_P
+Rule 35    EXP_P -> MINUS seen_term_op TERM seen_term EXP_P
+Rule 36    EXP_P -> empty
+Rule 37    seen_term_op -> <empty>
+Rule 38    EXPRESSION -> EXP
+Rule 39    EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp
+Rule 40    seen_comp -> <empty>
+Rule 41    seen_comp_op -> <empty>
+Rule 42    COMP -> BIGGER
+Rule 43    COMP -> SMALLER
+Rule 44    COMP -> DOUBLE_EQUALS
+Rule 45    COMP -> DIFFERENT
+Rule 46    COMP -> AND
+Rule 47    COMP -> OR
+Rule 48    FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+Rule 49    FACTOR -> FUNC_CALL
+Rule 50    FACTOR -> ID seen_id
+Rule 51    FACTOR -> CNST seen_cnst
+Rule 52    seen_opar -> <empty>
+Rule 53    seen_cpar -> <empty>
+Rule 54    seen_id -> <empty>
+Rule 55    seen_cnst -> <empty>
+Rule 56    CNST -> CTE_S
+Rule 57    CNST -> CTE_F
+Rule 58    CNST -> CTE_I
+Rule 59    TERM -> FACTOR seen_factor TERM_P
+Rule 60    TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P
+Rule 61    TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P
+Rule 62    TERM_P -> empty
+Rule 63    seen_factor -> <empty>
+Rule 64    seen_factor_op -> <empty>
+Rule 65    FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+Rule 66    ARG_LIST -> ID_LIST ARG_LIST_P
+Rule 67    ARG_LIST -> EXPRESSION ARG_LIST_P
+Rule 68    ARG_LIST_P -> COMMA ID_LIST ARG_LIST_P
+Rule 69    ARG_LIST_P -> COMMA EXPRESSION ARG_LIST_P
+Rule 70    ARG_LIST_P -> empty
+Rule 71    FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON
+Rule 72    READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+Rule 73    WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+Rule 74    PRINTABLE -> CNST PRINTABLE_P
+Rule 75    PRINTABLE -> EXPRESSION PRINTABLE_P
+Rule 76    PRINTABLE_P -> COMMA CNST PRINTABLE_P
+Rule 77    PRINTABLE_P -> COMMA EXPRESSION PRINTABLE_P
+Rule 78    PRINTABLE_P -> empty
+Rule 79    DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+Rule 80    DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+Rule 81    DECISION_P -> empty
+Rule 82    REPETITION -> CONDITIONAL_REP
+Rule 83    REPETITION -> UNCONDITIONAL_REP
+Rule 84    CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+Rule 85    UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+Rule 86    empty -> <empty>
 
 Terminals, with rules where they appear
 
-AND                  : 41
+AND                  : 46
 ATTR_KWD             : 5
-BIGGER               : 4 37
+BIGGER               : 4 42
 CLASS_KWD            : 4
-CLOSE_CURLY          : 1 4 5 15 21 67 68 72 73
-CLOSE_PARENTHESIS    : 1 15 43 53 60 61 67 72
+CLOSE_CURLY          : 1 4 5 15 21 79 80 84 85
+CLOSE_PARENTHESIS    : 1 15 48 65 72 73 79 84
 COLON                : 8 20
-COMMA                : 10 18 56 57 64 65
-CTE_F                : 48
-CTE_I                : 49
-CTE_S                : 47
+COMMA                : 10 18 68 69 76 77
+CTE_F                : 57
+CTE_I                : 58
+CTE_S                : 56
 DERIVES_KWD          : 4
-DIFFERENT            : 40
-DOUBLE_EQUALS        : 39
-ELSE_KWD             : 68
-EQUALS               : 30 73
-FROM_KWD             : 73
-FWD_SLASH            : 52
-ID                   : 1 4 9 10 15 20 30 45 53 73
-IF_KWD               : 67
+DIFFERENT            : 45
+DOUBLE_EQUALS        : 44
+ELSE_KWD             : 80
+EQUALS               : 30 85
+FROM_KWD             : 85
+FWD_SLASH            : 61
+ID                   : 1 4 9 10 15 20 30 50 65 85
+IF_KWD               : 79
 MAIN_KWD             : 1
-MINUS                : 33
-OPEN_CURLY           : 1 4 5 15 21 67 68 72 73
-OPEN_PARENTHESIS     : 1 15 43 53 60 61 67 72
-OR                   : 42
-PLUS                 : 32
+MINUS                : 35
+OPEN_CURLY           : 1 4 5 15 21 79 80 84 85
+OPEN_PARENTHESIS     : 1 15 48 65 72 73 79 84
+OR                   : 47
+PLUS                 : 34
 PROGRAM_KWD          : 1
-READ_KWD             : 60
-RETURN_KWD           : 59
-SEMI_COLON           : 1 8 30 59 60 61
-SMALLER              : 4 38
-STAR                 : 51
-THEN_KWD             : 67
+READ_KWD             : 72
+RETURN_KWD           : 71
+SEMI_COLON           : 1 8 30 71 72 73
+SMALLER              : 4 43
+STAR                 : 60
+THEN_KWD             : 79
 TYPE                 : 4 8 15 20
-UNTIL_KWD            : 73
+UNTIL_KWD            : 85
 VARS_KWD             : 21
-WHILE_KWD            : 72
-WRITE_KWD            : 61
+WHILE_KWD            : 84
+WRITE_KWD            : 73
 error                : 
 
 Nonterminals, with rules where they appear
 
-ARG_LIST             : 53
-ARG_LIST_P           : 54 55 56 57
+ARG_LIST             : 65
+ARG_LIST_P           : 66 67 68 69
 ASSIGN               : 24
 CLASS                : 2
 CLASS_ATTR           : 4
 CLASS_STAR           : 1 2
-CNST                 : 46 62 64
-COMP                 : 36
-CONDITIONAL_REP      : 70
+CNST                 : 51 74 76
+COMP                 : 39
+CONDITIONAL_REP      : 82
 DECISION             : 28
-DECISION_P           : 67 68
-EXP                  : 35 36 36
-EXPRESSION           : 30 43 55 57 59 63 65 67 72 73 73
-EXP_P                : 31 32 33
-FACTOR               : 50 51 51 52 52
-FUNC_CALL            : 44
+DECISION_P           : 79 80
+EXP                  : 38 39 39
+EXPRESSION           : 30 48 67 69 71 75 77 79 84 85 85
+EXP_P                : 32 34 35
+FACTOR               : 59 60 61
+FUNC_CALL            : 49
 FUNC_DEF             : 13
 FUNC_DEF_STAR        : 1 4 13
 FUNC_PARAM           : 15
 FUNC_PARAM_P         : 16 18
 FUNC_RETURN          : 25
 GLOBAL_VAR           : 1
-ID_LIST              : 8 54 56 60
+ID_LIST              : 8 66 68 72
 ID_LIST_P            : 9 10
-PRINTABLE            : 61
-PRINTABLE_P          : 62 63 64 65
+PRINTABLE            : 73
+PRINTABLE_P          : 74 75 76 77
 PROGRAM              : 0
 READ                 : 26
 REPETITION           : 29
 STATEMENT            : 22
-STATEMENT_STAR       : 1 15 22 67 68 72 73
-TERM                 : 31 32 33
-UNCONDITIONAL_REP    : 71
+STATEMENT_STAR       : 1 15 22 79 80 84 85
+TERM                 : 32 34 35
+TERM_P               : 59 60 61
+UNCONDITIONAL_REP    : 83
 VAR                  : 16 18
 VARS                 : 15
 VAR_LIST             : 6
 VAR_LIST_STAR        : 5 6 12 21
 WRITE                : 27
-empty                : 3 7 11 14 17 19 23 34 58 66 69
+empty                : 3 7 11 14 17 19 23 36 62 70 78 81
+seen_cnst            : 51
+seen_comp            : 39
+seen_comp_op         : 39
+seen_cpar            : 48
+seen_equals          : 30
+seen_factor          : 59 60 61
+seen_factor_op       : 60 61
+seen_id              : 30 50
+seen_opar            : 48
+seen_term            : 32 34 35
+seen_term_op         : 34 35
 
 Parsing method: LALR
 
@@ -199,12 +223,12 @@ state 4
     (2) CLASS_STAR -> . CLASS CLASS_STAR
     (3) CLASS_STAR -> . empty
     (4) CLASS -> . CLASS_KWD ID SMALLER DERIVES_KWD TYPE BIGGER OPEN_CURLY CLASS_ATTR FUNC_DEF_STAR CLOSE_CURLY
-    (74) empty -> .
+    (86) empty -> .
 
     CLASS_KWD       shift and go to state 8
-    ID              reduce using rule 74 (empty -> .)
-    TYPE            reduce using rule 74 (empty -> .)
-    MAIN_KWD        reduce using rule 74 (empty -> .)
+    ID              reduce using rule 86 (empty -> .)
+    TYPE            reduce using rule 86 (empty -> .)
+    MAIN_KWD        reduce using rule 86 (empty -> .)
 
     CLASS_STAR                     shift and go to state 5
     CLASS                          shift and go to state 6
@@ -217,11 +241,11 @@ state 5
     (6) VAR_LIST_STAR -> . VAR_LIST VAR_LIST_STAR
     (7) VAR_LIST_STAR -> . empty
     (8) VAR_LIST -> . ID_LIST COLON TYPE SEMI_COLON
-    (74) empty -> .
+    (86) empty -> .
     (9) ID_LIST -> . ID ID_LIST_P
 
-    TYPE            reduce using rule 74 (empty -> .)
-    MAIN_KWD        reduce using rule 74 (empty -> .)
+    TYPE            reduce using rule 86 (empty -> .)
+    MAIN_KWD        reduce using rule 86 (empty -> .)
     ID              shift and go to state 9
 
     GLOBAL_VAR                     shift and go to state 10
@@ -236,12 +260,12 @@ state 6
     (2) CLASS_STAR -> . CLASS CLASS_STAR
     (3) CLASS_STAR -> . empty
     (4) CLASS -> . CLASS_KWD ID SMALLER DERIVES_KWD TYPE BIGGER OPEN_CURLY CLASS_ATTR FUNC_DEF_STAR CLOSE_CURLY
-    (74) empty -> .
+    (86) empty -> .
 
     CLASS_KWD       shift and go to state 8
-    ID              reduce using rule 74 (empty -> .)
-    TYPE            reduce using rule 74 (empty -> .)
-    MAIN_KWD        reduce using rule 74 (empty -> .)
+    ID              reduce using rule 86 (empty -> .)
+    TYPE            reduce using rule 86 (empty -> .)
+    MAIN_KWD        reduce using rule 86 (empty -> .)
 
     CLASS                          shift and go to state 6
     CLASS_STAR                     shift and go to state 15
@@ -268,11 +292,11 @@ state 9
     (9) ID_LIST -> ID . ID_LIST_P
     (10) ID_LIST_P -> . COMMA ID ID_LIST_P
     (11) ID_LIST_P -> . empty
-    (74) empty -> .
+    (86) empty -> .
 
     COMMA           shift and go to state 18
-    COLON           reduce using rule 74 (empty -> .)
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    COLON           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
     ID_LIST_P                      shift and go to state 17
     empty                          shift and go to state 19
@@ -283,10 +307,10 @@ state 10
     (13) FUNC_DEF_STAR -> . FUNC_DEF FUNC_DEF_STAR
     (14) FUNC_DEF_STAR -> . empty
     (15) FUNC_DEF -> . TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (74) empty -> .
+    (86) empty -> .
 
     TYPE            shift and go to state 23
-    MAIN_KWD        reduce using rule 74 (empty -> .)
+    MAIN_KWD        reduce using rule 86 (empty -> .)
 
     FUNC_DEF_STAR                  shift and go to state 20
     FUNC_DEF                       shift and go to state 21
@@ -306,12 +330,12 @@ state 12
     (6) VAR_LIST_STAR -> . VAR_LIST VAR_LIST_STAR
     (7) VAR_LIST_STAR -> . empty
     (8) VAR_LIST -> . ID_LIST COLON TYPE SEMI_COLON
-    (74) empty -> .
+    (86) empty -> .
     (9) ID_LIST -> . ID ID_LIST_P
 
-    TYPE            reduce using rule 74 (empty -> .)
-    MAIN_KWD        reduce using rule 74 (empty -> .)
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    TYPE            reduce using rule 86 (empty -> .)
+    MAIN_KWD        reduce using rule 86 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 9
 
     VAR_LIST                       shift and go to state 12
@@ -389,11 +413,11 @@ state 21
     (13) FUNC_DEF_STAR -> . FUNC_DEF FUNC_DEF_STAR
     (14) FUNC_DEF_STAR -> . empty
     (15) FUNC_DEF -> . TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (74) empty -> .
+    (86) empty -> .
 
     TYPE            shift and go to state 23
-    MAIN_KWD        reduce using rule 74 (empty -> .)
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    MAIN_KWD        reduce using rule 86 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
 
     FUNC_DEF                       shift and go to state 21
     FUNC_DEF_STAR                  shift and go to state 29
@@ -442,14 +466,14 @@ state 27
     (10) ID_LIST_P -> COMMA ID . ID_LIST_P
     (10) ID_LIST_P -> . COMMA ID ID_LIST_P
     (11) ID_LIST_P -> . empty
-    (74) empty -> .
+    (86) empty -> .
 
   ! shift/reduce conflict for COMMA resolved as shift
     COMMA           shift and go to state 18
-    COLON           reduce using rule 74 (empty -> .)
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    COLON           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
-  ! COMMA           [ reduce using rule 74 (empty -> .) ]
+  ! COMMA           [ reduce using rule 86 (empty -> .) ]
 
     ID_LIST_P                      shift and go to state 33
     empty                          shift and go to state 19
@@ -512,10 +536,10 @@ state 35
     (16) FUNC_PARAM -> . VAR FUNC_PARAM_P
     (17) FUNC_PARAM -> . empty
     (20) VAR -> . ID COLON TYPE
-    (74) empty -> .
+    (86) empty -> .
 
     ID              shift and go to state 39
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
     FUNC_PARAM                     shift and go to state 40
     VAR                            shift and go to state 41
@@ -564,10 +588,10 @@ state 41
     (16) FUNC_PARAM -> VAR . FUNC_PARAM_P
     (18) FUNC_PARAM_P -> . COMMA VAR FUNC_PARAM_P
     (19) FUNC_PARAM_P -> . empty
-    (74) empty -> .
+    (86) empty -> .
 
     COMMA           shift and go to state 48
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
     FUNC_PARAM_P                   shift and go to state 47
     empty                          shift and go to state 49
@@ -597,18 +621,18 @@ state 44
     (27) STATEMENT -> . WRITE
     (28) STATEMENT -> . DECISION
     (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 51
     RETURN_KWD      shift and go to state 61
     READ_KWD        shift and go to state 62
@@ -679,10 +703,12 @@ state 50
 
 state 51
 
-    (30) ASSIGN -> ID . EQUALS EXPRESSION SEMI_COLON
+    (30) ASSIGN -> ID . seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (54) seen_id -> .
 
-    EQUALS          shift and go to state 75
+    EQUALS          reduce using rule 54 (seen_id -> .)
 
+    seen_id                        shift and go to state 75
 
 state 52
 
@@ -702,18 +728,18 @@ state 53
     (27) STATEMENT -> . WRITE
     (28) STATEMENT -> . DECISION
     (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 51
     RETURN_KWD      shift and go to state 61
     READ_KWD        shift and go to state 62
@@ -827,21 +853,19 @@ state 60
 
 state 61
 
-    (59) FUNC_RETURN -> RETURN_KWD . EXPRESSION SEMI_COLON
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (71) FUNC_RETURN -> RETURN_KWD . EXPRESSION SEMI_COLON
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
@@ -858,63 +882,63 @@ state 61
 
 state 62
 
-    (60) READ -> READ_KWD . OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (72) READ -> READ_KWD . OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
 
     OPEN_PARENTHESIS shift and go to state 89
 
 
 state 63
 
-    (61) WRITE -> WRITE_KWD . OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> WRITE_KWD . OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
 
     OPEN_PARENTHESIS shift and go to state 90
 
 
 state 64
 
-    (67) DECISION -> IF_KWD . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (79) DECISION -> IF_KWD . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
 
     OPEN_PARENTHESIS shift and go to state 91
 
 
 state 65
 
-    (70) REPETITION -> CONDITIONAL_REP .
+    (82) REPETITION -> CONDITIONAL_REP .
 
-    ID              reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    RETURN_KWD      reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    READ_KWD        reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    WRITE_KWD       reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    IF_KWD          reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    WHILE_KWD       reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    FROM_KWD        reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
-    CLOSE_CURLY     reduce using rule 70 (REPETITION -> CONDITIONAL_REP .)
+    ID              reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    RETURN_KWD      reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    READ_KWD        reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    WRITE_KWD       reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    IF_KWD          reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    WHILE_KWD       reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    FROM_KWD        reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
+    CLOSE_CURLY     reduce using rule 82 (REPETITION -> CONDITIONAL_REP .)
 
 
 state 66
 
-    (71) REPETITION -> UNCONDITIONAL_REP .
+    (83) REPETITION -> UNCONDITIONAL_REP .
 
-    ID              reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    RETURN_KWD      reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    READ_KWD        reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    WRITE_KWD       reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    IF_KWD          reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    WHILE_KWD       reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    FROM_KWD        reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
-    CLOSE_CURLY     reduce using rule 71 (REPETITION -> UNCONDITIONAL_REP .)
+    ID              reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    RETURN_KWD      reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    READ_KWD        reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    WRITE_KWD       reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    IF_KWD          reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    WHILE_KWD       reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    FROM_KWD        reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
+    CLOSE_CURLY     reduce using rule 83 (REPETITION -> UNCONDITIONAL_REP .)
 
 
 state 67
 
-    (72) CONDITIONAL_REP -> WHILE_KWD . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (84) CONDITIONAL_REP -> WHILE_KWD . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
     OPEN_PARENTHESIS shift and go to state 92
 
 
 state 68
 
-    (73) UNCONDITIONAL_REP -> FROM_KWD . ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> FROM_KWD . ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
     ID              shift and go to state 93
 
@@ -946,10 +970,10 @@ state 72
     (18) FUNC_PARAM_P -> COMMA VAR . FUNC_PARAM_P
     (18) FUNC_PARAM_P -> . COMMA VAR FUNC_PARAM_P
     (19) FUNC_PARAM_P -> . empty
-    (74) empty -> .
+    (86) empty -> .
 
     COMMA           shift and go to state 48
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
     FUNC_PARAM_P                   shift and go to state 96
     empty                          shift and go to state 49
@@ -960,10 +984,10 @@ state 73
     (13) FUNC_DEF_STAR -> . FUNC_DEF FUNC_DEF_STAR
     (14) FUNC_DEF_STAR -> . empty
     (15) FUNC_DEF -> . TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (74) empty -> .
+    (86) empty -> .
 
     TYPE            shift and go to state 23
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
 
     FUNC_DEF_STAR                  shift and go to state 97
     FUNC_DEF                       shift and go to state 21
@@ -978,34 +1002,10 @@ state 74
 
 state 75
 
-    (30) ASSIGN -> ID EQUALS . EXPRESSION SEMI_COLON
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (30) ASSIGN -> ID seen_id . EQUALS seen_equals EXPRESSION SEMI_COLON
 
-    OPEN_PARENTHESIS shift and go to state 82
-    ID              shift and go to state 84
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
+    EQUALS          shift and go to state 99
 
-    EXPRESSION                     shift and go to state 99
-    EXP                            shift and go to state 79
-    TERM                           shift and go to state 80
-    FACTOR                         shift and go to state 81
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
 
 state 76
 
@@ -1023,27 +1023,27 @@ state 77
 
 state 78
 
-    (59) FUNC_RETURN -> RETURN_KWD EXPRESSION . SEMI_COLON
+    (71) FUNC_RETURN -> RETURN_KWD EXPRESSION . SEMI_COLON
 
     SEMI_COLON      shift and go to state 100
 
 
 state 79
 
-    (35) EXPRESSION -> EXP .
-    (36) EXPRESSION -> EXP . COMP EXP
-    (37) COMP -> . BIGGER
-    (38) COMP -> . SMALLER
-    (39) COMP -> . DOUBLE_EQUALS
-    (40) COMP -> . DIFFERENT
-    (41) COMP -> . AND
-    (42) COMP -> . OR
+    (38) EXPRESSION -> EXP .
+    (39) EXPRESSION -> EXP . COMP seen_comp_op EXP seen_comp
+    (42) COMP -> . BIGGER
+    (43) COMP -> . SMALLER
+    (44) COMP -> . DOUBLE_EQUALS
+    (45) COMP -> . DIFFERENT
+    (46) COMP -> . AND
+    (47) COMP -> . OR
 
-    SEMI_COLON      reduce using rule 35 (EXPRESSION -> EXP .)
-    CLOSE_PARENTHESIS reduce using rule 35 (EXPRESSION -> EXP .)
-    COMMA           reduce using rule 35 (EXPRESSION -> EXP .)
-    UNTIL_KWD       reduce using rule 35 (EXPRESSION -> EXP .)
-    OPEN_CURLY      reduce using rule 35 (EXPRESSION -> EXP .)
+    SEMI_COLON      reduce using rule 38 (EXPRESSION -> EXP .)
+    COMMA           reduce using rule 38 (EXPRESSION -> EXP .)
+    CLOSE_PARENTHESIS reduce using rule 38 (EXPRESSION -> EXP .)
+    UNTIL_KWD       reduce using rule 38 (EXPRESSION -> EXP .)
+    OPEN_CURLY      reduce using rule 38 (EXPRESSION -> EXP .)
     BIGGER          shift and go to state 102
     SMALLER         shift and go to state 103
     DOUBLE_EQUALS   shift and go to state 104
@@ -1055,239 +1055,219 @@ state 79
 
 state 80
 
-    (31) EXP -> TERM . EXP_P
-    (32) EXP_P -> . PLUS TERM EXP_P
-    (33) EXP_P -> . MINUS TERM EXP_P
-    (34) EXP_P -> . empty
-    (74) empty -> .
+    (32) EXP -> TERM . seen_term EXP_P
+    (33) seen_term -> .
 
-    PLUS            shift and go to state 109
-    MINUS           shift and go to state 110
-    BIGGER          reduce using rule 74 (empty -> .)
-    SMALLER         reduce using rule 74 (empty -> .)
-    DOUBLE_EQUALS   reduce using rule 74 (empty -> .)
-    DIFFERENT       reduce using rule 74 (empty -> .)
-    AND             reduce using rule 74 (empty -> .)
-    OR              reduce using rule 74 (empty -> .)
-    SEMI_COLON      reduce using rule 74 (empty -> .)
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
-    COMMA           reduce using rule 74 (empty -> .)
-    UNTIL_KWD       reduce using rule 74 (empty -> .)
-    OPEN_CURLY      reduce using rule 74 (empty -> .)
+    PLUS            reduce using rule 33 (seen_term -> .)
+    MINUS           reduce using rule 33 (seen_term -> .)
+    BIGGER          reduce using rule 33 (seen_term -> .)
+    SMALLER         reduce using rule 33 (seen_term -> .)
+    DOUBLE_EQUALS   reduce using rule 33 (seen_term -> .)
+    DIFFERENT       reduce using rule 33 (seen_term -> .)
+    AND             reduce using rule 33 (seen_term -> .)
+    OR              reduce using rule 33 (seen_term -> .)
+    SEMI_COLON      reduce using rule 33 (seen_term -> .)
+    COMMA           reduce using rule 33 (seen_term -> .)
+    CLOSE_PARENTHESIS reduce using rule 33 (seen_term -> .)
+    UNTIL_KWD       reduce using rule 33 (seen_term -> .)
+    OPEN_CURLY      reduce using rule 33 (seen_term -> .)
 
-    EXP_P                          shift and go to state 108
-    empty                          shift and go to state 111
+    seen_term                      shift and go to state 108
 
 state 81
 
-    (50) TERM -> FACTOR .
-    (51) TERM -> FACTOR . STAR FACTOR
-    (52) TERM -> FACTOR . FWD_SLASH FACTOR
+    (59) TERM -> FACTOR . seen_factor TERM_P
+    (63) seen_factor -> .
 
-    PLUS            reduce using rule 50 (TERM -> FACTOR .)
-    MINUS           reduce using rule 50 (TERM -> FACTOR .)
-    BIGGER          reduce using rule 50 (TERM -> FACTOR .)
-    SMALLER         reduce using rule 50 (TERM -> FACTOR .)
-    DOUBLE_EQUALS   reduce using rule 50 (TERM -> FACTOR .)
-    DIFFERENT       reduce using rule 50 (TERM -> FACTOR .)
-    AND             reduce using rule 50 (TERM -> FACTOR .)
-    OR              reduce using rule 50 (TERM -> FACTOR .)
-    SEMI_COLON      reduce using rule 50 (TERM -> FACTOR .)
-    CLOSE_PARENTHESIS reduce using rule 50 (TERM -> FACTOR .)
-    COMMA           reduce using rule 50 (TERM -> FACTOR .)
-    UNTIL_KWD       reduce using rule 50 (TERM -> FACTOR .)
-    OPEN_CURLY      reduce using rule 50 (TERM -> FACTOR .)
-    STAR            shift and go to state 112
-    FWD_SLASH       shift and go to state 113
+    STAR            reduce using rule 63 (seen_factor -> .)
+    FWD_SLASH       reduce using rule 63 (seen_factor -> .)
+    PLUS            reduce using rule 63 (seen_factor -> .)
+    MINUS           reduce using rule 63 (seen_factor -> .)
+    BIGGER          reduce using rule 63 (seen_factor -> .)
+    SMALLER         reduce using rule 63 (seen_factor -> .)
+    DOUBLE_EQUALS   reduce using rule 63 (seen_factor -> .)
+    DIFFERENT       reduce using rule 63 (seen_factor -> .)
+    AND             reduce using rule 63 (seen_factor -> .)
+    OR              reduce using rule 63 (seen_factor -> .)
+    SEMI_COLON      reduce using rule 63 (seen_factor -> .)
+    COMMA           reduce using rule 63 (seen_factor -> .)
+    CLOSE_PARENTHESIS reduce using rule 63 (seen_factor -> .)
+    UNTIL_KWD       reduce using rule 63 (seen_factor -> .)
+    OPEN_CURLY      reduce using rule 63 (seen_factor -> .)
 
+    seen_factor                    shift and go to state 109
 
 state 82
 
-    (43) FACTOR -> OPEN_PARENTHESIS . EXPRESSION CLOSE_PARENTHESIS
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (48) FACTOR -> OPEN_PARENTHESIS . seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (52) seen_opar -> .
 
-    OPEN_PARENTHESIS shift and go to state 82
-    ID              shift and go to state 84
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
+    OPEN_PARENTHESIS reduce using rule 52 (seen_opar -> .)
+    ID              reduce using rule 52 (seen_opar -> .)
+    CTE_S           reduce using rule 52 (seen_opar -> .)
+    CTE_F           reduce using rule 52 (seen_opar -> .)
+    CTE_I           reduce using rule 52 (seen_opar -> .)
 
-    EXPRESSION                     shift and go to state 114
-    EXP                            shift and go to state 79
-    TERM                           shift and go to state 80
-    FACTOR                         shift and go to state 81
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
+    seen_opar                      shift and go to state 110
 
 state 83
 
-    (44) FACTOR -> FUNC_CALL .
+    (49) FACTOR -> FUNC_CALL .
 
-    STAR            reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    FWD_SLASH       reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    PLUS            reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    MINUS           reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    BIGGER          reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    SMALLER         reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    DOUBLE_EQUALS   reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    DIFFERENT       reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    AND             reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    OR              reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    SEMI_COLON      reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    CLOSE_PARENTHESIS reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    COMMA           reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    UNTIL_KWD       reduce using rule 44 (FACTOR -> FUNC_CALL .)
-    OPEN_CURLY      reduce using rule 44 (FACTOR -> FUNC_CALL .)
+    STAR            reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    FWD_SLASH       reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    PLUS            reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    MINUS           reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    BIGGER          reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    SMALLER         reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    DOUBLE_EQUALS   reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    DIFFERENT       reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    AND             reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    OR              reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    SEMI_COLON      reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    COMMA           reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    CLOSE_PARENTHESIS reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    UNTIL_KWD       reduce using rule 49 (FACTOR -> FUNC_CALL .)
+    OPEN_CURLY      reduce using rule 49 (FACTOR -> FUNC_CALL .)
 
 
 state 84
 
-    (45) FACTOR -> ID .
-    (53) FUNC_CALL -> ID . OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (50) FACTOR -> ID . seen_id
+    (65) FUNC_CALL -> ID . OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (54) seen_id -> .
 
-    STAR            reduce using rule 45 (FACTOR -> ID .)
-    FWD_SLASH       reduce using rule 45 (FACTOR -> ID .)
-    PLUS            reduce using rule 45 (FACTOR -> ID .)
-    MINUS           reduce using rule 45 (FACTOR -> ID .)
-    BIGGER          reduce using rule 45 (FACTOR -> ID .)
-    SMALLER         reduce using rule 45 (FACTOR -> ID .)
-    DOUBLE_EQUALS   reduce using rule 45 (FACTOR -> ID .)
-    DIFFERENT       reduce using rule 45 (FACTOR -> ID .)
-    AND             reduce using rule 45 (FACTOR -> ID .)
-    OR              reduce using rule 45 (FACTOR -> ID .)
-    SEMI_COLON      reduce using rule 45 (FACTOR -> ID .)
-    CLOSE_PARENTHESIS reduce using rule 45 (FACTOR -> ID .)
-    COMMA           reduce using rule 45 (FACTOR -> ID .)
-    UNTIL_KWD       reduce using rule 45 (FACTOR -> ID .)
-    OPEN_CURLY      reduce using rule 45 (FACTOR -> ID .)
-    OPEN_PARENTHESIS shift and go to state 115
+    OPEN_PARENTHESIS shift and go to state 112
+    STAR            reduce using rule 54 (seen_id -> .)
+    FWD_SLASH       reduce using rule 54 (seen_id -> .)
+    PLUS            reduce using rule 54 (seen_id -> .)
+    MINUS           reduce using rule 54 (seen_id -> .)
+    BIGGER          reduce using rule 54 (seen_id -> .)
+    SMALLER         reduce using rule 54 (seen_id -> .)
+    DOUBLE_EQUALS   reduce using rule 54 (seen_id -> .)
+    DIFFERENT       reduce using rule 54 (seen_id -> .)
+    AND             reduce using rule 54 (seen_id -> .)
+    OR              reduce using rule 54 (seen_id -> .)
+    SEMI_COLON      reduce using rule 54 (seen_id -> .)
+    COMMA           reduce using rule 54 (seen_id -> .)
+    CLOSE_PARENTHESIS reduce using rule 54 (seen_id -> .)
+    UNTIL_KWD       reduce using rule 54 (seen_id -> .)
+    OPEN_CURLY      reduce using rule 54 (seen_id -> .)
 
+    seen_id                        shift and go to state 111
 
 state 85
 
-    (46) FACTOR -> CNST .
+    (51) FACTOR -> CNST . seen_cnst
+    (55) seen_cnst -> .
 
-    STAR            reduce using rule 46 (FACTOR -> CNST .)
-    FWD_SLASH       reduce using rule 46 (FACTOR -> CNST .)
-    PLUS            reduce using rule 46 (FACTOR -> CNST .)
-    MINUS           reduce using rule 46 (FACTOR -> CNST .)
-    BIGGER          reduce using rule 46 (FACTOR -> CNST .)
-    SMALLER         reduce using rule 46 (FACTOR -> CNST .)
-    DOUBLE_EQUALS   reduce using rule 46 (FACTOR -> CNST .)
-    DIFFERENT       reduce using rule 46 (FACTOR -> CNST .)
-    AND             reduce using rule 46 (FACTOR -> CNST .)
-    OR              reduce using rule 46 (FACTOR -> CNST .)
-    SEMI_COLON      reduce using rule 46 (FACTOR -> CNST .)
-    CLOSE_PARENTHESIS reduce using rule 46 (FACTOR -> CNST .)
-    COMMA           reduce using rule 46 (FACTOR -> CNST .)
-    UNTIL_KWD       reduce using rule 46 (FACTOR -> CNST .)
-    OPEN_CURLY      reduce using rule 46 (FACTOR -> CNST .)
+    STAR            reduce using rule 55 (seen_cnst -> .)
+    FWD_SLASH       reduce using rule 55 (seen_cnst -> .)
+    PLUS            reduce using rule 55 (seen_cnst -> .)
+    MINUS           reduce using rule 55 (seen_cnst -> .)
+    BIGGER          reduce using rule 55 (seen_cnst -> .)
+    SMALLER         reduce using rule 55 (seen_cnst -> .)
+    DOUBLE_EQUALS   reduce using rule 55 (seen_cnst -> .)
+    DIFFERENT       reduce using rule 55 (seen_cnst -> .)
+    AND             reduce using rule 55 (seen_cnst -> .)
+    OR              reduce using rule 55 (seen_cnst -> .)
+    SEMI_COLON      reduce using rule 55 (seen_cnst -> .)
+    CLOSE_PARENTHESIS reduce using rule 55 (seen_cnst -> .)
+    COMMA           reduce using rule 55 (seen_cnst -> .)
+    UNTIL_KWD       reduce using rule 55 (seen_cnst -> .)
+    OPEN_CURLY      reduce using rule 55 (seen_cnst -> .)
 
+    seen_cnst                      shift and go to state 113
 
 state 86
 
-    (47) CNST -> CTE_S .
+    (56) CNST -> CTE_S .
 
-    STAR            reduce using rule 47 (CNST -> CTE_S .)
-    FWD_SLASH       reduce using rule 47 (CNST -> CTE_S .)
-    PLUS            reduce using rule 47 (CNST -> CTE_S .)
-    MINUS           reduce using rule 47 (CNST -> CTE_S .)
-    BIGGER          reduce using rule 47 (CNST -> CTE_S .)
-    SMALLER         reduce using rule 47 (CNST -> CTE_S .)
-    DOUBLE_EQUALS   reduce using rule 47 (CNST -> CTE_S .)
-    DIFFERENT       reduce using rule 47 (CNST -> CTE_S .)
-    AND             reduce using rule 47 (CNST -> CTE_S .)
-    OR              reduce using rule 47 (CNST -> CTE_S .)
-    SEMI_COLON      reduce using rule 47 (CNST -> CTE_S .)
-    CLOSE_PARENTHESIS reduce using rule 47 (CNST -> CTE_S .)
-    COMMA           reduce using rule 47 (CNST -> CTE_S .)
-    UNTIL_KWD       reduce using rule 47 (CNST -> CTE_S .)
-    OPEN_CURLY      reduce using rule 47 (CNST -> CTE_S .)
+    STAR            reduce using rule 56 (CNST -> CTE_S .)
+    FWD_SLASH       reduce using rule 56 (CNST -> CTE_S .)
+    PLUS            reduce using rule 56 (CNST -> CTE_S .)
+    MINUS           reduce using rule 56 (CNST -> CTE_S .)
+    BIGGER          reduce using rule 56 (CNST -> CTE_S .)
+    SMALLER         reduce using rule 56 (CNST -> CTE_S .)
+    DOUBLE_EQUALS   reduce using rule 56 (CNST -> CTE_S .)
+    DIFFERENT       reduce using rule 56 (CNST -> CTE_S .)
+    AND             reduce using rule 56 (CNST -> CTE_S .)
+    OR              reduce using rule 56 (CNST -> CTE_S .)
+    SEMI_COLON      reduce using rule 56 (CNST -> CTE_S .)
+    COMMA           reduce using rule 56 (CNST -> CTE_S .)
+    CLOSE_PARENTHESIS reduce using rule 56 (CNST -> CTE_S .)
+    UNTIL_KWD       reduce using rule 56 (CNST -> CTE_S .)
+    OPEN_CURLY      reduce using rule 56 (CNST -> CTE_S .)
 
 
 state 87
 
-    (48) CNST -> CTE_F .
+    (57) CNST -> CTE_F .
 
-    STAR            reduce using rule 48 (CNST -> CTE_F .)
-    FWD_SLASH       reduce using rule 48 (CNST -> CTE_F .)
-    PLUS            reduce using rule 48 (CNST -> CTE_F .)
-    MINUS           reduce using rule 48 (CNST -> CTE_F .)
-    BIGGER          reduce using rule 48 (CNST -> CTE_F .)
-    SMALLER         reduce using rule 48 (CNST -> CTE_F .)
-    DOUBLE_EQUALS   reduce using rule 48 (CNST -> CTE_F .)
-    DIFFERENT       reduce using rule 48 (CNST -> CTE_F .)
-    AND             reduce using rule 48 (CNST -> CTE_F .)
-    OR              reduce using rule 48 (CNST -> CTE_F .)
-    SEMI_COLON      reduce using rule 48 (CNST -> CTE_F .)
-    CLOSE_PARENTHESIS reduce using rule 48 (CNST -> CTE_F .)
-    COMMA           reduce using rule 48 (CNST -> CTE_F .)
-    UNTIL_KWD       reduce using rule 48 (CNST -> CTE_F .)
-    OPEN_CURLY      reduce using rule 48 (CNST -> CTE_F .)
+    STAR            reduce using rule 57 (CNST -> CTE_F .)
+    FWD_SLASH       reduce using rule 57 (CNST -> CTE_F .)
+    PLUS            reduce using rule 57 (CNST -> CTE_F .)
+    MINUS           reduce using rule 57 (CNST -> CTE_F .)
+    BIGGER          reduce using rule 57 (CNST -> CTE_F .)
+    SMALLER         reduce using rule 57 (CNST -> CTE_F .)
+    DOUBLE_EQUALS   reduce using rule 57 (CNST -> CTE_F .)
+    DIFFERENT       reduce using rule 57 (CNST -> CTE_F .)
+    AND             reduce using rule 57 (CNST -> CTE_F .)
+    OR              reduce using rule 57 (CNST -> CTE_F .)
+    SEMI_COLON      reduce using rule 57 (CNST -> CTE_F .)
+    COMMA           reduce using rule 57 (CNST -> CTE_F .)
+    CLOSE_PARENTHESIS reduce using rule 57 (CNST -> CTE_F .)
+    UNTIL_KWD       reduce using rule 57 (CNST -> CTE_F .)
+    OPEN_CURLY      reduce using rule 57 (CNST -> CTE_F .)
 
 
 state 88
 
-    (49) CNST -> CTE_I .
+    (58) CNST -> CTE_I .
 
-    STAR            reduce using rule 49 (CNST -> CTE_I .)
-    FWD_SLASH       reduce using rule 49 (CNST -> CTE_I .)
-    PLUS            reduce using rule 49 (CNST -> CTE_I .)
-    MINUS           reduce using rule 49 (CNST -> CTE_I .)
-    BIGGER          reduce using rule 49 (CNST -> CTE_I .)
-    SMALLER         reduce using rule 49 (CNST -> CTE_I .)
-    DOUBLE_EQUALS   reduce using rule 49 (CNST -> CTE_I .)
-    DIFFERENT       reduce using rule 49 (CNST -> CTE_I .)
-    AND             reduce using rule 49 (CNST -> CTE_I .)
-    OR              reduce using rule 49 (CNST -> CTE_I .)
-    SEMI_COLON      reduce using rule 49 (CNST -> CTE_I .)
-    CLOSE_PARENTHESIS reduce using rule 49 (CNST -> CTE_I .)
-    COMMA           reduce using rule 49 (CNST -> CTE_I .)
-    UNTIL_KWD       reduce using rule 49 (CNST -> CTE_I .)
-    OPEN_CURLY      reduce using rule 49 (CNST -> CTE_I .)
+    STAR            reduce using rule 58 (CNST -> CTE_I .)
+    FWD_SLASH       reduce using rule 58 (CNST -> CTE_I .)
+    PLUS            reduce using rule 58 (CNST -> CTE_I .)
+    MINUS           reduce using rule 58 (CNST -> CTE_I .)
+    BIGGER          reduce using rule 58 (CNST -> CTE_I .)
+    SMALLER         reduce using rule 58 (CNST -> CTE_I .)
+    DOUBLE_EQUALS   reduce using rule 58 (CNST -> CTE_I .)
+    DIFFERENT       reduce using rule 58 (CNST -> CTE_I .)
+    AND             reduce using rule 58 (CNST -> CTE_I .)
+    OR              reduce using rule 58 (CNST -> CTE_I .)
+    SEMI_COLON      reduce using rule 58 (CNST -> CTE_I .)
+    COMMA           reduce using rule 58 (CNST -> CTE_I .)
+    CLOSE_PARENTHESIS reduce using rule 58 (CNST -> CTE_I .)
+    UNTIL_KWD       reduce using rule 58 (CNST -> CTE_I .)
+    OPEN_CURLY      reduce using rule 58 (CNST -> CTE_I .)
 
 
 state 89
 
-    (60) READ -> READ_KWD OPEN_PARENTHESIS . ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (72) READ -> READ_KWD OPEN_PARENTHESIS . ID_LIST CLOSE_PARENTHESIS SEMI_COLON
     (9) ID_LIST -> . ID ID_LIST_P
 
     ID              shift and go to state 9
 
-    ID_LIST                        shift and go to state 116
+    ID_LIST                        shift and go to state 114
 
 state 90
 
-    (61) WRITE -> WRITE_KWD OPEN_PARENTHESIS . PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (62) PRINTABLE -> . CNST PRINTABLE_P
-    (63) PRINTABLE -> . EXPRESSION PRINTABLE_P
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (73) WRITE -> WRITE_KWD OPEN_PARENTHESIS . PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (74) PRINTABLE -> . CNST PRINTABLE_P
+    (75) PRINTABLE -> . EXPRESSION PRINTABLE_P
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
 
     CTE_S           shift and go to state 86
     CTE_F           shift and go to state 87
@@ -1295,9 +1275,9 @@ state 90
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
 
-    PRINTABLE                      shift and go to state 117
-    CNST                           shift and go to state 118
-    EXPRESSION                     shift and go to state 119
+    PRINTABLE                      shift and go to state 115
+    CNST                           shift and go to state 116
+    EXPRESSION                     shift and go to state 117
     EXP                            shift and go to state 79
     TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
@@ -1305,21 +1285,19 @@ state 90
 
 state 91
 
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS . EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS . EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
@@ -1327,7 +1305,7 @@ state 91
     CTE_F           shift and go to state 87
     CTE_I           shift and go to state 88
 
-    EXPRESSION                     shift and go to state 120
+    EXPRESSION                     shift and go to state 118
     EXP                            shift and go to state 79
     TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
@@ -1336,21 +1314,19 @@ state 91
 
 state 92
 
-    (72) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS . EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (84) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS . EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
@@ -1358,7 +1334,7 @@ state 92
     CTE_F           shift and go to state 87
     CTE_I           shift and go to state 88
 
-    EXPRESSION                     shift and go to state 121
+    EXPRESSION                     shift and go to state 119
     EXP                            shift and go to state 79
     TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
@@ -1367,9 +1343,9 @@ state 92
 
 state 93
 
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID . EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID . EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    EQUALS          shift and go to state 122
+    EQUALS          shift and go to state 120
 
 
 state 94
@@ -1383,18 +1359,18 @@ state 94
     (27) STATEMENT -> . WRITE
     (28) STATEMENT -> . DECISION
     (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 51
     RETURN_KWD      shift and go to state 61
     READ_KWD        shift and go to state 62
@@ -1403,7 +1379,7 @@ state 94
     WHILE_KWD       shift and go to state 67
     FROM_KWD        shift and go to state 68
 
-    STATEMENT_STAR                 shift and go to state 123
+    STATEMENT_STAR                 shift and go to state 121
     STATEMENT                      shift and go to state 53
     empty                          shift and go to state 54
     ASSIGN                         shift and go to state 55
@@ -1421,13 +1397,13 @@ state 95
     (6) VAR_LIST_STAR -> . VAR_LIST VAR_LIST_STAR
     (7) VAR_LIST_STAR -> . empty
     (8) VAR_LIST -> . ID_LIST COLON TYPE SEMI_COLON
-    (74) empty -> .
+    (86) empty -> .
     (9) ID_LIST -> . ID ID_LIST_P
 
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 9
 
-    VAR_LIST_STAR                  shift and go to state 124
+    VAR_LIST_STAR                  shift and go to state 122
     VAR_LIST                       shift and go to state 12
     empty                          shift and go to state 13
     ID_LIST                        shift and go to state 14
@@ -1443,7 +1419,7 @@ state 97
 
     (4) CLASS -> CLASS_KWD ID SMALLER DERIVES_KWD TYPE BIGGER OPEN_CURLY CLASS_ATTR FUNC_DEF_STAR . CLOSE_CURLY
 
-    CLOSE_CURLY     shift and go to state 125
+    CLOSE_CURLY     shift and go to state 123
 
 
 state 98
@@ -1452,189 +1428,190 @@ state 98
     (6) VAR_LIST_STAR -> . VAR_LIST VAR_LIST_STAR
     (7) VAR_LIST_STAR -> . empty
     (8) VAR_LIST -> . ID_LIST COLON TYPE SEMI_COLON
-    (74) empty -> .
+    (86) empty -> .
     (9) ID_LIST -> . ID ID_LIST_P
 
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 9
 
-    VAR_LIST_STAR                  shift and go to state 126
+    VAR_LIST_STAR                  shift and go to state 124
     VAR_LIST                       shift and go to state 12
     empty                          shift and go to state 13
     ID_LIST                        shift and go to state 14
 
 state 99
 
-    (30) ASSIGN -> ID EQUALS EXPRESSION . SEMI_COLON
+    (30) ASSIGN -> ID seen_id EQUALS . seen_equals EXPRESSION SEMI_COLON
+    (31) seen_equals -> .
 
-    SEMI_COLON      shift and go to state 127
+    OPEN_PARENTHESIS reduce using rule 31 (seen_equals -> .)
+    ID              reduce using rule 31 (seen_equals -> .)
+    CTE_S           reduce using rule 31 (seen_equals -> .)
+    CTE_F           reduce using rule 31 (seen_equals -> .)
+    CTE_I           reduce using rule 31 (seen_equals -> .)
 
+    seen_equals                    shift and go to state 125
 
 state 100
 
-    (59) FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .
+    (71) FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .
 
-    ID              reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    RETURN_KWD      reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    READ_KWD        reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    WRITE_KWD       reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    IF_KWD          reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    WHILE_KWD       reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    FROM_KWD        reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
-    CLOSE_CURLY     reduce using rule 59 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    ID              reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    RETURN_KWD      reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    READ_KWD        reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    WRITE_KWD       reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    IF_KWD          reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    WHILE_KWD       reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    FROM_KWD        reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
+    CLOSE_CURLY     reduce using rule 71 (FUNC_RETURN -> RETURN_KWD EXPRESSION SEMI_COLON .)
 
 
 state 101
 
-    (36) EXPRESSION -> EXP COMP . EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (39) EXPRESSION -> EXP COMP . seen_comp_op EXP seen_comp
+    (41) seen_comp_op -> .
 
-    OPEN_PARENTHESIS shift and go to state 82
-    ID              shift and go to state 84
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
+    OPEN_PARENTHESIS reduce using rule 41 (seen_comp_op -> .)
+    ID              reduce using rule 41 (seen_comp_op -> .)
+    CTE_S           reduce using rule 41 (seen_comp_op -> .)
+    CTE_F           reduce using rule 41 (seen_comp_op -> .)
+    CTE_I           reduce using rule 41 (seen_comp_op -> .)
 
-    EXP                            shift and go to state 128
-    TERM                           shift and go to state 80
-    FACTOR                         shift and go to state 81
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
+    seen_comp_op                   shift and go to state 126
 
 state 102
 
-    (37) COMP -> BIGGER .
+    (42) COMP -> BIGGER .
 
-    OPEN_PARENTHESIS reduce using rule 37 (COMP -> BIGGER .)
-    ID              reduce using rule 37 (COMP -> BIGGER .)
-    CTE_S           reduce using rule 37 (COMP -> BIGGER .)
-    CTE_F           reduce using rule 37 (COMP -> BIGGER .)
-    CTE_I           reduce using rule 37 (COMP -> BIGGER .)
+    OPEN_PARENTHESIS reduce using rule 42 (COMP -> BIGGER .)
+    ID              reduce using rule 42 (COMP -> BIGGER .)
+    CTE_S           reduce using rule 42 (COMP -> BIGGER .)
+    CTE_F           reduce using rule 42 (COMP -> BIGGER .)
+    CTE_I           reduce using rule 42 (COMP -> BIGGER .)
 
 
 state 103
 
-    (38) COMP -> SMALLER .
+    (43) COMP -> SMALLER .
 
-    OPEN_PARENTHESIS reduce using rule 38 (COMP -> SMALLER .)
-    ID              reduce using rule 38 (COMP -> SMALLER .)
-    CTE_S           reduce using rule 38 (COMP -> SMALLER .)
-    CTE_F           reduce using rule 38 (COMP -> SMALLER .)
-    CTE_I           reduce using rule 38 (COMP -> SMALLER .)
+    OPEN_PARENTHESIS reduce using rule 43 (COMP -> SMALLER .)
+    ID              reduce using rule 43 (COMP -> SMALLER .)
+    CTE_S           reduce using rule 43 (COMP -> SMALLER .)
+    CTE_F           reduce using rule 43 (COMP -> SMALLER .)
+    CTE_I           reduce using rule 43 (COMP -> SMALLER .)
 
 
 state 104
 
-    (39) COMP -> DOUBLE_EQUALS .
+    (44) COMP -> DOUBLE_EQUALS .
 
-    OPEN_PARENTHESIS reduce using rule 39 (COMP -> DOUBLE_EQUALS .)
-    ID              reduce using rule 39 (COMP -> DOUBLE_EQUALS .)
-    CTE_S           reduce using rule 39 (COMP -> DOUBLE_EQUALS .)
-    CTE_F           reduce using rule 39 (COMP -> DOUBLE_EQUALS .)
-    CTE_I           reduce using rule 39 (COMP -> DOUBLE_EQUALS .)
+    OPEN_PARENTHESIS reduce using rule 44 (COMP -> DOUBLE_EQUALS .)
+    ID              reduce using rule 44 (COMP -> DOUBLE_EQUALS .)
+    CTE_S           reduce using rule 44 (COMP -> DOUBLE_EQUALS .)
+    CTE_F           reduce using rule 44 (COMP -> DOUBLE_EQUALS .)
+    CTE_I           reduce using rule 44 (COMP -> DOUBLE_EQUALS .)
 
 
 state 105
 
-    (40) COMP -> DIFFERENT .
+    (45) COMP -> DIFFERENT .
 
-    OPEN_PARENTHESIS reduce using rule 40 (COMP -> DIFFERENT .)
-    ID              reduce using rule 40 (COMP -> DIFFERENT .)
-    CTE_S           reduce using rule 40 (COMP -> DIFFERENT .)
-    CTE_F           reduce using rule 40 (COMP -> DIFFERENT .)
-    CTE_I           reduce using rule 40 (COMP -> DIFFERENT .)
+    OPEN_PARENTHESIS reduce using rule 45 (COMP -> DIFFERENT .)
+    ID              reduce using rule 45 (COMP -> DIFFERENT .)
+    CTE_S           reduce using rule 45 (COMP -> DIFFERENT .)
+    CTE_F           reduce using rule 45 (COMP -> DIFFERENT .)
+    CTE_I           reduce using rule 45 (COMP -> DIFFERENT .)
 
 
 state 106
 
-    (41) COMP -> AND .
+    (46) COMP -> AND .
 
-    OPEN_PARENTHESIS reduce using rule 41 (COMP -> AND .)
-    ID              reduce using rule 41 (COMP -> AND .)
-    CTE_S           reduce using rule 41 (COMP -> AND .)
-    CTE_F           reduce using rule 41 (COMP -> AND .)
-    CTE_I           reduce using rule 41 (COMP -> AND .)
+    OPEN_PARENTHESIS reduce using rule 46 (COMP -> AND .)
+    ID              reduce using rule 46 (COMP -> AND .)
+    CTE_S           reduce using rule 46 (COMP -> AND .)
+    CTE_F           reduce using rule 46 (COMP -> AND .)
+    CTE_I           reduce using rule 46 (COMP -> AND .)
 
 
 state 107
 
-    (42) COMP -> OR .
+    (47) COMP -> OR .
 
-    OPEN_PARENTHESIS reduce using rule 42 (COMP -> OR .)
-    ID              reduce using rule 42 (COMP -> OR .)
-    CTE_S           reduce using rule 42 (COMP -> OR .)
-    CTE_F           reduce using rule 42 (COMP -> OR .)
-    CTE_I           reduce using rule 42 (COMP -> OR .)
+    OPEN_PARENTHESIS reduce using rule 47 (COMP -> OR .)
+    ID              reduce using rule 47 (COMP -> OR .)
+    CTE_S           reduce using rule 47 (COMP -> OR .)
+    CTE_F           reduce using rule 47 (COMP -> OR .)
+    CTE_I           reduce using rule 47 (COMP -> OR .)
 
 
 state 108
 
-    (31) EXP -> TERM EXP_P .
+    (32) EXP -> TERM seen_term . EXP_P
+    (34) EXP_P -> . PLUS seen_term_op TERM seen_term EXP_P
+    (35) EXP_P -> . MINUS seen_term_op TERM seen_term EXP_P
+    (36) EXP_P -> . empty
+    (86) empty -> .
 
-    BIGGER          reduce using rule 31 (EXP -> TERM EXP_P .)
-    SMALLER         reduce using rule 31 (EXP -> TERM EXP_P .)
-    DOUBLE_EQUALS   reduce using rule 31 (EXP -> TERM EXP_P .)
-    DIFFERENT       reduce using rule 31 (EXP -> TERM EXP_P .)
-    AND             reduce using rule 31 (EXP -> TERM EXP_P .)
-    OR              reduce using rule 31 (EXP -> TERM EXP_P .)
-    SEMI_COLON      reduce using rule 31 (EXP -> TERM EXP_P .)
-    CLOSE_PARENTHESIS reduce using rule 31 (EXP -> TERM EXP_P .)
-    COMMA           reduce using rule 31 (EXP -> TERM EXP_P .)
-    UNTIL_KWD       reduce using rule 31 (EXP -> TERM EXP_P .)
-    OPEN_CURLY      reduce using rule 31 (EXP -> TERM EXP_P .)
+    PLUS            shift and go to state 128
+    MINUS           shift and go to state 129
+    BIGGER          reduce using rule 86 (empty -> .)
+    SMALLER         reduce using rule 86 (empty -> .)
+    DOUBLE_EQUALS   reduce using rule 86 (empty -> .)
+    DIFFERENT       reduce using rule 86 (empty -> .)
+    AND             reduce using rule 86 (empty -> .)
+    OR              reduce using rule 86 (empty -> .)
+    SEMI_COLON      reduce using rule 86 (empty -> .)
+    COMMA           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+    UNTIL_KWD       reduce using rule 86 (empty -> .)
+    OPEN_CURLY      reduce using rule 86 (empty -> .)
 
+    EXP_P                          shift and go to state 127
+    empty                          shift and go to state 130
 
 state 109
 
-    (32) EXP_P -> PLUS . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (59) TERM -> FACTOR seen_factor . TERM_P
+    (60) TERM_P -> . STAR seen_factor_op FACTOR seen_factor TERM_P
+    (61) TERM_P -> . FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P
+    (62) TERM_P -> . empty
+    (86) empty -> .
 
-    OPEN_PARENTHESIS shift and go to state 82
-    ID              shift and go to state 84
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
+    STAR            shift and go to state 132
+    FWD_SLASH       shift and go to state 133
+    PLUS            reduce using rule 86 (empty -> .)
+    MINUS           reduce using rule 86 (empty -> .)
+    BIGGER          reduce using rule 86 (empty -> .)
+    SMALLER         reduce using rule 86 (empty -> .)
+    DOUBLE_EQUALS   reduce using rule 86 (empty -> .)
+    DIFFERENT       reduce using rule 86 (empty -> .)
+    AND             reduce using rule 86 (empty -> .)
+    OR              reduce using rule 86 (empty -> .)
+    SEMI_COLON      reduce using rule 86 (empty -> .)
+    COMMA           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+    UNTIL_KWD       reduce using rule 86 (empty -> .)
+    OPEN_CURLY      reduce using rule 86 (empty -> .)
 
-    TERM                           shift and go to state 129
-    FACTOR                         shift and go to state 81
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
+    TERM_P                         shift and go to state 131
+    empty                          shift and go to state 134
 
 state 110
 
-    (33) EXP_P -> MINUS . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (48) FACTOR -> OPEN_PARENTHESIS seen_opar . EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
@@ -1642,204 +1619,178 @@ state 110
     CTE_F           shift and go to state 87
     CTE_I           shift and go to state 88
 
-    TERM                           shift and go to state 130
+    EXPRESSION                     shift and go to state 135
+    EXP                            shift and go to state 79
+    TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
     FUNC_CALL                      shift and go to state 83
     CNST                           shift and go to state 85
 
 state 111
 
-    (34) EXP_P -> empty .
+    (50) FACTOR -> ID seen_id .
 
-    BIGGER          reduce using rule 34 (EXP_P -> empty .)
-    SMALLER         reduce using rule 34 (EXP_P -> empty .)
-    DOUBLE_EQUALS   reduce using rule 34 (EXP_P -> empty .)
-    DIFFERENT       reduce using rule 34 (EXP_P -> empty .)
-    AND             reduce using rule 34 (EXP_P -> empty .)
-    OR              reduce using rule 34 (EXP_P -> empty .)
-    SEMI_COLON      reduce using rule 34 (EXP_P -> empty .)
-    CLOSE_PARENTHESIS reduce using rule 34 (EXP_P -> empty .)
-    COMMA           reduce using rule 34 (EXP_P -> empty .)
-    UNTIL_KWD       reduce using rule 34 (EXP_P -> empty .)
-    OPEN_CURLY      reduce using rule 34 (EXP_P -> empty .)
+    STAR            reduce using rule 50 (FACTOR -> ID seen_id .)
+    FWD_SLASH       reduce using rule 50 (FACTOR -> ID seen_id .)
+    PLUS            reduce using rule 50 (FACTOR -> ID seen_id .)
+    MINUS           reduce using rule 50 (FACTOR -> ID seen_id .)
+    BIGGER          reduce using rule 50 (FACTOR -> ID seen_id .)
+    SMALLER         reduce using rule 50 (FACTOR -> ID seen_id .)
+    DOUBLE_EQUALS   reduce using rule 50 (FACTOR -> ID seen_id .)
+    DIFFERENT       reduce using rule 50 (FACTOR -> ID seen_id .)
+    AND             reduce using rule 50 (FACTOR -> ID seen_id .)
+    OR              reduce using rule 50 (FACTOR -> ID seen_id .)
+    SEMI_COLON      reduce using rule 50 (FACTOR -> ID seen_id .)
+    COMMA           reduce using rule 50 (FACTOR -> ID seen_id .)
+    CLOSE_PARENTHESIS reduce using rule 50 (FACTOR -> ID seen_id .)
+    UNTIL_KWD       reduce using rule 50 (FACTOR -> ID seen_id .)
+    OPEN_CURLY      reduce using rule 50 (FACTOR -> ID seen_id .)
 
 
 state 112
 
-    (51) TERM -> FACTOR STAR . FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (65) FUNC_CALL -> ID OPEN_PARENTHESIS . ARG_LIST CLOSE_PARENTHESIS
+    (66) ARG_LIST -> . ID_LIST ARG_LIST_P
+    (67) ARG_LIST -> . EXPRESSION ARG_LIST_P
+    (9) ID_LIST -> . ID ID_LIST_P
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
+    ID              shift and go to state 136
     OPEN_PARENTHESIS shift and go to state 82
-    ID              shift and go to state 84
     CTE_S           shift and go to state 86
     CTE_F           shift and go to state 87
     CTE_I           shift and go to state 88
 
-    FACTOR                         shift and go to state 131
+    ARG_LIST                       shift and go to state 137
+    ID_LIST                        shift and go to state 138
+    EXPRESSION                     shift and go to state 139
+    EXP                            shift and go to state 79
+    TERM                           shift and go to state 80
+    FACTOR                         shift and go to state 81
     FUNC_CALL                      shift and go to state 83
     CNST                           shift and go to state 85
 
 state 113
 
-    (52) TERM -> FACTOR FWD_SLASH . FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (51) FACTOR -> CNST seen_cnst .
 
-    OPEN_PARENTHESIS shift and go to state 82
-    ID              shift and go to state 84
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
+    STAR            reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    FWD_SLASH       reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    PLUS            reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    MINUS           reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    BIGGER          reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    SMALLER         reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    DOUBLE_EQUALS   reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    DIFFERENT       reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    AND             reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    OR              reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    SEMI_COLON      reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    COMMA           reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    CLOSE_PARENTHESIS reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    UNTIL_KWD       reduce using rule 51 (FACTOR -> CNST seen_cnst .)
+    OPEN_CURLY      reduce using rule 51 (FACTOR -> CNST seen_cnst .)
 
-    FACTOR                         shift and go to state 132
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
 
 state 114
 
-    (43) FACTOR -> OPEN_PARENTHESIS EXPRESSION . CLOSE_PARENTHESIS
+    (72) READ -> READ_KWD OPEN_PARENTHESIS ID_LIST . CLOSE_PARENTHESIS SEMI_COLON
 
-    CLOSE_PARENTHESIS shift and go to state 133
+    CLOSE_PARENTHESIS shift and go to state 140
 
 
 state 115
 
-    (53) FUNC_CALL -> ID OPEN_PARENTHESIS . ARG_LIST CLOSE_PARENTHESIS
-    (54) ARG_LIST -> . ID_LIST ARG_LIST_P
-    (55) ARG_LIST -> . EXPRESSION ARG_LIST_P
-    (9) ID_LIST -> . ID ID_LIST_P
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (73) WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE . CLOSE_PARENTHESIS SEMI_COLON
 
-    ID              shift and go to state 134
-    OPEN_PARENTHESIS shift and go to state 82
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
+    CLOSE_PARENTHESIS shift and go to state 141
 
-    ARG_LIST                       shift and go to state 135
-    ID_LIST                        shift and go to state 136
-    EXPRESSION                     shift and go to state 137
-    EXP                            shift and go to state 79
-    TERM                           shift and go to state 80
-    FACTOR                         shift and go to state 81
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
 
 state 116
 
-    (60) READ -> READ_KWD OPEN_PARENTHESIS ID_LIST . CLOSE_PARENTHESIS SEMI_COLON
+    (74) PRINTABLE -> CNST . PRINTABLE_P
+    (51) FACTOR -> CNST . seen_cnst
+    (76) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
+    (77) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
+    (78) PRINTABLE_P -> . empty
+    (55) seen_cnst -> .
+    (86) empty -> .
 
-    CLOSE_PARENTHESIS shift and go to state 138
+  ! shift/reduce conflict for COMMA resolved as shift
+  ! reduce/reduce conflict for CLOSE_PARENTHESIS resolved using rule 55 (seen_cnst -> .)
+    COMMA           shift and go to state 143
+    STAR            reduce using rule 55 (seen_cnst -> .)
+    FWD_SLASH       reduce using rule 55 (seen_cnst -> .)
+    PLUS            reduce using rule 55 (seen_cnst -> .)
+    MINUS           reduce using rule 55 (seen_cnst -> .)
+    BIGGER          reduce using rule 55 (seen_cnst -> .)
+    SMALLER         reduce using rule 55 (seen_cnst -> .)
+    DOUBLE_EQUALS   reduce using rule 55 (seen_cnst -> .)
+    DIFFERENT       reduce using rule 55 (seen_cnst -> .)
+    AND             reduce using rule 55 (seen_cnst -> .)
+    OR              reduce using rule 55 (seen_cnst -> .)
+    CLOSE_PARENTHESIS reduce using rule 55 (seen_cnst -> .)
 
+  ! COMMA           [ reduce using rule 55 (seen_cnst -> .) ]
+  ! CLOSE_PARENTHESIS [ reduce using rule 86 (empty -> .) ]
+
+    PRINTABLE_P                    shift and go to state 142
+    seen_cnst                      shift and go to state 113
+    empty                          shift and go to state 144
 
 state 117
 
-    (61) WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE . CLOSE_PARENTHESIS SEMI_COLON
+    (75) PRINTABLE -> EXPRESSION . PRINTABLE_P
+    (76) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
+    (77) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
+    (78) PRINTABLE_P -> . empty
+    (86) empty -> .
 
-    CLOSE_PARENTHESIS shift and go to state 139
+    COMMA           shift and go to state 143
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
+    PRINTABLE_P                    shift and go to state 145
+    empty                          shift and go to state 144
 
 state 118
 
-    (62) PRINTABLE -> CNST . PRINTABLE_P
-    (46) FACTOR -> CNST .
-    (64) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
-    (65) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
-    (66) PRINTABLE_P -> . empty
-    (74) empty -> .
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION . CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
 
-  ! shift/reduce conflict for COMMA resolved as shift
-  ! reduce/reduce conflict for CLOSE_PARENTHESIS resolved using rule 46 (FACTOR -> CNST .)
-    STAR            reduce using rule 46 (FACTOR -> CNST .)
-    FWD_SLASH       reduce using rule 46 (FACTOR -> CNST .)
-    PLUS            reduce using rule 46 (FACTOR -> CNST .)
-    MINUS           reduce using rule 46 (FACTOR -> CNST .)
-    BIGGER          reduce using rule 46 (FACTOR -> CNST .)
-    SMALLER         reduce using rule 46 (FACTOR -> CNST .)
-    DOUBLE_EQUALS   reduce using rule 46 (FACTOR -> CNST .)
-    DIFFERENT       reduce using rule 46 (FACTOR -> CNST .)
-    AND             reduce using rule 46 (FACTOR -> CNST .)
-    OR              reduce using rule 46 (FACTOR -> CNST .)
-    CLOSE_PARENTHESIS reduce using rule 46 (FACTOR -> CNST .)
-    COMMA           shift and go to state 141
+    CLOSE_PARENTHESIS shift and go to state 146
 
-  ! COMMA           [ reduce using rule 46 (FACTOR -> CNST .) ]
-  ! CLOSE_PARENTHESIS [ reduce using rule 74 (empty -> .) ]
-
-    PRINTABLE_P                    shift and go to state 140
-    empty                          shift and go to state 142
 
 state 119
 
-    (63) PRINTABLE -> EXPRESSION . PRINTABLE_P
-    (64) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
-    (65) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
-    (66) PRINTABLE_P -> . empty
-    (74) empty -> .
+    (84) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION . CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    COMMA           shift and go to state 141
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    CLOSE_PARENTHESIS shift and go to state 147
 
-    PRINTABLE_P                    shift and go to state 143
-    empty                          shift and go to state 142
 
 state 120
 
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION . CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-
-    CLOSE_PARENTHESIS shift and go to state 144
-
-
-state 121
-
-    (72) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION . CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-
-    CLOSE_PARENTHESIS shift and go to state 145
-
-
-state 122
-
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS . EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS . EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
@@ -1847,28 +1798,28 @@ state 122
     CTE_F           shift and go to state 87
     CTE_I           shift and go to state 88
 
-    EXPRESSION                     shift and go to state 146
+    EXPRESSION                     shift and go to state 148
     EXP                            shift and go to state 79
     TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
     FUNC_CALL                      shift and go to state 83
     CNST                           shift and go to state 85
 
-state 123
+state 121
 
     (15) FUNC_DEF -> TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY
 
-    CLOSE_CURLY     shift and go to state 147
+    CLOSE_CURLY     shift and go to state 149
 
 
-state 124
+state 122
 
     (21) VARS -> VARS_KWD OPEN_CURLY VAR_LIST_STAR . CLOSE_CURLY
 
-    CLOSE_CURLY     shift and go to state 148
+    CLOSE_CURLY     shift and go to state 150
 
 
-state 125
+state 123
 
     (4) CLASS -> CLASS_KWD ID SMALLER DERIVES_KWD TYPE BIGGER OPEN_CURLY CLASS_ATTR FUNC_DEF_STAR CLOSE_CURLY .
 
@@ -1878,254 +1829,306 @@ state 125
     MAIN_KWD        reduce using rule 4 (CLASS -> CLASS_KWD ID SMALLER DERIVES_KWD TYPE BIGGER OPEN_CURLY CLASS_ATTR FUNC_DEF_STAR CLOSE_CURLY .)
 
 
-state 126
+state 124
 
     (5) CLASS_ATTR -> ATTR_KWD OPEN_CURLY VAR_LIST_STAR . CLOSE_CURLY
 
-    CLOSE_CURLY     shift and go to state 149
+    CLOSE_CURLY     shift and go to state 151
 
+
+state 125
+
+    (30) ASSIGN -> ID seen_id EQUALS seen_equals . EXPRESSION SEMI_COLON
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    OPEN_PARENTHESIS shift and go to state 82
+    ID              shift and go to state 84
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    EXPRESSION                     shift and go to state 152
+    EXP                            shift and go to state 79
+    TERM                           shift and go to state 80
+    FACTOR                         shift and go to state 81
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
+
+state 126
+
+    (39) EXPRESSION -> EXP COMP seen_comp_op . EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    OPEN_PARENTHESIS shift and go to state 82
+    ID              shift and go to state 84
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    EXP                            shift and go to state 153
+    TERM                           shift and go to state 80
+    FACTOR                         shift and go to state 81
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
 
 state 127
 
-    (30) ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .
+    (32) EXP -> TERM seen_term EXP_P .
 
-    ID              reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    RETURN_KWD      reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    READ_KWD        reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    WRITE_KWD       reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    IF_KWD          reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    WHILE_KWD       reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    FROM_KWD        reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
-    CLOSE_CURLY     reduce using rule 30 (ASSIGN -> ID EQUALS EXPRESSION SEMI_COLON .)
+    BIGGER          reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    SMALLER         reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    DOUBLE_EQUALS   reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    DIFFERENT       reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    AND             reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    OR              reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    SEMI_COLON      reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    COMMA           reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    CLOSE_PARENTHESIS reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    UNTIL_KWD       reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
+    OPEN_CURLY      reduce using rule 32 (EXP -> TERM seen_term EXP_P .)
 
 
 state 128
 
-    (36) EXPRESSION -> EXP COMP EXP .
+    (34) EXP_P -> PLUS . seen_term_op TERM seen_term EXP_P
+    (37) seen_term_op -> .
 
-    SEMI_COLON      reduce using rule 36 (EXPRESSION -> EXP COMP EXP .)
-    CLOSE_PARENTHESIS reduce using rule 36 (EXPRESSION -> EXP COMP EXP .)
-    COMMA           reduce using rule 36 (EXPRESSION -> EXP COMP EXP .)
-    UNTIL_KWD       reduce using rule 36 (EXPRESSION -> EXP COMP EXP .)
-    OPEN_CURLY      reduce using rule 36 (EXPRESSION -> EXP COMP EXP .)
+    OPEN_PARENTHESIS reduce using rule 37 (seen_term_op -> .)
+    ID              reduce using rule 37 (seen_term_op -> .)
+    CTE_S           reduce using rule 37 (seen_term_op -> .)
+    CTE_F           reduce using rule 37 (seen_term_op -> .)
+    CTE_I           reduce using rule 37 (seen_term_op -> .)
 
+    seen_term_op                   shift and go to state 154
 
 state 129
 
-    (32) EXP_P -> PLUS TERM . EXP_P
-    (32) EXP_P -> . PLUS TERM EXP_P
-    (33) EXP_P -> . MINUS TERM EXP_P
-    (34) EXP_P -> . empty
-    (74) empty -> .
+    (35) EXP_P -> MINUS . seen_term_op TERM seen_term EXP_P
+    (37) seen_term_op -> .
 
-    PLUS            shift and go to state 109
-    MINUS           shift and go to state 110
-    BIGGER          reduce using rule 74 (empty -> .)
-    SMALLER         reduce using rule 74 (empty -> .)
-    DOUBLE_EQUALS   reduce using rule 74 (empty -> .)
-    DIFFERENT       reduce using rule 74 (empty -> .)
-    AND             reduce using rule 74 (empty -> .)
-    OR              reduce using rule 74 (empty -> .)
-    SEMI_COLON      reduce using rule 74 (empty -> .)
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
-    COMMA           reduce using rule 74 (empty -> .)
-    UNTIL_KWD       reduce using rule 74 (empty -> .)
-    OPEN_CURLY      reduce using rule 74 (empty -> .)
+    OPEN_PARENTHESIS reduce using rule 37 (seen_term_op -> .)
+    ID              reduce using rule 37 (seen_term_op -> .)
+    CTE_S           reduce using rule 37 (seen_term_op -> .)
+    CTE_F           reduce using rule 37 (seen_term_op -> .)
+    CTE_I           reduce using rule 37 (seen_term_op -> .)
 
-    EXP_P                          shift and go to state 150
-    empty                          shift and go to state 111
+    seen_term_op                   shift and go to state 155
 
 state 130
 
-    (33) EXP_P -> MINUS TERM . EXP_P
-    (32) EXP_P -> . PLUS TERM EXP_P
-    (33) EXP_P -> . MINUS TERM EXP_P
-    (34) EXP_P -> . empty
-    (74) empty -> .
+    (36) EXP_P -> empty .
 
-    PLUS            shift and go to state 109
-    MINUS           shift and go to state 110
-    BIGGER          reduce using rule 74 (empty -> .)
-    SMALLER         reduce using rule 74 (empty -> .)
-    DOUBLE_EQUALS   reduce using rule 74 (empty -> .)
-    DIFFERENT       reduce using rule 74 (empty -> .)
-    AND             reduce using rule 74 (empty -> .)
-    OR              reduce using rule 74 (empty -> .)
-    SEMI_COLON      reduce using rule 74 (empty -> .)
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
-    COMMA           reduce using rule 74 (empty -> .)
-    UNTIL_KWD       reduce using rule 74 (empty -> .)
-    OPEN_CURLY      reduce using rule 74 (empty -> .)
+    BIGGER          reduce using rule 36 (EXP_P -> empty .)
+    SMALLER         reduce using rule 36 (EXP_P -> empty .)
+    DOUBLE_EQUALS   reduce using rule 36 (EXP_P -> empty .)
+    DIFFERENT       reduce using rule 36 (EXP_P -> empty .)
+    AND             reduce using rule 36 (EXP_P -> empty .)
+    OR              reduce using rule 36 (EXP_P -> empty .)
+    SEMI_COLON      reduce using rule 36 (EXP_P -> empty .)
+    COMMA           reduce using rule 36 (EXP_P -> empty .)
+    CLOSE_PARENTHESIS reduce using rule 36 (EXP_P -> empty .)
+    UNTIL_KWD       reduce using rule 36 (EXP_P -> empty .)
+    OPEN_CURLY      reduce using rule 36 (EXP_P -> empty .)
 
-    EXP_P                          shift and go to state 151
-    empty                          shift and go to state 111
 
 state 131
 
-    (51) TERM -> FACTOR STAR FACTOR .
+    (59) TERM -> FACTOR seen_factor TERM_P .
 
-    PLUS            reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    MINUS           reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    BIGGER          reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    SMALLER         reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    DOUBLE_EQUALS   reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    DIFFERENT       reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    AND             reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    OR              reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    SEMI_COLON      reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    CLOSE_PARENTHESIS reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    COMMA           reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    UNTIL_KWD       reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
-    OPEN_CURLY      reduce using rule 51 (TERM -> FACTOR STAR FACTOR .)
+    PLUS            reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    MINUS           reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    BIGGER          reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    SMALLER         reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    DOUBLE_EQUALS   reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    DIFFERENT       reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    AND             reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    OR              reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    SEMI_COLON      reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    COMMA           reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    CLOSE_PARENTHESIS reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    UNTIL_KWD       reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
+    OPEN_CURLY      reduce using rule 59 (TERM -> FACTOR seen_factor TERM_P .)
 
 
 state 132
 
-    (52) TERM -> FACTOR FWD_SLASH FACTOR .
+    (60) TERM_P -> STAR . seen_factor_op FACTOR seen_factor TERM_P
+    (64) seen_factor_op -> .
 
-    PLUS            reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    MINUS           reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    BIGGER          reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    SMALLER         reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    DOUBLE_EQUALS   reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    DIFFERENT       reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    AND             reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    OR              reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    SEMI_COLON      reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    CLOSE_PARENTHESIS reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    COMMA           reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    UNTIL_KWD       reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
-    OPEN_CURLY      reduce using rule 52 (TERM -> FACTOR FWD_SLASH FACTOR .)
+    OPEN_PARENTHESIS reduce using rule 64 (seen_factor_op -> .)
+    ID              reduce using rule 64 (seen_factor_op -> .)
+    CTE_S           reduce using rule 64 (seen_factor_op -> .)
+    CTE_F           reduce using rule 64 (seen_factor_op -> .)
+    CTE_I           reduce using rule 64 (seen_factor_op -> .)
 
+    seen_factor_op                 shift and go to state 156
 
 state 133
 
-    (43) FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .
+    (61) TERM_P -> FWD_SLASH . seen_factor_op FACTOR seen_factor TERM_P
+    (64) seen_factor_op -> .
 
-    STAR            reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    FWD_SLASH       reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    PLUS            reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    MINUS           reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    BIGGER          reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    SMALLER         reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    DOUBLE_EQUALS   reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    DIFFERENT       reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    AND             reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    OR              reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    SEMI_COLON      reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    CLOSE_PARENTHESIS reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    COMMA           reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    UNTIL_KWD       reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
-    OPEN_CURLY      reduce using rule 43 (FACTOR -> OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS .)
+    OPEN_PARENTHESIS reduce using rule 64 (seen_factor_op -> .)
+    ID              reduce using rule 64 (seen_factor_op -> .)
+    CTE_S           reduce using rule 64 (seen_factor_op -> .)
+    CTE_F           reduce using rule 64 (seen_factor_op -> .)
+    CTE_I           reduce using rule 64 (seen_factor_op -> .)
 
+    seen_factor_op                 shift and go to state 157
 
 state 134
 
-    (9) ID_LIST -> ID . ID_LIST_P
-    (45) FACTOR -> ID .
-    (53) FUNC_CALL -> ID . OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (10) ID_LIST_P -> . COMMA ID ID_LIST_P
-    (11) ID_LIST_P -> . empty
-    (74) empty -> .
+    (62) TERM_P -> empty .
 
-  ! shift/reduce conflict for COMMA resolved as shift
-  ! shift/reduce conflict for COMMA resolved as shift
-  ! reduce/reduce conflict for CLOSE_PARENTHESIS resolved using rule 45 (FACTOR -> ID .)
-    STAR            reduce using rule 45 (FACTOR -> ID .)
-    FWD_SLASH       reduce using rule 45 (FACTOR -> ID .)
-    PLUS            reduce using rule 45 (FACTOR -> ID .)
-    MINUS           reduce using rule 45 (FACTOR -> ID .)
-    BIGGER          reduce using rule 45 (FACTOR -> ID .)
-    SMALLER         reduce using rule 45 (FACTOR -> ID .)
-    DOUBLE_EQUALS   reduce using rule 45 (FACTOR -> ID .)
-    DIFFERENT       reduce using rule 45 (FACTOR -> ID .)
-    AND             reduce using rule 45 (FACTOR -> ID .)
-    OR              reduce using rule 45 (FACTOR -> ID .)
-    CLOSE_PARENTHESIS reduce using rule 45 (FACTOR -> ID .)
-    OPEN_PARENTHESIS shift and go to state 115
-    COMMA           shift and go to state 18
+    PLUS            reduce using rule 62 (TERM_P -> empty .)
+    MINUS           reduce using rule 62 (TERM_P -> empty .)
+    BIGGER          reduce using rule 62 (TERM_P -> empty .)
+    SMALLER         reduce using rule 62 (TERM_P -> empty .)
+    DOUBLE_EQUALS   reduce using rule 62 (TERM_P -> empty .)
+    DIFFERENT       reduce using rule 62 (TERM_P -> empty .)
+    AND             reduce using rule 62 (TERM_P -> empty .)
+    OR              reduce using rule 62 (TERM_P -> empty .)
+    SEMI_COLON      reduce using rule 62 (TERM_P -> empty .)
+    COMMA           reduce using rule 62 (TERM_P -> empty .)
+    CLOSE_PARENTHESIS reduce using rule 62 (TERM_P -> empty .)
+    UNTIL_KWD       reduce using rule 62 (TERM_P -> empty .)
+    OPEN_CURLY      reduce using rule 62 (TERM_P -> empty .)
 
-  ! COMMA           [ reduce using rule 45 (FACTOR -> ID .) ]
-  ! COMMA           [ reduce using rule 74 (empty -> .) ]
-  ! CLOSE_PARENTHESIS [ reduce using rule 74 (empty -> .) ]
-
-    ID_LIST_P                      shift and go to state 17
-    empty                          shift and go to state 19
 
 state 135
 
-    (53) FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST . CLOSE_PARENTHESIS
+    (48) FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION . CLOSE_PARENTHESIS seen_cpar
 
-    CLOSE_PARENTHESIS shift and go to state 152
+    CLOSE_PARENTHESIS shift and go to state 158
 
 
 state 136
 
-    (54) ARG_LIST -> ID_LIST . ARG_LIST_P
-    (56) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
-    (57) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
-    (58) ARG_LIST_P -> . empty
-    (74) empty -> .
+    (9) ID_LIST -> ID . ID_LIST_P
+    (50) FACTOR -> ID . seen_id
+    (65) FUNC_CALL -> ID . OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (10) ID_LIST_P -> . COMMA ID ID_LIST_P
+    (11) ID_LIST_P -> . empty
+    (54) seen_id -> .
+    (86) empty -> .
 
-    COMMA           shift and go to state 154
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+  ! shift/reduce conflict for COMMA resolved as shift
+  ! shift/reduce conflict for COMMA resolved as shift
+  ! reduce/reduce conflict for CLOSE_PARENTHESIS resolved using rule 54 (seen_id -> .)
+    OPEN_PARENTHESIS shift and go to state 112
+    COMMA           shift and go to state 18
+    STAR            reduce using rule 54 (seen_id -> .)
+    FWD_SLASH       reduce using rule 54 (seen_id -> .)
+    PLUS            reduce using rule 54 (seen_id -> .)
+    MINUS           reduce using rule 54 (seen_id -> .)
+    BIGGER          reduce using rule 54 (seen_id -> .)
+    SMALLER         reduce using rule 54 (seen_id -> .)
+    DOUBLE_EQUALS   reduce using rule 54 (seen_id -> .)
+    DIFFERENT       reduce using rule 54 (seen_id -> .)
+    AND             reduce using rule 54 (seen_id -> .)
+    OR              reduce using rule 54 (seen_id -> .)
+    CLOSE_PARENTHESIS reduce using rule 54 (seen_id -> .)
 
-    ARG_LIST_P                     shift and go to state 153
-    empty                          shift and go to state 155
+  ! COMMA           [ reduce using rule 54 (seen_id -> .) ]
+  ! COMMA           [ reduce using rule 86 (empty -> .) ]
+  ! CLOSE_PARENTHESIS [ reduce using rule 86 (empty -> .) ]
+
+    ID_LIST_P                      shift and go to state 17
+    seen_id                        shift and go to state 111
+    empty                          shift and go to state 19
 
 state 137
 
-    (55) ARG_LIST -> EXPRESSION . ARG_LIST_P
-    (56) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
-    (57) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
-    (58) ARG_LIST_P -> . empty
-    (74) empty -> .
+    (65) FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST . CLOSE_PARENTHESIS
 
-    COMMA           shift and go to state 154
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    CLOSE_PARENTHESIS shift and go to state 159
 
-    ARG_LIST_P                     shift and go to state 156
-    empty                          shift and go to state 155
 
 state 138
 
-    (60) READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS . SEMI_COLON
+    (66) ARG_LIST -> ID_LIST . ARG_LIST_P
+    (68) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
+    (69) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
+    (70) ARG_LIST_P -> . empty
+    (86) empty -> .
 
-    SEMI_COLON      shift and go to state 157
+    COMMA           shift and go to state 161
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
+    ARG_LIST_P                     shift and go to state 160
+    empty                          shift and go to state 162
 
 state 139
 
-    (61) WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS . SEMI_COLON
+    (67) ARG_LIST -> EXPRESSION . ARG_LIST_P
+    (68) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
+    (69) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
+    (70) ARG_LIST_P -> . empty
+    (86) empty -> .
 
-    SEMI_COLON      shift and go to state 158
+    COMMA           shift and go to state 161
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
+    ARG_LIST_P                     shift and go to state 163
+    empty                          shift and go to state 162
 
 state 140
 
-    (62) PRINTABLE -> CNST PRINTABLE_P .
+    (72) READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS . SEMI_COLON
 
-    CLOSE_PARENTHESIS reduce using rule 62 (PRINTABLE -> CNST PRINTABLE_P .)
+    SEMI_COLON      shift and go to state 164
 
 
 state 141
 
-    (64) PRINTABLE_P -> COMMA . CNST PRINTABLE_P
-    (65) PRINTABLE_P -> COMMA . EXPRESSION PRINTABLE_P
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (73) WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS . SEMI_COLON
+
+    SEMI_COLON      shift and go to state 165
+
+
+state 142
+
+    (74) PRINTABLE -> CNST PRINTABLE_P .
+
+    CLOSE_PARENTHESIS reduce using rule 74 (PRINTABLE -> CNST PRINTABLE_P .)
+
+
+state 143
+
+    (76) PRINTABLE_P -> COMMA . CNST PRINTABLE_P
+    (77) PRINTABLE_P -> COMMA . EXPRESSION PRINTABLE_P
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
 
     CTE_S           shift and go to state 86
     CTE_F           shift and go to state 87
@@ -2133,49 +2136,49 @@ state 141
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
 
-    CNST                           shift and go to state 159
-    EXPRESSION                     shift and go to state 160
+    CNST                           shift and go to state 166
+    EXPRESSION                     shift and go to state 167
     EXP                            shift and go to state 79
     TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
     FUNC_CALL                      shift and go to state 83
 
-state 142
-
-    (66) PRINTABLE_P -> empty .
-
-    CLOSE_PARENTHESIS reduce using rule 66 (PRINTABLE_P -> empty .)
-
-
-state 143
-
-    (63) PRINTABLE -> EXPRESSION PRINTABLE_P .
-
-    CLOSE_PARENTHESIS reduce using rule 63 (PRINTABLE -> EXPRESSION PRINTABLE_P .)
-
-
 state 144
 
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS . THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (78) PRINTABLE_P -> empty .
 
-    THEN_KWD        shift and go to state 161
+    CLOSE_PARENTHESIS reduce using rule 78 (PRINTABLE_P -> empty .)
 
 
 state 145
 
-    (72) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (75) PRINTABLE -> EXPRESSION PRINTABLE_P .
 
-    OPEN_CURLY      shift and go to state 162
+    CLOSE_PARENTHESIS reduce using rule 75 (PRINTABLE -> EXPRESSION PRINTABLE_P .)
 
 
 state 146
 
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION . UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS . THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
 
-    UNTIL_KWD       shift and go to state 163
+    THEN_KWD        shift and go to state 168
 
 
 state 147
+
+    (84) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+
+    OPEN_CURLY      shift and go to state 169
+
+
+state 148
+
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION . UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+
+    UNTIL_KWD       shift and go to state 170
+
+
+state 149
 
     (15) FUNC_DEF -> TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .
 
@@ -2184,14 +2187,14 @@ state 147
     CLOSE_CURLY     reduce using rule 15 (FUNC_DEF -> TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
 
 
-state 148
+state 150
 
     (21) VARS -> VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY .
 
     OPEN_CURLY      reduce using rule 21 (VARS -> VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY .)
 
 
-state 149
+state 151
 
     (5) CLASS_ATTR -> ATTR_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY .
 
@@ -2199,255 +2202,38 @@ state 149
     CLOSE_CURLY     reduce using rule 5 (CLASS_ATTR -> ATTR_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY .)
 
 
-state 150
-
-    (32) EXP_P -> PLUS TERM EXP_P .
-
-    BIGGER          reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    SMALLER         reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    DOUBLE_EQUALS   reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    DIFFERENT       reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    AND             reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    OR              reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    SEMI_COLON      reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    CLOSE_PARENTHESIS reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    COMMA           reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    UNTIL_KWD       reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-    OPEN_CURLY      reduce using rule 32 (EXP_P -> PLUS TERM EXP_P .)
-
-
-state 151
-
-    (33) EXP_P -> MINUS TERM EXP_P .
-
-    BIGGER          reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    SMALLER         reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    DOUBLE_EQUALS   reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    DIFFERENT       reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    AND             reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    OR              reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    SEMI_COLON      reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    CLOSE_PARENTHESIS reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    COMMA           reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    UNTIL_KWD       reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-    OPEN_CURLY      reduce using rule 33 (EXP_P -> MINUS TERM EXP_P .)
-
-
 state 152
 
-    (53) FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .
+    (30) ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION . SEMI_COLON
 
-    STAR            reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    FWD_SLASH       reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    PLUS            reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    MINUS           reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    BIGGER          reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    SMALLER         reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    DOUBLE_EQUALS   reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    DIFFERENT       reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    AND             reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    OR              reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    SEMI_COLON      reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    CLOSE_PARENTHESIS reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    COMMA           reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    UNTIL_KWD       reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    OPEN_CURLY      reduce using rule 53 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    SEMI_COLON      shift and go to state 171
 
 
 state 153
 
-    (54) ARG_LIST -> ID_LIST ARG_LIST_P .
+    (39) EXPRESSION -> EXP COMP seen_comp_op EXP . seen_comp
+    (40) seen_comp -> .
 
-    CLOSE_PARENTHESIS reduce using rule 54 (ARG_LIST -> ID_LIST ARG_LIST_P .)
+    SEMI_COLON      reduce using rule 40 (seen_comp -> .)
+    COMMA           reduce using rule 40 (seen_comp -> .)
+    CLOSE_PARENTHESIS reduce using rule 40 (seen_comp -> .)
+    UNTIL_KWD       reduce using rule 40 (seen_comp -> .)
+    OPEN_CURLY      reduce using rule 40 (seen_comp -> .)
 
+    seen_comp                      shift and go to state 172
 
 state 154
 
-    (56) ARG_LIST_P -> COMMA . ID_LIST ARG_LIST_P
-    (57) ARG_LIST_P -> COMMA . EXPRESSION ARG_LIST_P
-    (9) ID_LIST -> . ID ID_LIST_P
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
-
-    ID              shift and go to state 134
-    OPEN_PARENTHESIS shift and go to state 82
-    CTE_S           shift and go to state 86
-    CTE_F           shift and go to state 87
-    CTE_I           shift and go to state 88
-
-    ID_LIST                        shift and go to state 164
-    EXPRESSION                     shift and go to state 165
-    EXP                            shift and go to state 79
-    TERM                           shift and go to state 80
-    FACTOR                         shift and go to state 81
-    FUNC_CALL                      shift and go to state 83
-    CNST                           shift and go to state 85
-
-state 155
-
-    (58) ARG_LIST_P -> empty .
-
-    CLOSE_PARENTHESIS reduce using rule 58 (ARG_LIST_P -> empty .)
-
-
-state 156
-
-    (55) ARG_LIST -> EXPRESSION ARG_LIST_P .
-
-    CLOSE_PARENTHESIS reduce using rule 55 (ARG_LIST -> EXPRESSION ARG_LIST_P .)
-
-
-state 157
-
-    (60) READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .
-
-    ID              reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    RETURN_KWD      reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    READ_KWD        reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    WRITE_KWD       reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    IF_KWD          reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    WHILE_KWD       reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    FROM_KWD        reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-    CLOSE_CURLY     reduce using rule 60 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
-
-
-state 158
-
-    (61) WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .
-
-    ID              reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    RETURN_KWD      reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    READ_KWD        reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    WRITE_KWD       reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    IF_KWD          reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    WHILE_KWD       reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    FROM_KWD        reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-    CLOSE_CURLY     reduce using rule 61 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
-
-
-state 159
-
-    (64) PRINTABLE_P -> COMMA CNST . PRINTABLE_P
-    (46) FACTOR -> CNST .
-    (64) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
-    (65) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
-    (66) PRINTABLE_P -> . empty
-    (74) empty -> .
-
-  ! shift/reduce conflict for COMMA resolved as shift
-  ! reduce/reduce conflict for CLOSE_PARENTHESIS resolved using rule 46 (FACTOR -> CNST .)
-    STAR            reduce using rule 46 (FACTOR -> CNST .)
-    FWD_SLASH       reduce using rule 46 (FACTOR -> CNST .)
-    PLUS            reduce using rule 46 (FACTOR -> CNST .)
-    MINUS           reduce using rule 46 (FACTOR -> CNST .)
-    BIGGER          reduce using rule 46 (FACTOR -> CNST .)
-    SMALLER         reduce using rule 46 (FACTOR -> CNST .)
-    DOUBLE_EQUALS   reduce using rule 46 (FACTOR -> CNST .)
-    DIFFERENT       reduce using rule 46 (FACTOR -> CNST .)
-    AND             reduce using rule 46 (FACTOR -> CNST .)
-    OR              reduce using rule 46 (FACTOR -> CNST .)
-    CLOSE_PARENTHESIS reduce using rule 46 (FACTOR -> CNST .)
-    COMMA           shift and go to state 141
-
-  ! COMMA           [ reduce using rule 46 (FACTOR -> CNST .) ]
-  ! CLOSE_PARENTHESIS [ reduce using rule 74 (empty -> .) ]
-
-    PRINTABLE_P                    shift and go to state 166
-    empty                          shift and go to state 142
-
-state 160
-
-    (65) PRINTABLE_P -> COMMA EXPRESSION . PRINTABLE_P
-    (64) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
-    (65) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
-    (66) PRINTABLE_P -> . empty
-    (74) empty -> .
-
-    COMMA           shift and go to state 141
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
-
-    PRINTABLE_P                    shift and go to state 167
-    empty                          shift and go to state 142
-
-state 161
-
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-
-    OPEN_CURLY      shift and go to state 168
-
-
-state 162
-
-    (72) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY
-    (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
-    (23) STATEMENT_STAR -> . empty
-    (24) STATEMENT -> . ASSIGN
-    (25) STATEMENT -> . FUNC_RETURN
-    (26) STATEMENT -> . READ
-    (27) STATEMENT -> . WRITE
-    (28) STATEMENT -> . DECISION
-    (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
-    ID              shift and go to state 51
-    RETURN_KWD      shift and go to state 61
-    READ_KWD        shift and go to state 62
-    WRITE_KWD       shift and go to state 63
-    IF_KWD          shift and go to state 64
-    WHILE_KWD       shift and go to state 67
-    FROM_KWD        shift and go to state 68
-
-    STATEMENT_STAR                 shift and go to state 169
-    STATEMENT                      shift and go to state 53
-    empty                          shift and go to state 54
-    ASSIGN                         shift and go to state 55
-    FUNC_RETURN                    shift and go to state 56
-    READ                           shift and go to state 57
-    WRITE                          shift and go to state 58
-    DECISION                       shift and go to state 59
-    REPETITION                     shift and go to state 60
-    CONDITIONAL_REP                shift and go to state 65
-    UNCONDITIONAL_REP              shift and go to state 66
-
-state 163
-
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD . EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (35) EXPRESSION -> . EXP
-    (36) EXPRESSION -> . EXP COMP EXP
-    (31) EXP -> . TERM EXP_P
-    (50) TERM -> . FACTOR
-    (51) TERM -> . FACTOR STAR FACTOR
-    (52) TERM -> . FACTOR FWD_SLASH FACTOR
-    (43) FACTOR -> . OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS
-    (44) FACTOR -> . FUNC_CALL
-    (45) FACTOR -> . ID
-    (46) FACTOR -> . CNST
-    (53) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
-    (47) CNST -> . CTE_S
-    (48) CNST -> . CTE_F
-    (49) CNST -> . CTE_I
+    (34) EXP_P -> PLUS seen_term_op . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
 
     OPEN_PARENTHESIS shift and go to state 82
     ID              shift and go to state 84
@@ -2455,269 +2241,260 @@ state 163
     CTE_F           shift and go to state 87
     CTE_I           shift and go to state 88
 
-    EXPRESSION                     shift and go to state 170
+    TERM                           shift and go to state 173
+    FACTOR                         shift and go to state 81
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
+
+state 155
+
+    (35) EXP_P -> MINUS seen_term_op . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    OPEN_PARENTHESIS shift and go to state 82
+    ID              shift and go to state 84
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    TERM                           shift and go to state 174
+    FACTOR                         shift and go to state 81
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
+
+state 156
+
+    (60) TERM_P -> STAR seen_factor_op . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    OPEN_PARENTHESIS shift and go to state 82
+    ID              shift and go to state 84
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    FACTOR                         shift and go to state 175
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
+
+state 157
+
+    (61) TERM_P -> FWD_SLASH seen_factor_op . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    OPEN_PARENTHESIS shift and go to state 82
+    ID              shift and go to state 84
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    FACTOR                         shift and go to state 176
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
+
+state 158
+
+    (48) FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS . seen_cpar
+    (53) seen_cpar -> .
+
+    STAR            reduce using rule 53 (seen_cpar -> .)
+    FWD_SLASH       reduce using rule 53 (seen_cpar -> .)
+    PLUS            reduce using rule 53 (seen_cpar -> .)
+    MINUS           reduce using rule 53 (seen_cpar -> .)
+    BIGGER          reduce using rule 53 (seen_cpar -> .)
+    SMALLER         reduce using rule 53 (seen_cpar -> .)
+    DOUBLE_EQUALS   reduce using rule 53 (seen_cpar -> .)
+    DIFFERENT       reduce using rule 53 (seen_cpar -> .)
+    AND             reduce using rule 53 (seen_cpar -> .)
+    OR              reduce using rule 53 (seen_cpar -> .)
+    SEMI_COLON      reduce using rule 53 (seen_cpar -> .)
+    COMMA           reduce using rule 53 (seen_cpar -> .)
+    CLOSE_PARENTHESIS reduce using rule 53 (seen_cpar -> .)
+    UNTIL_KWD       reduce using rule 53 (seen_cpar -> .)
+    OPEN_CURLY      reduce using rule 53 (seen_cpar -> .)
+
+    seen_cpar                      shift and go to state 177
+
+state 159
+
+    (65) FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .
+
+    STAR            reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    FWD_SLASH       reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    PLUS            reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    MINUS           reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    BIGGER          reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    SMALLER         reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    DOUBLE_EQUALS   reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    DIFFERENT       reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    AND             reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    OR              reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    SEMI_COLON      reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    COMMA           reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    CLOSE_PARENTHESIS reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    UNTIL_KWD       reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    OPEN_CURLY      reduce using rule 65 (FUNC_CALL -> ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+
+
+state 160
+
+    (66) ARG_LIST -> ID_LIST ARG_LIST_P .
+
+    CLOSE_PARENTHESIS reduce using rule 66 (ARG_LIST -> ID_LIST ARG_LIST_P .)
+
+
+state 161
+
+    (68) ARG_LIST_P -> COMMA . ID_LIST ARG_LIST_P
+    (69) ARG_LIST_P -> COMMA . EXPRESSION ARG_LIST_P
+    (9) ID_LIST -> . ID ID_LIST_P
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    ID              shift and go to state 136
+    OPEN_PARENTHESIS shift and go to state 82
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    ID_LIST                        shift and go to state 178
+    EXPRESSION                     shift and go to state 179
     EXP                            shift and go to state 79
     TERM                           shift and go to state 80
     FACTOR                         shift and go to state 81
     FUNC_CALL                      shift and go to state 83
     CNST                           shift and go to state 85
 
+state 162
+
+    (70) ARG_LIST_P -> empty .
+
+    CLOSE_PARENTHESIS reduce using rule 70 (ARG_LIST_P -> empty .)
+
+
+state 163
+
+    (67) ARG_LIST -> EXPRESSION ARG_LIST_P .
+
+    CLOSE_PARENTHESIS reduce using rule 67 (ARG_LIST -> EXPRESSION ARG_LIST_P .)
+
+
 state 164
 
-    (56) ARG_LIST_P -> COMMA ID_LIST . ARG_LIST_P
-    (56) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
-    (57) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
-    (58) ARG_LIST_P -> . empty
-    (74) empty -> .
+    (72) READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .
 
-    COMMA           shift and go to state 154
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    ID              reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    RETURN_KWD      reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    READ_KWD        reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    WRITE_KWD       reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    IF_KWD          reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    WHILE_KWD       reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    FROM_KWD        reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
+    CLOSE_CURLY     reduce using rule 72 (READ -> READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON .)
 
-    ARG_LIST_P                     shift and go to state 171
-    empty                          shift and go to state 155
 
 state 165
 
-    (57) ARG_LIST_P -> COMMA EXPRESSION . ARG_LIST_P
-    (56) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
-    (57) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
-    (58) ARG_LIST_P -> . empty
-    (74) empty -> .
+    (73) WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .
 
-    COMMA           shift and go to state 154
-    CLOSE_PARENTHESIS reduce using rule 74 (empty -> .)
+    ID              reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    RETURN_KWD      reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    READ_KWD        reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    WRITE_KWD       reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    IF_KWD          reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    WHILE_KWD       reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    FROM_KWD        reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
+    CLOSE_CURLY     reduce using rule 73 (WRITE -> WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON .)
 
-    ARG_LIST_P                     shift and go to state 172
-    empty                          shift and go to state 155
 
 state 166
 
-    (64) PRINTABLE_P -> COMMA CNST PRINTABLE_P .
+    (76) PRINTABLE_P -> COMMA CNST . PRINTABLE_P
+    (51) FACTOR -> CNST . seen_cnst
+    (76) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
+    (77) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
+    (78) PRINTABLE_P -> . empty
+    (55) seen_cnst -> .
+    (86) empty -> .
 
-    CLOSE_PARENTHESIS reduce using rule 64 (PRINTABLE_P -> COMMA CNST PRINTABLE_P .)
+  ! shift/reduce conflict for COMMA resolved as shift
+  ! reduce/reduce conflict for CLOSE_PARENTHESIS resolved using rule 55 (seen_cnst -> .)
+    COMMA           shift and go to state 143
+    STAR            reduce using rule 55 (seen_cnst -> .)
+    FWD_SLASH       reduce using rule 55 (seen_cnst -> .)
+    PLUS            reduce using rule 55 (seen_cnst -> .)
+    MINUS           reduce using rule 55 (seen_cnst -> .)
+    BIGGER          reduce using rule 55 (seen_cnst -> .)
+    SMALLER         reduce using rule 55 (seen_cnst -> .)
+    DOUBLE_EQUALS   reduce using rule 55 (seen_cnst -> .)
+    DIFFERENT       reduce using rule 55 (seen_cnst -> .)
+    AND             reduce using rule 55 (seen_cnst -> .)
+    OR              reduce using rule 55 (seen_cnst -> .)
+    CLOSE_PARENTHESIS reduce using rule 55 (seen_cnst -> .)
 
+  ! COMMA           [ reduce using rule 55 (seen_cnst -> .) ]
+  ! CLOSE_PARENTHESIS [ reduce using rule 86 (empty -> .) ]
+
+    PRINTABLE_P                    shift and go to state 180
+    seen_cnst                      shift and go to state 113
+    empty                          shift and go to state 144
 
 state 167
 
-    (65) PRINTABLE_P -> COMMA EXPRESSION PRINTABLE_P .
+    (77) PRINTABLE_P -> COMMA EXPRESSION . PRINTABLE_P
+    (76) PRINTABLE_P -> . COMMA CNST PRINTABLE_P
+    (77) PRINTABLE_P -> . COMMA EXPRESSION PRINTABLE_P
+    (78) PRINTABLE_P -> . empty
+    (86) empty -> .
 
-    CLOSE_PARENTHESIS reduce using rule 65 (PRINTABLE_P -> COMMA EXPRESSION PRINTABLE_P .)
+    COMMA           shift and go to state 143
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
 
+    PRINTABLE_P                    shift and go to state 181
+    empty                          shift and go to state 144
 
 state 168
 
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
-    (23) STATEMENT_STAR -> . empty
-    (24) STATEMENT -> . ASSIGN
-    (25) STATEMENT -> . FUNC_RETURN
-    (26) STATEMENT -> . READ
-    (27) STATEMENT -> . WRITE
-    (28) STATEMENT -> . DECISION
-    (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
-    ID              shift and go to state 51
-    RETURN_KWD      shift and go to state 61
-    READ_KWD        shift and go to state 62
-    WRITE_KWD       shift and go to state 63
-    IF_KWD          shift and go to state 64
-    WHILE_KWD       shift and go to state 67
-    FROM_KWD        shift and go to state 68
-
-    STATEMENT_STAR                 shift and go to state 173
-    STATEMENT                      shift and go to state 53
-    empty                          shift and go to state 54
-    ASSIGN                         shift and go to state 55
-    FUNC_RETURN                    shift and go to state 56
-    READ                           shift and go to state 57
-    WRITE                          shift and go to state 58
-    DECISION                       shift and go to state 59
-    REPETITION                     shift and go to state 60
-    CONDITIONAL_REP                shift and go to state 65
-    UNCONDITIONAL_REP              shift and go to state 66
-
-state 169
-
-    (72) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY
-
-    CLOSE_CURLY     shift and go to state 174
-
-
-state 170
-
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-
-    OPEN_CURLY      shift and go to state 175
-
-
-state 171
-
-    (56) ARG_LIST_P -> COMMA ID_LIST ARG_LIST_P .
-
-    CLOSE_PARENTHESIS reduce using rule 56 (ARG_LIST_P -> COMMA ID_LIST ARG_LIST_P .)
-
-
-state 172
-
-    (57) ARG_LIST_P -> COMMA EXPRESSION ARG_LIST_P .
-
-    CLOSE_PARENTHESIS reduce using rule 57 (ARG_LIST_P -> COMMA EXPRESSION ARG_LIST_P .)
-
-
-state 173
-
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY DECISION_P
-
-    CLOSE_CURLY     shift and go to state 176
-
-
-state 174
-
-    (72) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .
-
-    ID              reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    RETURN_KWD      reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    READ_KWD        reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    WRITE_KWD       reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    IF_KWD          reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    WHILE_KWD       reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    FROM_KWD        reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    CLOSE_CURLY     reduce using rule 72 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-
-
-state 175
-
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY
-    (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
-    (23) STATEMENT_STAR -> . empty
-    (24) STATEMENT -> . ASSIGN
-    (25) STATEMENT -> . FUNC_RETURN
-    (26) STATEMENT -> . READ
-    (27) STATEMENT -> . WRITE
-    (28) STATEMENT -> . DECISION
-    (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
-    ID              shift and go to state 51
-    RETURN_KWD      shift and go to state 61
-    READ_KWD        shift and go to state 62
-    WRITE_KWD       shift and go to state 63
-    IF_KWD          shift and go to state 64
-    WHILE_KWD       shift and go to state 67
-    FROM_KWD        shift and go to state 68
-
-    STATEMENT_STAR                 shift and go to state 177
-    STATEMENT                      shift and go to state 53
-    empty                          shift and go to state 54
-    ASSIGN                         shift and go to state 55
-    FUNC_RETURN                    shift and go to state 56
-    READ                           shift and go to state 57
-    WRITE                          shift and go to state 58
-    DECISION                       shift and go to state 59
-    REPETITION                     shift and go to state 60
-    CONDITIONAL_REP                shift and go to state 65
-    UNCONDITIONAL_REP              shift and go to state 66
-
-state 176
-
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY . DECISION_P
-    (68) DECISION_P -> . ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (69) DECISION_P -> . empty
-    (74) empty -> .
-
-    ELSE_KWD        shift and go to state 179
-    ID              reduce using rule 74 (empty -> .)
-    RETURN_KWD      reduce using rule 74 (empty -> .)
-    READ_KWD        reduce using rule 74 (empty -> .)
-    WRITE_KWD       reduce using rule 74 (empty -> .)
-    IF_KWD          reduce using rule 74 (empty -> .)
-    WHILE_KWD       reduce using rule 74 (empty -> .)
-    FROM_KWD        reduce using rule 74 (empty -> .)
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
-
-    DECISION_P                     shift and go to state 178
-    empty                          shift and go to state 180
-
-state 177
-
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY
-
-    CLOSE_CURLY     shift and go to state 181
-
-
-state 178
-
-    (67) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .
-
-    ID              reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    RETURN_KWD      reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    READ_KWD        reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    WRITE_KWD       reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    IF_KWD          reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    WHILE_KWD       reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    FROM_KWD        reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    CLOSE_CURLY     reduce using rule 67 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-
-
-state 179
-
-    (68) DECISION_P -> ELSE_KWD . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
 
     OPEN_CURLY      shift and go to state 182
 
 
-state 180
+state 169
 
-    (69) DECISION_P -> empty .
-
-    ID              reduce using rule 69 (DECISION_P -> empty .)
-    RETURN_KWD      reduce using rule 69 (DECISION_P -> empty .)
-    READ_KWD        reduce using rule 69 (DECISION_P -> empty .)
-    WRITE_KWD       reduce using rule 69 (DECISION_P -> empty .)
-    IF_KWD          reduce using rule 69 (DECISION_P -> empty .)
-    WHILE_KWD       reduce using rule 69 (DECISION_P -> empty .)
-    FROM_KWD        reduce using rule 69 (DECISION_P -> empty .)
-    CLOSE_CURLY     reduce using rule 69 (DECISION_P -> empty .)
-
-
-state 181
-
-    (73) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .
-
-    ID              reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    RETURN_KWD      reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    READ_KWD        reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    WRITE_KWD       reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    IF_KWD          reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    WHILE_KWD       reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    FROM_KWD        reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-    CLOSE_CURLY     reduce using rule 73 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
-
-
-state 182
-
-    (68) DECISION_P -> ELSE_KWD OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (84) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY
     (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
     (23) STATEMENT_STAR -> . empty
     (24) STATEMENT -> . ASSIGN
@@ -2726,18 +2503,18 @@ state 182
     (27) STATEMENT -> . WRITE
     (28) STATEMENT -> . DECISION
     (29) STATEMENT -> . REPETITION
-    (74) empty -> .
-    (30) ASSIGN -> . ID EQUALS EXPRESSION SEMI_COLON
-    (59) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
-    (60) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
-    (61) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
-    (67) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (70) REPETITION -> . CONDITIONAL_REP
-    (71) REPETITION -> . UNCONDITIONAL_REP
-    (72) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-    (73) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
     ID              shift and go to state 51
     RETURN_KWD      shift and go to state 61
     READ_KWD        shift and go to state 62
@@ -2758,57 +2535,692 @@ state 182
     CONDITIONAL_REP                shift and go to state 65
     UNCONDITIONAL_REP              shift and go to state 66
 
+state 170
+
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD . EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (38) EXPRESSION -> . EXP
+    (39) EXPRESSION -> . EXP COMP seen_comp_op EXP seen_comp
+    (32) EXP -> . TERM seen_term EXP_P
+    (59) TERM -> . FACTOR seen_factor TERM_P
+    (48) FACTOR -> . OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    (49) FACTOR -> . FUNC_CALL
+    (50) FACTOR -> . ID seen_id
+    (51) FACTOR -> . CNST seen_cnst
+    (65) FUNC_CALL -> . ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
+    (56) CNST -> . CTE_S
+    (57) CNST -> . CTE_F
+    (58) CNST -> . CTE_I
+
+    OPEN_PARENTHESIS shift and go to state 82
+    ID              shift and go to state 84
+    CTE_S           shift and go to state 86
+    CTE_F           shift and go to state 87
+    CTE_I           shift and go to state 88
+
+    EXPRESSION                     shift and go to state 184
+    EXP                            shift and go to state 79
+    TERM                           shift and go to state 80
+    FACTOR                         shift and go to state 81
+    FUNC_CALL                      shift and go to state 83
+    CNST                           shift and go to state 85
+
+state 171
+
+    (30) ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .
+
+    ID              reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    RETURN_KWD      reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    READ_KWD        reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    WRITE_KWD       reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    IF_KWD          reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    WHILE_KWD       reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    FROM_KWD        reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+    CLOSE_CURLY     reduce using rule 30 (ASSIGN -> ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON .)
+
+
+state 172
+
+    (39) EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp .
+
+    SEMI_COLON      reduce using rule 39 (EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp .)
+    COMMA           reduce using rule 39 (EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp .)
+    CLOSE_PARENTHESIS reduce using rule 39 (EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp .)
+    UNTIL_KWD       reduce using rule 39 (EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp .)
+    OPEN_CURLY      reduce using rule 39 (EXPRESSION -> EXP COMP seen_comp_op EXP seen_comp .)
+
+
+state 173
+
+    (34) EXP_P -> PLUS seen_term_op TERM . seen_term EXP_P
+    (33) seen_term -> .
+
+    PLUS            reduce using rule 33 (seen_term -> .)
+    MINUS           reduce using rule 33 (seen_term -> .)
+    BIGGER          reduce using rule 33 (seen_term -> .)
+    SMALLER         reduce using rule 33 (seen_term -> .)
+    DOUBLE_EQUALS   reduce using rule 33 (seen_term -> .)
+    DIFFERENT       reduce using rule 33 (seen_term -> .)
+    AND             reduce using rule 33 (seen_term -> .)
+    OR              reduce using rule 33 (seen_term -> .)
+    SEMI_COLON      reduce using rule 33 (seen_term -> .)
+    COMMA           reduce using rule 33 (seen_term -> .)
+    CLOSE_PARENTHESIS reduce using rule 33 (seen_term -> .)
+    UNTIL_KWD       reduce using rule 33 (seen_term -> .)
+    OPEN_CURLY      reduce using rule 33 (seen_term -> .)
+
+    seen_term                      shift and go to state 185
+
+state 174
+
+    (35) EXP_P -> MINUS seen_term_op TERM . seen_term EXP_P
+    (33) seen_term -> .
+
+    PLUS            reduce using rule 33 (seen_term -> .)
+    MINUS           reduce using rule 33 (seen_term -> .)
+    BIGGER          reduce using rule 33 (seen_term -> .)
+    SMALLER         reduce using rule 33 (seen_term -> .)
+    DOUBLE_EQUALS   reduce using rule 33 (seen_term -> .)
+    DIFFERENT       reduce using rule 33 (seen_term -> .)
+    AND             reduce using rule 33 (seen_term -> .)
+    OR              reduce using rule 33 (seen_term -> .)
+    SEMI_COLON      reduce using rule 33 (seen_term -> .)
+    COMMA           reduce using rule 33 (seen_term -> .)
+    CLOSE_PARENTHESIS reduce using rule 33 (seen_term -> .)
+    UNTIL_KWD       reduce using rule 33 (seen_term -> .)
+    OPEN_CURLY      reduce using rule 33 (seen_term -> .)
+
+    seen_term                      shift and go to state 186
+
+state 175
+
+    (60) TERM_P -> STAR seen_factor_op FACTOR . seen_factor TERM_P
+    (63) seen_factor -> .
+
+    STAR            reduce using rule 63 (seen_factor -> .)
+    FWD_SLASH       reduce using rule 63 (seen_factor -> .)
+    PLUS            reduce using rule 63 (seen_factor -> .)
+    MINUS           reduce using rule 63 (seen_factor -> .)
+    BIGGER          reduce using rule 63 (seen_factor -> .)
+    SMALLER         reduce using rule 63 (seen_factor -> .)
+    DOUBLE_EQUALS   reduce using rule 63 (seen_factor -> .)
+    DIFFERENT       reduce using rule 63 (seen_factor -> .)
+    AND             reduce using rule 63 (seen_factor -> .)
+    OR              reduce using rule 63 (seen_factor -> .)
+    SEMI_COLON      reduce using rule 63 (seen_factor -> .)
+    COMMA           reduce using rule 63 (seen_factor -> .)
+    CLOSE_PARENTHESIS reduce using rule 63 (seen_factor -> .)
+    UNTIL_KWD       reduce using rule 63 (seen_factor -> .)
+    OPEN_CURLY      reduce using rule 63 (seen_factor -> .)
+
+    seen_factor                    shift and go to state 187
+
+state 176
+
+    (61) TERM_P -> FWD_SLASH seen_factor_op FACTOR . seen_factor TERM_P
+    (63) seen_factor -> .
+
+    STAR            reduce using rule 63 (seen_factor -> .)
+    FWD_SLASH       reduce using rule 63 (seen_factor -> .)
+    PLUS            reduce using rule 63 (seen_factor -> .)
+    MINUS           reduce using rule 63 (seen_factor -> .)
+    BIGGER          reduce using rule 63 (seen_factor -> .)
+    SMALLER         reduce using rule 63 (seen_factor -> .)
+    DOUBLE_EQUALS   reduce using rule 63 (seen_factor -> .)
+    DIFFERENT       reduce using rule 63 (seen_factor -> .)
+    AND             reduce using rule 63 (seen_factor -> .)
+    OR              reduce using rule 63 (seen_factor -> .)
+    SEMI_COLON      reduce using rule 63 (seen_factor -> .)
+    COMMA           reduce using rule 63 (seen_factor -> .)
+    CLOSE_PARENTHESIS reduce using rule 63 (seen_factor -> .)
+    UNTIL_KWD       reduce using rule 63 (seen_factor -> .)
+    OPEN_CURLY      reduce using rule 63 (seen_factor -> .)
+
+    seen_factor                    shift and go to state 188
+
+state 177
+
+    (48) FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .
+
+    STAR            reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    FWD_SLASH       reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    PLUS            reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    MINUS           reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    BIGGER          reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    SMALLER         reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    DOUBLE_EQUALS   reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    DIFFERENT       reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    AND             reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    OR              reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    SEMI_COLON      reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    COMMA           reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    CLOSE_PARENTHESIS reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    UNTIL_KWD       reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+    OPEN_CURLY      reduce using rule 48 (FACTOR -> OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar .)
+
+
+state 178
+
+    (68) ARG_LIST_P -> COMMA ID_LIST . ARG_LIST_P
+    (68) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
+    (69) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
+    (70) ARG_LIST_P -> . empty
+    (86) empty -> .
+
+    COMMA           shift and go to state 161
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+
+    ARG_LIST_P                     shift and go to state 189
+    empty                          shift and go to state 162
+
+state 179
+
+    (69) ARG_LIST_P -> COMMA EXPRESSION . ARG_LIST_P
+    (68) ARG_LIST_P -> . COMMA ID_LIST ARG_LIST_P
+    (69) ARG_LIST_P -> . COMMA EXPRESSION ARG_LIST_P
+    (70) ARG_LIST_P -> . empty
+    (86) empty -> .
+
+    COMMA           shift and go to state 161
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+
+    ARG_LIST_P                     shift and go to state 190
+    empty                          shift and go to state 162
+
+state 180
+
+    (76) PRINTABLE_P -> COMMA CNST PRINTABLE_P .
+
+    CLOSE_PARENTHESIS reduce using rule 76 (PRINTABLE_P -> COMMA CNST PRINTABLE_P .)
+
+
+state 181
+
+    (77) PRINTABLE_P -> COMMA EXPRESSION PRINTABLE_P .
+
+    CLOSE_PARENTHESIS reduce using rule 77 (PRINTABLE_P -> COMMA EXPRESSION PRINTABLE_P .)
+
+
+state 182
+
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
+    (23) STATEMENT_STAR -> . empty
+    (24) STATEMENT -> . ASSIGN
+    (25) STATEMENT -> . FUNC_RETURN
+    (26) STATEMENT -> . READ
+    (27) STATEMENT -> . WRITE
+    (28) STATEMENT -> . DECISION
+    (29) STATEMENT -> . REPETITION
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
+    ID              shift and go to state 51
+    RETURN_KWD      shift and go to state 61
+    READ_KWD        shift and go to state 62
+    WRITE_KWD       shift and go to state 63
+    IF_KWD          shift and go to state 64
+    WHILE_KWD       shift and go to state 67
+    FROM_KWD        shift and go to state 68
+
+    STATEMENT_STAR                 shift and go to state 191
+    STATEMENT                      shift and go to state 53
+    empty                          shift and go to state 54
+    ASSIGN                         shift and go to state 55
+    FUNC_RETURN                    shift and go to state 56
+    READ                           shift and go to state 57
+    WRITE                          shift and go to state 58
+    DECISION                       shift and go to state 59
+    REPETITION                     shift and go to state 60
+    CONDITIONAL_REP                shift and go to state 65
+    UNCONDITIONAL_REP              shift and go to state 66
+
 state 183
 
-    (68) DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY DECISION_P
+    (84) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY
 
-    CLOSE_CURLY     shift and go to state 184
+    CLOSE_CURLY     shift and go to state 192
 
 
 state 184
 
-    (68) DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY . DECISION_P
-    (68) DECISION_P -> . ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
-    (69) DECISION_P -> . empty
-    (74) empty -> .
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
 
-    ELSE_KWD        shift and go to state 179
-    ID              reduce using rule 74 (empty -> .)
-    RETURN_KWD      reduce using rule 74 (empty -> .)
-    READ_KWD        reduce using rule 74 (empty -> .)
-    WRITE_KWD       reduce using rule 74 (empty -> .)
-    IF_KWD          reduce using rule 74 (empty -> .)
-    WHILE_KWD       reduce using rule 74 (empty -> .)
-    FROM_KWD        reduce using rule 74 (empty -> .)
-    CLOSE_CURLY     reduce using rule 74 (empty -> .)
+    OPEN_CURLY      shift and go to state 193
 
-    DECISION_P                     shift and go to state 185
-    empty                          shift and go to state 180
 
 state 185
 
-    (68) DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .
+    (34) EXP_P -> PLUS seen_term_op TERM seen_term . EXP_P
+    (34) EXP_P -> . PLUS seen_term_op TERM seen_term EXP_P
+    (35) EXP_P -> . MINUS seen_term_op TERM seen_term EXP_P
+    (36) EXP_P -> . empty
+    (86) empty -> .
 
-    ID              reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    RETURN_KWD      reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    READ_KWD        reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    WRITE_KWD       reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    IF_KWD          reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    WHILE_KWD       reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    FROM_KWD        reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
-    CLOSE_CURLY     reduce using rule 68 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    PLUS            shift and go to state 128
+    MINUS           shift and go to state 129
+    BIGGER          reduce using rule 86 (empty -> .)
+    SMALLER         reduce using rule 86 (empty -> .)
+    DOUBLE_EQUALS   reduce using rule 86 (empty -> .)
+    DIFFERENT       reduce using rule 86 (empty -> .)
+    AND             reduce using rule 86 (empty -> .)
+    OR              reduce using rule 86 (empty -> .)
+    SEMI_COLON      reduce using rule 86 (empty -> .)
+    COMMA           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+    UNTIL_KWD       reduce using rule 86 (empty -> .)
+    OPEN_CURLY      reduce using rule 86 (empty -> .)
+
+    EXP_P                          shift and go to state 194
+    empty                          shift and go to state 130
+
+state 186
+
+    (35) EXP_P -> MINUS seen_term_op TERM seen_term . EXP_P
+    (34) EXP_P -> . PLUS seen_term_op TERM seen_term EXP_P
+    (35) EXP_P -> . MINUS seen_term_op TERM seen_term EXP_P
+    (36) EXP_P -> . empty
+    (86) empty -> .
+
+    PLUS            shift and go to state 128
+    MINUS           shift and go to state 129
+    BIGGER          reduce using rule 86 (empty -> .)
+    SMALLER         reduce using rule 86 (empty -> .)
+    DOUBLE_EQUALS   reduce using rule 86 (empty -> .)
+    DIFFERENT       reduce using rule 86 (empty -> .)
+    AND             reduce using rule 86 (empty -> .)
+    OR              reduce using rule 86 (empty -> .)
+    SEMI_COLON      reduce using rule 86 (empty -> .)
+    COMMA           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+    UNTIL_KWD       reduce using rule 86 (empty -> .)
+    OPEN_CURLY      reduce using rule 86 (empty -> .)
+
+    EXP_P                          shift and go to state 195
+    empty                          shift and go to state 130
+
+state 187
+
+    (60) TERM_P -> STAR seen_factor_op FACTOR seen_factor . TERM_P
+    (60) TERM_P -> . STAR seen_factor_op FACTOR seen_factor TERM_P
+    (61) TERM_P -> . FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P
+    (62) TERM_P -> . empty
+    (86) empty -> .
+
+    STAR            shift and go to state 132
+    FWD_SLASH       shift and go to state 133
+    PLUS            reduce using rule 86 (empty -> .)
+    MINUS           reduce using rule 86 (empty -> .)
+    BIGGER          reduce using rule 86 (empty -> .)
+    SMALLER         reduce using rule 86 (empty -> .)
+    DOUBLE_EQUALS   reduce using rule 86 (empty -> .)
+    DIFFERENT       reduce using rule 86 (empty -> .)
+    AND             reduce using rule 86 (empty -> .)
+    OR              reduce using rule 86 (empty -> .)
+    SEMI_COLON      reduce using rule 86 (empty -> .)
+    COMMA           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+    UNTIL_KWD       reduce using rule 86 (empty -> .)
+    OPEN_CURLY      reduce using rule 86 (empty -> .)
+
+    TERM_P                         shift and go to state 196
+    empty                          shift and go to state 134
+
+state 188
+
+    (61) TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor . TERM_P
+    (60) TERM_P -> . STAR seen_factor_op FACTOR seen_factor TERM_P
+    (61) TERM_P -> . FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P
+    (62) TERM_P -> . empty
+    (86) empty -> .
+
+    STAR            shift and go to state 132
+    FWD_SLASH       shift and go to state 133
+    PLUS            reduce using rule 86 (empty -> .)
+    MINUS           reduce using rule 86 (empty -> .)
+    BIGGER          reduce using rule 86 (empty -> .)
+    SMALLER         reduce using rule 86 (empty -> .)
+    DOUBLE_EQUALS   reduce using rule 86 (empty -> .)
+    DIFFERENT       reduce using rule 86 (empty -> .)
+    AND             reduce using rule 86 (empty -> .)
+    OR              reduce using rule 86 (empty -> .)
+    SEMI_COLON      reduce using rule 86 (empty -> .)
+    COMMA           reduce using rule 86 (empty -> .)
+    CLOSE_PARENTHESIS reduce using rule 86 (empty -> .)
+    UNTIL_KWD       reduce using rule 86 (empty -> .)
+    OPEN_CURLY      reduce using rule 86 (empty -> .)
+
+    TERM_P                         shift and go to state 197
+    empty                          shift and go to state 134
+
+state 189
+
+    (68) ARG_LIST_P -> COMMA ID_LIST ARG_LIST_P .
+
+    CLOSE_PARENTHESIS reduce using rule 68 (ARG_LIST_P -> COMMA ID_LIST ARG_LIST_P .)
+
+
+state 190
+
+    (69) ARG_LIST_P -> COMMA EXPRESSION ARG_LIST_P .
+
+    CLOSE_PARENTHESIS reduce using rule 69 (ARG_LIST_P -> COMMA EXPRESSION ARG_LIST_P .)
+
+
+state 191
+
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY DECISION_P
+
+    CLOSE_CURLY     shift and go to state 198
+
+
+state 192
+
+    (84) CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .
+
+    ID              reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    RETURN_KWD      reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    READ_KWD        reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    WRITE_KWD       reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    IF_KWD          reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    WHILE_KWD       reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    FROM_KWD        reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    CLOSE_CURLY     reduce using rule 84 (CONDITIONAL_REP -> WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+
+
+state 193
+
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY
+    (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
+    (23) STATEMENT_STAR -> . empty
+    (24) STATEMENT -> . ASSIGN
+    (25) STATEMENT -> . FUNC_RETURN
+    (26) STATEMENT -> . READ
+    (27) STATEMENT -> . WRITE
+    (28) STATEMENT -> . DECISION
+    (29) STATEMENT -> . REPETITION
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
+    ID              shift and go to state 51
+    RETURN_KWD      shift and go to state 61
+    READ_KWD        shift and go to state 62
+    WRITE_KWD       shift and go to state 63
+    IF_KWD          shift and go to state 64
+    WHILE_KWD       shift and go to state 67
+    FROM_KWD        shift and go to state 68
+
+    STATEMENT_STAR                 shift and go to state 199
+    STATEMENT                      shift and go to state 53
+    empty                          shift and go to state 54
+    ASSIGN                         shift and go to state 55
+    FUNC_RETURN                    shift and go to state 56
+    READ                           shift and go to state 57
+    WRITE                          shift and go to state 58
+    DECISION                       shift and go to state 59
+    REPETITION                     shift and go to state 60
+    CONDITIONAL_REP                shift and go to state 65
+    UNCONDITIONAL_REP              shift and go to state 66
+
+state 194
+
+    (34) EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .
+
+    BIGGER          reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    SMALLER         reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    DOUBLE_EQUALS   reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    DIFFERENT       reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    AND             reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    OR              reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    SEMI_COLON      reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    COMMA           reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    CLOSE_PARENTHESIS reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    UNTIL_KWD       reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    OPEN_CURLY      reduce using rule 34 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+
+
+state 195
+
+    (35) EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .
+
+    BIGGER          reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    SMALLER         reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    DOUBLE_EQUALS   reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    DIFFERENT       reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    AND             reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    OR              reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    SEMI_COLON      reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    COMMA           reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    CLOSE_PARENTHESIS reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    UNTIL_KWD       reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    OPEN_CURLY      reduce using rule 35 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+
+
+state 196
+
+    (60) TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .
+
+    PLUS            reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    MINUS           reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    BIGGER          reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    SMALLER         reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    DOUBLE_EQUALS   reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    DIFFERENT       reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    AND             reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    OR              reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    SEMI_COLON      reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    COMMA           reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    CLOSE_PARENTHESIS reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    UNTIL_KWD       reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    OPEN_CURLY      reduce using rule 60 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+
+
+state 197
+
+    (61) TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .
+
+    PLUS            reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    MINUS           reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    BIGGER          reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    SMALLER         reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    DOUBLE_EQUALS   reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    DIFFERENT       reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    AND             reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    OR              reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    SEMI_COLON      reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    COMMA           reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    CLOSE_PARENTHESIS reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    UNTIL_KWD       reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    OPEN_CURLY      reduce using rule 61 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+
+
+state 198
+
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY . DECISION_P
+    (80) DECISION_P -> . ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (81) DECISION_P -> . empty
+    (86) empty -> .
+
+    ELSE_KWD        shift and go to state 201
+    ID              reduce using rule 86 (empty -> .)
+    RETURN_KWD      reduce using rule 86 (empty -> .)
+    READ_KWD        reduce using rule 86 (empty -> .)
+    WRITE_KWD       reduce using rule 86 (empty -> .)
+    IF_KWD          reduce using rule 86 (empty -> .)
+    WHILE_KWD       reduce using rule 86 (empty -> .)
+    FROM_KWD        reduce using rule 86 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
+
+    DECISION_P                     shift and go to state 200
+    empty                          shift and go to state 202
+
+state 199
+
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY
+
+    CLOSE_CURLY     shift and go to state 203
+
+
+state 200
+
+    (79) DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .
+
+    ID              reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    RETURN_KWD      reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    READ_KWD        reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    WRITE_KWD       reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    IF_KWD          reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    WHILE_KWD       reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    FROM_KWD        reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    CLOSE_CURLY     reduce using rule 79 (DECISION -> IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+
+
+state 201
+
+    (80) DECISION_P -> ELSE_KWD . OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+
+    OPEN_CURLY      shift and go to state 204
+
+
+state 202
+
+    (81) DECISION_P -> empty .
+
+    ID              reduce using rule 81 (DECISION_P -> empty .)
+    RETURN_KWD      reduce using rule 81 (DECISION_P -> empty .)
+    READ_KWD        reduce using rule 81 (DECISION_P -> empty .)
+    WRITE_KWD       reduce using rule 81 (DECISION_P -> empty .)
+    IF_KWD          reduce using rule 81 (DECISION_P -> empty .)
+    WHILE_KWD       reduce using rule 81 (DECISION_P -> empty .)
+    FROM_KWD        reduce using rule 81 (DECISION_P -> empty .)
+    CLOSE_CURLY     reduce using rule 81 (DECISION_P -> empty .)
+
+
+state 203
+
+    (85) UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .
+
+    ID              reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    RETURN_KWD      reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    READ_KWD        reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    WRITE_KWD       reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    IF_KWD          reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    WHILE_KWD       reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    FROM_KWD        reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+    CLOSE_CURLY     reduce using rule 85 (UNCONDITIONAL_REP -> FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY .)
+
+
+state 204
+
+    (80) DECISION_P -> ELSE_KWD OPEN_CURLY . STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (22) STATEMENT_STAR -> . STATEMENT STATEMENT_STAR
+    (23) STATEMENT_STAR -> . empty
+    (24) STATEMENT -> . ASSIGN
+    (25) STATEMENT -> . FUNC_RETURN
+    (26) STATEMENT -> . READ
+    (27) STATEMENT -> . WRITE
+    (28) STATEMENT -> . DECISION
+    (29) STATEMENT -> . REPETITION
+    (86) empty -> .
+    (30) ASSIGN -> . ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON
+    (71) FUNC_RETURN -> . RETURN_KWD EXPRESSION SEMI_COLON
+    (72) READ -> . READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON
+    (73) WRITE -> . WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON
+    (79) DECISION -> . IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (82) REPETITION -> . CONDITIONAL_REP
+    (83) REPETITION -> . UNCONDITIONAL_REP
+    (84) CONDITIONAL_REP -> . WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+    (85) UNCONDITIONAL_REP -> . FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
+    ID              shift and go to state 51
+    RETURN_KWD      shift and go to state 61
+    READ_KWD        shift and go to state 62
+    WRITE_KWD       shift and go to state 63
+    IF_KWD          shift and go to state 64
+    WHILE_KWD       shift and go to state 67
+    FROM_KWD        shift and go to state 68
+
+    STATEMENT_STAR                 shift and go to state 205
+    STATEMENT                      shift and go to state 53
+    empty                          shift and go to state 54
+    ASSIGN                         shift and go to state 55
+    FUNC_RETURN                    shift and go to state 56
+    READ                           shift and go to state 57
+    WRITE                          shift and go to state 58
+    DECISION                       shift and go to state 59
+    REPETITION                     shift and go to state 60
+    CONDITIONAL_REP                shift and go to state 65
+    UNCONDITIONAL_REP              shift and go to state 66
+
+state 205
+
+    (80) DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR . CLOSE_CURLY DECISION_P
+
+    CLOSE_CURLY     shift and go to state 206
+
+
+state 206
+
+    (80) DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY . DECISION_P
+    (80) DECISION_P -> . ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    (81) DECISION_P -> . empty
+    (86) empty -> .
+
+    ELSE_KWD        shift and go to state 201
+    ID              reduce using rule 86 (empty -> .)
+    RETURN_KWD      reduce using rule 86 (empty -> .)
+    READ_KWD        reduce using rule 86 (empty -> .)
+    WRITE_KWD       reduce using rule 86 (empty -> .)
+    IF_KWD          reduce using rule 86 (empty -> .)
+    WHILE_KWD       reduce using rule 86 (empty -> .)
+    FROM_KWD        reduce using rule 86 (empty -> .)
+    CLOSE_CURLY     reduce using rule 86 (empty -> .)
+
+    DECISION_P                     shift and go to state 207
+    empty                          shift and go to state 202
+
+state 207
+
+    (80) DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .
+
+    ID              reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    RETURN_KWD      reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    READ_KWD        reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    WRITE_KWD       reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    IF_KWD          reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    WHILE_KWD       reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    FROM_KWD        reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
+    CLOSE_CURLY     reduce using rule 80 (DECISION_P -> ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P .)
 
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
 WARNING: shift/reduce conflict for COMMA in state 27 resolved as shift
-WARNING: shift/reduce conflict for COMMA in state 118 resolved as shift
-WARNING: shift/reduce conflict for COMMA in state 134 resolved as shift
-WARNING: shift/reduce conflict for COMMA in state 134 resolved as shift
-WARNING: shift/reduce conflict for COMMA in state 159 resolved as shift
-WARNING: reduce/reduce conflict in state 118 resolved using rule (FACTOR -> CNST)
-WARNING: rejected rule (empty -> <empty>) in state 118
-WARNING: reduce/reduce conflict in state 134 resolved using rule (FACTOR -> ID)
-WARNING: rejected rule (empty -> <empty>) in state 134
-WARNING: reduce/reduce conflict in state 159 resolved using rule (FACTOR -> CNST)
-WARNING: rejected rule (empty -> <empty>) in state 159
+WARNING: shift/reduce conflict for COMMA in state 116 resolved as shift
+WARNING: shift/reduce conflict for COMMA in state 136 resolved as shift
+WARNING: shift/reduce conflict for COMMA in state 136 resolved as shift
+WARNING: shift/reduce conflict for COMMA in state 166 resolved as shift
+WARNING: reduce/reduce conflict in state 116 resolved using rule (seen_cnst -> <empty>)
+WARNING: rejected rule (empty -> <empty>) in state 116
+WARNING: reduce/reduce conflict in state 136 resolved using rule (seen_id -> <empty>)
+WARNING: rejected rule (empty -> <empty>) in state 136
+WARNING: reduce/reduce conflict in state 166 resolved using rule (seen_cnst -> <empty>)
+WARNING: rejected rule (empty -> <empty>) in state 166
