@@ -2,10 +2,14 @@ program MYPROGRAM;
 
 res : boolean;
 a, b, c, d, e, f, i : float;
-lol : str;
+lol, lol_doubled : str;
+another_str  : str;
 
 main () {
-  c = lol + f;
+  lol = "lol!";
+  lol_doubled = lol * 2;
+  another_str =  "String manipulation is nice! Look: " + lol_doubled + "This will also be doubled" * 2;
+  write(another_str);
   res = a * (b + c / d - e) / f * i >  (a *  (b - c) / d) + e;
 
 }

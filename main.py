@@ -88,18 +88,15 @@ t_DIFFERENT                 =   r'\<\>'
 
 t_ignore  = ' \t'
 
+
 def t_TYPE(t):
     # Currently defined as an ID; Look into how to implement actual types
     r'(int)|(float)|(str)|(void)|(boolean)'
     t.type = reserved.get(t.value, 'TYPE')    # Check for reserved words
     return t
 
-def t_CTE_S(t):
-     r'\"(.)*\"'
-     return t
-
 def t_ID(t):
-     r'[A-Za-z]([A-Za-z]|[0-9])*'
+     r'[A-Za-z]([A-Za-z]|[0-9]|_)*'
      t.type = reserved.get(t.value, 'ID')    # Check for reserved words
      return t
 
@@ -115,6 +112,9 @@ def t_CTE_I(t):
     t.value = int(t.value)
     return t
 
+def t_CTE_S(t):
+     r'"(?:[^"\\]|\\.)*"'
+     return t
 
 # Define a rule so we can track line numbers
 def t_newline(t):
@@ -159,7 +159,7 @@ QUADS = []
 # First lets define our grammar rules...
 
 def p_program(p):
-    ''' PROGRAM : PROGRAM_KWD ID SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' PROGRAM : PROGRAM_KWD  ID  SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
 
     print(">> APROPRIADO!")
 
@@ -253,7 +253,7 @@ def p_vars(p):
     p[0] = p[3]
 
 def p_statement_star(p):
-    ''' STATEMENT_STAR : STATEMENT STATEMENT_STAR
+    ''' STATEMENT_STAR :  STATEMENT STATEMENT_STAR
                        | empty '''
 
 def p_statement(p):
@@ -272,7 +272,6 @@ def p_assign(p):
     res =  SYMBOL_TABLE.OperandStack.pop()
     right_type  = SYMBOL_TABLE.TypeStack.pop()
     res_type = SYMBOL_TABLE.TypeStack.pop()
-    print(right_type, res_type)
     if right_type != res_type:
         raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
     else:
@@ -285,10 +284,6 @@ def p_seen_equals(p):
 
 def p_exp(p):
     ''' EXP : TERM seen_term EXP_P '''
-
-    p[0] = SYMBOL_TABLE.symbol_lookup(p[1])
-    if p[2] != None:
-        p[0] +=  SYMBOL_TABLE.symbol_lookup(p[2])
 
 
 def p_seen_term(p):
@@ -335,7 +330,7 @@ def p_factor(p):
     ''' FACTOR : OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
                | FUNC_CALL
                | ID seen_id
-               | CNST seen_cnst '''
+               | CNST  '''
 
     if len(p) == 2:
         p[0] = p[1]
@@ -355,16 +350,29 @@ def p_seen_id(p):
     SYMBOL_TABLE.OperandStack.append(p[-1])
     SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
 
-def p_seen_cnst(p):
-    ''' seen_cnst :  '''
-    SYMBOL_TABLE.OperandStack.append(p[-1])
+def p_seen_cte_i(p):
+    ''' seen_cte_i :  '''
+    SYMBOL_TABLE.OperandStack.append(str(p[-1]))
     SYMBOL_TABLE.TypeStack.append("int")
+
+def p_seen_cte_f(p):
+    ''' seen_cte_f :  '''
+    SYMBOL_TABLE.OperandStack.append(str(p[-1]))
+    SYMBOL_TABLE.TypeStack.append("float")
+
+
+def p_seen_cte_s(p):
+    ''' seen_cte_s :  '''
+    print(str(p[-1][1:-1]))
+    SYMBOL_TABLE.OperandStack.append(str(p[-1][1:-1]))
+    SYMBOL_TABLE.TypeStack.append("str")
+
 
 
 def p_cnst(p):
-    ''' CNST : CTE_S
-             | CTE_F
-             | CTE_I '''
+    ''' CNST : CTE_S seen_cte_s
+             | CTE_F seen_cte_f
+             | CTE_I seen_cte_i '''
 
     p[0] = p[1]
 
@@ -406,19 +414,23 @@ def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON '''
 
 def p_write(p):
-    ''' WRITE : WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON '''
+    ''' WRITE : WRITE_KWD seen_write_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON '''
 
+def p_seen_write_kwd(p):
+    ''' seen_write_kwd  : '''
+    SYMBOL_TABLE.OperatorStack.append('WR')
 
 def p_printable(p):
-    ''' PRINTABLE : CNST PRINTABLE_P
-                  | EXPRESSION PRINTABLE_P '''
+    ''' PRINTABLE : EXPRESSION seen_printable PRINTABLE_P '''
 
 
 def p_printable_p(p):
-    ''' PRINTABLE_P : COMMA CNST PRINTABLE_P
-                    | COMMA EXPRESSION PRINTABLE_P
+    ''' PRINTABLE_P : COMMA EXPRESSION seen_printable PRINTABLE_P
                     | empty '''
 
+def p_seen_printable(p):
+    ''' seen_printable  : '''
+    QUADS.append(SYMBOL_TABLE.OperatorStack.pop() + " _ _ "  + SYMBOL_TABLE.OperandStack.pop())
 
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''

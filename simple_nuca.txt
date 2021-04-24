@@ -3,15 +3,15 @@ program MYPROGRAM;
 i, j, p : int;
 k : float;
 
-int func (paramInt : int, paramString : string)
+int func (paramInt : int, paramString : str)
 VARS {
-funcVar : string;
+funcVar : str;
 a, b, c : int;
 }{}
 
-float func2 (paramInt : int, paramString : string)
+float func2 (paramInt : int, paramString : str)
 VARS {
-funcVar : string;
+funcVar : str;
 a, b, c : int;
 }{}
 
