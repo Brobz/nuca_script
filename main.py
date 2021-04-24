@@ -9,6 +9,7 @@ import ply.yacc as yacc
 from SymbolTable import *
 from FunctionDirectory import *
 from SemanticCube import *
+from Quad import *
 
 # List of token names.   This is always required
 tokens = [
@@ -156,6 +157,12 @@ SYMBOL_TABLE = SymbolTable()
 QUAD_POINTER = 0
 QUADS = []
 
+def push_to_quads(q):
+    global QUADS
+    global QUAD_POINTER
+    QUADS.append(q)
+    QUAD_POINTER += 1
+
 # First lets define our grammar rules...
 
 def p_program(p):
@@ -209,7 +216,8 @@ def p_readable_list_p(p):
 
 def p_seen_readable(p):
     ''' seen_readable  : '''
-    QUADS.append("RD _ _ "  + SYMBOL_TABLE.symbol_lookup(p[-1]))
+    push_to_quads(Quad("RD", "_", "_", SYMBOL_TABLE.symbol_lookup(p[-1])))
+
 
 
 def p_global_var(p):
@@ -279,7 +287,6 @@ def p_statement(p):
 
 def p_assign(p):
     ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON '''
-    global QUAD_POINTER
     op = SYMBOL_TABLE.OperatorStack.pop()
     right_operand  = SYMBOL_TABLE.OperandStack.pop()
     res =  SYMBOL_TABLE.OperandStack.pop()
@@ -288,8 +295,7 @@ def p_assign(p):
     if right_type != res_type:
         raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
     else:
-        QUADS.append(op + " _ "  + right_operand +  " " + res)
-        QUAD_POINTER += 1
+        push_to_quads(Quad(op, "_", right_operand, res))
 
 def p_seen_equals(p):
     ''' seen_equals  : '''
@@ -317,8 +323,6 @@ def p_seen_term_op(p):
 def p_expression(p):
     ''' EXPRESSION : EXP
                    | EXP COMP seen_comp_op EXP seen_comp '''
-    if len(p) == 2:
-        p[0] = p[1]
 
 def p_seen_comp(p):
     ''' seen_comp : '''
@@ -345,11 +349,6 @@ def p_factor(p):
                | ID seen_id
                | CNST  '''
 
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        p[0] = p[2]
-
 def p_seen_open_parenthesis(p):
     ''' seen_open_parenthesis : '''
     SYMBOL_TABLE.OperatorStack.append(p[-1])
@@ -360,7 +359,7 @@ def p_seen_close_parenthesis(p):
 
 def p_seen_id(p):
     ''' seen_id :  '''
-    SYMBOL_TABLE.OperandStack.append(p[-1])
+    SYMBOL_TABLE.OperandStack.append(SYMBOL_TABLE.symbol_lookup(p[-1]))
     SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
 
 def p_seen_cte_i(p):
@@ -441,7 +440,7 @@ def p_printable_p(p):
 
 def p_seen_printable(p):
     ''' seen_printable  : '''
-    QUADS.append("WR _ _ "  + SYMBOL_TABLE.OperandStack.pop())
+    push_to_quads(Quad("WR", "_", "_",  SYMBOL_TABLE.OperandStack.pop()))
 
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
@@ -471,7 +470,6 @@ def p_error(p):
 
 
 def generateExpressionQuad():
-    global QUAD_POINTER
     right_operand = SYMBOL_TABLE.OperandStack.pop()
     right_type = SYMBOL_TABLE.TypeStack.pop()
     left_operand = SYMBOL_TABLE.OperandStack.pop()
@@ -480,8 +478,7 @@ def generateExpressionQuad():
     result_type = SemanticCube[left_type][operator][right_type]
     if result_type != "err":
         result = SYMBOL_TABLE.Avail.next()
-        QUADS.append(operator + " " + left_operand + " " + right_operand +  " " + result)
-        QUAD_POINTER += 1
+        push_to_quads(Quad(operator, left_operand, right_operand, result))
         SYMBOL_TABLE.OperandStack.append(result)
         SYMBOL_TABLE.TypeStack.append(result_type)
     else:
@@ -501,4 +498,6 @@ with open(input_file) as f:
     result = parser.parse(s)
     print(SYMBOL_TABLE.SYMBOLS)
     print(FUNC_DIR.SYMBOLS)
-    print(QUADS)
+    print("GENERATED QUADS:")
+    for i, q in enumerate(QUADS):
+        print(str(i), q.get_string())
