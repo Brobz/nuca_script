@@ -90,7 +90,7 @@ t_ignore  = ' \t'
 
 def t_TYPE(t):
     # Currently defined as an ID; Look into how to implement actual types
-    r'(int)|(float)|(char)|(string)|(void)|(boolean)'
+    r'(int)|(float)|(str)|(void)|(boolean)'
     t.type = reserved.get(t.value, 'TYPE')    # Check for reserved words
     return t
 
@@ -274,7 +274,7 @@ def p_assign(p):
     res_type = SYMBOL_TABLE.TypeStack.pop()
     print(right_type, res_type)
     if right_type != res_type:
-        raise Exception("Type Mismatch")
+        raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
     else:
         QUADS.append(op + " _ "  + right_operand +  " " + res)
         QUAD_POINTER += 1
@@ -462,7 +462,7 @@ def generateExpressionQuad():
         SYMBOL_TABLE.OperandStack.append(result)
         SYMBOL_TABLE.TypeStack.append(result_type)
     else:
-        raise Exception("Type Mismatch")
+        raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
 
 # Build the parser
 parser = yacc.yacc()

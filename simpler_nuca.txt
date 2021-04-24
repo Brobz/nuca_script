@@ -2,8 +2,10 @@ program MYPROGRAM;
 
 res : boolean;
 a, b, c, d, e, f, i : float;
+lol : str;
 
 main () {
+  c = lol + f;
   res = a * (b + c / d - e) / f * i >  (a *  (b - c) / d) + e;
 
 }
