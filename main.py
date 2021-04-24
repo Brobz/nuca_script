@@ -199,6 +199,19 @@ def p_id_list_p(p):
         if p[3] != None:
             p[0] += p[3]
 
+def p_readable_list(p):
+    ''' READABLE_LIST : ID seen_readable READABLE_LIST_P '''
+
+
+def p_readable_list_p(p):
+    ''' READABLE_LIST_P : COMMA ID seen_readable READABLE_LIST_P
+                  | empty '''
+
+def p_seen_readable(p):
+    ''' seen_readable  : '''
+    QUADS.append("RD _ _ "  + SYMBOL_TABLE.symbol_lookup(p[-1]))
+
+
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
     for list in p[1].split("||"):
@@ -327,7 +340,7 @@ def p_comp(p):
     p[0] = p[1]
 
 def p_factor(p):
-    ''' FACTOR : OPEN_PARENTHESIS seen_opar EXPRESSION CLOSE_PARENTHESIS seen_cpar
+    ''' FACTOR : OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis
                | FUNC_CALL
                | ID seen_id
                | CNST  '''
@@ -337,12 +350,12 @@ def p_factor(p):
     else:
         p[0] = p[2]
 
-def p_seen_opar(p):
-    ''' seen_opar : '''
+def p_seen_open_parenthesis(p):
+    ''' seen_open_parenthesis : '''
     SYMBOL_TABLE.OperatorStack.append(p[-1])
 
-def p_seen_cpar(p):
-    ''' seen_cpar : '''
+def p_seen_close_parenthesis(p):
+    ''' seen_close_parenthesis : '''
     SYMBOL_TABLE.OperatorStack.pop()
 
 def p_seen_id(p):
@@ -411,14 +424,12 @@ def p_func_return(p):
     ''' FUNC_RETURN : RETURN_KWD EXPRESSION SEMI_COLON '''
 
 def p_read(p):
-    ''' READ : READ_KWD OPEN_PARENTHESIS ID_LIST CLOSE_PARENTHESIS SEMI_COLON '''
+    ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS SEMI_COLON '''
+
 
 def p_write(p):
-    ''' WRITE : WRITE_KWD seen_write_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON '''
+    ''' WRITE : WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON '''
 
-def p_seen_write_kwd(p):
-    ''' seen_write_kwd  : '''
-    SYMBOL_TABLE.OperatorStack.append('WR')
 
 def p_printable(p):
     ''' PRINTABLE : EXPRESSION seen_printable PRINTABLE_P '''
@@ -430,7 +441,7 @@ def p_printable_p(p):
 
 def p_seen_printable(p):
     ''' seen_printable  : '''
-    QUADS.append(SYMBOL_TABLE.OperatorStack.pop() + " _ _ "  + SYMBOL_TABLE.OperandStack.pop())
+    QUADS.append("WR _ _ "  + SYMBOL_TABLE.OperandStack.pop())
 
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''

@@ -30,7 +30,7 @@ class SymbolTable(object):
 
     def symbol_lookup(self, sym_id, scope = "GLOBAL"):
         if sym_id in self.SYMBOLS[scope]:
-            return self.SYMBOLS[scope][sym_id][1]
+            return sym_id
         else:
             raise Exception("Unseen symbol: " + sym_id)
 
