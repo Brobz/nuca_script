@@ -2,15 +2,18 @@ program MYPROGRAM;
 
 res : boolean;
 a, b, c, d, e, f, g : float;
+test_int : int;
 lol, lol_doubled : str;
-another_str  : str;
+another_str, test_str  : str;
 
 main () {
   lol = "lol!";
   lol_doubled = lol * 2;
   another_str =  "String manipulation is nice! Look: " + lol_doubled + "This will also be doubled" * 2;
-  write(another_str, lol);
+  write(another_str);
   read(a, b, c, d, e, f, g, g);
-  res = a * (b + c / d - e) / f * g >  (a *  (b - c) / d) + e;
-  write("The result is: ", res)
+  res = (a * (b + c / d - e) / f * g >  (a *  (b - c) / d) + e) || 1;
+  test_int = res * 5;
+  test_str = "TRUE!" * res + "False!" * (res < 1);
+  write("The result is: ", test_int, test_str);
 }

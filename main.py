@@ -13,6 +13,7 @@ from Quad import *
 
 # List of token names.   This is always required
 tokens = [
+'COMMENT',
 
 'SEMI_COLON',
 'COLON',
@@ -89,6 +90,10 @@ t_DIFFERENT                 =   r'\<\>'
 
 t_ignore  = ' \t'
 
+def t_COMMENT(t):
+    r'\#.*'
+    pass
+    # No return value. Token discarded
 
 def t_TYPE(t):
     # Currently defined as an ID; Look into how to implement actual types
@@ -283,6 +288,7 @@ def p_statement(p):
                   | READ
                   | WRITE
                   | DECISION
+                  | COMMENT
                   | REPETITION '''
 
 def p_assign(p):
@@ -375,7 +381,6 @@ def p_seen_cte_f(p):
 
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
-    print(str(p[-1][1:-1]))
     SYMBOL_TABLE.OperandStack.append(str(p[-1][1:-1]))
     SYMBOL_TABLE.TypeStack.append("str")
 
