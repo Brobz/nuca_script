@@ -1,6 +1,6 @@
 program MYPROGRAM;
 
-res : boolean;
+res, test_bool : boolean;
 a, b, c, d, e, f, g : float;
 test_int : int;
 lol, lol_doubled : str;
@@ -12,8 +12,9 @@ main () {
   another_str =  "String manipulation is nice! Look: " + lol_doubled + "This will also be doubled" * 2;
   write(another_str);
   read(a, b, c, d, e, f, g, g);
-  res = (a * (b + c / d - e) / f * g >  (a *  (b - c) / d) + e) || 1;
+  res = !test_bool || res;
+  res = (a * (b + c / d - e) / f * g >  (a *  (b - c) / d) + e) || !1;
   test_int = res * 5;
-  test_str = "TRUE!" * res + "False!" * (res < 1);
+  test_str = "TRUE!" * res + "False!" * !res;
   write("The result is: ", test_int, test_str);
 }

@@ -60,3 +60,10 @@ SemanticCube["boolean"] = {
                         "+" : {"int" : "int", "float" : "err", "str" : "err",  "boolean" : "err"},
                          "-" : {"int" : "int", "float" : "err", "str" : "err",  "boolean" : "err"}
                         }
+
+SemanticCube["!"] = {
+                        "int" : "boolean",
+                        "float" : "err",
+                        "str" : "boolean",
+                        "boolean" : "boolean"
+                        }

@@ -21,6 +21,7 @@ tokens = [
 'OPEN_CURLY',
 'CLOSE_CURLY',
 'EQUALS',
+'NOT',
 'DOUBLE_EQUALS',
 'AND',
 'OR',
@@ -76,6 +77,7 @@ t_OPEN_PARENTHESIS          =   r'\('
 t_CLOSE_PARENTHESIS         =   r'\)'
 t_DOUBLE_EQUALS             =   r'=='
 t_EQUALS                    =   r'='
+t_NOT                       =   r'!'
 t_AND                       =   r'\&\&'
 t_OR                        =   r'\|\|'
 t_PLUS                      =   r'\+'
@@ -308,7 +310,8 @@ def p_seen_equals(p):
     SYMBOL_TABLE.OperatorStack.append('=')
 
 def p_exp(p):
-    ''' EXP : TERM seen_term EXP_P '''
+    ''' EXP :   TERM seen_term EXP_P
+              | NOT seen_not EXP pop_not'''
 
 
 def p_seen_term(p):
@@ -327,8 +330,8 @@ def p_seen_term_op(p):
     SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_expression(p):
-    ''' EXPRESSION : EXP
-                   | EXP COMP seen_comp_op EXP seen_comp '''
+    ''' EXPRESSION :   EXP
+                     | EXP COMP seen_comp_op EXP seen_comp '''
 
 def p_seen_comp(p):
     ''' seen_comp : '''
@@ -350,10 +353,29 @@ def p_comp(p):
     p[0] = p[1]
 
 def p_factor(p):
-    ''' FACTOR : OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis
-               | FUNC_CALL
-               | ID seen_id
-               | CNST  '''
+    ''' FACTOR :  OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis
+                | NOT seen_not FACTOR pop_not
+                | FUNC_CALL
+                | ID seen_id
+                | CNST  '''
+
+def p_pop_not(p):
+    ''' pop_not : '''
+    op = SYMBOL_TABLE.OperatorStack.pop()
+    right_operand = SYMBOL_TABLE.OperandStack.pop()
+    right_type = SYMBOL_TABLE.TypeStack.pop()
+    res = SYMBOL_TABLE.Avail.next()
+    res_type = SemanticCube[op][right_type]
+    if res_type != "err":
+        push_to_quads(Quad(op, "_", right_operand, res))
+        SYMBOL_TABLE.OperandStack.append(res)
+        SYMBOL_TABLE.TypeStack.append(res_type)
+    else:
+        raise Exception("Type Mismatch: " + op + right_operand)
+
+def p_seen_not(p):
+    ''' seen_not : '''
+    SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_seen_open_parenthesis(p):
     ''' seen_open_parenthesis : '''
