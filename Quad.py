@@ -8,4 +8,4 @@ class Quad(object):
         self.result = res
 
     def get_string(self):
-        return self.operator + " " + self.left_operand + " "  + self.right_operand + " " + self.result
+        return str(self.operator) + " " + str(self.left_operand) + " "  + str(self.right_operand) + " " + str(self.result)

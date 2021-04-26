@@ -170,6 +170,17 @@ def push_to_quads(q):
     QUADS.append(q)
     QUAD_POINTER += 1
 
+def fill_quad(dir, fill):
+    global QUADS
+    global QUAD_POINTER
+
+    q = QUADS[dir]
+
+    if q.result == "PND":
+        q.result = fill
+    else:
+        raise Exception("Quad Error: trying to fill complete quad")
+
 # First lets define our grammar rules...
 
 def p_program(p):
@@ -470,11 +481,33 @@ def p_seen_printable(p):
     push_to_quads(Quad("WR", "_", "_",  SYMBOL_TABLE.OperandStack.pop()))
 
 def p_decision(p):
-    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
+    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P seen_if '''
+
+def p_seen_if_kwd(p):
+    ''' seen_if_kwd : '''
+    expr_type = SYMBOL_TABLE.TypeStack.pop()
+    if expr_type == "boolean":
+        res = SYMBOL_TABLE.OperandStack.pop()
+        push_to_quads(Quad("GTF", "_", res, "PND"))
+        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
+    else:
+        raise Exception("Type Mismatch: non-boolean expression in decision statement")
+
+def p_seen_if(p):
+    ''' seen_if : '''
+    dir = SYMBOL_TABLE.JumpStack.pop()
+    fill_quad(dir, QUAD_POINTER)
 
 def p_decision_p(p):
-    ''' DECISION_P : ELSE_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P
+    ''' DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
                    | empty '''
+
+def p_seen_else_kwd(p):
+    ''' seen_else_kwd : '''
+    push_to_quads(Quad("GOTO", "_", "_","PND"))
+    dir = SYMBOL_TABLE.JumpStack.pop()
+    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
+    fill_quad(dir, QUAD_POINTER)
 
 def p_repetition(p):
     ''' REPETITION : CONDITIONAL_REP

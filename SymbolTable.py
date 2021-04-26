@@ -8,6 +8,7 @@ class SymbolTable(object):
         self.OperatorStack = []
         self.OperandStack = []
         self.TypeStack = []
+        self.JumpStack = []
         self.Avail = Avail()
 
     def add_scope(self, scope):
