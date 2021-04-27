@@ -290,15 +290,21 @@ def p_statement_star(p):
                        | empty '''
 
 def p_statement(p):
-    ''' STATEMENT : ASSIGN
-                  | FUNC_RETURN
-                  | READ
-                  | WRITE
+    ''' STATEMENT : ASSIGN SEMI_COLON
+                  | FUNC_CALL SEMI_COLON
+                  | READ SEMI_COLON
+                  | WRITE SEMI_COLON
                   | DECISION
                   | REPETITION '''
 
+def p_for_incr_statement(p):
+    ''' FOR_INCR_STATEMENT :    ASSIGN
+                              | FUNC_CALL
+                              | READ
+                              | WRITE '''
+
 def p_assign(p):
-    ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON '''
+    ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION '''
     assign_to_var()
 
 def p_seen_equals(p):
@@ -435,7 +441,8 @@ def p_func_call(p):
 
 def p_arg_list(p):
     ''' ARG_LIST : ID_LIST ARG_LIST_P
-                 | EXPRESSION ARG_LIST_P '''
+                 | EXPRESSION ARG_LIST_P
+                 | empty '''
 
 def p_arg_list_p(p):
     ''' ARG_LIST_P : COMMA ID_LIST ARG_LIST_P
@@ -446,11 +453,11 @@ def p_func_return(p):
     ''' FUNC_RETURN : RETURN_KWD EXPRESSION SEMI_COLON '''
 
 def p_read(p):
-    ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS SEMI_COLON '''
+    ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
 
 
 def p_write(p):
-    ''' WRITE : WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS SEMI_COLON '''
+    ''' WRITE : WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
 
 
 def p_printable(p):
@@ -495,7 +502,7 @@ def p_conditional_rep(p):
     end_dir = SYMBOL_TABLE.JumpStack.pop()
     return_dir = SYMBOL_TABLE.JumpStack.pop()
     push_to_quads(Quad("GOTO", "_", "_", return_dir))
-    fill_quad(return_dir, QUAD_POINTER)
+    fill_quad(end_dir, QUAD_POINTER)
 
 def p_seen_while_kwd(p):
     ''' seen_while_kwd : empty '''
@@ -508,7 +515,7 @@ def p_seen_while_exp(p):
 
 
 def p_unconditional_rep(p):
-    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
 
     swap_end_dir = SYMBOL_TABLE.JumpStack.pop()
     swap_start_dir = SYMBOL_TABLE.JumpStack.pop()

@@ -6,6 +6,10 @@ test_int : int;
 lol, lol_doubled : str;
 another_str, test_str  : str;
 
+int func()
+VARS {}
+{}
+
 main () {
   lol = "lol!";
   lol_doubled = lol * 2;
@@ -18,7 +22,7 @@ main () {
   test_str = "TRUE!" * res + "False!" * !res;
 
 
-  while(res) {
+  while(res == (2 - 1)) {
     if (a + b > d) {
       if (a < b) {
         a = 0.0;
@@ -34,7 +38,7 @@ main () {
 
   d = b + a * c;
 
-  for(test_int = 1; test_int < 10; test_int = test_int + 1 * 3 - 5 / 6 / 7;){
+  for(test_int = 1; test_int < (10 * 5) - 40; test_int = test_int + 1 * 3 - 12 / 3 / 2){
     write("loopin!");
     d = b + a * c;
     write(test_int);
