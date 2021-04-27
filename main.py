@@ -13,8 +13,6 @@ from Quad import *
 
 # List of token names.   This is always required
 tokens = [
-'COMMENT',
-
 'SEMI_COLON',
 'COLON',
 'COMMA',
@@ -55,7 +53,7 @@ reserved = {
     'read' : 'READ_KWD',
     'return' : 'RETURN_KWD',
     'while' : 'WHILE_KWD',
-    'from' : 'FROM_KWD',
+    'for' : 'FOR_KWD',
     'until' : 'UNTIL_KWD',
     'if' : 'IF_KWD',
     'else' : 'ELSE_KWD',
@@ -137,23 +135,11 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
-    Missing definitions in Grammar / Diagram:
+// TODO: Update Formal grammar and flow diagrams.
 
-        -> Global_Var
-        -> Func_Def
-        -> Comp (in Expression)
-        -> Arg_List
-        -> Arg_List_P
-
-    Wrong (changed) definitions in Grammar / Diagram:
-
-        -> Expression (removed ending semicolons, etc.)
-        -> Class and Class_Attr (removed ending semicolons)
-        -> Assign (added ending semicolons)
-        -> Factor
-        -> Func_Return
-        -> Func_Call
-        -> Decision and Decision_P
+For loop -> for (ID = EXPR;                     EXPR;                               STATEMENT) { STATEMENT* }
+                # Starting assignment,          # Boolean (end) expr,               # Increment expression,
+                to existing ID                  will loop until its false           will be executed at the end of each iteration, before the looping GOTO
 '''
 
 # Now to parsing!
@@ -179,6 +165,15 @@ def fill_quad(dir, fill):
         q.result = fill
     else:
         raise Exception("Quad Error: trying to fill complete quad")
+
+
+def swap_quads(q1, q2):
+    if q2 > len(QUADS) - 1:
+        QUADS.append(QUADS.pop(q1))
+    else:
+        temp = QUADS[q2]
+        QUADS[q2] = QUADS[q1]
+        QUADS[q1] = temp
 
 # First lets define our grammar rules...
 
@@ -232,7 +227,7 @@ def p_readable_list_p(p):
                   | empty '''
 
 def p_seen_readable(p):
-    ''' seen_readable  : '''
+    ''' seen_readable  : empty '''
     push_to_quads(Quad("RD", "_", "_", SYMBOL_TABLE.symbol_lookup(p[-1])))
 
 
@@ -300,7 +295,6 @@ def p_statement(p):
                   | READ
                   | WRITE
                   | DECISION
-                  | COMMENT
                   | REPETITION '''
 
 def p_assign(p):
@@ -308,7 +302,7 @@ def p_assign(p):
     assign_to_var()
 
 def p_seen_equals(p):
-    ''' seen_equals  : '''
+    ''' seen_equals  : empty '''
     SYMBOL_TABLE.OperatorStack.append('=')
 
 def p_exp(p):
@@ -336,12 +330,12 @@ def p_expression(p):
                      | EXP COMP seen_comp_op EXP seen_comp '''
 
 def p_seen_comp(p):
-    ''' seen_comp : '''
+    ''' seen_comp : empty '''
     generateExpressionQuad()
 
 
 def p_seen_comp_op(p):
-    ''' seen_comp_op : '''
+    ''' seen_comp_op : empty '''
     SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_comp(p):
@@ -362,7 +356,7 @@ def p_factor(p):
                 | CNST  '''
 
 def p_pop_not(p):
-    ''' pop_not : '''
+    ''' pop_not : empty '''
     op = SYMBOL_TABLE.OperatorStack.pop()
     right_operand = SYMBOL_TABLE.OperandStack.pop()
     right_type = SYMBOL_TABLE.TypeStack.pop()
@@ -376,15 +370,15 @@ def p_pop_not(p):
         raise Exception("Type Mismatch: " + op + right_operand)
 
 def p_seen_not(p):
-    ''' seen_not : '''
+    ''' seen_not : empty '''
     SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_seen_open_parenthesis(p):
-    ''' seen_open_parenthesis : '''
+    ''' seen_open_parenthesis : empty '''
     SYMBOL_TABLE.OperatorStack.append(p[-1])
 
 def p_seen_close_parenthesis(p):
-    ''' seen_close_parenthesis : '''
+    ''' seen_close_parenthesis : empty '''
     SYMBOL_TABLE.OperatorStack.pop()
 
 def p_seen_id(p):
@@ -468,18 +462,12 @@ def p_printable_p(p):
                     | empty '''
 
 def p_seen_printable(p):
-    ''' seen_printable  : '''
+    ''' seen_printable  : empty '''
+    printable_type = SYMBOL_TABLE.TypeStack.pop()
     push_to_quads(Quad("WR", "_", "_",  SYMBOL_TABLE.OperandStack.pop()))
 
 def p_decision(p):
-    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P seen_if '''
-
-def p_seen_if_kwd(p):
-    ''' seen_if_kwd : '''
-    decision_statement()
-
-def p_seen_if(p):
-    ''' seen_if : '''
+    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
     dir = SYMBOL_TABLE.JumpStack.pop()
     fill_quad(dir, QUAD_POINTER)
 
@@ -487,8 +475,12 @@ def p_decision_p(p):
     ''' DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
                    | empty '''
 
+def p_seen_if_kwd(p):
+    ''' seen_if_kwd : empty '''
+    decision_statement()
+
 def p_seen_else_kwd(p):
-    ''' seen_else_kwd : '''
+    ''' seen_else_kwd : empty '''
     push_to_quads(Quad("GOTO", "_", "_","PND"))
     dir = SYMBOL_TABLE.JumpStack.pop()
     SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
@@ -506,57 +498,58 @@ def p_conditional_rep(p):
     fill_quad(return_dir, QUAD_POINTER)
 
 def p_seen_while_kwd(p):
-    ''' seen_while_kwd : '''
+    ''' seen_while_kwd : empty '''
     SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
 
 
 def p_seen_while_exp(p):
-    ''' seen_while_exp : '''
+    ''' seen_while_exp : empty '''
     decision_statement()
 
 
 def p_unconditional_rep(p):
-    ''' UNCONDITIONAL_REP : FROM_KWD ID seen_from_kwd EQUALS EXPRESSION seen_from_start_exp UNTIL_KWD EXPRESSION seen_from_end_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
-    expr_end = SYMBOL_TABLE.OperandStack.pop()
-    expr_start = SYMBOL_TABLE.OperandStack.pop()
+    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
 
-    push_to_quads(Quad("+", expr_start, 1, expr_start))
-
+    swap_end_dir = SYMBOL_TABLE.JumpStack.pop()
+    swap_start_dir = SYMBOL_TABLE.JumpStack.pop()
     end_dir = SYMBOL_TABLE.JumpStack.pop()
     loop_dir = SYMBOL_TABLE.JumpStack.pop()
+
+    incr_res = SYMBOL_TABLE.OperandStack.pop()
+
+    for i in range(swap_start_dir, swap_end_dir):
+        swap_quads(swap_start_dir, QUAD_POINTER)
 
     push_to_quads(Quad("GOTO", "_", "_", loop_dir))
     fill_quad(end_dir, QUAD_POINTER)
 
-def p_seen_from_kwd(p):
-    ''' seen_from_kwd : '''
+def p_seen_for_kwd(p):
+    ''' seen_for_kwd : empty '''
     SYMBOL_TABLE.OperandStack.append(SYMBOL_TABLE.symbol_lookup(p[-1]))
     SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
     SYMBOL_TABLE.OperatorStack.append("=")
 
+def p_seen_for_incr_exp(p):
+    ''' seen_for_incr_exp : empty'''
+    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
 
-def p_seen_from_start_exp(p):
-    ''' seen_from_start_exp : '''
+def p_seen_for_start_exp(p):
+    ''' seen_for_start_exp : empty '''
     assign_to_var(True)
     SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
 
-def p_seen_from_end_exp(p):
-    ''' seen_from_end_exp : '''
-    expr_end = SYMBOL_TABLE.OperandStack.pop()
-    expr_start = SYMBOL_TABLE.OperandStack.pop()
+def p_seen_for_end_exp(p):
+    ''' seen_for_end_exp : empty '''
+
     expr_end_type = SYMBOL_TABLE.TypeStack.pop()
-    expr_start_type = SYMBOL_TABLE.TypeStack.pop()
-    if expr_start_type != expr_end_type:
-        raise Exception("Type mismatch: 'from' starting type and ending type dont match")
-    elif expr_start_type != "int" or expr_end_type != "int":
-        raise Exception("Type mismatch: 'from' start and end types must be int!")
+
+    if expr_end_type != "boolean":
+        raise Exception("Type mismatch: 'for' end expression type is not boolean")
     else:
-        res = SYMBOL_TABLE.Avail.next()
-        push_to_quads(Quad("==", expr_start, expr_end, res))
+        res = SYMBOL_TABLE.OperandStack.pop()
         SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
         push_to_quads(Quad("GTF", "_", res, "PND"))
-        SYMBOL_TABLE.OperandStack.append(expr_start)
-        SYMBOL_TABLE.OperandStack.append(expr_end)
+        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
 
 def p_empty(p):
      'empty :'
