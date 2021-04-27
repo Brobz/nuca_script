@@ -16,13 +16,31 @@ main () {
   res = (a * (b + c / d - e) / f * g >  (a *  (b - c) / d) + e) || !1;
   test_int = res * 5;
   test_str = "TRUE!" * res + "False!" * !res;
-  if(test_str == "TRUE!") then {
-    write("It works?");
-    write("Hell yeah!");
-    write("next one is jump");
-  }else {
-    write("this might be trickier...");
-    write("lets see!");
+
+
+  while(res) {
+    if (a + b > d) {
+      if (a < b) {
+        a = 0.0;
+        b = b + d;
+      }
+      else{
+        c = a + b;
+      }
+    }else{
+    a = b + c;
+    }
   }
+
+  d = b + a * c;
+
+  from test_int = 1 until 10 {
+    write("loopin!");
+    write(test_int);
+    write("yeee!");
+  }
+
+  d = b + a * c;
+
   write("The result is: ", test_int, test_str);
 }

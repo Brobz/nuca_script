@@ -58,7 +58,6 @@ reserved = {
     'from' : 'FROM_KWD',
     'until' : 'UNTIL_KWD',
     'if' : 'IF_KWD',
-    'then' : 'THEN_KWD',
     'else' : 'ELSE_KWD',
 
 
@@ -306,15 +305,7 @@ def p_statement(p):
 
 def p_assign(p):
     ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION SEMI_COLON '''
-    op = SYMBOL_TABLE.OperatorStack.pop()
-    right_operand  = SYMBOL_TABLE.OperandStack.pop()
-    res =  SYMBOL_TABLE.OperandStack.pop()
-    right_type  = SYMBOL_TABLE.TypeStack.pop()
-    res_type = SYMBOL_TABLE.TypeStack.pop()
-    if right_type != res_type:
-        raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
-    else:
-        push_to_quads(Quad(op, "_", right_operand, res))
+    assign_to_var()
 
 def p_seen_equals(p):
     ''' seen_equals  : '''
@@ -481,17 +472,11 @@ def p_seen_printable(p):
     push_to_quads(Quad("WR", "_", "_",  SYMBOL_TABLE.OperandStack.pop()))
 
 def p_decision(p):
-    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd THEN_KWD OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P seen_if '''
+    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P seen_if '''
 
 def p_seen_if_kwd(p):
     ''' seen_if_kwd : '''
-    expr_type = SYMBOL_TABLE.TypeStack.pop()
-    if expr_type == "boolean":
-        res = SYMBOL_TABLE.OperandStack.pop()
-        push_to_quads(Quad("GTF", "_", res, "PND"))
-        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
-    else:
-        raise Exception("Type Mismatch: non-boolean expression in decision statement")
+    decision_statement()
 
 def p_seen_if(p):
     ''' seen_if : '''
@@ -514,10 +499,64 @@ def p_repetition(p):
                    | UNCONDITIONAL_REP '''
 
 def p_conditional_rep(p):
-    ''' CONDITIONAL_REP : WHILE_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    end_dir = SYMBOL_TABLE.JumpStack.pop()
+    return_dir = SYMBOL_TABLE.JumpStack.pop()
+    push_to_quads(Quad("GOTO", "_", "_", return_dir))
+    fill_quad(return_dir, QUAD_POINTER)
+
+def p_seen_while_kwd(p):
+    ''' seen_while_kwd : '''
+    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+
+
+def p_seen_while_exp(p):
+    ''' seen_while_exp : '''
+    decision_statement()
+
 
 def p_unconditional_rep(p):
-    ''' UNCONDITIONAL_REP : FROM_KWD ID EQUALS EXPRESSION UNTIL_KWD EXPRESSION OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' UNCONDITIONAL_REP : FROM_KWD ID seen_from_kwd EQUALS EXPRESSION seen_from_start_exp UNTIL_KWD EXPRESSION seen_from_end_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    expr_end = SYMBOL_TABLE.OperandStack.pop()
+    expr_start = SYMBOL_TABLE.OperandStack.pop()
+
+    push_to_quads(Quad("+", expr_start, 1, expr_start))
+
+    end_dir = SYMBOL_TABLE.JumpStack.pop()
+    loop_dir = SYMBOL_TABLE.JumpStack.pop()
+
+    push_to_quads(Quad("GOTO", "_", "_", loop_dir))
+    fill_quad(end_dir, QUAD_POINTER)
+
+def p_seen_from_kwd(p):
+    ''' seen_from_kwd : '''
+    SYMBOL_TABLE.OperandStack.append(SYMBOL_TABLE.symbol_lookup(p[-1]))
+    SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
+    SYMBOL_TABLE.OperatorStack.append("=")
+
+
+def p_seen_from_start_exp(p):
+    ''' seen_from_start_exp : '''
+    assign_to_var(True)
+    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+
+def p_seen_from_end_exp(p):
+    ''' seen_from_end_exp : '''
+    expr_end = SYMBOL_TABLE.OperandStack.pop()
+    expr_start = SYMBOL_TABLE.OperandStack.pop()
+    expr_end_type = SYMBOL_TABLE.TypeStack.pop()
+    expr_start_type = SYMBOL_TABLE.TypeStack.pop()
+    if expr_start_type != expr_end_type:
+        raise Exception("Type mismatch: 'from' starting type and ending type dont match")
+    elif expr_start_type != "int" or expr_end_type != "int":
+        raise Exception("Type mismatch: 'from' start and end types must be int!")
+    else:
+        res = SYMBOL_TABLE.Avail.next()
+        push_to_quads(Quad("==", expr_start, expr_end, res))
+        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+        push_to_quads(Quad("GTF", "_", res, "PND"))
+        SYMBOL_TABLE.OperandStack.append(expr_start)
+        SYMBOL_TABLE.OperandStack.append(expr_end)
 
 def p_empty(p):
      'empty :'
@@ -543,6 +582,33 @@ def generateExpressionQuad():
         SYMBOL_TABLE.TypeStack.append(result_type)
     else:
         raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
+
+
+def assign_to_var(push_back = False):
+    op = SYMBOL_TABLE.OperatorStack.pop()
+    right_operand  = SYMBOL_TABLE.OperandStack.pop()
+    res =  SYMBOL_TABLE.OperandStack.pop()
+    right_type  = SYMBOL_TABLE.TypeStack.pop()
+    res_type = SYMBOL_TABLE.TypeStack.pop()
+    if right_type != res_type:
+        raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
+    else:
+        push_to_quads(Quad(op, "_", right_operand, res))
+        if push_back:
+            SYMBOL_TABLE.TypeStack.append(res_type)
+            SYMBOL_TABLE.OperandStack.append(res)
+
+
+def decision_statement():
+    expr_type = SYMBOL_TABLE.TypeStack.pop()
+    if expr_type == "boolean":
+        res = SYMBOL_TABLE.OperandStack.pop()
+        push_to_quads(Quad("GTF", "_", res, "PND"))
+        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
+    else:
+
+        raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
+
 
 # Build the parser
 parser = yacc.yacc()
