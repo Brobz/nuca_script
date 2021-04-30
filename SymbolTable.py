@@ -4,7 +4,12 @@ class SymbolTable(object):
     """docstring for SymbolTable."""
 
     def __init__(self):
-        self.SYMBOLS = {"GLOBAL" : {}}
+        self.SYMBOLS = {
+                        "GLOBAL" : {},
+                        "CODE" : {},
+                        "STACK" : {},
+                        "TEMP" : {}
+                        }
         self.OperatorStack = []
         self.OperandStack = []
         self.TypeStack = []

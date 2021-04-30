@@ -22,7 +22,7 @@ main () {
   test_str = "TRUE!" * res + "False!" * !res;
 
 
-  while(res == (2 - 1)) {
+  while( ( (res == (2 - 1)) && (b + c < 10) ) || res) {
     if (a + b > d) {
       if (a < b) {
         a = 0.0;

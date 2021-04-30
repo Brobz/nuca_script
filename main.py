@@ -54,7 +54,6 @@ reserved = {
     'return' : 'RETURN_KWD',
     'while' : 'WHILE_KWD',
     'for' : 'FOR_KWD',
-    'until' : 'UNTIL_KWD',
     'if' : 'IF_KWD',
     'else' : 'ELSE_KWD',
 
@@ -135,6 +134,13 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
+
+// TODO: Redesign SYMBOL_TABLE and FUNC_DIR implementations (04/29 class sesssion) in prep for virtual memory and subsequent method quad generation
+
+// TODO: Design initial virtual memory management concept for virtual machine
+
+// TODO: Fix shift/reduce && reduce/reduce conflict warnings
+
 // TODO: Update Formal grammar and flow diagrams.
 
 For loop -> for (ID = EXPR;                     EXPR;                               STATEMENT) { STATEMENT* }
@@ -244,7 +250,7 @@ def p_func_def_star(p):
                       | empty '''
 
 def p_func_def(p):
-    ''' FUNC_DEF : TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' FUNC_DEF : TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     FUNC_DIR.declare_function(p[2], p[1])
     SYMBOL_TABLE.add_scope("METHOD_" + p[2])
 
@@ -284,6 +290,13 @@ def p_var(p):
 def p_vars(p):
     ''' VARS : VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY '''
     p[0] = p[3]
+
+
+def p_func_statement_star(p):
+    ''' FUNC_STATEMENT_STAR :       STATEMENT FUNC_STATEMENT_STAR
+                                |   FUNC_RETURN FUNC_STATEMENT_STAR
+                                |   empty '''
+
 
 def p_statement_star(p):
     ''' STATEMENT_STAR :  STATEMENT STATEMENT_STAR
@@ -333,7 +346,7 @@ def p_seen_term_op(p):
 
 def p_expression(p):
     ''' EXPRESSION :   EXP
-                     | EXP COMP seen_comp_op EXP seen_comp '''
+                     | EXP COMP seen_comp_op EXPRESSION seen_comp '''
 
 def p_seen_comp(p):
     ''' seen_comp : empty '''
@@ -359,7 +372,7 @@ def p_factor(p):
                 | NOT seen_not FACTOR pop_not
                 | FUNC_CALL
                 | ID seen_id
-                | CNST  '''
+                | CNST '''
 
 def p_pop_not(p):
     ''' pop_not : empty '''
@@ -584,7 +597,7 @@ def generateExpressionQuad():
         raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
 
 
-def assign_to_var(push_back = False):
+def assign_to_var(push_back_operand = False, push_back_type = False):
     op = SYMBOL_TABLE.OperatorStack.pop()
     right_operand  = SYMBOL_TABLE.OperandStack.pop()
     res =  SYMBOL_TABLE.OperandStack.pop()
@@ -594,10 +607,10 @@ def assign_to_var(push_back = False):
         raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
     else:
         push_to_quads(Quad(op, "_", right_operand, res))
-        if push_back:
-            SYMBOL_TABLE.TypeStack.append(res_type)
+        if push_back_operand:
             SYMBOL_TABLE.OperandStack.append(res)
-
+        if push_back_type:
+            SYMBOL_TABLE.TypeStack.append(res_type)
 
 def decision_statement():
     expr_type = SYMBOL_TABLE.TypeStack.pop()
@@ -624,6 +637,7 @@ with open(input_file) as f:
     result = parser.parse(s)
     print(SYMBOL_TABLE.SYMBOLS)
     print(FUNC_DIR.SYMBOLS)
+    print("STACKS:", SYMBOL_TABLE.OperandStack, SYMBOL_TABLE.TypeStack, SYMBOL_TABLE.OperatorStack, SYMBOL_TABLE.JumpStack)
     print("GENERATED QUADS:")
     for i, q in enumerate(QUADS):
         print(str(i), q.get_string())
