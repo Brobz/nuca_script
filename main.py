@@ -10,6 +10,7 @@ from SymbolTable import *
 from FunctionDirectory import *
 from SemanticCube import *
 from Quad import *
+from Avail import  *
 
 # List of token names.   This is always required
 tokens = [
@@ -135,7 +136,7 @@ lexer = lex.lex()
 
 '''
 
-// TODO: Redesign SYMBOL_TABLE and FUNC_DIR implementations (04/29 class sesssion) in prep for virtual memory and subsequent method quad generation
+// TODO: Implement quad generation for functions
 
 // TODO: Design initial virtual memory management concept for virtual machine
 
@@ -150,10 +151,14 @@ For loop -> for (ID = EXPR;                     EXPR;                           
 
 # Now to parsing!
 
+AVAIL = Avail()
 FUNC_DIR = FunctionDirectory()
-SYMBOL_TABLE = SymbolTable()
-QUAD_POINTER = 0
-QUADS = []
+OPERATOR_STACK = []
+OPERAND_STACK = []
+TYPE_STACK = []
+JUMP_STACK = []
+QUAD_POINTER = 1
+QUADS = [Quad("GOTO", "_", "_", "PND")]
 
 def push_to_quads(q):
     global QUADS
@@ -184,9 +189,19 @@ def swap_quads(q1, q2):
 # First lets define our grammar rules...
 
 def p_program(p):
-    ''' PROGRAM : PROGRAM_KWD  ID  SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
 
     print(">> APROPRIADO!")
+
+
+def p_seen_program_id(p):
+    ''' seen_program_id : empty '''
+    FUNC_DIR.declare_function(p[-1], "void", "PROGRAM")
+
+
+def p_seen_main_kwd(p):
+    ''' seen_main_kwd : empty '''
+    fill_quad(0, QUAD_POINTER)
 
 def p_class_star(p):
     ''' CLASS_STAR : CLASS CLASS_STAR
@@ -234,7 +249,7 @@ def p_readable_list_p(p):
 
 def p_seen_readable(p):
     ''' seen_readable  : empty '''
-    push_to_quads(Quad("RD", "_", "_", SYMBOL_TABLE.symbol_lookup(p[-1])))
+    push_to_quads(Quad("RD", "_", "_", FUNC_DIR.symbol_lookup(p[-1])))
 
 
 
@@ -243,27 +258,35 @@ def p_global_var(p):
     for list in p[1].split("||"):
         type = list.split(":")[1]
         for id in list.split(":")[0].split(','):
-            SYMBOL_TABLE.declare_symbol(id, type)
+            FUNC_DIR.declare_symbol(id, type)
 
 def p_func_def_star(p):
     ''' FUNC_DEF_STAR : FUNC_DEF FUNC_DEF_STAR
                       | empty '''
 
 def p_func_def(p):
-    ''' FUNC_DEF : TYPE ID OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS VARS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
-    FUNC_DIR.declare_function(p[2], p[1])
-    SYMBOL_TABLE.add_scope("METHOD_" + p[2])
+    ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
+    FUNC_DIR.current_scope = None
 
-    if p[4] != None:
-        for list in p[4].split(","):
+def p_seen_func_id(p):
+    ''' seen_func_id : empty '''
+    FUNC_DIR.declare_function(p[-1], p[-2])
+
+def p_seen_func_params(p):
+    ''' seen_func_params : empty '''
+
+    if p[-2] != None:
+        for list in p[-2].split(","):
             id, type = list.split(":")
-            SYMBOL_TABLE.declare_symbol(id, type, "METHOD_" + p[2])
+            FUNC_DIR.declare_param(id, type)
 
-    if p[6] != None:
-        for list in p[6].split("||"):
+def p_seen_func_vars(p):
+    ''' seen_func_vars : empty '''
+    if p[-1] != None:
+        for list in p[-1].split("||"):
             type = list.split(":")[1]
             for id in list.split(":")[0].split(','):
-                SYMBOL_TABLE.declare_symbol(id, type, "METHOD_" + p[2])
+                FUNC_DIR.declare_symbol(id, type)
 
 def p_func_param(p):
     ''' FUNC_PARAM : VAR FUNC_PARAM_P
@@ -322,7 +345,7 @@ def p_assign(p):
 
 def p_seen_equals(p):
     ''' seen_equals  : empty '''
-    SYMBOL_TABLE.OperatorStack.append('=')
+    OPERATOR_STACK.append('=')
 
 def p_exp(p):
     ''' EXP :   TERM seen_term EXP_P
@@ -331,7 +354,7 @@ def p_exp(p):
 
 def p_seen_term(p):
     ''' seen_term :  '''
-    if len(SYMBOL_TABLE.OperatorStack) and  (SYMBOL_TABLE.OperatorStack[-1] == '+' or SYMBOL_TABLE.OperatorStack[-1] == '-'):
+    if len(OPERATOR_STACK) and  (OPERATOR_STACK[-1] == '+' or OPERATOR_STACK[-1] == '-'):
         generateExpressionQuad()
 
 
@@ -342,7 +365,7 @@ def p_exp_p(p):
 
 def p_seen_term_op(p):
     ''' seen_term_op :  '''
-    SYMBOL_TABLE.OperatorStack.append(p[-1])
+    OPERATOR_STACK.append(p[-1])
 
 def p_expression(p):
     ''' EXPRESSION :   EXP
@@ -355,7 +378,7 @@ def p_seen_comp(p):
 
 def p_seen_comp_op(p):
     ''' seen_comp_op : empty '''
-    SYMBOL_TABLE.OperatorStack.append(p[-1])
+    OPERATOR_STACK.append(p[-1])
 
 def p_comp(p):
     ''' COMP : BIGGER
@@ -376,50 +399,50 @@ def p_factor(p):
 
 def p_pop_not(p):
     ''' pop_not : empty '''
-    op = SYMBOL_TABLE.OperatorStack.pop()
-    right_operand = SYMBOL_TABLE.OperandStack.pop()
-    right_type = SYMBOL_TABLE.TypeStack.pop()
-    res = SYMBOL_TABLE.Avail.next()
+    op = OPERATOR_STACK.pop()
+    right_operand = OPERAND_STACK.pop()
+    right_type = TYPE_STACK.pop()
+    res = AVAIL.next()
     res_type = SemanticCube[op][right_type]
     if res_type != "err":
         push_to_quads(Quad(op, "_", right_operand, res))
-        SYMBOL_TABLE.OperandStack.append(res)
-        SYMBOL_TABLE.TypeStack.append(res_type)
+        OPERAND_STACK.append(res)
+        TYPE_STACK.append(res_type)
     else:
         raise Exception("Type Mismatch: " + op + right_operand)
 
 def p_seen_not(p):
     ''' seen_not : empty '''
-    SYMBOL_TABLE.OperatorStack.append(p[-1])
+    OPERATOR_STACK.append(p[-1])
 
 def p_seen_open_parenthesis(p):
     ''' seen_open_parenthesis : empty '''
-    SYMBOL_TABLE.OperatorStack.append(p[-1])
+    OPERATOR_STACK.append(p[-1])
 
 def p_seen_close_parenthesis(p):
     ''' seen_close_parenthesis : empty '''
-    SYMBOL_TABLE.OperatorStack.pop()
+    OPERATOR_STACK.pop()
 
 def p_seen_id(p):
     ''' seen_id :  '''
-    SYMBOL_TABLE.OperandStack.append(SYMBOL_TABLE.symbol_lookup(p[-1]))
-    SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
+    OPERAND_STACK.append(FUNC_DIR.symbol_lookup(p[-1]))
+    TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(p[-1]))
 
 def p_seen_cte_i(p):
     ''' seen_cte_i :  '''
-    SYMBOL_TABLE.OperandStack.append(str(p[-1]))
-    SYMBOL_TABLE.TypeStack.append("int")
+    OPERAND_STACK.append(str(p[-1]))
+    TYPE_STACK.append("int")
 
 def p_seen_cte_f(p):
     ''' seen_cte_f :  '''
-    SYMBOL_TABLE.OperandStack.append(str(p[-1]))
-    SYMBOL_TABLE.TypeStack.append("float")
+    OPERAND_STACK.append(str(p[-1]))
+    TYPE_STACK.append("float")
 
 
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
-    SYMBOL_TABLE.OperandStack.append(str(p[-1][1:-1]))
-    SYMBOL_TABLE.TypeStack.append("str")
+    OPERAND_STACK.append(str(p[-1][1:-1]))
+    TYPE_STACK.append("str")
 
 
 
@@ -441,12 +464,12 @@ def p_term_p(p):
 
 def p_seen_factor(p):
     ''' seen_factor :  '''
-    if len(SYMBOL_TABLE.OperatorStack) and (SYMBOL_TABLE.OperatorStack[-1] == '*' or SYMBOL_TABLE.OperatorStack[-1] == '/'):
+    if len(OPERATOR_STACK) and (OPERATOR_STACK[-1] == '*' or OPERATOR_STACK[-1] == '/'):
         generateExpressionQuad()
 
 def p_seen_factor_op(p):
     ''' seen_factor_op :  '''
-    SYMBOL_TABLE.OperatorStack.append(p[-1])
+    OPERATOR_STACK.append(p[-1])
 
 
 def p_func_call(p):
@@ -483,12 +506,12 @@ def p_printable_p(p):
 
 def p_seen_printable(p):
     ''' seen_printable  : empty '''
-    printable_type = SYMBOL_TABLE.TypeStack.pop()
-    push_to_quads(Quad("WR", "_", "_",  SYMBOL_TABLE.OperandStack.pop()))
+    printable_type = TYPE_STACK.pop()
+    push_to_quads(Quad("WR", "_", "_",  OPERAND_STACK.pop()))
 
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
-    dir = SYMBOL_TABLE.JumpStack.pop()
+    dir = JUMP_STACK.pop()
     fill_quad(dir, QUAD_POINTER)
 
 def p_decision_p(p):
@@ -502,8 +525,8 @@ def p_seen_if_kwd(p):
 def p_seen_else_kwd(p):
     ''' seen_else_kwd : empty '''
     push_to_quads(Quad("GOTO", "_", "_","PND"))
-    dir = SYMBOL_TABLE.JumpStack.pop()
-    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
+    dir = JUMP_STACK.pop()
+    JUMP_STACK.append(QUAD_POINTER - 1)
     fill_quad(dir, QUAD_POINTER)
 
 def p_repetition(p):
@@ -512,14 +535,14 @@ def p_repetition(p):
 
 def p_conditional_rep(p):
     ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
-    end_dir = SYMBOL_TABLE.JumpStack.pop()
-    return_dir = SYMBOL_TABLE.JumpStack.pop()
+    end_dir = JUMP_STACK.pop()
+    return_dir = JUMP_STACK.pop()
     push_to_quads(Quad("GOTO", "_", "_", return_dir))
     fill_quad(end_dir, QUAD_POINTER)
 
 def p_seen_while_kwd(p):
     ''' seen_while_kwd : empty '''
-    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+    JUMP_STACK.append(QUAD_POINTER)
 
 
 def p_seen_while_exp(p):
@@ -530,12 +553,12 @@ def p_seen_while_exp(p):
 def p_unconditional_rep(p):
     ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
 
-    swap_end_dir = SYMBOL_TABLE.JumpStack.pop()
-    swap_start_dir = SYMBOL_TABLE.JumpStack.pop()
-    end_dir = SYMBOL_TABLE.JumpStack.pop()
-    loop_dir = SYMBOL_TABLE.JumpStack.pop()
+    swap_end_dir = JUMP_STACK.pop()
+    swap_start_dir = JUMP_STACK.pop()
+    end_dir = JUMP_STACK.pop()
+    loop_dir = JUMP_STACK.pop()
 
-    incr_res = SYMBOL_TABLE.OperandStack.pop()
+    incr_res = OPERAND_STACK.pop()
 
     for i in range(swap_start_dir, swap_end_dir):
         swap_quads(swap_start_dir, QUAD_POINTER)
@@ -545,31 +568,31 @@ def p_unconditional_rep(p):
 
 def p_seen_for_kwd(p):
     ''' seen_for_kwd : empty '''
-    SYMBOL_TABLE.OperandStack.append(SYMBOL_TABLE.symbol_lookup(p[-1]))
-    SYMBOL_TABLE.TypeStack.append(SYMBOL_TABLE.type_lookup(p[-1]))
-    SYMBOL_TABLE.OperatorStack.append("=")
+    OPERAND_STACK.append(FUNC_DIR.symbol_lookup(p[-1]))
+    TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(p[-1]))
+    OPERATOR_STACK.append("=")
 
 def p_seen_for_incr_exp(p):
     ''' seen_for_incr_exp : empty'''
-    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+    JUMP_STACK.append(QUAD_POINTER)
 
 def p_seen_for_start_exp(p):
     ''' seen_for_start_exp : empty '''
     assign_to_var(True)
-    SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+    JUMP_STACK.append(QUAD_POINTER)
 
 def p_seen_for_end_exp(p):
     ''' seen_for_end_exp : empty '''
 
-    expr_end_type = SYMBOL_TABLE.TypeStack.pop()
+    expr_end_type = TYPE_STACK.pop()
 
     if expr_end_type != "boolean":
         raise Exception("Type mismatch: 'for' end expression type is not boolean")
     else:
-        res = SYMBOL_TABLE.OperandStack.pop()
-        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+        res = OPERAND_STACK.pop()
+        JUMP_STACK.append(QUAD_POINTER)
         push_to_quads(Quad("GTF", "_", res, "PND"))
-        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER)
+        JUMP_STACK.append(QUAD_POINTER)
 
 def p_empty(p):
      'empty :'
@@ -582,42 +605,42 @@ def p_error(p):
 
 
 def generateExpressionQuad():
-    right_operand = SYMBOL_TABLE.OperandStack.pop()
-    right_type = SYMBOL_TABLE.TypeStack.pop()
-    left_operand = SYMBOL_TABLE.OperandStack.pop()
-    left_type = SYMBOL_TABLE.TypeStack.pop()
-    operator = SYMBOL_TABLE.OperatorStack.pop()
+    right_operand = OPERAND_STACK.pop()
+    right_type = TYPE_STACK.pop()
+    left_operand = OPERAND_STACK.pop()
+    left_type = TYPE_STACK.pop()
+    operator = OPERATOR_STACK.pop()
     result_type = SemanticCube[left_type][operator][right_type]
     if result_type != "err":
-        result = SYMBOL_TABLE.Avail.next()
+        result = AVAIL.next()
         push_to_quads(Quad(operator, left_operand, right_operand, result))
-        SYMBOL_TABLE.OperandStack.append(result)
-        SYMBOL_TABLE.TypeStack.append(result_type)
+        OPERAND_STACK.append(result)
+        TYPE_STACK.append(result_type)
     else:
         raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
 
 
 def assign_to_var(push_back_operand = False, push_back_type = False):
-    op = SYMBOL_TABLE.OperatorStack.pop()
-    right_operand  = SYMBOL_TABLE.OperandStack.pop()
-    res =  SYMBOL_TABLE.OperandStack.pop()
-    right_type  = SYMBOL_TABLE.TypeStack.pop()
-    res_type = SYMBOL_TABLE.TypeStack.pop()
+    op = OPERATOR_STACK.pop()
+    right_operand  = OPERAND_STACK.pop()
+    res =  OPERAND_STACK.pop()
+    right_type  = TYPE_STACK.pop()
+    res_type = TYPE_STACK.pop()
     if right_type != res_type:
         raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
     else:
         push_to_quads(Quad(op, "_", right_operand, res))
         if push_back_operand:
-            SYMBOL_TABLE.OperandStack.append(res)
+            OPERAND_STACK.append(res)
         if push_back_type:
-            SYMBOL_TABLE.TypeStack.append(res_type)
+            TYPE_STACK.append(res_type)
 
 def decision_statement():
-    expr_type = SYMBOL_TABLE.TypeStack.pop()
+    expr_type = TYPE_STACK.pop()
     if expr_type == "boolean":
-        res = SYMBOL_TABLE.OperandStack.pop()
+        res = OPERAND_STACK.pop()
         push_to_quads(Quad("GTF", "_", res, "PND"))
-        SYMBOL_TABLE.JumpStack.append(QUAD_POINTER - 1)
+        JUMP_STACK.append(QUAD_POINTER - 1)
     else:
 
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
@@ -635,9 +658,14 @@ with open(input_file) as f:
     for l in lines:
         s += l[:-1]
     result = parser.parse(s)
-    print(SYMBOL_TABLE.SYMBOLS)
-    print(FUNC_DIR.SYMBOLS)
-    print("STACKS:", SYMBOL_TABLE.OperandStack, SYMBOL_TABLE.TypeStack, SYMBOL_TABLE.OperatorStack, SYMBOL_TABLE.JumpStack)
+    for f in FUNC_DIR.FUNCS.values():
+        try:
+            print(f.SYMBOLS)
+        except:
+            for k in f.keys():
+                print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
+
+    print("STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK)
     print("GENERATED QUADS:")
     for i, q in enumerate(QUADS):
         print(str(i), q.get_string())

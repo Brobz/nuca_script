@@ -3,45 +3,31 @@ from Avail import *
 class SymbolTable(object):
     """docstring for SymbolTable."""
 
-    def __init__(self):
-        self.SYMBOLS = {
-                        "GLOBAL" : {},
-                        "CODE" : {},
-                        "STACK" : {},
-                        "TEMP" : {}
-                        }
-        self.OperatorStack = []
-        self.OperandStack = []
-        self.TypeStack = []
-        self.JumpStack = []
+    def __init__(self, scope):
+        self.scope = scope
+        self.SYMBOLS = {}
         self.Avail = Avail()
 
-    def add_scope(self, scope):
-        if scope not in self.SYMBOLS:
-            self.SYMBOLS[scope] = {}
+    def declare_symbol(self, sym_id, sym_type):
+        if sym_id not in self.SYMBOLS:
+            self.SYMBOLS[sym_id] = (sym_type, None)
         else:
-            raise Exception("Multiple Declarations of " + scope)
+            raise Exception("Multiple Declarations of " + sym_id + " in " + self.scope)
 
-    def declare_symbol(self, sym_id, sym_type, scope = "GLOBAL"):
-        if sym_id not in self.SYMBOLS[scope]:
-            self.SYMBOLS[scope][sym_id] = (sym_type, None)
+    def define_symbol(self, sym_id, sym_dir):
+        if sym_id in self.SYMBOLS:
+            self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], sym_dir)
         else:
-            raise Exception("Multiple Declarations of " + sym_id + " in " + scope)
+            raise Exception("No Declarations of " + sym_id + " in " + self.scope)
 
-    def define_symbol(self, sym_id, sym_value, scope = "GLOBAL"):
-        if sym_id in self.SYMBOLS[scope]:
-            self.SYMBOLS[scope][sym_id] = (self.SYMBOLS[scope][sym_id][0], sym_value)
-        else:
-            raise Exception("No Declarations of " + sym_id + " in " + scope)
-
-    def symbol_lookup(self, sym_id, scope = "GLOBAL"):
-        if sym_id in self.SYMBOLS[scope]:
+    def symbol_lookup(self, sym_id):
+        if sym_id in self.SYMBOLS:
             return sym_id
         else:
-            raise Exception("Unseen symbol: " + sym_id)
+            raise Exception("Unseen symbol " + sym_id + " in " + self.scope)
 
-    def type_lookup(self, sym_id, scope = "GLOBAL"):
-        if sym_id in self.SYMBOLS[scope]:
-            return self.SYMBOLS[scope][sym_id][0]
+    def type_lookup(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][0]
         else:
-            raise Exception("Unseen symbol: " + sym_id)
+            raise Exception("Unseen symbol " + sym_id + " in " + self.scope)
