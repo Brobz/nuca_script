@@ -14,6 +14,8 @@ from Avail import  *
 
 # List of token names.   This is always required
 tokens = [
+'COMMENT',
+
 'SEMI_COLON',
 'COLON',
 'COMMA',
@@ -89,13 +91,7 @@ t_DIFFERENT                 =   r'\<\>'
 
 t_ignore  = ' \t'
 
-def t_COMMENT(t):
-    r'\#.*'
-    pass
-    # No return value. Token discarded
-
 def t_TYPE(t):
-    # Currently defined as an ID; Look into how to implement actual types
     r'(int)|(float)|(str)|(void)|(boolean)'
     t.type = reserved.get(t.value, 'TYPE')    # Check for reserved words
     return t
@@ -120,6 +116,9 @@ def t_CTE_I(t):
 def t_CTE_S(t):
      r'"(?:[^"\\]|\\.)*"'
      return t
+
+def t_COMMENT(t):
+    r'//((?!/).)*//'
 
 # Define a rule so we can track line numbers
 def t_newline(t):
@@ -191,7 +190,7 @@ def swap_quads(q1, q2):
 def p_program(p):
     ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
 
-    print(">> APROPRIADO!")
+    print("Syntax Approved!")
 
 
 def p_seen_program_id(p):

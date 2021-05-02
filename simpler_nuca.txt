@@ -5,7 +5,7 @@ a, b, c, d, e, f, g : float;
 test_int : int;
 lol, lol_doubled : str;
 another_str, test_str  : str;
-
+// THIS IS A COMMENT //
 int func(a : str, b : str, func_param_int : int)
 VARS {
 
@@ -17,7 +17,7 @@ VARS {
   b = (func_var_int + 2) * a;
 }
 
-int another_func(a : str, b : str, func_param_int : int)
+str another_func(a : str, b : str, func_param_int : int)
 VARS {
 
   func_var_int, c : int;
@@ -45,6 +45,12 @@ main () {
       if (a < b) {
         a = 0.0;
         b = b + d;
+        //
+        COMMENTS
+        can also be
+        multi
+        lined
+        //
       }
       else{
         c = a + b;

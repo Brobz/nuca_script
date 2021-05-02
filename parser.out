@@ -1,5 +1,9 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
+Unused terminals:
+
+    COMMENT
+
 Grammar
 
 Rule 0     S' -> PROGRAM
@@ -130,6 +134,7 @@ CLOSE_CURLY          : 1 6 7 21 30 101 102 108 111
 CLOSE_PARENTHESIS    : 1 21 65 87 95 96 101 108 111
 COLON                : 10 29
 COMMA                : 12 15 27 91 92 98
+COMMENT              : 
 CTE_F                : 79
 CTE_I                : 80
 CTE_S                : 78
