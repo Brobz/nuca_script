@@ -10,6 +10,8 @@ class FunctionDirectory(object):
 
     def declare_symbol(self, sym_id, sym_type, scope = "GLOBAL"):
         if self.current_scope != None:
+            if sym_id in self.FUNCS["PROGRAM"].SYMBOLS:
+                print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
             self.FUNCS[scope][self.current_scope][2].declare_symbol(sym_id, sym_type)
         else:
             self.FUNCS["PROGRAM"].declare_symbol(sym_id,  sym_type)
@@ -17,6 +19,9 @@ class FunctionDirectory(object):
     def declare_param(self, param_id, param_type, scope = "GLOBAL"):
         if self.current_scope == None:
             raise Exception("Scope Error: Cant declare param")
+
+        if param_id in self.FUNCS["PROGRAM"].SYMBOLS:
+            print("WARNING: Definition of "  + param_id + " in " + self.current_scope + " shadows previous global definition.")
 
         self.FUNCS[scope][self.current_scope][1].declare_symbol(param_id, param_type)
         self.FUNCS[scope][self.current_scope][2].declare_symbol(param_id, param_type)
