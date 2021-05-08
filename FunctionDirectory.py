@@ -8,6 +8,63 @@ class FunctionDirectory(object):
         self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
 
 
+    def args_ok(self, func_id, scope = "GLOBAL"):
+        if func_id not in self.FUNCS[scope]:
+            raise Exception("Unseen function: " + func_id)
+
+        k = self.FUNCS[scope][func_id][4]
+        if k > 0:
+            raise Exception("Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
+        elif k < 0:
+            raise Exception("Argument mismatch: Call to " + func_id + " received parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
+
+    def verify_arg_type(self, func_id, arg_type, scope = "GLOBAL"):
+        if func_id not in self.FUNCS[scope]:
+            raise Exception("Unseen function: " + func_id)
+
+        k = self.FUNCS[scope][func_id][4]
+        types_list = self.FUNCS[scope][func_id][1].get_types_list()
+
+        if not len(types_list): # NO PARAM FUNC
+            self.FUNCS[scope][func_id][4] = -1
+            return
+
+        if arg_type != types_list[k]:
+            raise Exception("Type mismatch: Call to " + func_id + " received " + arg_type + " argument, was expecting " + types_list[k])
+
+        self.goto_next_param(func_id, scope)
+        return k
+
+    def set_param_index(self, func_id, index, scope = "GLOBAL"):
+        if func_id not in self.FUNCS[scope]:
+            raise Exception("Unseen function: " + func_id)
+
+        self.FUNCS[scope][func_id][4] = index
+
+    def goto_next_param(self, func_id, scope = "GLOBAL"):
+        if func_id not in self.FUNCS[scope]:
+            raise Exception("Unseen function: " + func_id)
+
+        if not len(self.FUNCS[scope][func_id][1].SYMBOLS): # NO PARAM FUNC
+            self.FUNCS[scope][func_id][4] = -1
+            return
+
+        self.FUNCS[scope][func_id][4] += 1
+
+        if self.FUNCS[scope][func_id][4] >= len(self.FUNCS[scope][func_id][1].SYMBOLS):
+            self.FUNCS[scope][func_id][4] = 0
+
+    def get_func_size(self, func_id, scope = "GLOBAL"):
+        if func_id not in self.FUNCS[scope]:
+            raise Exception("Unseen function: " + func_id)
+        return len(self.FUNCS[scope][func_id][2].SYMBOLS)
+
+    def set_start_addr(self, addr, scope = "GLOBAL"):
+        if self.current_scope != None:
+            self.FUNCS[scope][self.current_scope][3] = addr # INDEX 3 IS START_ADDR
+        else:
+            raise Exception("Scope Error: Cant declare start addr")
+
     def declare_symbol(self, sym_id, sym_type, scope = "GLOBAL"):
         if self.current_scope != None:
             if sym_id in self.FUNCS["PROGRAM"].SYMBOLS:
@@ -37,7 +94,7 @@ class FunctionDirectory(object):
         if scope == "PROGRAM":
             self.FUNCS[scope] = SymbolTable("GLOBAL")
         elif func_id not in self.FUNCS[scope]:
-            self.FUNCS[scope][func_id] = (func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id))
+            self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)
@@ -63,7 +120,7 @@ class FunctionDirectory(object):
 
 
     def func_type_lookup(self, func_id, scope = "GLOBAL"):
-        if func_id in self.FUNCS:
-            return self.FUNCS[func_id][0]
+        if func_id in self.FUNCS[scope]:
+            return self.FUNCS[scope][func_id][0]
         else:
             raise Exception("Unseen function: " + func_id)

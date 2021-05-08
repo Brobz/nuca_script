@@ -2,7 +2,7 @@ program MYPROGRAM;
 
 res, test_bool : boolean;
 a, b, c, d, e, f, g : float;
-test_int : int;
+test_int, func_result : int;
 lol, lol_doubled : str;
 another_str, test_str  : str;
 // THIS IS A COMMENT //
@@ -15,6 +15,7 @@ VARS {
   c = 2;
   func_var_int = func_param_int * c;
   b = (func_var_int + 2) * a;
+  // return 10; //
 }
 
 str another_func(a : str, b : str, func_param_int : int)
@@ -26,6 +27,13 @@ VARS {
   c = 2;
   func_var_int = func_param_int * c;
   b = (func_var_int + 2) * a;
+  // return  "RETURN VALUE : )"; //
+}
+
+boolean always_true()
+VARS {}
+{
+  // return 1; //
 }
 
 main () {
@@ -39,6 +47,9 @@ main () {
   test_int = res * 5;
   test_str = "TRUE!" * res + "False!" * !res;
 
+  func_result = func(test_str, lol, func(test_str, lol, func(test_str, lol, 10)));
+
+  res = always_true();
 
   while( ( (res == (2 - 1)) && (b + c < 10) ) || res) {
     if (a + b > d) {

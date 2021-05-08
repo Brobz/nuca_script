@@ -8,6 +8,13 @@ class SymbolTable(object):
         self.SYMBOLS = {}
         self.Avail = Avail()
 
+
+    def get_types_list(self): # FOR FUNCTION ARGUMENT VERIFICATION
+        l = []
+        for tuple in self.SYMBOLS.values():
+            l.append(tuple[0])
+        return l
+
     def declare_symbol(self, sym_id, sym_type):
         if sym_id not in self.SYMBOLS:
             self.SYMBOLS[sym_id] = (sym_type, None)

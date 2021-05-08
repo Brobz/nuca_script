@@ -14,8 +14,6 @@ from Avail import  *
 
 # List of token names.   This is always required
 tokens = [
-'COMMENT',
-
 'SEMI_COLON',
 'COLON',
 'COMMA',
@@ -135,7 +133,7 @@ lexer = lex.lex()
 
 '''
 
-// TODO: Implement quad generation for functions
+// TODO: Implement RETURN stmt functionality
 
 // TODO: Design initial virtual memory management concept for virtual machine
 
@@ -156,6 +154,7 @@ OPERATOR_STACK = []
 OPERAND_STACK = []
 TYPE_STACK = []
 JUMP_STACK = []
+FUNC_CALL_STACK = []
 QUAD_POINTER = 1
 QUADS = [Quad("GOTO", "_", "_", "PND")]
 
@@ -189,7 +188,7 @@ def swap_quads(q1, q2):
 
 def p_program(p):
     ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
-
+    push_to_quads(Quad("END", "_", "_", "_"))
     print("Syntax Approved!")
 
 
@@ -266,6 +265,7 @@ def p_func_def_star(p):
 def p_func_def(p):
     ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     FUNC_DIR.current_scope = None
+    push_to_quads(Quad("ENDFNC", "_", "_", "_"))
 
 def p_seen_func_id(p):
     ''' seen_func_id : empty '''
@@ -286,6 +286,8 @@ def p_seen_func_vars(p):
             type = list.split(":")[1]
             for id in list.split(":")[0].split(','):
                 FUNC_DIR.declare_symbol(id, type)
+
+    FUNC_DIR.set_start_addr(QUAD_POINTER)
 
 def p_func_param(p):
     ''' FUNC_PARAM : VAR FUNC_PARAM_P
@@ -472,20 +474,50 @@ def p_seen_factor_op(p):
 
 
 def p_func_call(p):
-    ''' FUNC_CALL : ID OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS '''
+    ''' FUNC_CALL : ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS '''
+    FUNC_DIR.args_ok(p[1])
+
+    push_to_quads(Quad("GOSUB", p[1], "_", "_"))
+
+    FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
+    FUNC_CALL_STACK.pop()
+
+    OPERAND_STACK.append("TEMP_RETURN_OBJ")
+    TYPE_STACK.append(FUNC_DIR.func_type_lookup(p[1]))
+
+
+
+def p_seen_func_call_id(p):
+    ''' seen_func_call_id : empty '''
+    func_type = FUNC_DIR.func_type_lookup(p[-1])
+    size = FUNC_DIR.get_func_size(p[-1])
+    push_to_quads(Quad("ERA", p[-1], "_", "_"))
+    FUNC_DIR.set_param_index(p[-1], 0)
+    FUNC_CALL_STACK.append([p[-1], 0])
 
 def p_arg_list(p):
-    ''' ARG_LIST : ID_LIST ARG_LIST_P
-                 | EXPRESSION ARG_LIST_P
+    ''' ARG_LIST : ID seen_arg ARG_LIST_P
+                 | EXPRESSION seen_arg ARG_LIST_P
+                 | FUNC_CALL seen_arg ARG_LIST_P
                  | empty '''
 
 def p_arg_list_p(p):
-    ''' ARG_LIST_P : COMMA ID_LIST ARG_LIST_P
-                   | COMMA EXPRESSION ARG_LIST_P
+    ''' ARG_LIST_P : COMMA ID seen_arg ARG_LIST_P
+                   | COMMA EXPRESSION seen_arg ARG_LIST_P
+                   | COMMA FUNC_CALL seen_arg ARG_LIST_P
                    | empty '''
 
+def p_seen_arg(p):
+    ''' seen_arg : '''
+    arg = OPERAND_STACK.pop()
+    arg_type = TYPE_STACK.pop()
+    k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], arg_type)
+    push_to_quads(Quad("PARAM", arg, "_", k))
+    FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1] = k
+
 def p_func_return(p):
-    ''' FUNC_RETURN : RETURN_KWD EXPRESSION SEMI_COLON '''
+    ''' FUNC_RETURN :   RETURN_KWD EXPRESSION SEMI_COLON
+                      | RETURN_KWD FUNC_CALL SEMI_COLON'''
 
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
@@ -664,7 +696,7 @@ with open(input_file) as f:
             for k in f.keys():
                 print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
 
-    print("STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK)
+    print("STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
     print("GENERATED QUADS:")
     for i, q in enumerate(QUADS):
         print(str(i), q.get_string())

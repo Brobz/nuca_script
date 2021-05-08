@@ -24,4 +24,8 @@ Ademas, se implemento el cubo de semantica para asegurar de que no haya errores 
 
 En el cuarto avance, se implemento la generacion de codigo intermedio (cuadruplos) para estatutos no lineales, como ciclos while y for. Ademas, se completo la generacion para expresiones sencillas,
 como los estatuos de READ y WRITE.
-Para probar: python main.py (usar simpler_nuca.txt como input)
+
+|-- Avance #5 --|
+
+En el quinto avance, se implemento la generacion de codigo intermedio (cuadruplos) para metodos y funciones, tanto en su definicion cuanto en su llamada.
+Para probar: python main.py (usar simpler_nuca.nuca o func_nuca.nuca como input)
