@@ -8,7 +8,6 @@ import ply.yacc as yacc
 
 from SymbolTable import *
 from FunctionDirectory import *
-from SemanticCube import *
 from Quad import *
 from Avail import  *
 
@@ -520,6 +519,14 @@ def p_seen_arg(p):
 def p_func_return(p):
     ''' FUNC_RETURN :   RETURN_KWD EXPRESSION SEMI_COLON
                       | RETURN_KWD FUNC_CALL SEMI_COLON'''
+
+    rtn_type = TYPE_STACK.pop()
+    rtn_id = OPERAND_STACK.pop()
+
+    FUNC_DIR.return_type_check(rtn_type)
+
+    push_to_quads(Quad("=", "_", rtn_id, "TEMP_RETURN_OBJ"))
+    push_to_quads(Quad("ENDFUNC", "_", "_", "_"))
 
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''

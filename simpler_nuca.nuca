@@ -15,7 +15,7 @@ VARS {
   c = 2;
   func_var_int = func_param_int * c;
   b = (func_var_int + 2) * a;
-  // return 10; //
+  return 10;
 }
 
 int two_params(a : int, b : int)
@@ -35,13 +35,13 @@ VARS {
   c = 2;
   func_var_int = func_param_int * c;
   b = (func_var_int + 2) * a;
-  // return  "RETURN VALUE : )"; //
+  return  "RETURN VALUE : )";
 }
 
 boolean always_true()
 VARS {}
 {
-  // return 1; //
+  return 1;
 }
 
 main () {

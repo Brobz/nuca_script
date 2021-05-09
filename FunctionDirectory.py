@@ -1,3 +1,4 @@
+from SemanticCube import *
 from SymbolTable import *
 
 class FunctionDirectory(object):
@@ -7,6 +8,14 @@ class FunctionDirectory(object):
         self.current_scope = None
         self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
 
+
+    def return_type_check(self, rtn_type, scope = "GLOBAL"):
+        if self.current_scope == None:
+            raise Exception("Scope error: cant check return type")
+
+        func_type = self.FUNCS[scope][self.current_scope][0]
+        if SemanticCube[rtn_type]["=="][func_type] == "err":
+            raise Exception("Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead.")
 
     def args_ok(self, func_id, scope = "GLOBAL"):
         if func_id not in self.FUNCS[scope]:
