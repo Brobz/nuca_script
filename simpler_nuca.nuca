@@ -8,23 +8,25 @@ another_str, test_str  : str;
 // THIS IS A COMMENT //
 int func(a : str, b : str, func_param_int : int)
 VARS {
-
   func_var_int, c : int;
 }
 {
   c = 2;
   func_var_int = func_param_int * c;
   b = (func_var_int + 2) * a;
-  return 10;
+  if(0){
+    return 10;
+  }
+  return 5;
 }
 
 int two_params(a : int, b : int)
 VARS{}
-{}
+{ return a * b + 5; }
 
 str one_param(a : int)
 VARS{}
-{}
+{ return a * "HI!"; }
 
 str another_func(a : str, b : str, func_param_int : int)
 VARS {
@@ -42,6 +44,13 @@ boolean always_true()
 VARS {}
 {
   return 1;
+}
+
+
+void monster_void()
+VARS {}
+{
+  return;
 }
 
 main () {

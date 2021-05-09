@@ -8,14 +8,21 @@ class FunctionDirectory(object):
         self.current_scope = None
         self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
 
+    def valid_return_check(self, ptr, scope = "GLOBAL"):
+        if self.current_scope == None:
+            raise Exception("Scope error: cant check for valid return")
 
-    def return_type_check(self, rtn_type, scope = "GLOBAL"):
+        return self.FUNCS[scope][self.current_scope][5] == ptr
+
+    def return_type_check(self, rtn_type, ptr, scope = "GLOBAL"):
         if self.current_scope == None:
             raise Exception("Scope error: cant check return type")
 
         func_type = self.FUNCS[scope][self.current_scope][0]
         if SemanticCube[rtn_type]["=="][func_type] == "err":
-            raise Exception("Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead.")
+            raise Exception("Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead. Maybe missing default return statement?")
+
+        self.FUNCS[scope][self.current_scope][5] = ptr
 
     def args_ok(self, func_id, scope = "GLOBAL"):
         if func_id not in self.FUNCS[scope]:
@@ -104,7 +111,7 @@ class FunctionDirectory(object):
         if scope == "PROGRAM":
             self.FUNCS[scope] = SymbolTable("GLOBAL")
         elif func_id not in self.FUNCS[scope]:
-            self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER
+            self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)

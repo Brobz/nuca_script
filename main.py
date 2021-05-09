@@ -47,7 +47,7 @@ reserved = {
     'ATTR' : 'ATTR_KWD',
     'VARS' : 'VARS_KWD',
     'main' : 'MAIN_KWD',
-    'Class' : 'CLASS_KWD',
+    'class' : 'CLASS_KWD',
     'derives' : 'DERIVES_KWD',
     'write' : 'WRITE_KWD',
     'read' : 'READ_KWD',
@@ -55,9 +55,7 @@ reserved = {
     'while' : 'WHILE_KWD',
     'for' : 'FOR_KWD',
     'if' : 'IF_KWD',
-    'else' : 'ELSE_KWD',
-
-
+    'else' : 'ELSE_KWD'
 }
 
 
@@ -131,6 +129,7 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
+// THING : IDs cannot start with type-names... BUG OR FEATURE?
 
 // TODO: Implement RETURN stmt functionality
 
@@ -263,8 +262,12 @@ def p_func_def_star(p):
 
 def p_func_def(p):
     ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
+    if not FUNC_DIR.valid_return_check(QUAD_POINTER - 1):
+        FUNC_DIR.return_type_check("void", QUAD_POINTER)
+        push_to_quads(Quad("ENDFNC", "_", "_", "_"))
+
     FUNC_DIR.current_scope = None
-    push_to_quads(Quad("ENDFNC", "_", "_", "_"))
+
 
 def p_seen_func_id(p):
     ''' seen_func_id : empty '''
@@ -316,9 +319,13 @@ def p_vars(p):
 
 
 def p_func_statement_star(p):
-    ''' FUNC_STATEMENT_STAR :       STATEMENT FUNC_STATEMENT_STAR
-                                |   FUNC_RETURN FUNC_STATEMENT_STAR
-                                |   empty '''
+    ''' FUNC_STATEMENT_STAR :      ASSIGN SEMI_COLON FUNC_STATEMENT_STAR
+                                |  FUNC_CALL SEMI_COLON FUNC_STATEMENT_STAR
+                                |  READ SEMI_COLON FUNC_STATEMENT_STAR
+                                |  WRITE SEMI_COLON FUNC_STATEMENT_STAR
+                                |  FUNC_FLOW_CONTROL FUNC_STATEMENT_STAR
+                                |  FUNC_RETURN FUNC_STATEMENT_STAR
+                                |  empty '''
 
 
 def p_statement_star(p):
@@ -330,8 +337,15 @@ def p_statement(p):
                   | FUNC_CALL SEMI_COLON
                   | READ SEMI_COLON
                   | WRITE SEMI_COLON
-                  | DECISION
-                  | REPETITION '''
+                  | FLOW_CONTROL '''
+
+def p_flow_control(p):
+    ''' FLOW_CONTROL :      DECISION
+                        |   REPETITION '''
+
+def p_func_flow_control(p):
+    ''' FUNC_FLOW_CONTROL :     FUNC_DECISION
+                            |   FUNC_REPETITION '''
 
 def p_for_incr_statement(p):
     ''' FOR_INCR_STATEMENT :    ASSIGN
@@ -518,15 +532,20 @@ def p_seen_arg(p):
 
 def p_func_return(p):
     ''' FUNC_RETURN :   RETURN_KWD EXPRESSION SEMI_COLON
-                      | RETURN_KWD FUNC_CALL SEMI_COLON'''
+                      | RETURN_KWD FUNC_CALL SEMI_COLON '''
 
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
 
-    FUNC_DIR.return_type_check(rtn_type)
-
     push_to_quads(Quad("=", "_", rtn_id, "TEMP_RETURN_OBJ"))
-    push_to_quads(Quad("ENDFUNC", "_", "_", "_"))
+    push_to_quads(Quad("ENDFNC", "_", "_", "_"))
+
+    FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1)
+
+def p_void_func_return(p):
+    ''' FUNC_RETURN : RETURN_KWD SEMI_COLON '''
+    FUNC_DIR.return_type_check("void", QUAD_POINTER)
+    push_to_quads(Quad("ENDFNC", "_", "_", "_"))
 
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
@@ -549,14 +568,26 @@ def p_seen_printable(p):
     printable_type = TYPE_STACK.pop()
     push_to_quads(Quad("WR", "_", "_",  OPERAND_STACK.pop()))
 
+def p_func_decision(p):
+    ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''
+    seen_decision()
+
+def p_func_decision_p(p):
+    ''' FUNC_DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY
+                            | empty '''
+
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
-    dir = JUMP_STACK.pop()
-    fill_quad(dir, QUAD_POINTER)
+    seen_decision()
+
 
 def p_decision_p(p):
     ''' DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
                    | empty '''
+
+def seen_decision():
+    dir = JUMP_STACK.pop()
+    fill_quad(dir, QUAD_POINTER)
 
 def p_seen_if_kwd(p):
     ''' seen_if_kwd : empty '''
@@ -569,12 +600,31 @@ def p_seen_else_kwd(p):
     JUMP_STACK.append(QUAD_POINTER - 1)
     fill_quad(dir, QUAD_POINTER)
 
+def p_func_repetition(p):
+    ''' FUNC_REPETITION :     FUNC_CONDITIONAL_REP
+                            | FUNC_UNCONDITIONAL_REP '''
+
+def p_func_conditional_rep(p):
+    ''' FUNC_CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
+    seen_conditional_rep()
+
+
+def p_func_unconditional_rep(p):
+    ''' FUNC_UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
+    seen_unconditional_rep()
+
+
 def p_repetition(p):
     ''' REPETITION : CONDITIONAL_REP
                    | UNCONDITIONAL_REP '''
 
+
 def p_conditional_rep(p):
     ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    seen_conditional_rep()
+
+
+def seen_conditional_rep():
     end_dir = JUMP_STACK.pop()
     return_dir = JUMP_STACK.pop()
     push_to_quads(Quad("GOTO", "_", "_", return_dir))
@@ -592,7 +642,10 @@ def p_seen_while_exp(p):
 
 def p_unconditional_rep(p):
     ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    seen_unconditional_rep()
 
+
+def seen_unconditional_rep():
     swap_end_dir = JUMP_STACK.pop()
     swap_start_dir = JUMP_STACK.pop()
     end_dir = JUMP_STACK.pop()
@@ -677,12 +730,11 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
 
 def decision_statement():
     expr_type = TYPE_STACK.pop()
-    if expr_type == "boolean":
+    if SemanticCube[expr_type]["=="]["boolean"]:
         res = OPERAND_STACK.pop()
         push_to_quads(Quad("GTF", "_", res, "PND"))
         JUMP_STACK.append(QUAD_POINTER - 1)
     else:
-
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
 
 
