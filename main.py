@@ -493,7 +493,7 @@ def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
     func_type = FUNC_DIR.func_type_lookup(p[-1])
     size = FUNC_DIR.get_func_size(p[-1])
-    push_to_quads(Quad("ERA", p[-1], "_", "_"))
+    push_to_quads(Quad("ERA", "_", "_", p[-1]))
     FUNC_DIR.set_param_index(p[-1], 0)
     FUNC_CALL_STACK.append([p[-1], 0])
 
