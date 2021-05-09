@@ -18,6 +18,14 @@ VARS {
   // return 10; //
 }
 
+int two_params(a : int, b : int)
+VARS{}
+{}
+
+str one_param(a : int)
+VARS{}
+{}
+
 str another_func(a : str, b : str, func_param_int : int)
 VARS {
 
@@ -47,9 +55,9 @@ main () {
   test_int = res * 5;
   test_str = "TRUE!" * res + "False!" * !res;
 
-  func_result = func(test_str, lol, func(test_str, lol, func(test_str, lol, 10)));
+  func_result = func(lol, one_param(3), two_params(func(lol, one_param(5), two_params(10, 20)), 5));
 
-  res = always_true();
+  // res = always_true(); //
 
   while( ( (res == (2 - 1)) && (b + c < 10) ) || res) {
     if (a + b > d) {

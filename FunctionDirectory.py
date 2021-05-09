@@ -13,10 +13,11 @@ class FunctionDirectory(object):
             raise Exception("Unseen function: " + func_id)
 
         k = self.FUNCS[scope][func_id][4]
-        if k > 0:
-            raise Exception("Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
-        elif k < 0:
-            raise Exception("Argument mismatch: Call to " + func_id + " received parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
+        if len(self.FUNCS[scope][func_id][1].SYMBOLS) != k:
+            if k > 0:
+                raise Exception("Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
+            elif k < 0:
+                raise Exception("Argument mismatch: Call to " + func_id + " received parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
 
     def verify_arg_type(self, func_id, arg_type, scope = "GLOBAL"):
         if func_id not in self.FUNCS[scope]:
@@ -29,11 +30,14 @@ class FunctionDirectory(object):
             self.FUNCS[scope][func_id][4] = -1
             return
 
+        if k >= len(types_list): # TOO MANY PARAMS
+            raise Exception("Argument mismatch: Call to " + func_id + " received " + str(k + 1) + " or more parameters, was expecting " + str(len(types_list)))
+
         if arg_type != types_list[k]:
             raise Exception("Type mismatch: Call to " + func_id + " received " + arg_type + " argument, was expecting " + types_list[k])
 
         self.goto_next_param(func_id, scope)
-        return k
+        return k + 1
 
     def set_param_index(self, func_id, index, scope = "GLOBAL"):
         if func_id not in self.FUNCS[scope]:
@@ -50,9 +54,6 @@ class FunctionDirectory(object):
             return
 
         self.FUNCS[scope][func_id][4] += 1
-
-        if self.FUNCS[scope][func_id][4] >= len(self.FUNCS[scope][func_id][1].SYMBOLS):
-            self.FUNCS[scope][func_id][4] = 0
 
     def get_func_size(self, func_id, scope = "GLOBAL"):
         if func_id not in self.FUNCS[scope]:

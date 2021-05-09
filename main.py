@@ -479,8 +479,10 @@ def p_func_call(p):
 
     push_to_quads(Quad("GOSUB", p[1], "_", "_"))
 
-    FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
     FUNC_CALL_STACK.pop()
+    if len(FUNC_CALL_STACK):
+        FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
+
 
     OPERAND_STACK.append("TEMP_RETURN_OBJ")
     TYPE_STACK.append(FUNC_DIR.func_type_lookup(p[1]))
