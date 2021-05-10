@@ -5,8 +5,21 @@ class FunctionDirectory(object):
     """docstring for FunctionDirectory."""
 
     def __init__(self):
+        self.temp_return_sufix = "_temp_return"
         self.current_scope = None
         self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
+
+
+    def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):
+        if func_name == None:
+            if self.current_scope == None:
+                raise Exception("Scope error: cannot get function return object name for " + func_name)
+            func_name = self.current_scope
+
+        if func_name not in self.FUNCS[scope]:
+            raise  Exception("Name error: cannot get function return object name for " + func_name  + " in " + scope)
+
+        return func_name + self.temp_return_sufix
 
     def valid_return_check(self, ptr, scope = "GLOBAL"):
         if self.current_scope == None:
@@ -112,6 +125,7 @@ class FunctionDirectory(object):
             self.FUNCS[scope] = SymbolTable("GLOBAL")
         elif func_id not in self.FUNCS[scope]:
             self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+            self.FUNCS["PROGRAM"].declare_symbol(func_id + self.temp_return_sufix, func_type)
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)

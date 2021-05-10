@@ -17,7 +17,7 @@ VARS {
   if(0){
     return 10;
   }
-  return 5;
+  return 5; // The last statemnt of a function must alwys be a return statement; If it isnt, the compiler assumes a void-type function! (which is equivalent to an invisible "return;") //
 }
 
 int two_params(a : int, b : int)
@@ -68,7 +68,7 @@ main () {
 
   // res = always_true(); //
 
-  while( ( (res == (2 - 1)) && (b + c < 10) ) || res) {
+  while( ( (res == (2 - 1)) && (b + c < 10) ) || always_true()) {
     if (a + b > d) {
       if (a < b) {
         a = 0.0;

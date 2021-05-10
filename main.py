@@ -129,7 +129,14 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
+
+// IDEA : python compile_nuca.py (main.py) nuca_file.nuca -> puts quads into C virtual machine file; compiles it with gcc and generates executable output !
+
 // THING : IDs cannot start with type-names... BUG OR FEATURE?
+
+// TODO : Add global temp_return_object for each non-void method (ALSO IMMEDIATELY STORE IT THE RETURN VALUE INTO THE NEXT TEMP after func_call to free up global temp_return_object)
+
+// TODO : Refactor files and methods
 
 // TODO: Implement RETURN stmt functionality
 
@@ -139,9 +146,6 @@ lexer = lex.lex()
 
 // TODO: Update Formal grammar and flow diagrams.
 
-For loop -> for (ID = EXPR;                     EXPR;                               STATEMENT) { STATEMENT* }
-                # Starting assignment,          # Boolean (end) expr,               # Increment expression,
-                to existing ID                  will loop until its false           will be executed at the end of each iteration, before the looping GOTO
 '''
 
 # Now to parsing!
@@ -267,6 +271,7 @@ def p_func_def(p):
         push_to_quads(Quad("ENDFNC", "_", "_", "_"))
 
     FUNC_DIR.current_scope = None
+    AVAIL.reset_counter()
 
 
 def p_seen_func_id(p):
@@ -496,14 +501,16 @@ def p_func_call(p):
     if len(FUNC_CALL_STACK):
         FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
 
-
-    OPERAND_STACK.append("TEMP_RETURN_OBJ")
+    temp = AVAIL.next()
+    OPERAND_STACK.append(temp)
     TYPE_STACK.append(FUNC_DIR.func_type_lookup(p[1]))
 
+    push_to_quads(Quad("=", "_", FUNC_DIR.get_return_obj_name(p[1]), temp))
 
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
+    OPERATOR_STACK.append("|") # ARGUMENT 'FAKE WALL'
     func_type = FUNC_DIR.func_type_lookup(p[-1])
     size = FUNC_DIR.get_func_size(p[-1])
     push_to_quads(Quad("ERA", "_", "_", p[-1]))
@@ -515,6 +522,8 @@ def p_arg_list(p):
                  | EXPRESSION seen_arg ARG_LIST_P
                  | FUNC_CALL seen_arg ARG_LIST_P
                  | empty '''
+
+    OPERATOR_STACK.pop()  # POP 'ARGUMENT FAKE WALL'
 
 def p_arg_list_p(p):
     ''' ARG_LIST_P : COMMA ID seen_arg ARG_LIST_P
@@ -537,7 +546,7 @@ def p_func_return(p):
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
 
-    push_to_quads(Quad("=", "_", rtn_id, "TEMP_RETURN_OBJ"))
+    push_to_quads(Quad("=", "_", rtn_id, FUNC_DIR.get_return_obj_name()))
     push_to_quads(Quad("ENDFNC", "_", "_", "_"))
 
     FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1)

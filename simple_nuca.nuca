@@ -3,17 +3,25 @@ program MYPROGRAM;
 i, j, p : int;
 k : float;
 
-int func (paramInt : int, paramString : str)
-VARS {
-funcVar : str;
-a, b, c : int;
-}{}
-
 float func2 (paramInt : int, paramString : str)
 VARS {
 funcVar : str;
 a, b, c : int;
-}{}
+}{
+  return 0.0;
+}
+
+int func (paramInt : int, paramString : str)
+VARS {
+funcVar : str;
+a, b, c : int;
+}{
+    if (paramInt < 10){
+      return func(paramInt + 1, paramString + "ONEUP!") + func2(paramInt, paramString + "NOUP!");
+    }
+    return 10;
+}
+
 
 
 main () {
