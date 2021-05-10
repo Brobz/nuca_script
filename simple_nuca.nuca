@@ -2,6 +2,7 @@ program MYPROGRAM;
 
 i, j, p : int;
 k : float;
+func2_temp_return : boolean;
 
 float func2 (paramInt : int, paramString : str)
 VARS {
@@ -10,6 +11,8 @@ a, b, c : int;
 }{
   return 0.0;
 }
+
+
 
 float func (paramInt : int, paramString : str)
 VARS {
@@ -25,7 +28,7 @@ a, b, c : int;
 
 
 main () {
-  k = 10.0;
+  k = func2;
   i = (5 + 5) * (2 + 5);
   j = 15 + 10 - 5 + i;
   p = 10 + 5 / 5 + j / j;

@@ -5,7 +5,6 @@ class FunctionDirectory(object):
     """docstring for FunctionDirectory."""
 
     def __init__(self):
-        self.temp_return_sufix = "_temp_return"
         self.current_scope = None
         self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
 
@@ -19,7 +18,7 @@ class FunctionDirectory(object):
         if func_name not in self.FUNCS[scope]:
             raise  Exception("Name error: cannot get function return object name for " + func_name  + " in " + scope)
 
-        return func_name + self.temp_return_sufix
+        return func_name
 
     def valid_return_check(self, ptr, scope = "GLOBAL"):
         if self.current_scope == None:
@@ -96,6 +95,9 @@ class FunctionDirectory(object):
             raise Exception("Scope Error: Cant declare start addr")
 
     def declare_symbol(self, sym_id, sym_type, scope = "GLOBAL"):
+        if sym_id in self.FUNCS[scope]:
+            raise Exception("Attribute error: symbol " + sym_id + " is already declared as a function within " + scope)
+
         if self.current_scope != None:
             if sym_id in self.FUNCS["PROGRAM"].SYMBOLS:
                 print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
@@ -125,7 +127,7 @@ class FunctionDirectory(object):
             self.FUNCS[scope] = SymbolTable("GLOBAL")
         elif func_id not in self.FUNCS[scope]:
             self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
-            self.FUNCS["PROGRAM"].declare_symbol(func_id + self.temp_return_sufix, func_type)
+            self.FUNCS["PROGRAM"].declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to TEMPORARY
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)

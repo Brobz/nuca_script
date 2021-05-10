@@ -15,9 +15,9 @@ class SymbolTable(object):
             l.append(tuple[0])
         return l
 
-    def declare_symbol(self, sym_id, sym_type):
+    def declare_symbol(self, sym_id, sym_type, is_temp = False):
         if sym_id not in self.SYMBOLS:
-            self.SYMBOLS[sym_id] = (sym_type, None)
+            self.SYMBOLS[sym_id] = (sym_type, None, is_temp)
         else:
             raise Exception("Multiple Declarations of " + sym_id + " in " + self.scope)
 
@@ -29,6 +29,8 @@ class SymbolTable(object):
 
     def symbol_lookup(self, sym_id):
         if sym_id in self.SYMBOLS:
+            if self.SYMBOLS[sym_id][2]: # This symbol is marked as TEMPORARY, meaning it is used as a global storage for the function with the same name to store its return value
+                raise Exception("Syntax Error: Use of function name " + sym_id + " as variable ID. (Maybe missing '()' ?)")
             return sym_id
         else:
             raise Exception("Unseen symbol " + sym_id + " in " + self.scope)

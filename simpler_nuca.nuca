@@ -17,7 +17,7 @@ VARS {
   if(0){
     return 10;
   }
-  return 5; // The last statemnt of a function must alwys be a return statement; If it isnt, the compiler assumes a void-type function! (which is equivalent to an invisible "return;") //
+  return 5; // The last statement of a function must always be a return statement; If it is not, the compiler assumes a void-type function! (which is equivalent to an invisible "return;") //
 }
 
 int two_params(a : int, b : int)
