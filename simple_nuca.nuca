@@ -11,7 +11,7 @@ a, b, c : int;
   return 0.0;
 }
 
-int func (paramInt : int, paramString : str)
+float func (paramInt : int, paramString : str)
 VARS {
 funcVar : str;
 a, b, c : int;
@@ -19,7 +19,7 @@ a, b, c : int;
     if (paramInt < 10){
       return func(paramInt + 1, paramString + "ONEUP!") + func2(paramInt, paramString + "NOUP!");
     }
-    return 10;
+    return 9.3;
 }
 
 
@@ -29,4 +29,5 @@ main () {
   i = (5 + 5) * (2 + 5);
   j = 15 + 10 - 5 + i;
   p = 10 + 5 / 5 + j / j;
+  k = func(i * j * p, "TEST");
 }
