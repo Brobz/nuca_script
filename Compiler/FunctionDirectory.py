@@ -1,5 +1,5 @@
-from SemanticCube import *
-from SymbolTable import *
+from Compiler.SemanticCube import *
+from Compiler.SymbolTable import *
 
 class FunctionDirectory(object):
     """docstring for FunctionDirectory."""

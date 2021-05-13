@@ -5,7 +5,17 @@ a, b, c, d, e, f, g : float;
 test_int, func_result : int;
 lol, lol_doubled : str;
 another_str, test_str  : str;
+
 // THIS IS A COMMENT //
+
+
+voidFUNC()
+VARS{}  {
+
+    write("lol?");
+    return "?";
+}
+
 int func(a : str, b : str, func_param_int : int)
 VARS {
   func_var_int, c : int;

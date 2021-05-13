@@ -1,4 +1,4 @@
-from Avail import *
+from Compiler.Avail import *
 
 class SymbolTable(object):
     """docstring for SymbolTable."""

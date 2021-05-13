@@ -9,3 +9,6 @@ class Quad(object):
 
     def get_string(self):
         return str(self.operator) + " " + str(self.left_operand) + " "  + str(self.right_operand) + " " + str(self.result)
+
+    def get_cpp_string(self):
+        return '{"' + str(self.operator) + '", "' + str(self.left_operand) + '", "'  + str(self.right_operand) + '", "' + str(self.result) + '"},' 

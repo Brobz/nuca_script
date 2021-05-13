@@ -3,13 +3,14 @@
 # Diseno de Compiladores
 # ------------------------------------------------------------
 
+import sys, os, getopt
+
 import ply.lex as lex
 import ply.yacc as yacc
 
-from SymbolTable import *
-from FunctionDirectory import *
-from Quad import *
-from Avail import  *
+from Compiler.SymbolTable import *
+from Compiler.FunctionDirectory import *
+from Compiler.Quad import *
 
 # List of token names.   This is always required
 tokens = [
@@ -130,19 +131,25 @@ lexer = lex.lex()
 
 '''
 
-// IDEA : python compile_nuca.py (main.py) nuca_file.nuca -> puts quads into C virtual machine file; compiles it with gcc and generates executable output !
+// IDEA 1 : python compile_nuca.py (main.py) nuca_file.nuca -> puts quads into C virtual machine file; compiles it with gcc and generates executable output !
 
-// THING : IDs cannot start with type-names... BUG OR FEATURE?
+// THING 1 : IDs cannot start with type-names... BUG OR FEATURE?
 
-// TODO : Add global temp_return_object for each non-void method (ALSO IMMEDIATELY STORE IT THE RETURN VALUE INTO THE NEXT TEMP after func_call to free up global temp_return_object)
+// TODO : Design initial virtual memory management concept for virtual machine
+
+// TODO : Design and implement initial VM pipeline (IDEA 1)
+
+// TODO : Implement VM code for expressions and linear statements (ASSIGN, READ, WRITE)
+
+-----------------------------------------------------------------------------------------------
 
 // TODO : Refactor files and methods
 
-// TODO: Implement RETURN stmt functionality
+// TODO : Add +=,-=, *= and /= operators as possible ASSIGN statements in grammar and SemanticCube
 
-// TODO: Design initial virtual memory management concept for virtual machine
+// TODO : Fix shift/reduce && reduce/reduce conflict warnings
 
-// TODO: Fix shift/reduce && reduce/reduce conflict warnings
+// TODO : Make list of includes/dependencies and add them to the project
 
 // TODO: Update Formal grammar and flow diagrams.
 
@@ -510,7 +517,7 @@ def p_func_call(p):
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
-    OPERATOR_STACK.append("|") # ARGUMENT 'FAKE WALL'
+    OPERATOR_STACK.append("|ARG_WALL|") # ARGUMENT 'FAKE WALL'
     func_type = FUNC_DIR.func_type_lookup(p[-1])
     size = FUNC_DIR.get_func_size(p[-1])
     push_to_quads(Quad("ERA", "_", "_", p[-1]))
@@ -747,26 +754,89 @@ def decision_statement():
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
 
 
-# Build the parser
-parser = yacc.yacc()
+## For VM compilation
+VM_FILE_PATH = "VM/main.cpp"
+VM_QUAD_MARKER_STR = "// QUADS //\n"
+VM_QUAD_START_STR = "vector<vector<string>> QUADS = {\n"
+VM_QUAD_END_STR = "\t" * 10 + "};\n"
 
-print(">> Input file for NucaNuca parsing: ")
-input_file = input("-- ")
 
-s = ""
-with open(input_file) as f:
-    lines = f.readlines()
-    for l in lines:
-        s += l[:-1]
-    result = parser.parse(s)
-    for f in FUNC_DIR.FUNCS.values():
-        try:
-            print(f.SYMBOLS)
-        except:
-            for k in f.keys():
-                print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
+def main(argv):
 
-    print("STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
-    print("GENERATED QUADS:")
-    for i, q in enumerate(QUADS):
-        print(str(i), q.get_string())
+    # Build the parser
+    parser = yacc.yacc()
+
+    output_file_path = "out.exe"
+
+    while len(argv):
+        if len(argv) == 1:
+            input_file_path = argv.pop()
+            break
+
+        arg = argv.pop()
+        param = argv.pop()
+
+        if param == "-i":
+            input_file_path = arg
+        elif param == "-o":
+            output_file_path = arg + ".exe"
+        else:
+            raise Exception("Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
+
+
+    s = ""
+    with open(input_file_path) as f:
+        lines = f.readlines()
+        for l in lines:
+            s += l[:-1]
+        result = parser.parse(s)
+        for f in FUNC_DIR.FUNCS.values():
+            try:
+                print(f.SYMBOLS)
+            except:
+                for k in f.keys():
+                    print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
+
+        print("STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
+
+
+    quad_line_indices = []
+    with open(VM_FILE_PATH, "r") as f:
+        contents = f.readlines()
+
+        for i, c in enumerate(contents):
+            if c == VM_QUAD_MARKER_STR:
+                quad_line_indices.append(i)
+
+    # IF THERE ARE MORE/LESS QUADS THAN LAST TIME...
+    quad_size_diff = len(QUADS) - (quad_line_indices[1] - quad_line_indices[0]) + 2
+    print(quad_size_diff)
+    for i in range(quad_size_diff):
+        contents.insert(quad_line_indices[1], "\n")
+
+    for i in range(-quad_size_diff):
+        contents.pop(quad_line_indices[0] + len(QUADS) - i)
+
+    insert_start_index =  quad_line_indices[0] + 2
+    insert_end_index = insert_start_index + len(QUADS)
+
+    contents[quad_line_indices[0] + 1] = VM_QUAD_START_STR
+    curr_quad = 0
+    for i in range(insert_start_index, insert_end_index):
+        contents[i] = "\t" * 10 + QUADS[curr_quad].get_cpp_string() + "\n"
+        curr_quad += 1
+
+    contents[insert_end_index] = VM_QUAD_END_STR  + VM_QUAD_MARKER_STR
+    contents[insert_end_index]
+
+    with open(VM_FILE_PATH, "w") as f:
+        contents = "".join(contents)
+        f.write(contents)
+
+    os.system("echo Compiling " + input_file_path + " into " + output_file_path)
+    os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path)
+
+
+
+if __name__=='__main__':
+    main(sys.argv[1:])
