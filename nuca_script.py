@@ -38,7 +38,7 @@ tokens = [
 'CTE_F',
 'CTE_S',
 'ID',
-'TYPE',
+
 
 ]
 
@@ -56,7 +56,12 @@ reserved = {
     'while' : 'WHILE_KWD',
     'for' : 'FOR_KWD',
     'if' : 'IF_KWD',
-    'else' : 'ELSE_KWD'
+    'else' : 'ELSE_KWD',
+    'int' : 'TYPE_I',
+    'float' : 'TYPE_F',
+    'string' : 'TYPE_S',
+    'boolean' : 'TYPE_B',
+    'void' : 'TYPE_V',
 }
 
 
@@ -86,11 +91,6 @@ t_DIFFERENT                 =   r'\<\>'
 
 
 t_ignore  = ' \t'
-
-def t_TYPE(t):
-    r'(int)|(float)|(str)|(void)|(boolean)'
-    t.type = reserved.get(t.value, 'TYPE')    # Check for reserved words
-    return t
 
 def t_ID(t):
      r'[A-Za-z]([A-Za-z]|[0-9]|_)*'
@@ -130,8 +130,6 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
-
-// THING 1 : IDs cannot start with type-names... BUG OR FEATURE?
 
 // TODO : Implement list syntax and quad generation! int arr[3] = [1, 2, 3]; ?
 
@@ -198,7 +196,7 @@ def swap_quads(q1, q2):
 def p_program(p):
     ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
     push_to_quads(Quad("END", "_", "_", "_"))
-    print("Syntax Approved!")
+    print(">> Syntax Approved!")
 
 
 def p_seen_program_id(p):
@@ -468,7 +466,7 @@ def p_seen_cte_f(p):
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
     OPERAND_STACK.append(str(p[-1][1:-1]))
-    TYPE_STACK.append("str")
+    TYPE_STACK.append("string")
 
 
 
@@ -703,6 +701,15 @@ def p_seen_for_end_exp(p):
         push_to_quads(Quad("GTF", "_", res, "PND"))
         JUMP_STACK.append(QUAD_POINTER)
 
+def p_type(p):
+    ''' TYPE :      TYPE_I
+                |   TYPE_F
+                |   TYPE_S
+                |   TYPE_B
+                |   TYPE_V '''
+
+    p[0] = p[1]
+
 def p_empty(p):
      'empty :'
      pass
@@ -789,7 +796,8 @@ def main(argv):
         lines = f.readlines()
         for l in lines:
             s += l[:-1]
-        result = parser.parse(s)
+        print(">> Parsing " + input_file_path + "...")
+        parser.parse(s)
         for f in FUNC_DIR.FUNCS.values():
             try:
                 print(f.SYMBOLS)
@@ -797,7 +805,7 @@ def main(argv):
                 for k in f.keys():
                     print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
 
-        print("STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
+        print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
 
 
     quad_line_indices = []
@@ -815,7 +823,7 @@ def main(argv):
         contents.insert(quad_line_indices[1], "\n") # More quads! Add more lines
 
     for i in range(-quad_size_diff):
-        contents.pop(quad_line_indices[0] + len(QUADS) - i) # Less quads! Get read of useless lines
+        contents.pop(quad_line_indices[0] + len(QUADS)) # Less quads! Get read of useless lines
 
     insert_start_index =  quad_line_indices[0] + 2
     insert_end_index = insert_start_index + len(QUADS)
@@ -832,9 +840,9 @@ def main(argv):
         contents = "".join(contents)
         f.write(contents)
 
-    os.system("echo Compiling " + input_file_path + " into " + output_file_path)
-    os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path)
-
+    print(">> Compiling " + input_file_path + " into " + output_file_path)
+    if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):
+        print(">> Compilation Successfull!")
 
 
 if __name__=='__main__':

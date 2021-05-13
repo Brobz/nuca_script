@@ -3,20 +3,20 @@ program MYPROGRAM;
 res, test_bool : boolean;
 a, b, c, d, e, f, g : float;
 test_int, func_result : int;
-lol, lol_doubled : str;
-another_str, test_str  : str;
+lol, lol_doubled : string;
+another_str, test_str  : string;
 
 // THIS IS A COMMENT //
 
 
-voidFUNC()
+void void_FUNC()
 VARS{}  {
 
     write("lol?");
-    return "?";
+    return;
 }
 
-int func(a : str, b : str, func_param_int : int)
+int func(a : string, b : string, func_param_int : int)
 VARS {
   func_var_int, c : int;
 }
@@ -34,11 +34,11 @@ int two_params(a : int, b : int)
 VARS{}
 { return a * b + 5; }
 
-str one_param(a : int)
+string one_param(a : int)
 VARS{}
 { return a * "HI!"; }
 
-str another_func(a : str, b : str, func_param_int : int)
+string another_func(a : string, b : string, func_param_int : int)
 VARS {
 
   func_var_int, c : int;
