@@ -131,13 +131,13 @@ lexer = lex.lex()
 
 '''
 
-// IDEA 1 : python compile_nuca.py (main.py) nuca_file.nuca -> puts quads into C virtual machine file; compiles it with gcc and generates executable output !
-
 // THING 1 : IDs cannot start with type-names... BUG OR FEATURE?
+
+// TODO : Implement list syntax and quad generation! int arr[3] = [1, 2, 3]; ?
 
 // TODO : Design initial virtual memory management concept for virtual machine
 
-// TODO : Design and implement initial VM pipeline (IDEA 1)
+// TODO : Design and implement initial VM pipeline
 
 // TODO : Implement VM code for expressions and linear statements (ASSIGN, READ, WRITE)
 
@@ -810,12 +810,12 @@ def main(argv):
 
     # IF THERE ARE MORE/LESS QUADS THAN LAST TIME...
     quad_size_diff = len(QUADS) - (quad_line_indices[1] - quad_line_indices[0]) + 2
-    print(quad_size_diff)
+
     for i in range(quad_size_diff):
-        contents.insert(quad_line_indices[1], "\n")
+        contents.insert(quad_line_indices[1], "\n") # More quads! Add more lines
 
     for i in range(-quad_size_diff):
-        contents.pop(quad_line_indices[0] + len(QUADS) - i)
+        contents.pop(quad_line_indices[0] + len(QUADS) - i) # Less quads! Get read of useless lines
 
     insert_start_index =  quad_line_indices[0] + 2
     insert_end_index = insert_start_index + len(QUADS)
@@ -827,7 +827,6 @@ def main(argv):
         curr_quad += 1
 
     contents[insert_end_index] = VM_QUAD_END_STR  + VM_QUAD_MARKER_STR
-    contents[insert_end_index]
 
     with open(VM_FILE_PATH, "w") as f:
         contents = "".join(contents)
