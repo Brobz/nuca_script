@@ -131,13 +131,20 @@ lexer = lex.lex()
 
 '''
 
-// TODO : Implement list syntax and quad generation! int arr[3] = [1, 2, 3]; ?
-
 // TODO : Design initial virtual memory management concept for virtual machine
+        NEXT STEP : Get a simple main that sums two global vars going in the VM
+        VM will need to:
+            -> Receive the indices and values of constants
+        Compiler will need to:
+            -> Set indices for each variable name
+            -> Have an op-to-code translation table
+            -> Write constants to VM file
 
 // TODO : Design and implement initial VM pipeline
 
 // TODO : Implement VM code for expressions and linear statements (ASSIGN, READ, WRITE)
+
+// TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
 -----------------------------------------------------------------------------------------------
 
@@ -155,7 +162,6 @@ lexer = lex.lex()
 
 # Now to parsing!
 
-AVAIL = Avail()
 FUNC_DIR = FunctionDirectory()
 OPERATOR_STACK = []
 OPERAND_STACK = []
@@ -182,7 +188,6 @@ def fill_quad(dir, fill):
     else:
         raise Exception("Quad Error: trying to fill complete quad")
 
-
 def swap_quads(q1, q2):
     if q2 > len(QUADS) - 1:
         QUADS.append(QUADS.pop(q1))
@@ -198,11 +203,9 @@ def p_program(p):
     push_to_quads(Quad("END", "_", "_", "_"))
     print(">> Syntax Approved!")
 
-
 def p_seen_program_id(p):
     ''' seen_program_id : empty '''
     FUNC_DIR.declare_function(p[-1], "void", "PROGRAM")
-
 
 def p_seen_main_kwd(p):
     ''' seen_main_kwd : empty '''
@@ -247,7 +250,6 @@ def p_id_list_p(p):
 def p_readable_list(p):
     ''' READABLE_LIST : ID seen_readable READABLE_LIST_P '''
 
-
 def p_readable_list_p(p):
     ''' READABLE_LIST_P : COMMA ID seen_readable READABLE_LIST_P
                   | empty '''
@@ -255,8 +257,6 @@ def p_readable_list_p(p):
 def p_seen_readable(p):
     ''' seen_readable  : empty '''
     push_to_quads(Quad("RD", "_", "_", FUNC_DIR.symbol_lookup(p[-1])))
-
-
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -276,8 +276,7 @@ def p_func_def(p):
         push_to_quads(Quad("ENDFNC", "_", "_", "_"))
 
     FUNC_DIR.current_scope = None
-    AVAIL.reset_counter()
-
+    FUNC_DIR.AVAIL.reset_counter()
 
 def p_seen_func_id(p):
     ''' seen_func_id : empty '''
@@ -327,7 +326,6 @@ def p_vars(p):
     ''' VARS : VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY '''
     p[0] = p[3]
 
-
 def p_func_statement_star(p):
     ''' FUNC_STATEMENT_STAR :      ASSIGN SEMI_COLON FUNC_STATEMENT_STAR
                                 |  FUNC_CALL SEMI_COLON FUNC_STATEMENT_STAR
@@ -336,7 +334,6 @@ def p_func_statement_star(p):
                                 |  FUNC_FLOW_CONTROL FUNC_STATEMENT_STAR
                                 |  FUNC_RETURN FUNC_STATEMENT_STAR
                                 |  empty '''
-
 
 def p_statement_star(p):
     ''' STATEMENT_STAR :  STATEMENT STATEMENT_STAR
@@ -375,12 +372,10 @@ def p_exp(p):
     ''' EXP :   TERM seen_term EXP_P
               | NOT seen_not EXP pop_not'''
 
-
 def p_seen_term(p):
     ''' seen_term :  '''
     if len(OPERATOR_STACK) and  (OPERATOR_STACK[-1] == '+' or OPERATOR_STACK[-1] == '-'):
         generateExpressionQuad()
-
 
 def p_exp_p(p):
     ''' EXP_P : PLUS seen_term_op TERM seen_term EXP_P
@@ -398,7 +393,6 @@ def p_expression(p):
 def p_seen_comp(p):
     ''' seen_comp : empty '''
     generateExpressionQuad()
-
 
 def p_seen_comp_op(p):
     ''' seen_comp_op : empty '''
@@ -426,8 +420,8 @@ def p_pop_not(p):
     op = OPERATOR_STACK.pop()
     right_operand = OPERAND_STACK.pop()
     right_type = TYPE_STACK.pop()
-    res = AVAIL.next()
     res_type = SemanticCube[op][right_type]
+    res = FUNC_DIR.next_avail(res_type)
     if res_type != "err":
         push_to_quads(Quad(op, "_", right_operand, res))
         OPERAND_STACK.append(res)
@@ -462,13 +456,10 @@ def p_seen_cte_f(p):
     OPERAND_STACK.append(str(p[-1]))
     TYPE_STACK.append("float")
 
-
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
     OPERAND_STACK.append(str(p[-1][1:-1]))
     TYPE_STACK.append("string")
-
-
 
 def p_cnst(p):
     ''' CNST : CTE_S seen_cte_s
@@ -485,7 +476,6 @@ def p_term_p(p):
                  |  FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P
                  |  empty '''
 
-
 def p_seen_factor(p):
     ''' seen_factor :  '''
     if len(OPERATOR_STACK) and (OPERATOR_STACK[-1] == '*' or OPERATOR_STACK[-1] == '/'):
@@ -494,7 +484,6 @@ def p_seen_factor(p):
 def p_seen_factor_op(p):
     ''' seen_factor_op :  '''
     OPERATOR_STACK.append(p[-1])
-
 
 def p_func_call(p):
     ''' FUNC_CALL : ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS '''
@@ -506,12 +495,12 @@ def p_func_call(p):
     if len(FUNC_CALL_STACK):
         FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
 
-    temp = AVAIL.next()
+    temp_type = FUNC_DIR.func_type_lookup(p[1])
+    temp = FUNC_DIR.next_avail(temp_type)
     OPERAND_STACK.append(temp)
-    TYPE_STACK.append(FUNC_DIR.func_type_lookup(p[1]))
+    TYPE_STACK.append(temp_type)
 
     push_to_quads(Quad("=", "_", FUNC_DIR.get_return_obj_name(p[1]), temp))
-
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
@@ -564,14 +553,11 @@ def p_void_func_return(p):
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
 
-
 def p_write(p):
     ''' WRITE : WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
 
-
 def p_printable(p):
     ''' PRINTABLE : EXPRESSION seen_printable PRINTABLE_P '''
-
 
 def p_printable_p(p):
     ''' PRINTABLE_P : COMMA EXPRESSION seen_printable PRINTABLE_P
@@ -593,7 +579,6 @@ def p_func_decision_p(p):
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
     seen_decision()
-
 
 def p_decision_p(p):
     ''' DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
@@ -622,21 +607,17 @@ def p_func_conditional_rep(p):
     ''' FUNC_CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     seen_conditional_rep()
 
-
 def p_func_unconditional_rep(p):
     ''' FUNC_UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     seen_unconditional_rep()
-
 
 def p_repetition(p):
     ''' REPETITION : CONDITIONAL_REP
                    | UNCONDITIONAL_REP '''
 
-
 def p_conditional_rep(p):
     ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
     seen_conditional_rep()
-
 
 def seen_conditional_rep():
     end_dir = JUMP_STACK.pop()
@@ -648,16 +629,13 @@ def p_seen_while_kwd(p):
     ''' seen_while_kwd : empty '''
     JUMP_STACK.append(QUAD_POINTER)
 
-
 def p_seen_while_exp(p):
     ''' seen_while_exp : empty '''
     decision_statement()
 
-
 def p_unconditional_rep(p):
     ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
     seen_unconditional_rep()
-
 
 def seen_unconditional_rep():
     swap_end_dir = JUMP_STACK.pop()
@@ -719,7 +697,6 @@ def p_error(p):
     print("Syntax error in input!")
     print(p)
 
-
 def generateExpressionQuad():
     right_operand = OPERAND_STACK.pop()
     right_type = TYPE_STACK.pop()
@@ -728,13 +705,12 @@ def generateExpressionQuad():
     operator = OPERATOR_STACK.pop()
     result_type = SemanticCube[left_type][operator][right_type]
     if result_type != "err":
-        result = AVAIL.next()
+        result = FUNC_DIR.next_avail(result_type)
         push_to_quads(Quad(operator, left_operand, right_operand, result))
         OPERAND_STACK.append(result)
         TYPE_STACK.append(result_type)
     else:
         raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
-
 
 def assign_to_var(push_back_operand = False, push_back_type = False):
     op = OPERATOR_STACK.pop()
@@ -760,12 +736,47 @@ def decision_statement():
     else:
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
 
+def fill_vm_file(file_path, marker_str, start_str, end_str, info):
+    line_indices = []
+    with open(file_path, "r") as f:
+        contents = f.readlines()
+
+        for i, c in enumerate(contents):
+            if c == marker_str:
+                line_indices.append(i)
+
+    # IF THERE ARE MORE/LESS LINES THAN LAST TIME...
+    quad_size_diff = len(info) - (line_indices[1] - line_indices[0]) + 2
+
+    for i in range(quad_size_diff):
+        contents.insert(line_indices[1], "\n") # More info! Add more lines
+
+    for i in range(-quad_size_diff):
+        contents.pop(line_indices[0] + len(info)) # Less info! Get rid of useless lines
+
+    insert_start_index =  line_indices[0] + 2
+    insert_end_index = insert_start_index + len(info)
+
+    contents[line_indices[0] + 1] = start_str
+
+    for i in range(insert_start_index, insert_end_index):
+        contents[i] = info[i - insert_start_index]
+
+    contents[insert_end_index] = end_str + marker_str
+
+    with open(VM_FILE_PATH, "w") as f:
+        contents = "".join(contents)
+        f.write(contents)
+
 
 ## For VM compilation
 VM_FILE_PATH = "VM/main.cpp"
 VM_QUAD_MARKER_STR = "// QUADS //\n"
+VM_MEMORY_MARKER_STR = "// MEMORY //\n"
 VM_QUAD_START_STR = "vector<vector<string>> QUADS = {\n"
+VM_MEMORY_START_STR = "MemoryMap GLOBAL_MEMORY("
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
+VM_MEMORY_END_STR = ");\n"
 
 
 def main(argv):
@@ -803,42 +814,23 @@ def main(argv):
                 print(f.SYMBOLS)
             except:
                 for k in f.keys():
-                    print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
+                    print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS, f[k][2].var_memory_signature, f[k][2].temp_memory_signature)
 
         print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
 
+    vm_quads = []
+    for i in range(len(QUADS)):
+        vm_quads.append("\t" * 10 + QUADS[i].get_cpp_string() + "\n")
 
-    quad_line_indices = []
-    with open(VM_FILE_PATH, "r") as f:
-        contents = f.readlines()
+    fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
 
-        for i, c in enumerate(contents):
-            if c == VM_QUAD_MARKER_STR:
-                quad_line_indices.append(i)
+    vm_memory = []
+    global_mem_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS["PROGRAM"].var_memory_signature.values())]) + "}"
+    global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS["PROGRAM"].temp_memory_signature.values())]) + "}"
+    vm_memory.append(VM_MEMORY_START_STR + global_mem_sign + ", " + global_temp_sign + VM_MEMORY_END_STR)
 
-    # IF THERE ARE MORE/LESS QUADS THAN LAST TIME...
-    quad_size_diff = len(QUADS) - (quad_line_indices[1] - quad_line_indices[0]) + 2
+    fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, "", "", vm_memory)
 
-    for i in range(quad_size_diff):
-        contents.insert(quad_line_indices[1], "\n") # More quads! Add more lines
-
-    for i in range(-quad_size_diff):
-        contents.pop(quad_line_indices[0] + len(QUADS)) # Less quads! Get read of useless lines
-
-    insert_start_index =  quad_line_indices[0] + 2
-    insert_end_index = insert_start_index + len(QUADS)
-
-    contents[quad_line_indices[0] + 1] = VM_QUAD_START_STR
-    curr_quad = 0
-    for i in range(insert_start_index, insert_end_index):
-        contents[i] = "\t" * 10 + QUADS[curr_quad].get_cpp_string() + "\n"
-        curr_quad += 1
-
-    contents[insert_end_index] = VM_QUAD_END_STR  + VM_QUAD_MARKER_STR
-
-    with open(VM_FILE_PATH, "w") as f:
-        contents = "".join(contents)
-        f.write(contents)
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)
     if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):

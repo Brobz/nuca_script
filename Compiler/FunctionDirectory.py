@@ -7,7 +7,15 @@ class FunctionDirectory(object):
     def __init__(self):
         self.current_scope = None
         self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
+        self.AVAIL = Avail()
 
+    def next_avail(self, type, scope = "GLOBAL"):
+        if self.current_scope == None:
+            self.FUNCS["PROGRAM"].next_avail(type)
+        else:
+            self.FUNCS[scope][self.current_scope][2].next_avail(type)
+
+        return self.AVAIL.next()
 
     def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):
         if func_name == None:

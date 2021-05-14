@@ -6,8 +6,25 @@ class SymbolTable(object):
     def __init__(self, scope):
         self.scope = scope
         self.SYMBOLS = {}
-        self.Avail = Avail()
+        self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0}
+        self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0}
 
+    def next_avail(self, type):
+        self.update_temp_mem_sign(type)
+
+    def update_temp_mem_sign(self, type):
+        if type not in self.temp_memory_signature:
+            if type == "void":
+                return
+            raise Exception("Type error: type " + type + " is unknown")
+        self.temp_memory_signature[type] += 1
+
+    def update_var_mem_sign(self, type):
+        if type not in self.var_memory_signature:
+            if type == "void":
+                return
+            raise Exception("Type error: type " + type + " is unknown")
+        self.var_memory_signature[type] += 1
 
     def get_types_list(self): # FOR FUNCTION ARGUMENT VERIFICATION
         l = []
@@ -18,6 +35,7 @@ class SymbolTable(object):
     def declare_symbol(self, sym_id, sym_type, is_temp = False):
         if sym_id not in self.SYMBOLS:
             self.SYMBOLS[sym_id] = (sym_type, None, is_temp)
+            self.update_var_mem_sign(sym_type)
         else:
             raise Exception("Multiple Declarations of " + sym_id + " in " + self.scope)
 
