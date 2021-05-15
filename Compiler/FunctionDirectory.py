@@ -4,19 +4,37 @@ from Compiler.SymbolTable import *
 class FunctionDirectory(object):
     """docstring for FunctionDirectory."""
 
+    MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean"]
+
     def __init__(self):
         self.current_scope = None
         self.program_name = None
         self.FUNCS = {"GLOBAL" : {}}
         self.AVAIL = Avail()
 
-    def next_avail(self, type, scope = "GLOBAL"):
-        if self.current_scope == None:
-            self.FUNCS[self.program_name].next_avail(type)
-        else:
-            self.FUNCS[scope][self.current_scope][2].next_avail(type)
 
-        return self.AVAIL.next()
+    def declare_constant(self, cnst_id, cnst_type):
+        self.declare_symbol(cnst_id, cnst_type, is_cnst = True)
+
+    def get_symbol_mem_index(self, sym_id, scope = "GLOBAL"):
+        if self.current_scope == None:
+            return self.FUNCS[self.program_name].get_mem_index(sym_id, self.program_name)
+        else:
+            mem_index = self.FUNCS[scope][self.current_scope][2].get_mem_index(sym_id, self.program_name)
+            if mem_index == -1:
+                return self.FUNCS[self.program_name].get_mem_index(sym_id, self.program_name)
+            return mem_index
+
+    def next_avail(self, type, scope = "GLOBAL"):
+        if type == "void": # Nope?
+            return
+        t_id = self.AVAIL.next()
+        if self.current_scope == None:
+            self.FUNCS[self.program_name].next_avail(t_id, type, "1" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1")
+        else:
+            self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1")
+
+        return t_id
 
     def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):
         if func_name == None:
@@ -103,16 +121,33 @@ class FunctionDirectory(object):
         else:
             raise Exception("Scope Error: Cant declare start addr")
 
-    def declare_symbol(self, sym_id, sym_type, scope = "GLOBAL"):
+    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False):
+        if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!
+            return
+
         if sym_id in self.FUNCS[scope]:
             raise Exception("Attribute error: symbol " + sym_id + " is already declared as a function within " + scope)
 
-        if self.current_scope != None:
+        # Here we decide where in memory to place this symbol
+        memory_sector_signature = list(str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(sym_type)) + "0")
+
+
+        if is_cnst:
+            memory_sector_signature.insert(0, "0") # Global Variable
+        elif self.current_scope != None:
+            memory_sector_signature.insert(0, "2") # Local Variable
             if sym_id in self.FUNCS[self.program_name].SYMBOLS:
                 print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
-            self.FUNCS[scope][self.current_scope][2].declare_symbol(sym_id, sym_type)
+            sym_table_index = 2
+            if is_param:
+                sym_table_index = 1
+            self.FUNCS[scope][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst)
+            return
         else:
-            self.FUNCS[self.program_name].declare_symbol(sym_id,  sym_type)
+            memory_sector_signature.insert(0, "1") # Global Variable
+
+        self.FUNCS[self.program_name].declare_symbol(sym_id,  sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst)
+
 
     def declare_param(self, param_id, param_type, scope = "GLOBAL"):
         if self.current_scope == None:
@@ -121,8 +156,9 @@ class FunctionDirectory(object):
         if param_id in self.FUNCS[self.program_name].SYMBOLS:
             print("WARNING: Definition of "  + param_id + " in " + self.current_scope + " shadows previous global definition.")
 
-        self.FUNCS[scope][self.current_scope][1].declare_symbol(param_id, param_type)
-        self.FUNCS[scope][self.current_scope][2].declare_symbol(param_id, param_type)
+        self.declare_symbol(param_id, param_type, is_param = True)
+        self.declare_symbol(param_id, param_type)
+
 
 
     def define_symbol(self, sym_id, sym_dir):
@@ -136,8 +172,8 @@ class FunctionDirectory(object):
             self.program_name = func_id
             self.FUNCS[self.program_name] = SymbolTable(func_id)
         elif func_id not in self.FUNCS[scope]:
+            self.declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
             self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
-            self.FUNCS[self.program_name].declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to TEMPORARY
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)

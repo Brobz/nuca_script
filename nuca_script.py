@@ -135,13 +135,31 @@ lexer = lex.lex()
 
         NEXT STEP : Get a simple main that sums two global vars going in the VM
 
-            1. Design variable (and temps) indexing structure                               (compiler)
-            2. Replace var (and temp) names with var (and temp) indices in quads            (compiler)
-            3. Design constant Constant's MemoryMap structure, assign indices and values    (compiler)
-            4. Replace constants with their indices from the constants table in quads       (compiler)
-            5. Write constant memorymap to VM file                                          (compiler)
-            6. Design preliminary op-to-code translation                                    (compiler)
-            7. Interpret QUADS in VM file                                                   (VM)
+            Preliminary model:
+
+                0 - 0.25k - Constant Ints
+                0.25k - 0.5k - Constant Floats
+                0.5k - 0.75k - Constant Strings
+                0.75k - 1k - Constant Booleans
+                1k - 2k - Global Ints
+                2k - 3k - Global Floats
+                3k - 4k - Global Strings
+                4k - 5k - Global Booleans
+                5k - 6k - Global Temp Ints
+                6k - 7k - Global Temp Floats
+                7k - 8k - Global Temp Strings
+                8k - 9k - Global Temp Booleans
+                9k - 10k - Local Ints
+                10k - 11k - Local Floats
+                11k - 12k - Local Strings
+                12k - 13k - Local Booleans
+                13k - 14k - Local Temp Ints
+                14k - 15k - Local Temp Floats
+                15k - 16k - Local Temp Strings
+                16k - 17k - Local Temp Booleans
+
+            1. Design preliminary op-to-code translation                                        (compiler)
+            2. Interpret QUADS in VM file                                                       (VM)
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
@@ -255,7 +273,7 @@ def p_readable_list_p(p):
 
 def p_seen_readable(p):
     ''' seen_readable  : empty '''
-    push_to_quads(Quad("RD", "_", "_", FUNC_DIR.symbol_lookup(p[-1])))
+    push_to_quads(Quad("RD", "_", "_", FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(p[-1]))))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -422,7 +440,7 @@ def p_pop_not(p):
     res_type = SemanticCube[op][right_type]
     res = FUNC_DIR.next_avail(res_type)
     if res_type != "err":
-        push_to_quads(Quad(op, "_", right_operand, res))
+        push_to_quads(Quad(op, "_", FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
@@ -447,17 +465,20 @@ def p_seen_id(p):
 
 def p_seen_cte_i(p):
     ''' seen_cte_i :  '''
-    OPERAND_STACK.append(str(p[-1]))
+    FUNC_DIR.declare_constant(p[-1], "int")
+    OPERAND_STACK.append(p[-1])
     TYPE_STACK.append("int")
 
 def p_seen_cte_f(p):
     ''' seen_cte_f :  '''
-    OPERAND_STACK.append(str(p[-1]))
+    FUNC_DIR.declare_constant(p[-1], "float")
+    OPERAND_STACK.append(p[-1])
     TYPE_STACK.append("float")
 
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
-    OPERAND_STACK.append(str(p[-1][1:-1]))
+    FUNC_DIR.declare_constant(p[-1], "string")
+    OPERAND_STACK.append(p[-1][1:-1])
     TYPE_STACK.append("string")
 
 def p_cnst(p):
@@ -501,7 +522,7 @@ def p_func_call(p):
     OPERAND_STACK.append(temp)
     TYPE_STACK.append(return_type)
     if return_type != "void":
-        push_to_quads(Quad("=", "_", FUNC_DIR.get_return_obj_name(p[1]), temp))
+        push_to_quads(Quad("=", "_", FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name(p[1])), FUNC_DIR.get_symbol_mem_index(temp)))
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
@@ -531,7 +552,7 @@ def p_seen_arg(p):
     arg = OPERAND_STACK.pop()
     arg_type = TYPE_STACK.pop()
     k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], arg_type)
-    push_to_quads(Quad("PARAM", arg, "_", k))
+    push_to_quads(Quad("PARAM", FUNC_DIR.get_symbol_mem_index(arg), "_", k))
     FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1] = k
 
 def p_func_return(p):
@@ -541,7 +562,7 @@ def p_func_return(p):
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
 
-    push_to_quads(Quad("=", "_", rtn_id, FUNC_DIR.get_return_obj_name()))
+    push_to_quads(Quad("=", "_", FUNC_DIR.get_symbol_mem_index(rtn_id), FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name())))
     push_to_quads(Quad("ENDFNC", "_", "_", "_"))
 
     FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1)
@@ -567,7 +588,7 @@ def p_printable_p(p):
 def p_seen_printable(p):
     ''' seen_printable  : empty '''
     printable_type = TYPE_STACK.pop()
-    push_to_quads(Quad("WR", "_", "_",  OPERAND_STACK.pop()))
+    push_to_quads(Quad("WR", "_", "_",  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK.pop())))
 
 def p_func_decision(p):
     ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''
@@ -677,7 +698,7 @@ def p_seen_for_end_exp(p):
     else:
         res = OPERAND_STACK.pop()
         JUMP_STACK.append(QUAD_POINTER)
-        push_to_quads(Quad("GTF", "_", res, "PND"))
+        push_to_quads(Quad("GTF", "_", FUNC_DIR.get_symbol_mem_index(res), "PND"))
         JUMP_STACK.append(QUAD_POINTER)
 
 def p_type(p):
@@ -707,7 +728,7 @@ def generateExpressionQuad():
     result_type = SemanticCube[left_type][operator][right_type]
     if result_type != "err":
         result = FUNC_DIR.next_avail(result_type)
-        push_to_quads(Quad(operator, left_operand, right_operand, result))
+        push_to_quads(Quad(operator, FUNC_DIR.get_symbol_mem_index(left_operand), FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(result)))
         OPERAND_STACK.append(result)
         TYPE_STACK.append(result_type)
     else:
@@ -722,7 +743,7 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     if right_type != res_type:
         raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
     else:
-        push_to_quads(Quad(op, "_", right_operand, res))
+        push_to_quads(Quad(op, "_", FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         if push_back_operand:
             OPERAND_STACK.append(res)
         if push_back_type:
@@ -732,7 +753,7 @@ def decision_statement():
     expr_type = TYPE_STACK.pop()
     if SemanticCube[expr_type]["=="]["boolean"]:
         res = OPERAND_STACK.pop()
-        push_to_quads(Quad("GTF", "_", res, "PND"))
+        push_to_quads(Quad("GTF", "_", FUNC_DIR.get_symbol_mem_index(res), "PND"))
         JUMP_STACK.append(QUAD_POINTER - 1)
     else:
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
@@ -772,13 +793,18 @@ def fill_vm_file(file_path, marker_str, start_str, end_str, info):
 
 ## For VM compilation
 VM_FILE_PATH = "VM/main.cpp"
+
 VM_QUAD_MARKER_STR = "// QUADS //\n"
-VM_MEMORY_MARKER_STR = "// MEMORY //\n"
 VM_QUAD_START_STR = "vector<vector<string>> QUADS = {\n"
-VM_MEMORY_START_STR = "map<string, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
+
+VM_MEMORY_MARKER_STR = "// MEMORY //\n"
+VM_MEMORY_START_STR = "map<string, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
 VM_MEMORY_END_STR = "\t" * 10 + "};\n"
 
+VM_CONSTANTS_MARKER_STR = "// CONSTANTS //\n"
+VM_CONSTANTS_START_STR = "map<int, string> CONSTANTS = {\n"
+VM_CONSTANTS_END_STR = "\t" * 10 + "};\n"
 
 def main(argv):
 
@@ -810,13 +836,14 @@ def main(argv):
             s += l[:-1]
         print(">> Parsing " + input_file_path + "...")
         parser.parse(s)
+        '''
         for f in FUNC_DIR.FUNCS.values():
             try:
                 print(f.SYMBOLS)
             except:
                 for k in f.keys():
-                    print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS, f[k][2].var_memory_signature, f[k][2].temp_memory_signature)
-
+                    print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
+        '''
         print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
 
     vm_quads = []
@@ -829,8 +856,9 @@ def main(argv):
     for context in FUNC_DIR.FUNCS.keys():
         if context == FUNC_DIR.program_name:
             global_mem_sign = "\t" * 10 +  "{" +  '"' + FUNC_DIR.program_name + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
-            global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}}},\n"
-            vm_memory.insert(0, global_mem_sign + ", " + global_temp_sign)
+            global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}"
+            global_const_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].const_memory_signature.values())]) + "}}},\n"
+            vm_memory.insert(0, global_mem_sign + ", " + global_temp_sign + ", " + global_const_sign)
         else:
             for func in FUNC_DIR.FUNCS[context].keys():
                 mem_sign = "\t" * 10 +  "{" +  '"' + func + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
@@ -839,6 +867,14 @@ def main(argv):
 
     fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
 
+    vm_constants = []
+    for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
+        var = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
+        if var[3]:
+            cnst_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
+            vm_constants.append(cnst_string)
+
+    fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)
     if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):
