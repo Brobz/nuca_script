@@ -131,18 +131,17 @@ lexer = lex.lex()
 
 '''
 
-// TODO : Design initial virtual memory management concept for virtual machine
-        NEXT STEP : Get a simple main that sums two global vars going in the VM
-        VM will need to:
-            -> Receive the indices and values of constants
-        Compiler will need to:
-            -> Set indices for each variable name
-            -> Have an op-to-code translation table
-            -> Write constants to VM file
-
-// TODO : Design and implement initial VM pipeline
-
 // TODO : Implement VM code for expressions and linear statements (ASSIGN, READ, WRITE)
+
+        NEXT STEP : Get a simple main that sums two global vars going in the VM
+
+            1. Design variable (and temps) indexing structure                               (compiler)
+            2. Replace var (and temp) names with var (and temp) indices in quads            (compiler)
+            3. Design constant Constant's MemoryMap structure, assign indices and values    (compiler)
+            4. Replace constants with their indices from the constants table in quads       (compiler)
+            5. Write constant memorymap to VM file                                          (compiler)
+            6. Design preliminary op-to-code translation                                    (compiler)
+            7. Interpret QUADS in VM file                                                   (VM)
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
@@ -495,12 +494,14 @@ def p_func_call(p):
     if len(FUNC_CALL_STACK):
         FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
 
-    temp_type = FUNC_DIR.func_type_lookup(p[1])
-    temp = FUNC_DIR.next_avail(temp_type)
-    OPERAND_STACK.append(temp)
-    TYPE_STACK.append(temp_type)
+    return_type = FUNC_DIR.func_type_lookup(p[1])
 
-    push_to_quads(Quad("=", "_", FUNC_DIR.get_return_obj_name(p[1]), temp))
+
+    temp = FUNC_DIR.next_avail(return_type)
+    OPERAND_STACK.append(temp)
+    TYPE_STACK.append(return_type)
+    if return_type != "void":
+        push_to_quads(Quad("=", "_", FUNC_DIR.get_return_obj_name(p[1]), temp))
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
@@ -774,9 +775,9 @@ VM_FILE_PATH = "VM/main.cpp"
 VM_QUAD_MARKER_STR = "// QUADS //\n"
 VM_MEMORY_MARKER_STR = "// MEMORY //\n"
 VM_QUAD_START_STR = "vector<vector<string>> QUADS = {\n"
-VM_MEMORY_START_STR = "MemoryMap GLOBAL_MEMORY("
+VM_MEMORY_START_STR = "vector<MemoryMapSignature> MEMORY_MAP_SIGN = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
-VM_MEMORY_END_STR = ");\n"
+VM_MEMORY_END_STR = "\t" * 10 + "};\n"
 
 
 def main(argv):
@@ -825,11 +826,18 @@ def main(argv):
     fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
 
     vm_memory = []
-    global_mem_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS["PROGRAM"].var_memory_signature.values())]) + "}"
-    global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS["PROGRAM"].temp_memory_signature.values())]) + "}"
-    vm_memory.append(VM_MEMORY_START_STR + global_mem_sign + ", " + global_temp_sign + VM_MEMORY_END_STR)
+    for context in FUNC_DIR.FUNCS.keys():
+        if context == FUNC_DIR.program_name:
+            global_mem_sign = "\t" * 10 +  "MemoryMapSignature(" +  '"' + FUNC_DIR.program_name + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
+            global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}}),\n"
+            vm_memory.insert(0, global_mem_sign + ", " + global_temp_sign)
+        else:
+            for func in FUNC_DIR.FUNCS[context].keys():
+                mem_sign = "\t" * 10 +  "MemoryMapSignature(" +  '"' + func + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
+                temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}),\n"
+                vm_memory.insert(0, mem_sign + ", " + temp_sign)
 
-    fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, "", "", vm_memory)
+    fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
 
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)

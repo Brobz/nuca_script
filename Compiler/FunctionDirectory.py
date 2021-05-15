@@ -6,12 +6,13 @@ class FunctionDirectory(object):
 
     def __init__(self):
         self.current_scope = None
-        self.FUNCS = {"PROGRAM" : None, "GLOBAL" : {}}
+        self.program_name = None
+        self.FUNCS = {"GLOBAL" : {}}
         self.AVAIL = Avail()
 
     def next_avail(self, type, scope = "GLOBAL"):
         if self.current_scope == None:
-            self.FUNCS["PROGRAM"].next_avail(type)
+            self.FUNCS[self.program_name].next_avail(type)
         else:
             self.FUNCS[scope][self.current_scope][2].next_avail(type)
 
@@ -107,17 +108,17 @@ class FunctionDirectory(object):
             raise Exception("Attribute error: symbol " + sym_id + " is already declared as a function within " + scope)
 
         if self.current_scope != None:
-            if sym_id in self.FUNCS["PROGRAM"].SYMBOLS:
+            if sym_id in self.FUNCS[self.program_name].SYMBOLS:
                 print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
             self.FUNCS[scope][self.current_scope][2].declare_symbol(sym_id, sym_type)
         else:
-            self.FUNCS["PROGRAM"].declare_symbol(sym_id,  sym_type)
+            self.FUNCS[self.program_name].declare_symbol(sym_id,  sym_type)
 
     def declare_param(self, param_id, param_type, scope = "GLOBAL"):
         if self.current_scope == None:
             raise Exception("Scope Error: Cant declare param")
 
-        if param_id in self.FUNCS["PROGRAM"].SYMBOLS:
+        if param_id in self.FUNCS[self.program_name].SYMBOLS:
             print("WARNING: Definition of "  + param_id + " in " + self.current_scope + " shadows previous global definition.")
 
         self.FUNCS[scope][self.current_scope][1].declare_symbol(param_id, param_type)
@@ -128,14 +129,15 @@ class FunctionDirectory(object):
         if self.current_scope != None:
             self.FUNCS[scope][self.current_scope][2].define_symbol(sym_id, sym_dir)
         else:
-            self.FUNCS["PROGRAM"].define_symbol(sym_id,  sym_dir)
+            self.FUNCS[self.program_name].define_symbol(sym_id,  sym_dir)
 
     def declare_function(self, func_id, func_type, scope = "GLOBAL"):
         if scope == "PROGRAM":
-            self.FUNCS[scope] = SymbolTable("GLOBAL")
+            self.program_name = func_id
+            self.FUNCS[self.program_name] = SymbolTable(func_id)
         elif func_id not in self.FUNCS[scope]:
             self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
-            self.FUNCS["PROGRAM"].declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to TEMPORARY
+            self.FUNCS[self.program_name].declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to TEMPORARY
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)
@@ -145,9 +147,9 @@ class FunctionDirectory(object):
             try:
                 return self.FUNCS[scope][self.current_scope][2].symbol_lookup(sym_id)
             except:
-                return self.FUNCS["PROGRAM"].symbol_lookup(sym_id)
+                return self.FUNCS[self.program_name].symbol_lookup(sym_id)
 
-        return self.FUNCS["PROGRAM"].symbol_lookup(sym_id)
+        return self.FUNCS[self.program_name].symbol_lookup(sym_id)
 
 
     def symbol_type_lookup(self, sym_id, scope = "GLOBAL"):
@@ -155,9 +157,9 @@ class FunctionDirectory(object):
             try:
                 return self.FUNCS[scope][self.current_scope][2].type_lookup(sym_id)
             except:
-                return self.FUNCS["PROGRAM"].type_lookup(sym_id)
+                return self.FUNCS[self.program_name].type_lookup(sym_id)
 
-        return self.FUNCS["PROGRAM"].type_lookup(sym_id)
+        return self.FUNCS[self.program_name].type_lookup(sym_id)
 
 
     def func_type_lookup(self, func_id, scope = "GLOBAL"):

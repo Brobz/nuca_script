@@ -1,28 +1,32 @@
 // NucaScript VM
 // To compile: g++ main.cpp -o out_file_path
 
-#include <string>
+
 #include <iostream>
 #include <fstream>
+#include <stack>
 #include "MemoryMap.h"
+#include "MemoryMapSignature.h"
 
 using namespace std;
 
 /*/
 
--> Under Memory Category, place vector<vector<int>>, where each entry will contain a scopes memory signature (vars and temps)
--> The index of each entry represents the scope ? (maybe use dictionaary and have function name represent the scope)
--> Quads indices will be structured in a way that we can tell global from scoped variables apart
+-> Quads indices will be structured in a way that we can tell global from scoped variables and temps from vars apart
 
 /*/
 
 // MEMORY //
-MemoryMap GLOBAL_MEMORY({2,1,0,0}, {4,2,0,0});
+vector<MemoryMapSignature> MEMORY_MAP_SIGN = {
+										MemoryMapSignature("PATITO", {{2,1,0,0}, {4,2,0,0}}),
+										MemoryMapSignature("dos", {{4,0,0,0}, {5,0,0,1}}),
+										MemoryMapSignature("uno", {{1,0,0,0}, {3,0,0,0}}),
+										};
 // MEMORY //
 
 // QUADS //
 vector<vector<string>> QUADS = {
-										{"GOTO", "_", "_", "26"},
+										{"GOTO", "_", "_", "25"},
 										{"*", "b", "a", "t0"},
 										{"+", "a", "t0", "t1"},
 										{"=", "_", "t1", "a"},
@@ -33,7 +37,7 @@ vector<vector<string>> QUADS = {
 										{"ENDFNC", "_", "_", "_"},
 										{"=", "_", "b", "i"},
 										{">", "i", "0", "t0"},
-										{"GTF", "_", "t0", "25"},
+										{"GTF", "_", "t0", "24"},
 										{"*", "b", "i", "t1"},
 										{"+", "a", "t1", "t2"},
 										{"+", "t2", "b", "t3"},
@@ -42,7 +46,6 @@ vector<vector<string>> QUADS = {
 										{"*", "i", "2", "t4"},
 										{"PARAM", "t4", "_", "1"},
 										{"GOSUB", "uno", "_", "_"},
-										{"=", "_", "uno", "t5"},
 										{"WR", "_", "_", "a"},
 										{"-", "i", "1", "t6"},
 										{"=", "_", "t6", "i"},
@@ -62,7 +65,6 @@ vector<vector<string>> QUADS = {
 										{"*", "3", "3", "t3"},
 										{"PARAM", "t3", "_", "3"},
 										{"GOSUB", "dos", "_", "_"},
-										{"=", "_", "dos", "t4"},
 										{"WR", "_", "_", "a"},
 										{"WR", "_", "_", "b"},
 										{"*", "f", "2", "t5"},
@@ -72,12 +74,17 @@ vector<vector<string>> QUADS = {
 										};
 // QUADS //
 
+
+stack<MemoryMap> MEMORY_STACK;
+
 int main () {
-  cout << ">> GENERATED QUADS:" << endl;
+
+  MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN[0].signature[0], MEMORY_MAP_SIGN[0].signature[1]));
+
   for(int i = 0; i < QUADS.size(); i++){
     cout << i << ": " << QUADS[i][0] << " " << QUADS[i][1] << " " << QUADS[i][2] << " " << QUADS[i][3] << endl;
   }
-  GLOBAL_MEMORY.local_mem.printout();
-  GLOBAL_MEMORY.temp_mem.printout();
+  MEMORY_STACK.top().local_mem.printout();
+  MEMORY_STACK.top().temp_mem.printout();
   return 0;
 }

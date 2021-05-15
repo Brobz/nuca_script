@@ -24,22 +24,22 @@ class Memory{
     void printout(){
       cout << "INTS: ";
       for (int i = 0; i < ints.size(); i++){
-        cout << ints[i] << " ";
+        cout << ints[i] << " | ";
       }
       cout << endl;
       cout << "FLOATS: ";
       for (int i = 0; i < floats.size(); i++){
-        cout << floats[i] << " ";
+        cout << floats[i] << " | ";
       }
       cout << endl;
       cout << "STRINGS: ";
       for (int i = 0; i < strings.size(); i++){
-        cout << strings[i] << " ";
+        cout << strings[i] << " | ";
       }
       cout << endl;
       cout << "BOOLEANS: ";
       for (int i = 0; i < booleans.size(); i++){
-        cout << booleans[i] << " ";
+        cout << booleans[i] << " | ";
       }
       cout << endl;
     }
