@@ -775,7 +775,7 @@ VM_FILE_PATH = "VM/main.cpp"
 VM_QUAD_MARKER_STR = "// QUADS //\n"
 VM_MEMORY_MARKER_STR = "// MEMORY //\n"
 VM_QUAD_START_STR = "vector<vector<string>> QUADS = {\n"
-VM_MEMORY_START_STR = "vector<MemoryMapSignature> MEMORY_MAP_SIGN = {\n"
+VM_MEMORY_START_STR = "map<string, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
 VM_MEMORY_END_STR = "\t" * 10 + "};\n"
 
@@ -828,14 +828,14 @@ def main(argv):
     vm_memory = []
     for context in FUNC_DIR.FUNCS.keys():
         if context == FUNC_DIR.program_name:
-            global_mem_sign = "\t" * 10 +  "MemoryMapSignature(" +  '"' + FUNC_DIR.program_name + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
-            global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}}),\n"
+            global_mem_sign = "\t" * 10 +  "{" +  '"' + FUNC_DIR.program_name + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
+            global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}}},\n"
             vm_memory.insert(0, global_mem_sign + ", " + global_temp_sign)
         else:
             for func in FUNC_DIR.FUNCS[context].keys():
-                mem_sign = "\t" * 10 +  "MemoryMapSignature(" +  '"' + func + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
-                temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}),\n"
-                vm_memory.insert(0, mem_sign + ", " + temp_sign)
+                mem_sign = "\t" * 10 +  "{" +  '"' + func + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
+                temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
+                vm_memory.append(mem_sign + ", " + temp_sign)
 
     fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
 
