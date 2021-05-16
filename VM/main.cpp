@@ -89,20 +89,111 @@ MemoryMap GLOBAL_MEM;
 stack<MemoryMap> MEMORY_STACK;
 // GLOBAL VARS //
 
+
+int write_to_memory(int index, string value){
+  if (index < 1000){ // CONSTANTS
+    if (index < 250){
+      GLOBAL_MEM.const_mem.ints[index] = stoi(value);
+    }
+    else if (index < 500){
+      GLOBAL_MEM.const_mem.floats[index - 250] = stof(value);
+    }
+    else if (index < 750){
+      GLOBAL_MEM.const_mem.strings[index - 500] = value;
+    }
+    else{
+      GLOBAL_MEM.const_mem.booleans[index - 750] = stoi(value);
+    }
+    return 0;
+  }
+  else if (index < 9000){ // GLOBALS
+    // VARIABLES
+    if (index < 2000){
+      GLOBAL_MEM.local_mem.ints[index] = stoi(value);
+    }
+    else if (index < 3000){
+      GLOBAL_MEM.local_mem.floats[index - 2000] = stof(value);
+    }
+    else if (index < 4000){
+      GLOBAL_MEM.local_mem.strings[index - 3000] = value;
+    }
+    else if (index < 5000){
+      GLOBAL_MEM.local_mem.booleans[index - 4000] = stoi(value);
+    }
+    // TEMPS
+    else if (index < 6000){
+      GLOBAL_MEM.temp_mem.ints[index] = stoi(value);
+    }
+    else if (index < 7000){
+      GLOBAL_MEM.temp_mem.floats[index - 6000] = stof(value);
+    }
+    else if (index < 8000){
+      GLOBAL_MEM.temp_mem.strings[index - 7000] = value;
+    }
+    else {
+      GLOBAL_MEM.temp_mem.booleans[index - 8000] = stoi(value);
+    }
+    return 0;
+  }
+  else{ // LOCALS
+    // VARIABLES
+    if (index < 10000){
+      MEMORY_STACK.top().local_mem.ints[index] = stoi(value);
+    }
+    else if (index < 11000){
+      MEMORY_STACK.top().local_mem.floats[index - 10000] = stof(value);
+    }
+    else if (index < 12000){
+      MEMORY_STACK.top().local_mem.strings[index - 11000] = value;
+    }
+    else if (index < 13000){
+      MEMORY_STACK.top().local_mem.booleans[index - 12000] = stoi(value);
+    }
+    // TEMPS
+    else if (index < 14000){
+      MEMORY_STACK.top().temp_mem.ints[index] = stoi(value);
+    }
+    else if (index < 15000){
+      MEMORY_STACK.top().temp_mem.floats[index - 14000] = stof(value);
+    }
+    else if (index < 16000){
+      MEMORY_STACK.top().temp_mem.strings[index - 15000] = value;
+    }
+    else {
+      MEMORY_STACK.top().temp_mem.booleans[index - 16000] = stoi(value);
+    }
+    return 0;
+  }
+
+  // ERROR! Nothing was written
+  return 1;
+}
+
+void setup(){
+  for (auto const& pair : CONSTANTS){
+    if (write_to_memory(pair.first, pair.second)){
+      cout << "Error writting " << pair.second << " to " << pair.first << endl;
+      abort();
+    }
+  }
+}
+
 int main () {
 
   // First memory signature is always GLOBAL scope
   PROGRAM_NAME = MEMORY_MAP_SIGN.begin()->first;
 
   // Pushes GLOBAL memory into the stack
-  GLOBAL_MEM = MemoryMap(MEMORY_MAP_SIGN[PROGRAM_NAME][0], MEMORY_MAP_SIGN[PROGRAM_NAME][1]);
+  GLOBAL_MEM = MemoryMap(MEMORY_MAP_SIGN[PROGRAM_NAME][0], MEMORY_MAP_SIGN[PROGRAM_NAME][1], MEMORY_MAP_SIGN[PROGRAM_NAME][2]);
+
+  // Write constants to memory
+  setup();
 
   for(int i = 0; i < QUADS.size(); i++){
     cout << i << ": " << QUADS[i][0] << " " << QUADS[i][1] << " " << QUADS[i][2] << " " << QUADS[i][3] << endl;
   }
 
-  GLOBAL_MEM.local_mem.printout();
-  GLOBAL_MEM.temp_mem.printout();
+  GLOBAL_MEM.const_mem.printout();
 
   return 0;
 }

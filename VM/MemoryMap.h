@@ -4,9 +4,7 @@ using namespace std;
 
 class MemoryMap{
     public:
-      Memory const_mem;
-      Memory local_mem;
-      Memory temp_mem;
+      Memory const_mem, local_mem, temp_mem;
 
       MemoryMap(){};
 

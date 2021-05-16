@@ -161,6 +161,12 @@ lexer = lex.lex()
             1. Design preliminary op-to-code translation                                        (compiler)
             2. Interpret QUADS in VM file                                                       (VM)
 
+            /*//*//*/ IMPORTANT /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
+
+            3. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
+
+            /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
+
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
 -----------------------------------------------------------------------------------------------
