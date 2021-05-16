@@ -31,7 +31,9 @@ tokens = [
 'STAR',
 'FWD_SLASH',
 'BIGGER',
+'BIGGER_EQ',
 'SMALLER',
+'SMALLER_EQ',
 'DIFFERENT',
 
 'CTE_I',
@@ -84,7 +86,9 @@ t_PLUS                      =   r'\+'
 t_MINUS                     =   r'\-'
 t_STAR                      =   r'\*'
 t_FWD_SLASH                 =   r'\/'
+t_BIGGER_EQ                 =   r'\>='
 t_BIGGER                    =   r'\>'
+t_SMALLER_EQ                =   r'\<='
 t_SMALLER                   =   r'\<'
 t_DIFFERENT                 =   r'\<\>'
 
@@ -423,7 +427,9 @@ def p_seen_comp_op(p):
 
 def p_comp(p):
     ''' COMP : BIGGER
+             | BIGGER_EQ
              | SMALLER
+             | SMALLER_EQ
              | DOUBLE_EQUALS
              | DIFFERENT
              | AND
@@ -483,8 +489,8 @@ def p_seen_cte_f(p):
 
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
-    FUNC_DIR.declare_constant(p[-1][1:-1], "string")
-    OPERAND_STACK.append(p[-1][1:-1])
+    FUNC_DIR.declare_constant("'" + p[-1][1:-1] + "'", "string")
+    OPERAND_STACK.append("'" + p[-1][1:-1] + "'")
     TYPE_STACK.append("string")
 
 def p_cnst(p):
@@ -850,8 +856,9 @@ def main(argv):
             except:
                 for k in f.keys():
                     print(f[k][0], k, f[k][1].SYMBOLS, f[k][2].SYMBOLS)
-        '''
+
         print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
+        '''
 
     vm_quads = []
     for i in range(len(QUADS)):
@@ -878,7 +885,10 @@ def main(argv):
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
         var = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
         if var[3]:
-            cnst_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
+            if isinstance(id, str): # String Constant
+                cnst_string = "\t" * 10 + "{" + str(var[1]) + ', "' + id[1:-1] + '"},\n'
+            else:
+                cnst_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
             vm_constants.append(cnst_string)
 
     fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)

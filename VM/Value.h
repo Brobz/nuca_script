@@ -63,8 +63,8 @@ class Value{
 
       Value operator+(const Value v){
         Value temp;
-        int sum_case = stoi(to_string(type) + to_string(v.type));
-        switch(sum_case){
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
           case 0: // INT + INT
           {
             temp.set_i(i + v.i);
@@ -87,7 +87,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot sum case " <<  sum_case << endl;
+            cout << "Cannot sum case " <<  operation_case << endl;
             abort();
           }
         }
@@ -96,8 +96,8 @@ class Value{
 
       Value operator-(const Value v){
         Value temp;
-        int sum_case = stoi(to_string(type) + to_string(v.type));
-        switch(sum_case){
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
           case 0: // INT - INT
           {
             temp.set_i(i - v.i);
@@ -116,7 +116,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot subtract case " <<  sum_case << endl;
+            cout << "Cannot subtract case " <<  operation_case << endl;
             abort();
           }
         }
@@ -125,8 +125,8 @@ class Value{
 
       Value operator*(const Value v){
         Value temp;
-        int sum_case = stoi(to_string(type) + to_string(v.type));
-        switch(sum_case){
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
           case 0: // INT * INT
           {
             temp.set_i(i * v.i);
@@ -189,7 +189,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot multiply case " <<  sum_case << endl;
+            cout << "Cannot multiply case " <<  operation_case << endl;
             abort();
           }
         }
@@ -198,8 +198,8 @@ class Value{
 
       Value operator/(const Value v){
         Value temp;
-        int sum_case = stoi(to_string(type) + to_string(v.type));
-        switch(sum_case){
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
           case 0: // INT / INT
           {
             temp.set_i(i / v.i);
@@ -218,7 +218,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot divide case " <<  sum_case << endl;
+            cout << "Cannot divide case " <<  operation_case << endl;
             abort();
           }
         }
@@ -227,8 +227,8 @@ class Value{
 
       Value operator==(const Value v){
         Value temp;
-        int sum_case = stoi(to_string(type) + to_string(v.type));
-        switch(sum_case){
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
           case 0: // INT == INT
           {
             temp.set_b(i == v.i);
@@ -255,7 +255,322 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot == case " <<  sum_case << endl;
+            cout << "Cannot == case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator>(const Value v){
+        Value temp;
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
+          case 0: // INT > INT
+          {
+            temp.set_b(i > v.i);
+          } break;
+          case 1: // INT > FLOAT
+          {
+            temp.set_b(i > v.f);
+          } break;
+          case 10: // FLOAT > INT
+          {
+            temp.set_b(f > v.i);
+          } break;
+          case 11: // FLOAT > FLOAT
+          {
+            temp.set_b(f > v.f);
+          } break;
+          case 22: // STRING > STRING
+          {
+            temp.set_b(s.size() > v.s.size());
+          } break;
+          default:
+          {
+            cout << "Cannot > case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator<(const Value v){
+        Value temp;
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
+          case 0: // INT < INT
+          {
+            temp.set_b(i < v.i);
+          } break;
+          case 1: // INT < FLOAT
+          {
+            temp.set_b(i < v.f);
+          } break;
+          case 10: // FLOAT < INT
+          {
+            temp.set_b(f < v.i);
+          } break;
+          case 11: // FLOAT < FLOAT
+          {
+            temp.set_b(f < v.f);
+          } break;
+          case 22: // STRING < STRING
+          {
+            temp.set_b(s.size() < v.s.size());
+          } break;
+          default:
+          {
+            cout << "Cannot < case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator>=(const Value v){
+        Value temp;
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
+          case 0: // INT >= INT
+          {
+            temp.set_b(i >= v.i);
+          } break;
+          case 1: // INT >= FLOAT
+          {
+            temp.set_b(i >= v.f);
+          } break;
+          case 10: // FLOAT >= INT
+          {
+            temp.set_b(f >= v.i);
+          } break;
+          case 11: // FLOAT >= FLOAT
+          {
+            temp.set_b(f >= v.f);
+          } break;
+          case 22: // STRING >= STRING
+          {
+            temp.set_b(s.size() >= v.s.size());
+          } break;
+          default:
+          {
+            cout << "Cannot >= case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator<=(const Value v){
+        Value temp;
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
+          case 0: // INT <= INT
+          {
+            temp.set_b(i <= v.i);
+          } break;
+          case 1: // INT <= FLOAT
+          {
+            temp.set_b(i <= v.f);
+          } break;
+          case 10: // FLOAT <= INT
+          {
+            temp.set_b(f <= v.i);
+          } break;
+          case 11: // FLOAT <= FLOAT
+          {
+            temp.set_b(f <= v.f);
+          } break;
+          case 22: // STRING <= STRING
+          {
+            temp.set_b(s.size() <= v.s.size());
+          } break;
+          default:
+          {
+            cout << "Cannot <= case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator&&(const Value v){
+        Value temp;
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
+          case 0: // INT && INT
+          {
+            temp.set_b(i && v.i);
+          } break;
+          case 1: // INT && FLOAT
+          {
+            temp.set_b(i && v.f);
+          } break;
+          case 2: // INT && STRING
+          {
+            temp.set_b(i && v.s.size());
+          } break;
+          case 3: // INT && BOOL
+          {
+            temp.set_b(i && v.b);
+          } break;
+          case 10: // FLOAT && INT
+          {
+            temp.set_b(f && v.i);
+          } break;
+          case 11: // FLOAT && FLOAT
+          {
+            temp.set_b(f && v.f);
+          } break;
+          case 12: // FLOAT && STRING
+          {
+            temp.set_b(f && v.s.size());
+          } break;
+          case 13: // FLOAT && BOOL
+          {
+            temp.set_b(f && v.b);
+          } break;
+          case 20: // STRING && INT
+          {
+            temp.set_b(s.size() && v.i);
+          } break;
+          case 21: // STRING && FLOAT
+          {
+            temp.set_b(s.size() && v.f);
+          } break;
+          case 22: // STRING && STRING
+          {
+            temp.set_b(s.size() && v.s.size());
+          } break;
+          case 23: // STRING && BOOL
+          {
+            temp.set_b(s.size() && v.b);
+          } break;
+          case 30: // BOOl && INT
+          {
+            temp.set_b(b && v.i);
+          } break;
+          case 31: // BOOl && FLOAT
+          {
+            temp.set_b(b && v.f);
+          } break;
+          case 32: // BOOl && STRING
+          {
+            temp.set_b(b && v.s.size());
+          } break;
+          case 33: // BOOl && BOOL
+          {
+            temp.set_b(b && v.b);
+          } break;
+          default:
+          {
+            cout << "Cannot && case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator||(const Value v){
+        Value temp;
+        int operation_case = stoi(to_string(type) + to_string(v.type));
+        switch(operation_case){
+          case 0: // INT || INT
+          {
+            temp.set_b(i || v.i);
+          } break;
+          case 1: // INT || FLOAT
+          {
+            temp.set_b(i || v.f);
+          } break;
+          case 2: // INT || STRING
+          {
+            temp.set_b(i || v.s.size());
+          } break;
+          case 3: // INT || BOOL
+          {
+            temp.set_b(i || v.b);
+          } break;
+          case 10: // FLOAT || INT
+          {
+            temp.set_b(f || v.i);
+          } break;
+          case 11: // FLOAT || FLOAT
+          {
+            temp.set_b(f || v.f);
+          } break;
+          case 12: // FLOAT || STRING
+          {
+            temp.set_b(f || v.s.size());
+          } break;
+          case 13: // FLOAT || BOOL
+          {
+            temp.set_b(f || v.b);
+          } break;
+          case 20: // STRING || INT
+          {
+            temp.set_b(s.size() || v.i);
+          } break;
+          case 21: // STRING || FLOAT
+          {
+            temp.set_b(s.size() || v.f);
+          } break;
+          case 22: // STRING || STRING
+          {
+            temp.set_b(s.size() || v.s.size());
+          } break;
+          case 23: // STRING || BOOL
+          {
+            temp.set_b(s.size() || v.b);
+          } break;
+          case 30: // BOOl || INT
+          {
+            temp.set_b(b || v.i);
+          } break;
+          case 31: // BOOl || FLOAT
+          {
+            temp.set_b(b || v.f);
+          } break;
+          case 32: // BOOl || STRING
+          {
+            temp.set_b(b || v.s.size());
+          } break;
+          case 33: // BOOl || BOOL
+          {
+            temp.set_b(b || v.b);
+          } break;
+          default:
+          {
+            cout << "Cannot && case " <<  operation_case << endl;
+            abort();
+          }
+        }
+        return temp;
+      }
+
+      Value operator!(){
+        Value temp;
+        int operation_case = type;
+        switch(operation_case){
+          case 0: // !INT
+          {
+            temp.set_b(!i);
+          } break;
+          case 1: // !FLOAT
+          {
+            temp.set_b(!f);
+          } break;
+          case 2: // !STRING
+          {
+            temp.set_b(!s.size());
+          } break;
+          case 3: // !BOOLEAN
+          {
+            temp.set_b(!b);
+          } break;
+          default:
+          {
+            cout << "Cannot ! case " <<  operation_case << endl;
             abort();
           }
         }

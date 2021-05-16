@@ -147,7 +147,7 @@ class FunctionDirectory(object):
 
 
         if is_cnst:
-            memory_sector_signature.insert(0, "0") # Global Variable
+            memory_sector_signature.insert(0, "0") # Global Constant
         elif self.current_scope != None:
             memory_sector_signature.insert(0, "2") # Local Variable
             if sym_id in self.FUNCS[self.program_name].SYMBOLS:
