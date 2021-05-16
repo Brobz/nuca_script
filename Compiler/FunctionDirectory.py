@@ -135,7 +135,7 @@ class FunctionDirectory(object):
         else:
             raise Exception("Scope Error: Cant get func start addr")
 
-    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False):
+    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False, give_warning = True):
         if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!
             return
 
@@ -150,7 +150,7 @@ class FunctionDirectory(object):
             memory_sector_signature.insert(0, "0") # Global Constant
         elif self.current_scope != None:
             memory_sector_signature.insert(0, "2") # Local Variable
-            if sym_id in self.FUNCS[self.program_name].SYMBOLS:
+            if sym_id in self.FUNCS[self.program_name].SYMBOLS and give_warning:
                 print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
             sym_table_index = 2
             if is_param:
@@ -167,11 +167,8 @@ class FunctionDirectory(object):
         if self.current_scope == None:
             raise Exception("Scope Error: Cant declare param")
 
-        if param_id in self.FUNCS[self.program_name].SYMBOLS:
-            print("WARNING: Definition of "  + param_id + " in " + self.current_scope + " shadows previous global definition.")
-
         self.declare_symbol(param_id, param_type, is_param = True)
-        self.declare_symbol(param_id, param_type)
+        self.declare_symbol(param_id, param_type, give_warning = False)
 
 
 

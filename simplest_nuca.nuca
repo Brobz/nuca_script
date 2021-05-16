@@ -5,6 +5,13 @@ d, e, f : float;
 g : string;
 h : boolean;
 
+
+int int_func(a : int)
+VARS {}
+{
+  return a * 2;
+}
+
 main (){
   a = 1 + 3;
   b = 5;
