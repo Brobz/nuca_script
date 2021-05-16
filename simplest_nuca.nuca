@@ -6,12 +6,16 @@ g : string;
 h : boolean;
 
 main (){
-  a = 1;
+  a = 1 + 3;
   b = 5;
   c = 10;
   d = 4.5;
-  e = 1.3;
-  f = 3.3;
-  g = "HI!";
-  h = 1;
+  e = 5 + 1.3;
+  f = 3.3 + 2;
+  g = "HI!" * b;
+  h = g == "HI!" * (a + 1);
+  g = "lol" * h + "\t" * 2 + "HAHA" * 1 ;
+  e = 1;
+  f = a * (1 == 1) + b * (2 == 2);
+  print(a, b, c, d, e, f, g, h);
 }

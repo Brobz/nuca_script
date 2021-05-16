@@ -50,7 +50,7 @@ reserved = {
     'main' : 'MAIN_KWD',
     'class' : 'CLASS_KWD',
     'derives' : 'DERIVES_KWD',
-    'write' : 'WRITE_KWD',
+    'print' : 'WRITE_KWD',
     'read' : 'READ_KWD',
     'return' : 'RETURN_KWD',
     'while' : 'WHILE_KWD',
@@ -133,9 +133,7 @@ lexer = lex.lex()
 
 // TODO : Implement VM code for expressions and linear statements (ASSIGN, READ, WRITE)
 
-        NEXT STEP : Get a simple main that sums two global vars going in the VM
-
-            Preliminary model:
+            Preliminary Memory Model:
 
                 0 - 0.25k - Constant Ints
                 0.25k - 0.5k - Constant Floats
@@ -158,13 +156,15 @@ lexer = lex.lex()
                 15k - 16k - Local Temp Strings
                 16k - 17k - Local Temp Booleans
 
-            1. Interpret QUADS in VM file                                                       (VM)
-
             /*//*//*/ IMPORTANT /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
-            2. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
+            1. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
 
             /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
+
+            2. Implement READ
+
+            3. Change WRITE to PRINT, and make it print comma-separated printables inline;
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
@@ -593,8 +593,9 @@ def p_printable_p(p):
 
 def p_seen_printable(p):
     ''' seen_printable  : empty '''
+    printable = OPERAND_STACK.pop()
     printable_type = TYPE_STACK.pop()
-    push_to_quads(Quad("PRNT", -1, -1,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK.pop())))
+    push_to_quads(Quad("PRNT", -1, -1, FUNC_DIR.get_symbol_mem_index(printable)))
 
 def p_func_decision(p):
     ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''

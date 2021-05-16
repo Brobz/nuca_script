@@ -12,7 +12,7 @@ SemanticCube["int"] = {
                         "!=" :  {"int" : "boolean", "float" : "boolean", "string" : "err", "boolean" : "boolean", "void" : "err"} ,
                         "*" :  {"int" : "int", "float" : "float", "string" : "string", "boolean" : "int", "void" : "err"} ,
                         "/" :  {"int" : "int", "float" : "float", "string" : "err", "boolean" : "err", "void" : "err"} ,
-                        "+" :  {"int" : "int", "float" : "float", "string" : "err", "boolean" : "int", "void" : "err"} ,
+                        "+" :  {"int" : "int", "float" : "float", "string" : "err", "boolean" : "err", "void" : "err"} ,
                         "-" :  {"int" : "int", "float" : "float", "string" : "err", "boolean" : "int", "void" : "err"}
                     }
 
@@ -64,7 +64,7 @@ SemanticCube["boolean"] = {
                         "!=" : {"int" : "boolean", "float" : "err", "string" : "err", "boolean" : "boolean", "void" : "err"},
                         "*" : {"int" : "int", "float" : "float", "string" : "string", "boolean" : "err", "void" : "err"},
                         "/" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
-                        "+" : {"int" : "int", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err"},
+                        "+" : {"int" : "err", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err"},
                          "-" : {"int" : "int", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err"}
                         }
 
@@ -78,7 +78,7 @@ SemanticCube["void"] = {
                         "&&" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
                         "||" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
                         "!=" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
-                        "*" : {"int" : "err", "float" : "err", "string" : "string", "boolean" : "err", "void" : "err"},
+                        "*" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
                         "/" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
                         "+" : {"int" : "err", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err"},
                          "-" : {"int" : "err", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err"}

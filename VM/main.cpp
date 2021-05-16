@@ -8,39 +8,73 @@
 #include <map>
 
 #include "MemoryMap.h"
+#include "Value.h"
 
 using namespace std;
 
 
 // MEMORY //
 map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{1, {{3,3,1,1}, {0,0,0,0}, {3,3,1,0}}},
+										{1, {{3,3,1,1}, {5,2,7,3}, {5,3,4,0}}},
 										};
 // MEMORY //
 
 // CONSTANTS //
 map<int, string> CONSTANTS = {
 										{0, "1"},
-										{1, "5"},
-										{2, "10"},
+										{1, "3"},
+										{2, "5"},
+										{3, "10"},
 										{250, "4.5"},
 										{251, "1.3"},
 										{252, "3.3"},
+										{4, "2"},
 										{500, "HI!"},
+										{501, "lol"},
+										{502, "\t"},
+										{503, "HAHA"},
 										};
 // CONSTANTS //
 
 // QUADS //
 vector<vector<int>> QUADS = {
 										{20, -1, -1, 1},
-										{0, -1, 0, 1000},
-										{0, -1, 1, 1001},
-										{0, -1, 2, 1002},
+										{1, 0, 1, 5000},
+										{0, -1, 5000, 1000},
+										{0, -1, 2, 1001},
+										{0, -1, 3, 1002},
 										{0, -1, 250, 2000},
-										{0, -1, 251, 2001},
-										{0, -1, 252, 2002},
-										{0, -1, 500, 3000},
-										{0, -1, 0, 4000},
+										{1, 2, 251, 6000},
+										{0, -1, 6000, 2001},
+										{1, 252, 4, 6001},
+										{0, -1, 6001, 2002},
+										{3, 500, 1001, 7000},
+										{0, -1, 7000, 3000},
+										{1, 1000, 0, 5001},
+										{3, 500, 5001, 7001},
+										{5, 3000, 7001, 8000},
+										{0, -1, 8000, 4000},
+										{3, 501, 4000, 7002},
+										{3, 502, 4, 7003},
+										{1, 7002, 7003, 7004},
+										{3, 503, 0, 7005},
+										{1, 7004, 7005, 7006},
+										{0, -1, 7006, 3000},
+										{0, -1, 0, 2001},
+										{5, 0, 0, 8001},
+										{3, 1000, 8001, 5002},
+										{5, 4, 4, 8002},
+										{3, 1001, 8002, 5003},
+										{1, 5002, 5003, 5004},
+										{0, -1, 5004, 2002},
+										{18, -1, -1, 1000},
+										{18, -1, -1, 1001},
+										{18, -1, -1, 1002},
+										{18, -1, -1, 2000},
+										{18, -1, -1, 2001},
+										{18, -1, -1, 2002},
+										{18, -1, -1, 3000},
+										{18, -1, -1, 4000},
 										{22, -1, -1, -1},
 										};
 // QUADS //
@@ -52,6 +86,30 @@ int IP; // Instruction Pointer
 MemoryMap GLOBAL_MEM;
 stack<MemoryMap> MEMORY_STACK;
 // GLOBAL VARS //
+
+
+Value str_to_val(string str, int type){
+  Value v;
+  switch (type) {
+    case 0: // INT
+    {
+      v.set_i(stoi(str));
+    }  break;
+    case 1: // FLOAT
+    {
+      v.set_f(stof(str));
+    }  break;
+    case 2: // STRING
+    {
+      v.set_s(str);
+    }  break;
+    case 3: // BOOL
+    {
+      v.set_b(stoi(str));
+    }  break;
+  }
+  return v;
+}
 
 string mem_index_to_mem_signature(int index){
   if (index < 1000){ // CONSTANTS
@@ -413,44 +471,12 @@ void run(){
           vector<string> left_operand = read_from_memory(QUADS[IP][1]);
           vector<string> right_operand = read_from_memory(QUADS[IP][2]);
 
-          int result_type = stoi(string(1, mem_index_to_mem_signature(result_dir)[1]));
-          int left_type = stoi(left_operand[0]) ;
-          int right_type = stoi(right_operand[0]);
+          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
+          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
 
-          /*/
-          switch(result_type){
-            case 0:
-              {
-                // INTS
-                if (left_type == 0){
-                  int left_value = stoi(left_operand[1]);
-                }
-                int value = (int) (str_to_val(left_operand[1], left_type) + str_to_val(right_operand[1], right_type));
-                write_to_memory(result_dir, to_string(value));
-              }
-              break;
-            case 1:
-              {
-                // FLOATS
-                float value = (float) (str_to_val(left_operand[1], left_type) + str_to_val(right_operand[1], right_type));
-                write_to_memory(result_dir, to_string(value));
-              }
-              break;
-            case 2:
-              {
-                // STRINGS
-                string value = str_to_val(left_operand[1], left_type) + str_to_val(right_operand[1], right_type);
-                write_to_memory(result_dir, value);
-              }
-              break;
-            case 3:
-              {
-                // BOOLEANS
-                bool value = (bool) (str_to_val(left_operand[1], left_type) + str_to_val(right_operand[1], right_type));
-                write_to_memory(result_dir, to_string(value));
-              }
-          }
-          /*/
+          Value res_value = left_value + right_value;
+
+          write_to_memory(result_dir, res_value.to_str());
 
           IP++;
         }
@@ -460,6 +486,17 @@ void run(){
         // -
         {
           // Subtract !
+          int result_dir = QUADS[IP][3];
+
+          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
+          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
+
+          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
+          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
+
+          Value res_value = left_value - right_value;
+
+          write_to_memory(result_dir, res_value.to_str());
           IP++;
         }
         break;
@@ -468,6 +505,17 @@ void run(){
         // *
         {
           // Mutiply!
+          int result_dir = QUADS[IP][3];
+
+          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
+          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
+
+          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
+          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
+
+          Value res_value = left_value * right_value;
+
+          write_to_memory(result_dir, res_value.to_str());
           IP++;
         }
         break;
@@ -476,6 +524,17 @@ void run(){
         // /
         {
           // Divide!
+          int result_dir = QUADS[IP][3];
+
+          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
+          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
+
+          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
+          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
+
+          Value res_value = left_value / right_value;
+
+          write_to_memory(result_dir, res_value.to_str());
           IP++;
         }
         break;
@@ -484,10 +543,31 @@ void run(){
         // ==
         {
           // Compare!
+          int result_dir = QUADS[IP][3];
+
+          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
+          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
+
+          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
+          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
+
+          Value res_value = left_value == right_value;
+
+          write_to_memory(result_dir, res_value.to_str());
           IP++;
         }
         break;
 
+      case 18:
+        // PRINT
+        {
+
+          vector<string> printable = read_from_memory(QUADS[IP][3]);
+          cout << str_to_val(printable[1], stoi(printable[0])).to_str() << endl;
+
+          IP++;
+        }
+        break;
       case 20:
         // GOTO
         {
@@ -526,8 +606,6 @@ int main () {
 
   // Run program
   run();
-
-  GLOBAL_MEM.local_mem.printout();
 
   return 0;
 }
