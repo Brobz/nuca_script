@@ -158,12 +158,11 @@ lexer = lex.lex()
                 15k - 16k - Local Temp Strings
                 16k - 17k - Local Temp Booleans
 
-            1. Design preliminary op-to-code translation                                        (compiler)
-            2. Interpret QUADS in VM file                                                       (VM)
+            1. Interpret QUADS in VM file                                                       (VM)
 
             /*//*//*/ IMPORTANT /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
-            3. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
+            2. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
 
             /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
@@ -192,7 +191,7 @@ TYPE_STACK = []
 JUMP_STACK = []
 FUNC_CALL_STACK = []
 QUAD_POINTER = 1
-QUADS = [Quad("GOTO", "_", "_", "PND")]
+QUADS = [Quad("GOTO", -1, -1, "PND")]
 
 def push_to_quads(q):
     global QUADS
@@ -223,7 +222,7 @@ def swap_quads(q1, q2):
 
 def p_program(p):
     ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON CLASS_STAR GLOBAL_VAR FUNC_DEF_STAR MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
-    push_to_quads(Quad("END", "_", "_", "_"))
+    push_to_quads(Quad("END", -1, -1, -1))
     print(">> Syntax Approved!")
 
 def p_seen_program_id(p):
@@ -232,6 +231,7 @@ def p_seen_program_id(p):
 
 def p_seen_main_kwd(p):
     ''' seen_main_kwd : empty '''
+    FUNC_DIR.set_main_start_addr(QUAD_POINTER)
     fill_quad(0, QUAD_POINTER)
 
 def p_class_star(p):
@@ -279,7 +279,7 @@ def p_readable_list_p(p):
 
 def p_seen_readable(p):
     ''' seen_readable  : empty '''
-    push_to_quads(Quad("RD", "_", "_", FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(p[-1]))))
+    push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(p[-1]))))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -296,7 +296,7 @@ def p_func_def(p):
     ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     if not FUNC_DIR.valid_return_check(QUAD_POINTER - 1):
         FUNC_DIR.return_type_check("void", QUAD_POINTER)
-        push_to_quads(Quad("ENDFNC", "_", "_", "_"))
+        push_to_quads(Quad("ENDFNC", -1, -1, -1))
 
     FUNC_DIR.current_scope = None
     FUNC_DIR.AVAIL.reset_counter()
@@ -446,7 +446,7 @@ def p_pop_not(p):
     res_type = SemanticCube[op][right_type]
     res = FUNC_DIR.next_avail(res_type)
     if res_type != "err":
-        push_to_quads(Quad(op, "_", FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
+        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
@@ -483,7 +483,7 @@ def p_seen_cte_f(p):
 
 def p_seen_cte_s(p):
     ''' seen_cte_s :  '''
-    FUNC_DIR.declare_constant(p[-1], "string")
+    FUNC_DIR.declare_constant(p[-1][1:-1], "string")
     OPERAND_STACK.append(p[-1][1:-1])
     TYPE_STACK.append("string")
 
@@ -515,7 +515,7 @@ def p_func_call(p):
     ''' FUNC_CALL : ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS '''
     FUNC_DIR.args_ok(p[1])
 
-    push_to_quads(Quad("GOSUB", p[1], "_", "_"))
+    push_to_quads(Quad("GOSUB", FUNC_DIR.get_start_addr(p[1]), -1, -1))
 
     FUNC_CALL_STACK.pop()
     if len(FUNC_CALL_STACK):
@@ -528,14 +528,14 @@ def p_func_call(p):
     OPERAND_STACK.append(temp)
     TYPE_STACK.append(return_type)
     if return_type != "void":
-        push_to_quads(Quad("=", "_", FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name(p[1])), FUNC_DIR.get_symbol_mem_index(temp)))
+        push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name(p[1])), FUNC_DIR.get_symbol_mem_index(temp)))
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
     OPERATOR_STACK.append("|ARG_WALL|") # ARGUMENT 'FAKE WALL'
     func_type = FUNC_DIR.func_type_lookup(p[-1])
     size = FUNC_DIR.get_func_size(p[-1])
-    push_to_quads(Quad("ERA", "_", "_", p[-1]))
+    push_to_quads(Quad("ERA", -1, -1, FUNC_DIR.get_start_addr(p[-1])))
     FUNC_DIR.set_param_index(p[-1], 0)
     FUNC_CALL_STACK.append([p[-1], 0])
 
@@ -558,7 +558,7 @@ def p_seen_arg(p):
     arg = OPERAND_STACK.pop()
     arg_type = TYPE_STACK.pop()
     k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], arg_type)
-    push_to_quads(Quad("PARAM", FUNC_DIR.get_symbol_mem_index(arg), "_", k))
+    push_to_quads(Quad("PARAM", FUNC_DIR.get_symbol_mem_index(arg), -1, k))
     FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1] = k
 
 def p_func_return(p):
@@ -568,15 +568,15 @@ def p_func_return(p):
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
 
-    push_to_quads(Quad("=", "_", FUNC_DIR.get_symbol_mem_index(rtn_id), FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name())))
-    push_to_quads(Quad("ENDFNC", "_", "_", "_"))
+    push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(rtn_id), FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name())))
+    push_to_quads(Quad("ENDFNC", -1, -1, -1))
 
     FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1)
 
 def p_void_func_return(p):
     ''' FUNC_RETURN : RETURN_KWD SEMI_COLON '''
     FUNC_DIR.return_type_check("void", QUAD_POINTER)
-    push_to_quads(Quad("ENDFNC", "_", "_", "_"))
+    push_to_quads(Quad("ENDFNC", -1, -1, -1))
 
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
@@ -594,7 +594,7 @@ def p_printable_p(p):
 def p_seen_printable(p):
     ''' seen_printable  : empty '''
     printable_type = TYPE_STACK.pop()
-    push_to_quads(Quad("WR", "_", "_",  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK.pop())))
+    push_to_quads(Quad("PRNT", -1, -1,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK.pop())))
 
 def p_func_decision(p):
     ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''
@@ -622,7 +622,7 @@ def p_seen_if_kwd(p):
 
 def p_seen_else_kwd(p):
     ''' seen_else_kwd : empty '''
-    push_to_quads(Quad("GOTO", "_", "_","PND"))
+    push_to_quads(Quad("GOTO", -1, -1,"PND"))
     dir = JUMP_STACK.pop()
     JUMP_STACK.append(QUAD_POINTER - 1)
     fill_quad(dir, QUAD_POINTER)
@@ -650,7 +650,7 @@ def p_conditional_rep(p):
 def seen_conditional_rep():
     end_dir = JUMP_STACK.pop()
     return_dir = JUMP_STACK.pop()
-    push_to_quads(Quad("GOTO", "_", "_", return_dir))
+    push_to_quads(Quad("GOTO", -1, -1, return_dir))
     fill_quad(end_dir, QUAD_POINTER)
 
 def p_seen_while_kwd(p):
@@ -676,7 +676,7 @@ def seen_unconditional_rep():
     for i in range(swap_start_dir, swap_end_dir):
         swap_quads(swap_start_dir, QUAD_POINTER)
 
-    push_to_quads(Quad("GOTO", "_", "_", loop_dir))
+    push_to_quads(Quad("GOTO", -1, -1, loop_dir))
     fill_quad(end_dir, QUAD_POINTER)
 
 def p_seen_for_kwd(p):
@@ -704,7 +704,7 @@ def p_seen_for_end_exp(p):
     else:
         res = OPERAND_STACK.pop()
         JUMP_STACK.append(QUAD_POINTER)
-        push_to_quads(Quad("GTF", "_", FUNC_DIR.get_symbol_mem_index(res), "PND"))
+        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res), "PND"))
         JUMP_STACK.append(QUAD_POINTER)
 
 def p_type(p):
@@ -746,10 +746,10 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     res =  OPERAND_STACK.pop()
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
-    if right_type != res_type:
-        raise Exception("Type Mismatch: " + right_type + " " + op + " " + res_type)
+    if SemanticCube[res_type][op][right_type] == "err":
+        raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
     else:
-        push_to_quads(Quad(op, "_", FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
+        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         if push_back_operand:
             OPERAND_STACK.append(res)
         if push_back_type:
@@ -759,7 +759,7 @@ def decision_statement():
     expr_type = TYPE_STACK.pop()
     if SemanticCube[expr_type]["=="]["boolean"]:
         res = OPERAND_STACK.pop()
-        push_to_quads(Quad("GTF", "_", FUNC_DIR.get_symbol_mem_index(res), "PND"))
+        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res), "PND"))
         JUMP_STACK.append(QUAD_POINTER - 1)
     else:
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
@@ -801,11 +801,11 @@ def fill_vm_file(file_path, marker_str, start_str, end_str, info):
 VM_FILE_PATH = "VM/main.cpp"
 
 VM_QUAD_MARKER_STR = "// QUADS //\n"
-VM_QUAD_START_STR = "vector<vector<string>> QUADS = {\n"
+VM_QUAD_START_STR = "vector<vector<int>> QUADS = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
 
 VM_MEMORY_MARKER_STR = "// MEMORY //\n"
-VM_MEMORY_START_STR = "map<string, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
+VM_MEMORY_START_STR = "map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
 VM_MEMORY_END_STR = "\t" * 10 + "};\n"
 
 VM_CONSTANTS_MARKER_STR = "// CONSTANTS //\n"
@@ -861,13 +861,13 @@ def main(argv):
     vm_memory = []
     for context in FUNC_DIR.FUNCS.keys():
         if context == FUNC_DIR.program_name:
-            global_mem_sign = "\t" * 10 +  "{" +  '"' + FUNC_DIR.program_name + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
+            global_mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_main_start_addr()) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
             global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}"
             global_const_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].const_memory_signature.values())]) + "}}},\n"
             vm_memory.insert(0, global_mem_sign + ", " + global_temp_sign + ", " + global_const_sign)
         else:
             for func in FUNC_DIR.FUNCS[context].keys():
-                mem_sign = "\t" * 10 +  "{" +  '"' + func + '"' + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
+                mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
                 temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
                 vm_memory.append(mem_sign + ", " + temp_sign)
 

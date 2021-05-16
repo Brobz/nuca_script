@@ -9,6 +9,7 @@ class FunctionDirectory(object):
     def __init__(self):
         self.current_scope = None
         self.program_name = None
+        self.main_start_addr = None
         self.FUNCS = {"GLOBAL" : {}}
         self.AVAIL = Avail()
 
@@ -115,11 +116,24 @@ class FunctionDirectory(object):
             raise Exception("Unseen function: " + func_id)
         return len(self.FUNCS[scope][func_id][2].SYMBOLS)
 
+
+    def set_main_start_addr(self, addr):
+        self.main_start_addr = addr
+
+    def get_main_start_addr(self):
+        return self.main_start_addr
+
     def set_start_addr(self, addr, scope = "GLOBAL"):
         if self.current_scope != None:
             self.FUNCS[scope][self.current_scope][3] = addr # INDEX 3 IS START_ADDR
         else:
-            raise Exception("Scope Error: Cant declare start addr")
+            raise Exception("Scope Error: Cant declare func start addr")
+
+    def get_start_addr(self, func_id, scope = "GLOBAL"):
+        if func_id in self.FUNCS[scope]:
+            return self.FUNCS[scope][func_id][3] # INDEX 3 IS START_ADDR
+        else:
+            raise Exception("Scope Error: Cant get func start addr")
 
     def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False):
         if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!

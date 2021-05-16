@@ -1,8 +1,10 @@
+from Compiler.OPCodes import *
+
 class Quad(object):
     """docstring for Quad."""
 
     def __init__(self, op, left_operand, right_operand, res):
-        self.operator = op
+        self.operator = OPCodes[op]
         self.left_operand = left_operand
         self.right_operand = right_operand
         self.result = res
@@ -11,4 +13,4 @@ class Quad(object):
         return str(self.operator) + " " + str(self.left_operand) + " "  + str(self.right_operand) + " " + str(self.result)
 
     def get_cpp_string(self):
-        return '{"' + str(self.operator) + '", "' + str(self.left_operand) + '", "'  + str(self.right_operand) + '", "' + str(self.result) + '"},' 
+        return '{' + str(self.operator) + ', ' + str(self.left_operand) + ', '  + str(self.right_operand) + ', ' + str(self.result) + '},'

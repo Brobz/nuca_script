@@ -19,6 +19,7 @@ class SymbolTable(object):
             return self.SYMBOLS[sym_id][1]
         else:
             if self.scope == global_scope:
+                print(self.SYMBOLS)
                 raise Exception("Cannot get memory index for symbol " + sym_id + " in " + self.scope)
             return -1
 

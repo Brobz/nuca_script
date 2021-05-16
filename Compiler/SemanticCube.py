@@ -1,6 +1,7 @@
 SemanticCube = {}
 
 SemanticCube["int"] = {
+                        "=" :  {"int" : "int", "float" : "err", "string" : "err", "boolean" : "int", "void" : "err"} ,
                         "==" :  {"int" : "boolean", "float" : "err", "string" : "err", "boolean" : "boolean", "void" : "err"} ,
                         ">" :  {"int" : "boolean", "float" : "boolean", "string" : "err", "boolean" : "boolean", "void" : "err"} ,
                         "<" :  {"int" : "boolean", "float" : "boolean", "string" : "err", "boolean" : "boolean", "void" : "err"} ,
@@ -16,6 +17,8 @@ SemanticCube["int"] = {
                     }
 
 SemanticCube["float"] = {
+
+                        "=" :  {"int" : "float", "float" : "float", "string" : "err", "boolean" : "err", "void" : "err"} ,
                         "==" : {"int" : "err", "float" : "boolean", "string" : "err", "boolean" : "err", "void" : "err"},
                         ">" : {"int" : "boolean", "float" : "boolean", "string" : "err", "boolean" : "err", "void" : "err"},
                         "<" : {"int" : "boolean", "float" : "boolean", "string" : "err", "boolean" : "err", "void" : "err"},
@@ -32,6 +35,8 @@ SemanticCube["float"] = {
 
 
 SemanticCube["string"] = {
+
+                        "=" :  {"int" : "err", "float" : "err", "string" : "string", "boolean" : "err", "void" : "err"} ,
                         "==" : {"int" : "err", "float" : "err", "string" : "boolean", "boolean" : "err", "void" : "err"},
                         ">" : {"int" : "err", "float" : "err", "string" : "boolean", "boolean" : "err", "void" : "err"},
                         "<" : {"int" : "err", "float" : "err", "string" : "boolean", "boolean" : "err", "void" : "err"},
@@ -47,6 +52,8 @@ SemanticCube["string"] = {
                         }
 
 SemanticCube["boolean"] = {
+
+                        "=" :  {"int" : "boolean", "float" : "err", "string" : "err", "boolean" : "boolean", "void" : "err"} ,
                         "==" : {"int" : "boolean", "float" : "err", "string" : "err", "boolean" : "boolean", "void" : "err"},
                         ">" : {"int" : "boolean", "float" : "err", "string" : "err", "boolean" : "boolean", "void" : "err"},
                         "<" : {"int" : "boolean", "float" : "err", "string" : "err", "boolean" : "boolean", "void" : "err"},
@@ -62,6 +69,7 @@ SemanticCube["boolean"] = {
                         }
 
 SemanticCube["void"] = {
+                        "=" :  {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"} ,
                         "==" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "boolean"},
                         ">" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
                         "<" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err"},
