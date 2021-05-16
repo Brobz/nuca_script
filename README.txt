@@ -28,4 +28,13 @@ como los estatuos de READ y WRITE.
 |-- Avance #5 --|
 
 En el quinto avance, se implemento la generacion de codigo intermedio (cuadruplos) para metodos y funciones, tanto en su definicion cuanto en su llamada.
-Para probar: python main.py (usar simpler_nuca.nuca o func_nuca.nuca como input)
+
+|-- Avance #6 --|
+
+En el quinto avance, se implemento una version inicial de la maquina virtual, escrita en C++;
+El compilador (nuca_script.py), al terminar de generar el codigo intermedio, escribe toda la informacion necesaria para la ejecucion del programa en el archivo de la maquina virtual,
+y posteriormente lo compila, generando asi un ejecutable final.
+Por el momento, solo se implemento la ejecucion de los operadores GOTO y =.
+Para probar:
+            python nuca_script.py simplest_nuca.nuca -o simplest_nuca (compila)
+            simplest_nuca.exe (corre el programa compilado)
