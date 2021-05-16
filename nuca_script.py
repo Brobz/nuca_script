@@ -135,40 +135,42 @@ lexer = lex.lex()
 
 '''
 
-// TODO : Implement VM code for expressions and linear statements (ASSIGN, READ, WRITE)
+Preliminary Memory Model:
 
-            Preliminary Memory Model:
+    0 - 0.25k - Constant Ints
+    0.25k - 0.5k - Constant Floats
+    0.5k - 0.75k - Constant Strings
+    0.75k - 1k - Constant Booleans
+    1k - 2k - Global Ints
+    2k - 3k - Global Floats
+    3k - 4k - Global Strings
+    4k - 5k - Global Booleans
+    5k - 6k - Global Temp Ints
+    6k - 7k - Global Temp Floats
+    7k - 8k - Global Temp Strings
+    8k - 9k - Global Temp Booleans
+    9k - 10k - Local Ints
+    10k - 11k - Local Floats
+    11k - 12k - Local Strings
+    12k - 13k - Local Booleans
+    13k - 14k - Local Temp Ints
+    14k - 15k - Local Temp Floats
+    15k - 16k - Local Temp Strings
+    16k - 17k - Local Temp Booleans
 
-                0 - 0.25k - Constant Ints
-                0.25k - 0.5k - Constant Floats
-                0.5k - 0.75k - Constant Strings
-                0.75k - 1k - Constant Booleans
-                1k - 2k - Global Ints
-                2k - 3k - Global Floats
-                3k - 4k - Global Strings
-                4k - 5k - Global Booleans
-                5k - 6k - Global Temp Ints
-                6k - 7k - Global Temp Floats
-                7k - 8k - Global Temp Strings
-                8k - 9k - Global Temp Booleans
-                9k - 10k - Local Ints
-                10k - 11k - Local Floats
-                11k - 12k - Local Strings
-                12k - 13k - Local Booleans
-                13k - 14k - Local Temp Ints
-                14k - 15k - Local Temp Floats
-                15k - 16k - Local Temp Strings
-                16k - 17k - Local Temp Booleans
 
-            /*//*//*/ IMPORTANT /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
+// TODO:
 
-            1. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
+        /*//*//*/ IMPORTANT /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
-            /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
+        1. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
 
-            2. Implement READ
+        /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
-            3. Change WRITE to PRINT, and make it print comma-separated printables inline;
+        2. Implement READ
+
+        3. Change WRITE to PRINT, and make it print comma-separated printables inline;
+
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
@@ -217,6 +219,11 @@ def fill_quad(dir, fill):
 def swap_quads(q1, q2):
     if q2 > len(QUADS) - 1:
         QUADS.append(QUADS.pop(q1))
+        for q in QUADS:
+            if q.operator in [20, 21] and q.result != "PND":
+                if q.result > q1:
+                    # Jump dir has been changed since we popped a quad that came before the on we where jumping to
+                    q.result -= 1 # Adjust the value
     else:
         temp = QUADS[q2]
         QUADS[q2] = QUADS[q1]
@@ -731,6 +738,7 @@ def p_empty(p):
 def p_error(p):
     print("Syntax error in input!")
     print(p)
+    exit()
 
 def generateExpressionQuad():
     right_operand = OPERAND_STACK.pop()
@@ -892,6 +900,11 @@ def main(argv):
             vm_constants.append(cnst_string)
 
     fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)
+
+    '''
+    for i, q in enumerate(QUADS):
+        print(i, ":", q.get_string())
+    '''
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)
     if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):

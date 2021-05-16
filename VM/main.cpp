@@ -15,7 +15,7 @@ using namespace std;
 
 // MEMORY //
 map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{1, {{3,3,1,1}, {5,2,7,6}, {5,3,7,0}}},
+										{1, {{3,3,1,1}, {7,2,7,9}, {6,3,10,0}}},
 										};
 // MEMORY //
 
@@ -27,15 +27,19 @@ map<int, string> CONSTANTS = {
 										{3, "10"},
 										{250, "4.5"},
 										{251, "1.3"},
-										{252, "3.3"},
-										{4, "2"},
 										{500, "HI!"},
 										{501, "lol"},
 										{502, "\t"},
+										{4, "2"},
 										{503, "HAHA"},
-										{504, "a"},
-										{505, "b"},
-										{506, ""},
+										{5, "0"},
+										{252, "0.1"},
+										{504, "b is now:"},
+										{505, "a is now:"},
+										{506, "after while f value: "},
+										{507, "a"},
+										{508, "b"},
+										{509, ""},
 										};
 // CONSTANTS //
 
@@ -49,8 +53,7 @@ vector<vector<int>> QUADS = {
 										{0, -1, 250, 2000},
 										{1, 2, 251, 6000},
 										{0, -1, 6000, 2001},
-										{1, 252, 4, 6001},
-										{0, -1, 6001, 2002},
+										{0, -1, 3, 2002},
 										{3, 500, 1001, 7000},
 										{0, -1, 7000, 3000},
 										{1, 1000, 0, 5001},
@@ -64,12 +67,36 @@ vector<vector<int>> QUADS = {
 										{1, 7004, 7005, 7006},
 										{0, -1, 7006, 3000},
 										{0, -1, 0, 2001},
-										{5, 0, 0, 8001},
-										{3, 1000, 8001, 5002},
-										{5, 4, 4, 8002},
-										{3, 1001, 8002, 5003},
-										{1, 5002, 5003, 5004},
-										{0, -1, 5004, 2002},
+										{18, -1, -1, 2002},
+										{0, -1, 5, 1000},
+										{9, 1000, 3, 8001},
+										{21, -1, 8001, 44},
+										{0, -1, 3, 1001},
+										{6, 1001, 5, 8002},
+										{21, -1, 8002, 39},
+										{6, 2002, 252, 8003},
+										{21, -1, 8003, 34},
+										{2, 2002, 252, 6001},
+										{0, -1, 6001, 2002},
+										{20, -1, -1, 29},
+										{18, -1, -1, 504},
+										{18, -1, -1, 1001},
+										{2, 1001, 2, 5003},
+										{0, -1, 5003, 1001},
+										{20, -1, -1, 27},
+										{18, -1, -1, 505},
+										{18, -1, -1, 1000},
+										{1, 1000, 2, 5002},
+										{0, -1, 5002, 1000},
+										{20, -1, -1, 24},
+										{18, -1, -1, 506},
+										{18, -1, -1, 2002},
+										{5, 0, 0, 8004},
+										{3, 1000, 8004, 5004},
+										{5, 4, 4, 8005},
+										{3, 1001, 8005, 5005},
+										{1, 5004, 5005, 5006},
+										{0, -1, 5006, 2002},
 										{18, -1, -1, 1000},
 										{18, -1, -1, 1001},
 										{18, -1, -1, 1002},
@@ -78,12 +105,12 @@ vector<vector<int>> QUADS = {
 										{18, -1, -1, 2002},
 										{18, -1, -1, 3000},
 										{18, -1, -1, 4000},
-										{6, 504, 505, 8003},
-										{18, -1, -1, 8003},
-										{8, 504, 505, 8004},
-										{18, -1, -1, 8004},
-										{13, -1, 506, 8005},
-										{18, -1, -1, 8005},
+										{6, 507, 508, 8006},
+										{18, -1, -1, 8006},
+										{8, 507, 508, 8007},
+										{18, -1, -1, 8007},
+										{13, -1, 509, 8008},
+										{18, -1, -1, 8008},
 										{22, -1, -1, -1},
 										};
 // QUADS //
@@ -197,7 +224,7 @@ string mem_index_to_mem_signature(int index){
   abort();
 }
 
-vector<string> read_from_memory(int index){
+Value read_from_memory(int index){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
     if (!MEMORY_STACK.size()){
@@ -206,108 +233,107 @@ vector<string> read_from_memory(int index){
     }
   }
 
-  vector<string> retn_obj;
-  retn_obj.push_back(string(1, mem_sign[1]));
+  Value v;
 
   switch (stoi(mem_sign)) {
     case 0:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.const_mem.ints[index]));
+        v.set_i(GLOBAL_MEM.const_mem.ints[index]);
       }
       break;
     case 10:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.const_mem.floats[index - 250]));
+        v.set_f(GLOBAL_MEM.const_mem.floats[index - 250]);
       }
       break;
     case 20:
       {
-        retn_obj.push_back(GLOBAL_MEM.const_mem.strings[index - 500]);
+        v.set_s(GLOBAL_MEM.const_mem.strings[index - 500]);
       }
       break;
     case 30:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.const_mem.booleans[index - 750]));
+        v.set_b(GLOBAL_MEM.const_mem.booleans[index - 750]);
       }
       break;
     case 100:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.local_mem.ints[index - 1000]));
+        v.set_i(GLOBAL_MEM.local_mem.ints[index - 1000]);
       }
       break;
     case 110:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.local_mem.floats[index - 2000]));
+        v.set_f(GLOBAL_MEM.local_mem.floats[index - 2000]);
       }
       break;
     case 120:
       {
-        retn_obj.push_back(GLOBAL_MEM.local_mem.strings[index - 3000]);
+        v.set_s(GLOBAL_MEM.local_mem.strings[index - 3000]);
       }
       break;
     case 130:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.local_mem.booleans[index - 4000]));
+        v.set_b(GLOBAL_MEM.local_mem.booleans[index - 4000]);
       }
       break;
     case 101:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.temp_mem.ints[index - 5000]));
+        v.set_i(GLOBAL_MEM.temp_mem.ints[index - 5000]);
       }
       break;
     case 111:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.temp_mem.floats[index - 6000]));
+        v.set_f(GLOBAL_MEM.temp_mem.floats[index - 6000]);
       }
       break;
     case 121:
       {
-        retn_obj.push_back(GLOBAL_MEM.temp_mem.strings[index - 7000]);
+        v.set_s(GLOBAL_MEM.temp_mem.strings[index - 7000]);
       }
       break;
     case 131:
       {
-        retn_obj.push_back(to_string(GLOBAL_MEM.temp_mem.booleans[index - 8000]));
+        v.set_b(GLOBAL_MEM.temp_mem.booleans[index - 8000]);
       }
       break;
     case 200:
       {
-        retn_obj.push_back(to_string(MEMORY_STACK.top().local_mem.ints[index - 9000]));
+        v.set_i(MEMORY_STACK.top().local_mem.ints[index - 9000]);
       }
       break;
     case 210:
       {
-        retn_obj.push_back(to_string(MEMORY_STACK.top().local_mem.floats[index - 10000]));
+        v.set_f(MEMORY_STACK.top().local_mem.floats[index - 10000]);
       }
       break;
     case 220:
       {
-        retn_obj.push_back(MEMORY_STACK.top().local_mem.strings[index - 11000]);
+        v.set_s(MEMORY_STACK.top().local_mem.strings[index - 11000]);
       }
       break;
     case 230:
       {
-        retn_obj.push_back(to_string(MEMORY_STACK.top().local_mem.booleans[index - 12000]));
+        v.set_b(MEMORY_STACK.top().local_mem.booleans[index - 12000]);
       }
       break;
     case 201:
       {
-        retn_obj.push_back(to_string(MEMORY_STACK.top().temp_mem.ints[index - 13000]));
+        v.set_i(MEMORY_STACK.top().temp_mem.ints[index - 13000]);
       }
       break;
     case 211:
       {
-        retn_obj.push_back(to_string(MEMORY_STACK.top().temp_mem.floats[index - 14000]));
+        v.set_f(MEMORY_STACK.top().temp_mem.floats[index - 14000]);
       }
       break;
     case 221:
       {
-        retn_obj.push_back(MEMORY_STACK.top().temp_mem.strings[index - 15000]);
+        v.set_s(MEMORY_STACK.top().temp_mem.strings[index - 15000]);
       }
       break;
     case 231:
       {
-        retn_obj.push_back(to_string(MEMORY_STACK.top().temp_mem.booleans[index - 16000]));
+        v.set_b(MEMORY_STACK.top().temp_mem.booleans[index - 16000]);
       }
       break;
     default:
@@ -318,7 +344,7 @@ vector<string> read_from_memory(int index){
     }
   }
 
-  return retn_obj;
+  return v;
 }
 
 int write_to_memory(int index, string value){
@@ -458,245 +484,134 @@ void run(){
   while(RUNNING){
     int op = QUADS[IP][0];
 
+		if (!op){
+			// =
+
+			int result_dir = QUADS[IP][3];
+			Value value = read_from_memory(QUADS[IP][2]);
+
+			write_to_memory(result_dir, value.to_str());
+
+			IP++;
+			continue;
+		}
+
+		else if (op < 13){
+			// Arithmetic Epxressions (two operands, one solution)
+
+			int result_dir = QUADS[IP][3];
+
+			Value left_value = read_from_memory(QUADS[IP][1]);
+			Value right_value = read_from_memory(QUADS[IP][2]);
+
+			switch (op) {
+				case 1:				// +
+					{
+						// Sum!
+						Value res_value = left_value + right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 2:				// -
+					{
+						// Subtract !
+						Value res_value = left_value - right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 3:				// *
+					{
+						// Mutiply!
+						Value res_value = left_value * right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 4:				// /
+					{
+						// Divide!
+						Value res_value = left_value / right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 5:				// ==
+					{
+						// Compare (equals to)!
+						Value res_value = left_value == right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 6:				// >
+					{
+						// Compare (bigger than)!
+						Value res_value = left_value > right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 7:				// <
+					{
+						// Compare (less than)!
+						Value res_value = left_value < right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 8:				// >=
+					{
+						// Compare (bigger than or equal to)!
+						Value res_value = left_value >= right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 9:				// <=
+					{
+						// Compare (less than or equal to)!
+						Value res_value = left_value <= right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 10:			// &&
+					{
+						// Compare (and)!
+						Value res_value = left_value && right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 11:			// ||
+					{
+						// Compare (or)!
+						Value res_value = left_value || right_value;
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+
+				case 12:			// !=
+					{
+						// Compare (not equal to)!
+						Value res_value = !(left_value == right_value);
+						write_to_memory(result_dir, res_value.to_str());
+					}
+					break;
+			}
+			IP++;
+			continue;
+		}
+
     switch(op) {
-      case 0:				// =
-        {
-        int result_dir = QUADS[IP][3];
-        string value = read_from_memory(QUADS[IP][2])[1];
-
-        write_to_memory(result_dir, value);
-
-        IP++;
-        }
-        break;
-
-      case 1:				// +
-        {
-          // Sum!
-          int result_dir = QUADS[IP][3];
-
-          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-          Value res_value = left_value + right_value;
-
-          write_to_memory(result_dir, res_value.to_str());
-
-          IP++;
-        }
-        break;
-
-      case 2:				// -
-        {
-          // Subtract !
-          int result_dir = QUADS[IP][3];
-
-          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-          Value res_value = left_value - right_value;
-
-          write_to_memory(result_dir, res_value.to_str());
-          IP++;
-        }
-        break;
-
-      case 3:				// *
-        {
-          // Mutiply!
-          int result_dir = QUADS[IP][3];
-
-          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-          Value res_value = left_value * right_value;
-
-          write_to_memory(result_dir, res_value.to_str());
-          IP++;
-        }
-        break;
-
-      case 4:				// /
-        {
-          // Divide!
-          int result_dir = QUADS[IP][3];
-
-          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-          Value res_value = left_value / right_value;
-
-          write_to_memory(result_dir, res_value.to_str());
-          IP++;
-        }
-        break;
-
-      case 5:				// ==
-        {
-          // Compare (equals to)!
-          int result_dir = QUADS[IP][3];
-
-          vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-          vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-          Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-          Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-          Value res_value = left_value == right_value;
-
-          write_to_memory(result_dir, res_value.to_str());
-          IP++;
-        }
-        break;
-
-			case 6:				// >
-				{
-					// Compare (bigger than)!
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = left_value > right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 7:				// <
-				{
-					// Compare (less than)!
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = left_value < right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 8:				// >=
-				{
-					// Compare (bigger than or equal to)!
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = left_value >= right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 9:				// <=
-				{
-					// Compare (less than or equal to)!
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = left_value <= right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 10:			// &&
-				{
-					// Compare (and)!
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = left_value && right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 11:			// ||
-				{
-					// Compare (or)!
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = left_value || right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 12:			// !=
-				{
-					// Compare (not equal to)!
-
-					int result_dir = QUADS[IP][3];
-
-					vector<string> left_operand = read_from_memory(QUADS[IP][1]);
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value left_value = str_to_val(left_operand[1], stoi(left_operand[0]));
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
-
-					Value res_value = !(left_value == right_value);
-
-					write_to_memory(result_dir, res_value.to_str());
-
-					IP++;
-				}
-				break;
-
 			case 13:			// !
 				{
 					// Negate!
 					int result_dir = QUADS[IP][3];
 
-					vector<string> right_operand = read_from_memory(QUADS[IP][2]);
-
-					Value right_value = str_to_val(right_operand[1], stoi(right_operand[0]));
+					Value right_value = read_from_memory(QUADS[IP][2]);
 
 					Value res_value = !right_value;
 
@@ -708,10 +623,8 @@ void run(){
 
       case 18:			// PRINT
         {
-
-          vector<string> printable = read_from_memory(QUADS[IP][3]);
-          cout << str_to_val(printable[1], stoi(printable[0])).to_str() << endl;
-
+          Value printable = read_from_memory(QUADS[IP][3]);
+          cout << printable.to_str() << endl;
           IP++;
         }
         break;
@@ -719,10 +632,20 @@ void run(){
       case 20:			// GOTO
         {
           int to_dir = QUADS[IP][3];
-
           IP = to_dir;
         }
         break;
+
+			case 21:			// GOTOF
+				{
+					int to_dir = QUADS[IP][3];
+					Value condition = read_from_memory(QUADS[IP][2]);
+					Value false_value = Value(false);
+					Value result = condition == false_value;
+					if(result.b) IP = to_dir;
+					else IP++;
+				}
+				break;
 
       case 22:			// END
         {
