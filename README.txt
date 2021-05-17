@@ -34,7 +34,7 @@ En el quinto avance, se implemento la generacion de codigo intermedio (cuadruplo
 En el sexto avance, se implemento una version inicial de la maquina virtual, escrita en C++;
 El compilador (nuca_script.py), al terminar de generar el codigo intermedio, escribe toda la informacion necesaria para la ejecucion del programa en el archivo de la maquina virtual,
 y posteriormente lo compila, generando asi un ejecutable final.
-Por el momento, solo se implemento la ejecucion de los operadores GOTO y =.
+Por el momento, se implemento la ejecucion de expresiones aritmeticas, condicionales y ciclos, ademas de estatutos sencillos como asignaciones, lecturas y escrituras.
 Para probar:
             python nuca_script.py simplest_nuca.nuca -o simplest_nuca (compila)
             simplest_nuca.exe (corre el programa compilado)
