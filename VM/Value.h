@@ -55,7 +55,7 @@ class Value{
           default:
           {
             cout << "Unknown type " << type << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
       }
@@ -65,30 +65,46 @@ class Value{
         Value temp;
         int operation_case = stoi(to_string(type) + to_string(v.type));
         switch(operation_case){
-          case 0: // INT + INT
+          case 0: // INT + INT = INT
           {
             temp.set_i(i + v.i);
           } break;
-          case 1: // INT + FLOAT
+          case 1: // INT + FLOAT = FLOAT
           {
             temp.set_f(i + v.f);
           } break;
-          case 10: // FLOAT + INT
+          case 2: // INT + STRING = STRING
+          {
+            temp.set_s(to_string(i) + v.s);
+          } break;
+          case 10: // FLOAT + INT + FLOAT
           {
             temp.set_f(f + v.i);
           } break;
-          case 11: // FLOAT + FLOAT
+          case 11: // FLOAT + FLOAT = FLOAT
           {
             temp.set_f(f + v.f);
           } break;
-          case 22: // STRING + STRING
+          case 12: // FLOAT + STRING = STRING
+          {
+            temp.set_s(to_string(f) + v.s);
+          } break;
+          case 20: // STRING + INT = STRING
+          {
+            temp.set_s(s + to_string(v.i));
+          } break;
+          case 21: // STRING + FLOAT = STRING
+          {
+            temp.set_s(s + to_string(v.f));
+          } break;
+          case 22: // STRING + STRING + STRING
           {
             temp.set_s(s + v.s);
           } break;
           default:
           {
             cout << "Cannot sum case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -117,7 +133,7 @@ class Value{
           default:
           {
             cout << "Cannot subtract case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -190,7 +206,7 @@ class Value{
           default:
           {
             cout << "Cannot multiply case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -219,7 +235,7 @@ class Value{
           default:
           {
             cout << "Cannot divide case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -256,7 +272,7 @@ class Value{
           default:
           {
             cout << "Cannot == case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -289,7 +305,7 @@ class Value{
           default:
           {
             cout << "Cannot > case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -322,7 +338,7 @@ class Value{
           default:
           {
             cout << "Cannot < case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -355,7 +371,7 @@ class Value{
           default:
           {
             cout << "Cannot >= case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -388,7 +404,7 @@ class Value{
           default:
           {
             cout << "Cannot <= case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -465,7 +481,7 @@ class Value{
           default:
           {
             cout << "Cannot && case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -542,7 +558,7 @@ class Value{
           default:
           {
             cout << "Cannot && case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;
@@ -571,7 +587,7 @@ class Value{
           default:
           {
             cout << "Cannot ! case " <<  operation_case << endl;
-            abort();
+            exit(EXIT_FAILURE);
           }
         }
         return temp;

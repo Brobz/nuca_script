@@ -165,6 +165,16 @@ Preliminary Memory Model:
 
         1. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
 
+            Build memory model from constants (TO FIX MAGIC NUMBERS):
+
+            [250,                   1000,           1000,           1000]
+            [AllowedConstants, AllowedGlobals, AllowedLocals, AllowedTemps] # For each type
+            [int, float, string, boolean]
+
+            -> maybe use SymbolTable's MEMORY_SECTOR_SHIFTS ?
+
+            write this values to VM, use them inside of memory methods instead of magic numbers
+
         /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
         2. Implement READ
@@ -816,15 +826,15 @@ def fill_vm_file(file_path, marker_str, start_str, end_str, info):
 VM_FILE_PATH = "VM/main.cpp"
 
 VM_QUAD_MARKER_STR = "// QUADS //\n"
-VM_QUAD_START_STR = "vector<vector<int>> QUADS = {\n"
+VM_QUAD_START_STR = "const vector<vector<int>> QUADS = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
 
 VM_MEMORY_MARKER_STR = "// MEMORY //\n"
-VM_MEMORY_START_STR = "map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
+VM_MEMORY_START_STR = "const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {\n"
 VM_MEMORY_END_STR = "\t" * 10 + "};\n"
 
 VM_CONSTANTS_MARKER_STR = "// CONSTANTS //\n"
-VM_CONSTANTS_START_STR = "map<int, string> CONSTANTS = {\n"
+VM_CONSTANTS_START_STR = "const map<int, string> CONSTANTS = {\n"
 VM_CONSTANTS_END_STR = "\t" * 10 + "};\n"
 
 def main(argv):

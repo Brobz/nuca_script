@@ -23,17 +23,27 @@ main (){
   h = g == "HI!" * (a + 1);
   g = "lol" * h + "\t" * 2 + "HAHA" * 1 ;
   e = 1;
-  print(f);
   for(a = 0; a <= 10; a = a + 5){
     for(b = 10; b > 0; b = b - 5){
       while(f > 0.1){
         f = f - 0.1;
         }
-    print("b is now:", b);
+    print(">> b is now:", b, "\n");
   }
-    print("a is now:", a);
+    print(">> a is now:", a, "\n");
   }
-  print("after while f value: ", f);
+  print(">> Enter an integer\n-- a = ");
+  read(a);
+  print(">> Enter a float\n-- f = ");
+  read(e);
+  print(">> Enter a fate(bool)\n-- h = ");
+  read(h);
+  if(h){
+    print(">> h is true", "a is " + a, "\n");
+  }else{
+    print(">> h is false", "e is " + e, "\n");
+  }
+  print(">> after while f value: ", f, "\n");
   f = a * (1 == 1) + b * (2 == 2);
   print(a, b, c, d, e, f, g, h);
   print("a" > "b", "a" >= "b", !"");
