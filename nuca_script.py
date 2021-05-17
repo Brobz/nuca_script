@@ -135,6 +135,7 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Preliminary Memory Model:
 
@@ -159,6 +160,7 @@ Preliminary Memory Model:
     15k - 16k - Local Temp Strings
     16k - 17k - Local Temp Booleans
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // TODO:
 
@@ -176,12 +178,14 @@ Preliminary Memory Model:
 
             write this values to VM, use them inside of memory methods instead of magic numbers
 
+        2. Optimize the way main.cpp converts from index (int) to memory_sector_signature (string) using the reverse method of what SymbolTable does with the for loop
+
         /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
-        
+
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // TODO : Refactor files and methods
 
@@ -192,6 +196,8 @@ Preliminary Memory Model:
 // TODO : Make list of includes/dependencies and add them to the project
 
 // TODO: Update Formal grammar and flow diagrams.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 '''
 
@@ -227,9 +233,9 @@ def swap_quads(q1, q2):
     if q2 > len(QUADS) - 1:
         QUADS.append(QUADS.pop(q1))
         for q in QUADS:
-            if q.operator in [20, 21] and q.result != "PND":
-                if q.result > q1:
-                    # Jump dir has been changed since we popped a quad that came before the on we where jumping to
+            if q.operator in [OPCodes["GOTO"], OPCodes["GOTOF"]] and q.result != "PND": # If this QUAD is either a GOTO or a GOTOF...
+                if q.result > q1: # And was pointing to a quad placed after (bigger index) the one we popped...
+                    # Jump dir has been changed since we popped a quad that came before the one we were jumping to
                     q.result -= 1 # Adjust the value
     else:
         temp = QUADS[q2]
@@ -538,7 +544,7 @@ def p_func_call(p):
     ''' FUNC_CALL : ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS '''
     FUNC_DIR.args_ok(p[1])
 
-    push_to_quads(Quad("GOSUB", FUNC_DIR.get_start_addr(p[1]), -1, -1))
+    push_to_quads(Quad("GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1])))
 
     FUNC_CALL_STACK.pop()
     if len(FUNC_CALL_STACK):
@@ -581,7 +587,7 @@ def p_seen_arg(p):
     arg = OPERAND_STACK.pop()
     arg_type = TYPE_STACK.pop()
     k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], arg_type)
-    push_to_quads(Quad("PARAM", FUNC_DIR.get_symbol_mem_index(arg), -1, k))
+    push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], k)))
     FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1] = k
 
 def p_func_return(p):
@@ -606,6 +612,7 @@ def p_read(p):
 
 def p_print(p):
     ''' PRINT : PRINT_KWD seen_print_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
+    push_to_quads(Quad("PRNT", -1, -1, -1))
 
 def p_seen_print_kwd(p):
     ''' seen_print_kwd : empty '''
@@ -628,7 +635,7 @@ def p_seen_printable(p):
     ''' seen_printable  : empty '''
     printable = OPERAND_STACK.pop()
     printable_type = TYPE_STACK.pop()
-    push_to_quads(Quad("PRNT", -1, -1, FUNC_DIR.get_symbol_mem_index(printable)))
+    push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable)))
 
 def p_func_decision(p):
     ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''
@@ -852,7 +859,7 @@ def main(argv):
     # Build the parser
     parser = yacc.yacc()
 
-    output_file_path = "out.exe"
+    output_file_path = None
 
     while len(argv):
         if len(argv) == 1:
@@ -925,6 +932,9 @@ def main(argv):
     for i, q in enumerate(QUADS):
         print(i, ":", q.get_string())
     '''
+
+    if output_file_path == None:
+        output_file_path = FUNC_DIR.program_name + ".exe"
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)
     if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):

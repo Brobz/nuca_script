@@ -54,7 +54,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Unknown type " << type << endl;
+            cout << ">> Error: Unknown type " << type << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -103,7 +103,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot sum case " <<  operation_case << endl;
+            cout << ">> Error: Cannot sum case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -132,7 +132,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot subtract case " <<  operation_case << endl;
+            cout << ">> Error: Cannot subtract case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -205,7 +205,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot multiply case " <<  operation_case << endl;
+            cout << ">> Error: Cannot multiply case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -234,7 +234,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot divide case " <<  operation_case << endl;
+            cout << ">> Error: Cannot divide case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -271,7 +271,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot == case " <<  operation_case << endl;
+            cout << ">> Error: Cannot == case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -304,7 +304,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot > case " <<  operation_case << endl;
+            cout << ">> Error: Cannot > case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -337,7 +337,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot < case " <<  operation_case << endl;
+            cout << ">> Error: Cannot < case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -370,7 +370,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot >= case " <<  operation_case << endl;
+            cout << ">> Error: Cannot >= case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -403,7 +403,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot <= case " <<  operation_case << endl;
+            cout << ">> Error: Cannot <= case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -480,7 +480,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot && case " <<  operation_case << endl;
+            cout << ">> Error: Cannot && case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -557,7 +557,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot && case " <<  operation_case << endl;
+            cout << ">> Error: Cannot && case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -586,7 +586,7 @@ class Value{
           } break;
           default:
           {
-            cout << "Cannot ! case " <<  operation_case << endl;
+            cout << ">> Error: Cannot ! case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }

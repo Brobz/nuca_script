@@ -14,6 +14,12 @@ class FunctionDirectory(object):
         self.AVAIL = Avail()
 
 
+    def get_param_mem_index(self, func_id, k, scope = "GLOBAL"):
+        if func_id not in self.FUNCS[scope]:
+            raise Exception("Unseen function: " + func_id)
+
+        return self.FUNCS[scope][func_id][2].param_indices[k - 1]
+
     def declare_constant(self, cnst_id, cnst_type):
         self.declare_symbol(cnst_id, cnst_type, is_cnst = True)
 
@@ -155,7 +161,7 @@ class FunctionDirectory(object):
             sym_table_index = 2
             if is_param:
                 sym_table_index = 1
-            self.FUNCS[scope][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst)
+            self.FUNCS[scope][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, not give_warning)
             return
         else:
             memory_sector_signature.insert(0, "1") # Global Variable

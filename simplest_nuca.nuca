@@ -5,15 +5,37 @@ d, e, f : float;
 g : string;
 h : boolean;
 
-
-int int_func(a : int)
+string string_doubler(n : string)
 VARS {}
 {
-  return a * 2;
+  return n * 2;
+}
+
+
+int fac(n : int)
+VARS {}
+{
+  if(n < 2){
+    return 1;
+  }
+  return n * fac(n - 1);
+}
+
+
+void infinite(useless : string)
+VARS{
+  var_1, var_2, var_3 : int;
+}
+{
+  infinite();
 }
 
 main (){
-  a = 1 + 3;
+  // infinite(); //
+  for(a = 0; a <= 12; a = a + 1){
+    println(a + "! = " + fac(a));
+  }
+  //
   b = 5;
   c = 10;
   d = 4.5;
@@ -39,14 +61,14 @@ main (){
   print(">> Enter a fate(bool)\n-- h = ");
   read(h);
   if(h){
-    println(">> h is true", "a is " + a);
+    println(">> h is true", "\n>> a is " + a);
   }else{
-    println(">> h is false", "e is " + e);
+    println(">> h is false", "\n>> e is " + e);
   }
   println(">> after while f value: ", f);
   f = a * (1 == 1) + b * (2 == 2);
-  println(a, b, c, d, e, f, g, h);
-  println("a" > "b", "a" >= "b", !"");
+
+  println("Global a: " + a );
 
   println("------------------------");
 
@@ -54,4 +76,5 @@ main (){
   println("Hello from another line!", " println() acts just like print, " + "but always adds a '\\n' parameter at the end!");
   println("And this will skip two lines!", "\n");
   println("Nice : )");
+  //
 }

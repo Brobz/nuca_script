@@ -10,6 +10,7 @@ class SymbolTable(object):
     def __init__(self, scope):
         self.scope = scope
         self.SYMBOLS = {}
+        self.param_indices = []
         self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0}
         self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0 }
         self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0 } # FOR GLOBAL SCOPE ONLY
@@ -19,7 +20,6 @@ class SymbolTable(object):
             return self.SYMBOLS[sym_id][1]
         else:
             if self.scope == global_scope:
-                print(self.SYMBOLS)
                 raise Exception("Cannot get memory index for symbol " + sym_id + " in " + self.scope)
             return -1
 
@@ -55,7 +55,7 @@ class SymbolTable(object):
             l.append(tuple[0])
         return l
 
-    def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False):
+    def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
             self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst)
@@ -65,6 +65,10 @@ class SymbolTable(object):
                 self.update_var_mem_sign(sym_type)
             else:
                 self.update_temp_mem_sign(sym_type)
+
+            if is_param:
+                self.param_indices.append(mem_index)
+
         else:
             if is_cnst:
                 pass

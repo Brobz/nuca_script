@@ -15,8 +15,10 @@ using namespace std;
 
 // MEMORY //
 const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{4, {{4,3,1,1}, {7,2,10,9}, {6,3,28,0}}},
-										{1, {{1,0,0,0}, {1,0,0,0}}},
+										{19, {{4,3,2,1}, {2,0,2,1}, {4,0,1,0}}},
+										{1, {{0,0,1,0}, {0,0,1,0}}},
+										{4, {{1,0,0,0}, {3,0,0,1}}},
+										{16, {{3,0,1,0}, {0,0,0,0}}},
 										};
 // MEMORY //
 
@@ -24,160 +26,56 @@ const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
 const map<int, string> CONSTANTS = {
 										{0, "2"},
 										{1, "1"},
-										{2, "3"},
-										{3, "5"},
-										{4, "10"},
-										{250, "4.5"},
-										{251, "1.3"},
-										{500, "HI!"},
-										{501, "lol"},
-										{502, "\t"},
-										{503, "HAHA"},
-										{5, "0"},
-										{252, "0.1"},
-										{504, ">> b is now:"},
-										{505, ">> a is now:"},
-										{506, ">> Enter an integer\n-- a = "},
-										{507, ">> Enter a float\n-- f = "},
-										{508, ">> Enter a fate(bool)\n-- h = "},
-										{509, ">> h is true"},
-										{510, "a is "},
-										{511, ">> h is false"},
-										{512, "e is "},
-										{513, ">> after while f value: "},
-										{514, "a"},
-										{515, "b"},
-										{516, ""},
-										{517, "------------------------"},
-										{518, "HI "},
-										{519, " print() "},
-										{520, " prints inline,"},
-										{521, " and needs this next param for a newline:"},
-										{522, "\n"},
-										{523, "Hello from another line!"},
-										{524, " println() acts just like print, "},
-										{525, "but always adds a '\\n' parameter at the end!"},
-										{526, "And this skips two lines!"},
-										{527, "Nice : )"},
+										{2, "0"},
+										{3, "12"},
+										{500, "! = "},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{20, -1, -1, 4},
-										{3, 9000, 0, 13000},
-										{0, -1, 13000, 1003},
-										{22, -1, -1, -1},
-										{1, 1, 2, 5000},
-										{0, -1, 5000, 1000},
-										{0, -1, 3, 1001},
-										{0, -1, 4, 1002},
-										{0, -1, 250, 2000},
-										{1, 3, 251, 6000},
-										{0, -1, 6000, 2001},
-										{0, -1, 4, 2002},
-										{3, 500, 1001, 7000},
-										{0, -1, 7000, 3000},
-										{1, 1000, 1, 5001},
-										{3, 500, 5001, 7001},
-										{5, 3000, 7001, 8000},
-										{0, -1, 8000, 4000},
-										{3, 501, 4000, 7002},
-										{3, 502, 0, 7003},
-										{1, 7002, 7003, 7004},
-										{3, 503, 1, 7005},
-										{1, 7004, 7005, 7006},
-										{0, -1, 7006, 3000},
-										{0, -1, 1, 2001},
-										{0, -1, 5, 1000},
-										{9, 1000, 4, 8001},
-										{21, -1, 8001, 48},
-										{0, -1, 4, 1001},
-										{6, 1001, 5, 8002},
-										{21, -1, 8002, 42},
-										{6, 2002, 252, 8003},
-										{21, -1, 8003, 36},
-										{2, 2002, 252, 6001},
-										{0, -1, 6001, 2002},
-										{20, -1, -1, 31},
-										{18, -1, -1, 504},
-										{18, -1, -1, 1001},
-										{19, -1, -1, -1},
-										{2, 1001, 3, 5003},
-										{0, -1, 5003, 1001},
-										{20, -1, -1, 29},
-										{18, -1, -1, 505},
-										{18, -1, -1, 1000},
-										{19, -1, -1, -1},
-										{1, 1000, 3, 5002},
-										{0, -1, 5002, 1000},
-										{20, -1, -1, 26},
-										{18, -1, -1, 506},
-										{17, -1, -1, 1000},
-										{18, -1, -1, 507},
-										{17, -1, -1, 2001},
-										{18, -1, -1, 508},
-										{17, -1, -1, 4000},
-										{21, -1, 4000, 60},
-										{18, -1, -1, 509},
-										{1, 510, 1000, 7007},
-										{18, -1, -1, 7007},
-										{19, -1, -1, -1},
-										{20, -1, -1, 64},
-										{18, -1, -1, 511},
-										{1, 512, 2001, 7008},
-										{18, -1, -1, 7008},
-										{19, -1, -1, -1},
-										{18, -1, -1, 513},
-										{18, -1, -1, 2002},
-										{19, -1, -1, -1},
-										{5, 1, 1, 8004},
-										{3, 1000, 8004, 5004},
-										{5, 0, 0, 8005},
-										{3, 1001, 8005, 5005},
-										{1, 5004, 5005, 5006},
-										{0, -1, 5006, 2002},
-										{18, -1, -1, 1000},
-										{18, -1, -1, 1001},
-										{18, -1, -1, 1002},
-										{18, -1, -1, 2000},
-										{18, -1, -1, 2001},
-										{18, -1, -1, 2002},
-										{18, -1, -1, 3000},
-										{18, -1, -1, 4000},
-										{19, -1, -1, -1},
-										{6, 514, 515, 8006},
-										{18, -1, -1, 8006},
-										{8, 514, 515, 8007},
-										{18, -1, -1, 8007},
-										{13, -1, 516, 8008},
-										{18, -1, -1, 8008},
-										{19, -1, -1, -1},
-										{18, -1, -1, 517},
-										{19, -1, -1, -1},
-										{18, -1, -1, 518},
-										{18, -1, -1, 519},
-										{18, -1, -1, 520},
-										{18, -1, -1, 521},
-										{18, -1, -1, 522},
-										{18, -1, -1, 523},
-										{1, 524, 525, 7009},
-										{18, -1, -1, 7009},
-										{19, -1, -1, -1},
-										{18, -1, -1, 526},
-										{18, -1, -1, 522},
-										{19, -1, -1, -1},
-										{18, -1, -1, 527},
-										{19, -1, -1, -1},
+										{21, -1, -1, 19},
+										{3, 11000, 0, 15000},
+										{0, -1, 15000, 3001},
 										{23, -1, -1, -1},
+										{7, 9000, 0, 16000},
+										{22, -1, 16000, 8},
+										{0, -1, 1, 1003},
+										{23, -1, -1, -1},
+										{14, -1, -1, 4},
+										{2, 9000, 1, 13000},
+										{15, -1, 13000, 9000},
+										{16, -1, -1, 4},
+										{0, -1, 1003, 13001},
+										{3, 9000, 13001, 13002},
+										{0, -1, 13002, 1003},
+										{23, -1, -1, -1},
+										{14, -1, -1, 16},
+										{16, -1, -1, 16},
+										{23, -1, -1, -1},
+										{0, -1, 2, 1000},
+										{9, 1000, 3, 8000},
+										{22, -1, 8000, 33},
+										{1, 1000, 500, 7000},
+										{14, -1, -1, 4},
+										{15, -1, 1000, 9000},
+										{16, -1, -1, 4},
+										{0, -1, 1003, 5001},
+										{1, 7000, 5001, 7001},
+										{18, -1, -1, 7001},
+										{20, -1, -1, -1},
+										{1, 1000, 1, 5000},
+										{0, -1, 5000, 1000},
+										{21, -1, -1, 20},
+										{24, -1, -1, -1},
 										};
 // QUADS //
 
 // GLOBAL VARS //
 int PROGRAM_START; // Quad index of the start of main()
 bool RUNNING = false;
-int IP; // Instruction Pointer
-MemoryMap GLOBAL_MEM;
+int IP, MEMORY_STACK_LIMIT; // Instruction Pointer, Recursion Limit
+MemoryMap GLOBAL_MEM, LOCAL_MEM;
 stack<MemoryMap> MEMORY_STACK;
 // GLOBAL VARS //
 
@@ -196,7 +94,7 @@ int s_stoi(string s){
 	try{
 		return stoi(s);
 	}catch(...){
-			cout << "Cannot resolve stoi(" << s << ")" << endl;
+			cout << ">> Error: Cannot resolve stoi(" << s << ")" << endl;
 			exit(EXIT_FAILURE);
 		}
 }
@@ -206,7 +104,7 @@ float s_stof(string s){
 	try{
 		return stof(s);
 	}catch(...){
-			cout << "Cannot resolve stof(" << s << ")" << endl;
+			cout << ">> Error: Cannot resolve stof(" << s << ")" << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -219,7 +117,7 @@ bool s_stob(string s){
 			if (STOB_MAP.count(s)){
 				return STOB_MAP.at(s);
 			}else{
-				cout << "Cannot resolve stob(" << s << ")" << endl;
+				cout << ">> Error: Cannot resolve stob(" << s << ")" << endl;
 				exit(EXIT_FAILURE);
 			}
 	}
@@ -298,7 +196,7 @@ string mem_index_to_mem_signature(int index){
   }
 
   // ERROR! Nothing was written
-  cout << "Error: could not read "  << index << " from memory" << endl;
+  cout << ">> Error: could not read "  << index << " from memory" << endl;
   exit(EXIT_FAILURE);
 }
 // HELPER METHODS //
@@ -307,7 +205,7 @@ Value read_from_memory(int index){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
     if (!MEMORY_STACK.size()){
-      cout << "Error: No local context to read "  << index << " from memory" << endl;
+      cout << ">> Error: No local context to read "  << index << " from memory" << endl;
       exit(EXIT_FAILURE); // ERROR! No context to read local variable from
     }
   }
@@ -377,48 +275,48 @@ Value read_from_memory(int index){
       break;
     case 200:
       {
-        v.set_i(MEMORY_STACK.top().local_mem.ints[index - 9000]);
+        v.set_i(LOCAL_MEM.local_mem.ints[index - 9000]);
       }
       break;
     case 210:
       {
-        v.set_f(MEMORY_STACK.top().local_mem.floats[index - 10000]);
+        v.set_f(LOCAL_MEM.local_mem.floats[index - 10000]);
       }
       break;
     case 220:
       {
-        v.set_s(MEMORY_STACK.top().local_mem.strings[index - 11000]);
+        v.set_s(LOCAL_MEM.local_mem.strings[index - 11000]);
       }
       break;
     case 230:
       {
-        v.set_b(MEMORY_STACK.top().local_mem.booleans[index - 12000]);
+        v.set_b(LOCAL_MEM.local_mem.booleans[index - 12000]);
       }
       break;
     case 201:
       {
-        v.set_i(MEMORY_STACK.top().temp_mem.ints[index - 13000]);
+        v.set_i(LOCAL_MEM.temp_mem.ints[index - 13000]);
       }
       break;
     case 211:
       {
-        v.set_f(MEMORY_STACK.top().temp_mem.floats[index - 14000]);
+        v.set_f(LOCAL_MEM.temp_mem.floats[index - 14000]);
       }
       break;
     case 221:
       {
-        v.set_s(MEMORY_STACK.top().temp_mem.strings[index - 15000]);
+        v.set_s(LOCAL_MEM.temp_mem.strings[index - 15000]);
       }
       break;
     case 231:
       {
-        v.set_b(MEMORY_STACK.top().temp_mem.booleans[index - 16000]);
+        v.set_b(LOCAL_MEM.temp_mem.booleans[index - 16000]);
       }
       break;
     default:
     {
       // ERROR! Nothing was read
-      cout << "Error: could not read "  << index << " from memory" << endl;
+      cout << ">> Error: could not read "  << index << " from memory" << endl;
       exit(EXIT_FAILURE);
     }
   }
@@ -430,7 +328,7 @@ int write_to_memory(int index, string value){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
     if (!MEMORY_STACK.size()){
-      cout << "Error: No local context to write "  << index << " to memory" << endl;
+      cout << ">> Error: No local context to write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE); // ERROR! No context to write local variable to
     }
   }
@@ -498,6 +396,68 @@ int write_to_memory(int index, string value){
       break;
     case 200:
       {
+      LOCAL_MEM.local_mem.ints[index - 9000] = s_stoi(value);
+      }
+      break;
+    case 210:
+      {
+      LOCAL_MEM.local_mem.floats[index - 10000] = s_stof(value);
+      }
+      break;
+    case 220:
+      {
+      LOCAL_MEM.local_mem.strings[index - 11000] = value;
+      }
+      break;
+    case 230:
+      {
+      LOCAL_MEM.local_mem.booleans[index - 12000] = s_stob(value);
+      }
+      break;
+    case 201:
+      {
+      LOCAL_MEM.temp_mem.ints[index - 13000] = s_stoi(value);
+      }
+      break;
+    case 211:
+      {
+      LOCAL_MEM.temp_mem.floats[index - 14000] = s_stof(value);
+      }
+      break;
+    case 221:
+      {
+      LOCAL_MEM.temp_mem.strings[index - 15000] = value;
+      }
+      break;
+    case 231:
+      {
+      LOCAL_MEM.temp_mem.booleans[index - 16000] = s_stob(value);
+      }
+      break;
+    default:
+    {
+      // ERROR! Nothing was written
+      return 1;
+    }
+  }
+
+  return 0; // Success!
+}
+
+
+void write_to_param(int index, string value){
+	string mem_sign = mem_index_to_mem_signature(index);
+  if(mem_sign[0] == '2'){
+    if (!MEMORY_STACK.size()){
+      cout << ">> Error: No local context to write "  << value << " to " << index << endl;
+      exit(EXIT_FAILURE); // ERROR! No context to write local variable to
+    }
+  }
+
+	int int_mem_sign = stoi(mem_sign);
+  switch (int_mem_sign) {
+		case 200:
+      {
         MEMORY_STACK.top().local_mem.ints[index - 9000] = s_stoi(value);
       }
       break;
@@ -516,45 +476,26 @@ int write_to_memory(int index, string value){
         MEMORY_STACK.top().local_mem.booleans[index - 12000] = s_stob(value);
       }
       break;
-    case 201:
-      {
-        MEMORY_STACK.top().temp_mem.ints[index - 13000] = s_stoi(value);
-      }
-      break;
-    case 211:
-      {
-        MEMORY_STACK.top().temp_mem.floats[index - 14000] = s_stof(value);
-      }
-      break;
-    case 221:
-      {
-        MEMORY_STACK.top().temp_mem.strings[index - 15000] = value;
-      }
-      break;
-    case 231:
-      {
-        MEMORY_STACK.top().temp_mem.booleans[index - 16000] = s_stob(value);
-      }
-      break;
-    default:
-    {
-      // ERROR! Nothing was written
-      return 1;
-    }
-  }
-
-  return 0; // Success!
+		default:
+			{
+				// ERROR! Nothing was read
+	      cout << ">> Error: could not write "  << index << " to memory" << endl;
+	      exit(EXIT_FAILURE);
+			}
+			break;
+	}
 }
 
 void setup(){
   for (auto const& pair : CONSTANTS){
     if (write_to_memory(pair.first, pair.second)){
-      cout << "Error writting " << pair.second << " to " << pair.first << endl;
+      cout << ">> Error writting " << pair.second << " to " << pair.first << endl;
       exit(EXIT_FAILURE);
     }
   }
 
-  IP = 0;
+  IP = 0; // Start execution at the first QUAD
+	MEMORY_STACK_LIMIT = 100000;
 }
 
 void run(){
@@ -700,6 +641,39 @@ void run(){
 				}
 				break;
 
+			case 14:		// ERA
+				{
+					int func_start_addr = QUADS[IP][3];
+					if (MEMORY_STACK.size() > MEMORY_STACK_LIMIT){
+						// Too many functions on the stack!
+						cout << ">> Error: Memory Stack Limit reached (infinite recursion?). Terminating..." << endl;
+						exit(EXIT_FAILURE);
+					}
+					MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN.at(func_start_addr).at(0), MEMORY_MAP_SIGN.at(func_start_addr).at(1)));
+					IP++;
+				}
+				break;
+
+			case 15:		// PARAM
+				{
+
+					Value param_value = read_from_memory(QUADS[IP][2]);
+					int param_addr = QUADS[IP][3];
+
+					write_to_param(param_addr, param_value.to_str());
+					IP++;
+				}
+				break;
+
+			case 16:		// GOSUB
+				{
+					int func_start_addr = QUADS[IP][3];
+					MEMORY_STACK.top().set_return_addr(IP + 1);
+					LOCAL_MEM = MEMORY_STACK.top();
+					IP = func_start_addr;
+				}
+				break;
+
 			case 17:		// READ
 				{
 
@@ -714,40 +688,60 @@ void run(){
 				}
 				break;
 
-      case 18:			// PRINT
-        {
-          Value printable = read_from_memory(QUADS[IP][3]);
-          cout << printable.to_str();
-          IP++;
-        }
-        break;
-
-			case 19:			// PRINTLN
-        {
-          cout << endl;
-          IP++;
-        }
-        break;
-
-      case 20:			// GOTO
-        {
-          int to_dir = QUADS[IP][3];
-          IP = to_dir;
-        }
-        break;
-
-			case 21:			// GOTOF
+			case 18:			// PRNTBFFR
 				{
-					int to_dir = QUADS[IP][3];
+					Value printable = read_from_memory(QUADS[IP][3]);
+					if (MEMORY_STACK.size()) MEMORY_STACK.top().add_to_print_buffer(printable.to_str());
+					else GLOBAL_MEM.add_to_print_buffer(printable.to_str());
+					IP++;
+				}
+				break;
+
+      case 19:			// PRNT
+        {
+          string printable = (MEMORY_STACK.size()) ? MEMORY_STACK.top().flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+          cout << printable;
+          IP++;
+        }
+        break;
+
+			case 20:			// PRNTLN
+        {
+					string printable = (MEMORY_STACK.size()) ? MEMORY_STACK.top().flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+          cout << printable << endl;
+          IP++;
+        }
+        break;
+
+      case 21:			// GOTO
+        {
+          int to_addr = QUADS[IP][3];
+          IP = to_addr;
+        }
+        break;
+
+			case 22:			// GOTOF
+				{
+					int to_addr = QUADS[IP][3];
 					Value condition = read_from_memory(QUADS[IP][2]);
 					Value false_value = Value(false);
 					Value result = condition == false_value;
-					if(result.b) IP = to_dir;
+					if(result.b) IP = to_addr;
 					else IP++;
 				}
 				break;
 
-      case 23:			// END
+
+			case 23:			// ENDFNC
+				{
+					int return_addr = MEMORY_STACK.top().return_addr;
+					MEMORY_STACK.pop();
+					LOCAL_MEM = (MEMORY_STACK.size()) ? MEMORY_STACK.top() : MemoryMap();
+					IP = return_addr;
+				}
+				break;
+
+      case 24:			// END
         {
           RUNNING = false;
         }
@@ -755,7 +749,7 @@ void run(){
 
       default:
         {
-        cout << "Unknown op: " << op << endl;
+        cout << ">> Error: Unknown Op: " << op << endl;
         exit(EXIT_FAILURE);
         }
     }
