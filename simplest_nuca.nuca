@@ -47,4 +47,11 @@ main (){
   f = a * (1 == 1) + b * (2 == 2);
   print(a, b, c, d, e, f, g, h);
   print("a" > "b", "a" >= "b", !"");
+
+  println("------------------------");
+
+  print("HI ", " print() ", " prints inline,", " and needs this next param for a newline:", "\n");
+  println("Hello from another line!", " println() acts just like print, " + "but always adds a '\\n' parameter at the end!");
+  println("And this skips two lines!", "\n");
+  println("Nice : )");
 }

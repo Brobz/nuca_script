@@ -52,7 +52,8 @@ reserved = {
     'main' : 'MAIN_KWD',
     'class' : 'CLASS_KWD',
     'derives' : 'DERIVES_KWD',
-    'print' : 'WRITE_KWD',
+    'println' : 'PRINTLN_KWD',
+    'print' : 'PRINT_KWD',
     'read' : 'READ_KWD',
     'return' : 'RETURN_KWD',
     'while' : 'WHILE_KWD',
@@ -176,11 +177,7 @@ Preliminary Memory Model:
             write this values to VM, use them inside of memory methods instead of magic numbers
 
         /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
-
-        2. Implement READ
-
-        3. Change WRITE to PRINT, and make it print comma-separated printables inline;
-
+        
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
@@ -374,7 +371,8 @@ def p_func_statement_star(p):
     ''' FUNC_STATEMENT_STAR :      ASSIGN SEMI_COLON FUNC_STATEMENT_STAR
                                 |  FUNC_CALL SEMI_COLON FUNC_STATEMENT_STAR
                                 |  READ SEMI_COLON FUNC_STATEMENT_STAR
-                                |  WRITE SEMI_COLON FUNC_STATEMENT_STAR
+                                |  PRINT SEMI_COLON FUNC_STATEMENT_STAR
+                                |  PRINTLN SEMI_COLON FUNC_STATEMENT_STAR
                                 |  FUNC_FLOW_CONTROL FUNC_STATEMENT_STAR
                                 |  FUNC_RETURN FUNC_STATEMENT_STAR
                                 |  empty '''
@@ -387,7 +385,8 @@ def p_statement(p):
     ''' STATEMENT : ASSIGN SEMI_COLON
                   | FUNC_CALL SEMI_COLON
                   | READ SEMI_COLON
-                  | WRITE SEMI_COLON
+                  | PRINT SEMI_COLON
+                  | PRINTLN SEMI_COLON
                   | FLOW_CONTROL '''
 
 def p_flow_control(p):
@@ -402,7 +401,8 @@ def p_for_incr_statement(p):
     ''' FOR_INCR_STATEMENT :    ASSIGN
                               | FUNC_CALL
                               | READ
-                              | WRITE '''
+                              | PRINT
+                              | PRINTLN '''
 
 def p_assign(p):
     ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION '''
@@ -604,8 +604,18 @@ def p_void_func_return(p):
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
 
-def p_write(p):
-    ''' WRITE : WRITE_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
+def p_print(p):
+    ''' PRINT : PRINT_KWD seen_print_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
+
+def p_seen_print_kwd(p):
+    ''' seen_print_kwd : empty '''
+
+def p_println(p):
+    ''' PRINTLN : PRINTLN_KWD seen_println_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
+    push_to_quads(Quad("PRNTLN", -1, -1, -1))
+
+def p_seen_println_kwd(p):
+    ''' seen_println_kwd : empty '''
 
 def p_printable(p):
     ''' PRINTABLE : EXPRESSION seen_printable PRINTABLE_P '''

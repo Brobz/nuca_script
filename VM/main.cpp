@@ -15,7 +15,7 @@ using namespace std;
 
 // MEMORY //
 const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{4, {{4,3,1,1}, {7,2,9,9}, {6,3,18,0}}},
+										{4, {{4,3,1,1}, {7,2,10,9}, {6,3,28,0}}},
 										{1, {{1,0,0,0}, {1,0,0,0}}},
 										};
 // MEMORY //
@@ -49,6 +49,16 @@ const map<int, string> CONSTANTS = {
 										{515, "a"},
 										{516, "b"},
 										{517, ""},
+										{518, "------------------------"},
+										{519, "HI "},
+										{520, " print() "},
+										{521, " prints inline,"},
+										{522, " and needs this next param for a newline:"},
+										{523, "Hello from another line!"},
+										{524, " println() acts just like print, "},
+										{525, "but always adds a '\\n' parameter at the end!"},
+										{526, "And this skips two lines!"},
+										{527, "Nice : )"},
 										};
 // CONSTANTS //
 
@@ -57,7 +67,7 @@ const vector<vector<int>> QUADS = {
 										{20, -1, -1, 4},
 										{3, 9000, 0, 13000},
 										{0, -1, 13000, 1003},
-										{19, -1, -1, -1},
+										{22, -1, -1, -1},
 										{1, 1, 2, 5000},
 										{0, -1, 5000, 1000},
 										{0, -1, 3, 1001},
@@ -141,7 +151,23 @@ const vector<vector<int>> QUADS = {
 										{18, -1, -1, 8007},
 										{13, -1, 517, 8008},
 										{18, -1, -1, 8008},
-										{22, -1, -1, -1},
+										{18, -1, -1, 518},
+										{19, -1, -1, -1},
+										{18, -1, -1, 519},
+										{18, -1, -1, 520},
+										{18, -1, -1, 521},
+										{18, -1, -1, 522},
+										{18, -1, -1, 505},
+										{18, -1, -1, 523},
+										{1, 524, 525, 7009},
+										{18, -1, -1, 7009},
+										{19, -1, -1, -1},
+										{18, -1, -1, 526},
+										{18, -1, -1, 505},
+										{19, -1, -1, -1},
+										{18, -1, -1, 527},
+										{19, -1, -1, -1},
+										{23, -1, -1, -1},
 										};
 // QUADS //
 
@@ -694,6 +720,13 @@ void run(){
         }
         break;
 
+			case 19:			// PRINTLN
+        {
+          cout << endl;
+          IP++;
+        }
+        break;
+
       case 20:			// GOTO
         {
           int to_dir = QUADS[IP][3];
@@ -712,7 +745,7 @@ void run(){
 				}
 				break;
 
-      case 22:			// END
+      case 23:			// END
         {
           RUNNING = false;
         }

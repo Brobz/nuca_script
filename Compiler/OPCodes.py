@@ -19,9 +19,10 @@ OPCodes = {
                 "PARAM" :       16,
                 "READ" :        17,
                 "PRNT" :       18,
-                "ENDFNC" :      19,
+                "PRNTLN" :       19,
                 "GOTO" :        20,
                 "GOTOF" :         21,
-                "END" :         22,
+                "ENDFNC" :      22,
+                "END" :         23,
 
 }
