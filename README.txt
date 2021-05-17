@@ -38,7 +38,7 @@ Por el momento, solo se implemento la ejecucion de los operadores GOTO y =.
 
 |-- Avance #6.b (16/05/2021) --|
 
-Se implemento la ejecucion en maquina virtual de expresiones aritmeticas, condicionales y ciclos en su totalidad, ademas de estatutos sencillos como lecturas (read) y escrituras (print y println).
+Se implementaron la ejecucion en maquina virtual de expresiones aritmeticas, condicionales y ciclos en su totalidad, ademas de estatutos sencillos como lecturas (read) y escrituras (print y println).
 Para probar:
             python nuca_script.py simplest_nuca.nuca -o simplest_nuca (compila)
             simplest_nuca.exe (corre el programa compilado)

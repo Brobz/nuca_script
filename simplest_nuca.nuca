@@ -28,9 +28,9 @@ main (){
       while(f > 0.1){
         f = f - 0.1;
         }
-    print(">> b is now:", b, "\n");
+    println(">> b is now:", b);
   }
-    print(">> a is now:", a, "\n");
+    println(">> a is now:", a);
   }
   print(">> Enter an integer\n-- a = ");
   read(a);
@@ -39,19 +39,19 @@ main (){
   print(">> Enter a fate(bool)\n-- h = ");
   read(h);
   if(h){
-    print(">> h is true", "a is " + a, "\n");
+    println(">> h is true", "a is " + a);
   }else{
-    print(">> h is false", "e is " + e, "\n");
+    println(">> h is false", "e is " + e);
   }
-  print(">> after while f value: ", f, "\n");
+  println(">> after while f value: ", f);
   f = a * (1 == 1) + b * (2 == 2);
-  print(a, b, c, d, e, f, g, h);
-  print("a" > "b", "a" >= "b", !"");
+  println(a, b, c, d, e, f, g, h);
+  println("a" > "b", "a" >= "b", !"");
 
   println("------------------------");
 
   print("HI ", " print() ", " prints inline,", " and needs this next param for a newline:", "\n");
   println("Hello from another line!", " println() acts just like print, " + "but always adds a '\\n' parameter at the end!");
-  println("And this skips two lines!", "\n");
+  println("And this will skip two lines!", "\n");
   println("Nice : )");
 }
