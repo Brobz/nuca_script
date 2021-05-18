@@ -5,16 +5,25 @@ d, e, f : float;
 g : string;
 h : boolean;
 
-int recursive_print(s : string, n : int)
+int abs(n : int)
+VARS{}
+{
+  if(n < 0){
+    return n * (0 - 1);
+  }
+  return n;
+}
+
+int recursive_print(s : string, n : int, big_n : int)
 VARS {
   i : int;
 }
 {
-  if(n < 5 - 10){
-    return 5 - 11;
+  if(n < big_n * (0 - 1)){
+    return big_n * (0 - 1) - 1;
   }
-  i = recursive_print(s, n - 1);
-  println(s + " * " + i + " = " + s * i);
+  i = recursive_print(s, n - 1, big_n);
+  println(s + " * " + i + " = " + s * i,  ((big_n - abs(n)))  * "\t", s * i + " = " + i + " * " + s);
   return n;
 }
 
@@ -38,47 +47,19 @@ VARS{
 }
 
 main (){
-  recursive_print("ITESM", 3);
-  // infinite(); //
+  print(">> Enter an integer\n-- a = ");
+  read(a);
+  print(">> Enter a string\n-- f = ");
+  read(g);
+
+  recursive_print(g, a, a);
 
   for(a = 0; a <= 12; a = a + 1){
     println(a + "! = " + fac(a));
   }
 
 
-  b = 5;
-  c = 10;
-  d = 4.5;
-  e = 5 + 1.3;
-  f = 10;
-  g = "HI!" * b;
-  h = g == "HI!" * (a + 1);
-  g = "lol" * h + "\t" * 2 + "HAHA" * 1 ;
-  e = 1;
-  for(a = 0; a <= 10; a = a + 5){
-    for(b = 10; b > 0; b = b - 5){
-      while(f > 0.1){
-        f = f - 0.1;
-        }
-    println(">> b is now:", b);
-  }
-    println(">> a is now:", a);
-  }
-  print(">> Enter an integer\n-- a = ");
-  read(a);
-  print(">> Enter a float\n-- f = ");
-  read(e);
-  print(">> Enter a fate(bool)\n-- h = ");
-  read(h);
-  if(h){
-    println(">> h is true", "\n>> a is " + a);
-  }else{
-    println(">> h is false", "\n>> e is " + e);
-  }
-  println(">> after while f value: ", f);
-  f = a * (1 == 1) + b * (2 == 2);
-
-  println("Global a: " + a );
+  println("Global a:", a);
 
   println("------------------------");
 

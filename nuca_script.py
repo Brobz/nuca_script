@@ -135,6 +135,15 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
+
+// IDEAS //
+
+    FUNCTIONS:
+
+        -> overloaded functions?
+        -> default arguments?
+        -> builtin methods? (wait, exit, etc..)
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Preliminary Memory Model:
@@ -175,6 +184,8 @@ Preliminary Memory Model:
             [int, float, string, boolean]
 
             -> maybe use SymbolTable's MEMORY_SECTOR_SHIFTS ?
+
+            -> probably bump up variable numers, * 5
 
             write this values to VM, use them inside of memory methods instead of magic numbers
 

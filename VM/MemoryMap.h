@@ -2,8 +2,11 @@
 
 using namespace std;
 
+const string STRING_BUFFER_PADDING = " ";
+
 class MemoryMap{
     public:
+
 
       int return_addr = 0;
       bool active = true;
@@ -37,9 +40,10 @@ class MemoryMap{
 
 
       string flush_print_buffer(){
+        int buffer_size = print_buffer.size();
         string temp_string = "";
-        for(int i = 0; i < print_buffer.size(); i++){
-          temp_string += print_buffer[i];
+        for(int i = 0; i < buffer_size; i++){
+          temp_string += (i + 1 < buffer_size) ? print_buffer[i] + STRING_BUFFER_PADDING : print_buffer[i];
         }
         print_buffer.clear();
         return temp_string;
