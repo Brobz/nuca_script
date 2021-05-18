@@ -5,10 +5,17 @@ d, e, f : float;
 g : string;
 h : boolean;
 
-string string_doubler(n : string)
-VARS {}
+int recursive_print(s : string, n : int)
+VARS {
+  i : int;
+}
 {
-  return n * 2;
+  if(n < 5 - 10){
+    return 5 - 11;
+  }
+  i = recursive_print(s, n - 1);
+  println(s + " * " + i + " = " + s * i);
+  return n;
 }
 
 
@@ -31,10 +38,13 @@ VARS{
 }
 
 main (){
+  recursive_print("ITESM", 3);
   // infinite(); //
+
   for(a = 0; a <= 12; a = a + 1){
     println(a + "! = " + fac(a));
   }
+
   //
   b = 5;
   c = 10;

@@ -15,58 +15,89 @@ using namespace std;
 
 // MEMORY //
 const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{19, {{4,3,2,1}, {2,0,2,1}, {4,0,1,0}}},
-										{1, {{0,0,1,0}, {0,0,1,0}}},
-										{4, {{1,0,0,0}, {3,0,0,1}}},
-										{16, {{3,0,1,0}, {0,0,0,0}}},
+										{38, {{5,3,1,1}, {3,0,2,1}, {8,0,4,0}}},
+										{1, {{2,0,1,0}, {4,0,5,1}}},
+										{23, {{1,0,0,0}, {3,0,0,1}}},
+										{35, {{3,0,1,0}, {0,0,0,0}}},
 										};
 // MEMORY //
 
 // CONSTANTS //
 const map<int, string> CONSTANTS = {
-										{0, "2"},
-										{1, "1"},
-										{2, "0"},
-										{3, "12"},
-										{500, "! = "},
+										{0, "5"},
+										{1, "10"},
+										{2, "11"},
+										{3, "1"},
+										{500, " * "},
+										{501, " = "},
+										{4, "2"},
+										{502, "ITESM"},
+										{5, "3"},
+										{6, "0"},
+										{7, "12"},
+										{503, "! = "},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{21, -1, -1, 19},
-										{3, 11000, 0, 15000},
-										{0, -1, 15000, 3001},
+										{21, -1, -1, 38},
+										{2, 0, 1, 13000},
+										{7, 9000, 13000, 16000},
+										{22, -1, 16000, 7},
+										{2, 0, 2, 13001},
+										{0, -1, 13001, 1003},
 										{23, -1, -1, -1},
-										{7, 9000, 0, 16000},
-										{22, -1, 16000, 8},
-										{0, -1, 1, 1003},
+										{14, -1, -1, 1},
+										{15, -1, 11000, 11000},
+										{2, 9000, 3, 13002},
+										{15, -1, 13002, 9000},
+										{16, -1, -1, 1},
+										{0, -1, 1003, 13003},
+										{0, -1, 13003, 9001},
+										{1, 11000, 500, 15000},
+										{1, 15000, 9001, 15001},
+										{1, 15001, 501, 15002},
+										{3, 11000, 9001, 15003},
+										{1, 15002, 15003, 15004},
+										{18, -1, -1, 15004},
+										{20, -1, -1, -1},
+										{0, -1, 9000, 1003},
 										{23, -1, -1, -1},
-										{14, -1, -1, 4},
-										{2, 9000, 1, 13000},
+										{7, 9000, 4, 16000},
+										{22, -1, 16000, 27},
+										{0, -1, 3, 1004},
+										{23, -1, -1, -1},
+										{14, -1, -1, 23},
+										{2, 9000, 3, 13000},
 										{15, -1, 13000, 9000},
-										{16, -1, -1, 4},
-										{0, -1, 1003, 13001},
+										{16, -1, -1, 23},
+										{0, -1, 1004, 13001},
 										{3, 9000, 13001, 13002},
-										{0, -1, 13002, 1003},
+										{0, -1, 13002, 1004},
 										{23, -1, -1, -1},
-										{14, -1, -1, 16},
-										{16, -1, -1, 16},
+										{14, -1, -1, 35},
+										{16, -1, -1, 35},
 										{23, -1, -1, -1},
-										{0, -1, 2, 1000},
-										{9, 1000, 3, 8000},
-										{22, -1, 8000, 33},
-										{1, 1000, 500, 7000},
-										{14, -1, -1, 4},
+										{14, -1, -1, 1},
+										{15, -1, 502, 11000},
+										{15, -1, 5, 9000},
+										{16, -1, -1, 1},
+										{0, -1, 1003, 5000},
+										{0, -1, 6, 1000},
+										{9, 1000, 7, 8000},
+										{22, -1, 8000, 57},
+										{1, 1000, 503, 7000},
+										{14, -1, -1, 23},
 										{15, -1, 1000, 9000},
-										{16, -1, -1, 4},
-										{0, -1, 1003, 5001},
-										{1, 7000, 5001, 7001},
+										{16, -1, -1, 23},
+										{0, -1, 1004, 5002},
+										{1, 7000, 5002, 7001},
 										{18, -1, -1, 7001},
 										{20, -1, -1, -1},
-										{1, 1000, 1, 5000},
-										{0, -1, 5000, 1000},
-										{21, -1, -1, 20},
+										{1, 1000, 3, 5001},
+										{0, -1, 5001, 1000},
+										{21, -1, -1, 44},
 										{24, -1, -1, -1},
 										};
 // QUADS //
@@ -204,7 +235,7 @@ string mem_index_to_mem_signature(int index){
 Value read_from_memory(int index){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
-    if (!MEMORY_STACK.size()){
+    if (!LOCAL_MEM.active){
       cout << ">> Error: No local context to read "  << index << " from memory" << endl;
       exit(EXIT_FAILURE); // ERROR! No context to read local variable from
     }
@@ -327,7 +358,7 @@ Value read_from_memory(int index){
 int write_to_memory(int index, string value){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
-    if (!MEMORY_STACK.size()){
+    if (!LOCAL_MEM.active){
       cout << ">> Error: No local context to write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE); // ERROR! No context to write local variable to
     }
@@ -649,6 +680,12 @@ void run(){
 						cout << ">> Error: Memory Stack Limit reached (infinite recursion?). Terminating..." << endl;
 						exit(EXIT_FAILURE);
 					}
+
+					if(MEMORY_STACK.size()){ // Function call, within a function!
+						MEMORY_STACK.pop(); // Get rid of old, empty memory structure..
+						MEMORY_STACK.push(MemoryMap(LOCAL_MEM)); // Swap it with the modified version!
+					}
+
 					MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN.at(func_start_addr).at(0), MEMORY_MAP_SIGN.at(func_start_addr).at(1)));
 					IP++;
 				}
@@ -668,8 +705,8 @@ void run(){
 			case 16:		// GOSUB
 				{
 					int func_start_addr = QUADS[IP][3];
-					MEMORY_STACK.top().set_return_addr(IP + 1);
-					LOCAL_MEM = MEMORY_STACK.top();
+					LOCAL_MEM = MemoryMap(MEMORY_STACK.top());
+					LOCAL_MEM.set_return_addr(IP + 1);
 					IP = func_start_addr;
 				}
 				break;
@@ -691,7 +728,7 @@ void run(){
 			case 18:			// PRNTBFFR
 				{
 					Value printable = read_from_memory(QUADS[IP][3]);
-					if (MEMORY_STACK.size()) MEMORY_STACK.top().add_to_print_buffer(printable.to_str());
+					if (LOCAL_MEM.active) LOCAL_MEM.add_to_print_buffer(printable.to_str());
 					else GLOBAL_MEM.add_to_print_buffer(printable.to_str());
 					IP++;
 				}
@@ -699,7 +736,7 @@ void run(){
 
       case 19:			// PRNT
         {
-          string printable = (MEMORY_STACK.size()) ? MEMORY_STACK.top().flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+          string printable = (LOCAL_MEM.active) ? LOCAL_MEM.flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
           cout << printable;
           IP++;
         }
@@ -707,7 +744,7 @@ void run(){
 
 			case 20:			// PRNTLN
         {
-					string printable = (MEMORY_STACK.size()) ? MEMORY_STACK.top().flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+					string printable = (LOCAL_MEM.active) ? LOCAL_MEM.flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
           cout << printable << endl;
           IP++;
         }
@@ -734,9 +771,9 @@ void run(){
 
 			case 23:			// ENDFNC
 				{
-					int return_addr = MEMORY_STACK.top().return_addr;
+					int return_addr = LOCAL_MEM.return_addr;
 					MEMORY_STACK.pop();
-					LOCAL_MEM = (MEMORY_STACK.size()) ? MEMORY_STACK.top() : MemoryMap();
+					LOCAL_MEM = (MEMORY_STACK.size()) ? MemoryMap(MEMORY_STACK.top()) : MemoryMap();
 					IP = return_addr;
 				}
 				break;

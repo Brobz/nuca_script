@@ -1,4 +1,5 @@
 #include <string>
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
@@ -150,8 +151,16 @@ class Value{
           case 2: // INT * STRING
           {
             string tmp_str = "";
-            for(int x = 0; x < i; x++){
-              tmp_str += v.s;
+            if(i > 0){ // Multiply string
+              for(int x = 0; x < i; x++){
+                tmp_str += v.s;
+              }
+            }else{ // Multiply reversed string (negative coef)
+              string copy(v.s);
+              reverse(copy.begin(), copy.end());
+              for(int x = 0; x > i; x--){
+                tmp_str += copy;
+              }
             }
             temp.set_s(tmp_str);
           } break;
@@ -178,8 +187,16 @@ class Value{
           case 20: // STRING * INT
           {
             string tmp_str = "";
-            for(int x = 0; x < v.i; x++){
-              tmp_str += s;
+            if(v.i > 0){ // Multiply string
+              for(int x = 0; x < v.i; x++){
+                tmp_str += s;
+              }
+            }else{ // Multiply reversed string (negative coef)
+              string copy(s);
+              reverse(copy.begin(), copy.end());
+              for(int x = 0; x > v.i; x--){
+                tmp_str += copy;
+              }
             }
             temp.set_s(tmp_str);
           } break;
