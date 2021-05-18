@@ -45,7 +45,7 @@ main (){
     println(a + "! = " + fac(a));
   }
 
-  //
+
   b = 5;
   c = 10;
   d = 4.5;
@@ -86,5 +86,5 @@ main (){
   println("Hello from another line!", " println() acts just like print, " + "but always adds a '\\n' parameter at the end!");
   println("And this will skip two lines!", "\n");
   println("Nice : )");
-  //
+
 }

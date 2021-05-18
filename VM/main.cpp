@@ -15,7 +15,7 @@ using namespace std;
 
 // MEMORY //
 const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{38, {{5,3,1,1}, {3,0,2,1}, {8,0,4,0}}},
+										{38, {{5,3,1,1}, {9,2,13,7}, {8,3,30,0}}},
 										{1, {{2,0,1,0}, {4,0,5,1}}},
 										{23, {{1,0,0,0}, {3,0,0,1}}},
 										{35, {{3,0,1,0}, {0,0,0,0}}},
@@ -36,6 +36,35 @@ const map<int, string> CONSTANTS = {
 										{6, "0"},
 										{7, "12"},
 										{503, "! = "},
+										{250, "4.5"},
+										{251, "1.3"},
+										{504, "HI!"},
+										{505, "lol"},
+										{506, "\t"},
+										{507, "HAHA"},
+										{252, "0.1"},
+										{508, ">> b is now:"},
+										{509, ">> a is now:"},
+										{510, ">> Enter an integer\n-- a = "},
+										{511, ">> Enter a float\n-- f = "},
+										{512, ">> Enter a fate(bool)\n-- h = "},
+										{513, ">> h is true"},
+										{514, "\n>> a is "},
+										{515, ">> h is false"},
+										{516, "\n>> e is "},
+										{517, ">> after while f value: "},
+										{518, "Global a: "},
+										{519, "------------------------"},
+										{520, "HI "},
+										{521, " print() "},
+										{522, " prints inline,"},
+										{523, " and needs this next param for a newline:"},
+										{524, "\n"},
+										{525, "Hello from another line!"},
+										{526, " println() acts just like print, "},
+										{527, "but always adds a '\\n' parameter at the end!"},
+										{528, "And this will skip two lines!"},
+										{529, "Nice : )"},
 										};
 // CONSTANTS //
 
@@ -98,6 +127,96 @@ const vector<vector<int>> QUADS = {
 										{1, 1000, 3, 5001},
 										{0, -1, 5001, 1000},
 										{21, -1, -1, 44},
+										{0, -1, 0, 1001},
+										{0, -1, 1, 1002},
+										{0, -1, 250, 2000},
+										{1, 0, 251, 6000},
+										{0, -1, 6000, 2001},
+										{0, -1, 1, 2002},
+										{3, 504, 1001, 7002},
+										{0, -1, 7002, 3000},
+										{1, 1000, 3, 5003},
+										{3, 504, 5003, 7003},
+										{5, 3000, 7003, 8001},
+										{0, -1, 8001, 4000},
+										{3, 505, 4000, 7004},
+										{3, 506, 4, 7005},
+										{1, 7004, 7005, 7006},
+										{3, 507, 3, 7007},
+										{1, 7006, 7007, 7008},
+										{0, -1, 7008, 3000},
+										{0, -1, 3, 2001},
+										{0, -1, 6, 1000},
+										{9, 1000, 1, 8002},
+										{22, -1, 8002, 99},
+										{0, -1, 1, 1001},
+										{6, 1001, 6, 8003},
+										{22, -1, 8003, 93},
+										{6, 2002, 252, 8004},
+										{22, -1, 8004, 87},
+										{2, 2002, 252, 6001},
+										{0, -1, 6001, 2002},
+										{21, -1, -1, 82},
+										{18, -1, -1, 508},
+										{18, -1, -1, 1001},
+										{20, -1, -1, -1},
+										{2, 1001, 0, 5005},
+										{0, -1, 5005, 1001},
+										{21, -1, -1, 80},
+										{18, -1, -1, 509},
+										{18, -1, -1, 1000},
+										{20, -1, -1, -1},
+										{1, 1000, 0, 5004},
+										{0, -1, 5004, 1000},
+										{21, -1, -1, 77},
+										{18, -1, -1, 510},
+										{19, -1, -1, -1},
+										{17, -1, -1, 1000},
+										{18, -1, -1, 511},
+										{19, -1, -1, -1},
+										{17, -1, -1, 2001},
+										{18, -1, -1, 512},
+										{19, -1, -1, -1},
+										{17, -1, -1, 4000},
+										{22, -1, 4000, 114},
+										{18, -1, -1, 513},
+										{1, 514, 1000, 7009},
+										{18, -1, -1, 7009},
+										{20, -1, -1, -1},
+										{21, -1, -1, 118},
+										{18, -1, -1, 515},
+										{1, 516, 2001, 7010},
+										{18, -1, -1, 7010},
+										{20, -1, -1, -1},
+										{18, -1, -1, 517},
+										{18, -1, -1, 2002},
+										{20, -1, -1, -1},
+										{5, 3, 3, 8005},
+										{3, 1000, 8005, 5006},
+										{5, 4, 4, 8006},
+										{3, 1001, 8006, 5007},
+										{1, 5006, 5007, 5008},
+										{0, -1, 5008, 2002},
+										{1, 518, 1000, 7011},
+										{18, -1, -1, 7011},
+										{20, -1, -1, -1},
+										{18, -1, -1, 519},
+										{20, -1, -1, -1},
+										{18, -1, -1, 520},
+										{18, -1, -1, 521},
+										{18, -1, -1, 522},
+										{18, -1, -1, 523},
+										{18, -1, -1, 524},
+										{19, -1, -1, -1},
+										{18, -1, -1, 525},
+										{1, 526, 527, 7012},
+										{18, -1, -1, 7012},
+										{20, -1, -1, -1},
+										{18, -1, -1, 528},
+										{18, -1, -1, 524},
+										{20, -1, -1, -1},
+										{18, -1, -1, 529},
+										{20, -1, -1, -1},
 										{24, -1, -1, -1},
 										};
 // QUADS //
@@ -106,7 +225,8 @@ const vector<vector<int>> QUADS = {
 int PROGRAM_START; // Quad index of the start of main()
 bool RUNNING = false;
 int IP, MEMORY_STACK_LIMIT; // Instruction Pointer, Recursion Limit
-MemoryMap GLOBAL_MEM, LOCAL_MEM;
+MemoryMap GLOBAL_MEM;
+MemoryMap* LOCAL_MEM;
 stack<MemoryMap> MEMORY_STACK;
 // GLOBAL VARS //
 
@@ -235,7 +355,7 @@ string mem_index_to_mem_signature(int index){
 Value read_from_memory(int index){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
-    if (!LOCAL_MEM.active){
+    if (!LOCAL_MEM->active){
       cout << ">> Error: No local context to read "  << index << " from memory" << endl;
       exit(EXIT_FAILURE); // ERROR! No context to read local variable from
     }
@@ -306,42 +426,42 @@ Value read_from_memory(int index){
       break;
     case 200:
       {
-        v.set_i(LOCAL_MEM.local_mem.ints[index - 9000]);
+        v.set_i(LOCAL_MEM->local_mem.ints[index - 9000]);
       }
       break;
     case 210:
       {
-        v.set_f(LOCAL_MEM.local_mem.floats[index - 10000]);
+        v.set_f(LOCAL_MEM->local_mem.floats[index - 10000]);
       }
       break;
     case 220:
       {
-        v.set_s(LOCAL_MEM.local_mem.strings[index - 11000]);
+        v.set_s(LOCAL_MEM->local_mem.strings[index - 11000]);
       }
       break;
     case 230:
       {
-        v.set_b(LOCAL_MEM.local_mem.booleans[index - 12000]);
+        v.set_b(LOCAL_MEM->local_mem.booleans[index - 12000]);
       }
       break;
     case 201:
       {
-        v.set_i(LOCAL_MEM.temp_mem.ints[index - 13000]);
+        v.set_i(LOCAL_MEM->temp_mem.ints[index - 13000]);
       }
       break;
     case 211:
       {
-        v.set_f(LOCAL_MEM.temp_mem.floats[index - 14000]);
+        v.set_f(LOCAL_MEM->temp_mem.floats[index - 14000]);
       }
       break;
     case 221:
       {
-        v.set_s(LOCAL_MEM.temp_mem.strings[index - 15000]);
+        v.set_s(LOCAL_MEM->temp_mem.strings[index - 15000]);
       }
       break;
     case 231:
       {
-        v.set_b(LOCAL_MEM.temp_mem.booleans[index - 16000]);
+        v.set_b(LOCAL_MEM->temp_mem.booleans[index - 16000]);
       }
       break;
     default:
@@ -358,7 +478,7 @@ Value read_from_memory(int index){
 int write_to_memory(int index, string value){
   string mem_sign = mem_index_to_mem_signature(index);
   if(mem_sign[0] == '2'){
-    if (!LOCAL_MEM.active){
+    if (!LOCAL_MEM->active){
       cout << ">> Error: No local context to write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE); // ERROR! No context to write local variable to
     }
@@ -427,42 +547,42 @@ int write_to_memory(int index, string value){
       break;
     case 200:
       {
-      LOCAL_MEM.local_mem.ints[index - 9000] = s_stoi(value);
+      LOCAL_MEM->local_mem.ints[index - 9000] = s_stoi(value);
       }
       break;
     case 210:
       {
-      LOCAL_MEM.local_mem.floats[index - 10000] = s_stof(value);
+      LOCAL_MEM->local_mem.floats[index - 10000] = s_stof(value);
       }
       break;
     case 220:
       {
-      LOCAL_MEM.local_mem.strings[index - 11000] = value;
+      LOCAL_MEM->local_mem.strings[index - 11000] = value;
       }
       break;
     case 230:
       {
-      LOCAL_MEM.local_mem.booleans[index - 12000] = s_stob(value);
+      LOCAL_MEM->local_mem.booleans[index - 12000] = s_stob(value);
       }
       break;
     case 201:
       {
-      LOCAL_MEM.temp_mem.ints[index - 13000] = s_stoi(value);
+      LOCAL_MEM->temp_mem.ints[index - 13000] = s_stoi(value);
       }
       break;
     case 211:
       {
-      LOCAL_MEM.temp_mem.floats[index - 14000] = s_stof(value);
+      LOCAL_MEM->temp_mem.floats[index - 14000] = s_stof(value);
       }
       break;
     case 221:
       {
-      LOCAL_MEM.temp_mem.strings[index - 15000] = value;
+      LOCAL_MEM->temp_mem.strings[index - 15000] = value;
       }
       break;
     case 231:
       {
-      LOCAL_MEM.temp_mem.booleans[index - 16000] = s_stob(value);
+      LOCAL_MEM->temp_mem.booleans[index - 16000] = s_stob(value);
       }
       break;
     default:
@@ -681,11 +801,6 @@ void run(){
 						exit(EXIT_FAILURE);
 					}
 
-					if(MEMORY_STACK.size()){ // Function call, within a function!
-						MEMORY_STACK.pop(); // Get rid of old, empty memory structure..
-						MEMORY_STACK.push(MemoryMap(LOCAL_MEM)); // Swap it with the modified version!
-					}
-
 					MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN.at(func_start_addr).at(0), MEMORY_MAP_SIGN.at(func_start_addr).at(1)));
 					IP++;
 				}
@@ -705,8 +820,8 @@ void run(){
 			case 16:		// GOSUB
 				{
 					int func_start_addr = QUADS[IP][3];
-					LOCAL_MEM = MemoryMap(MEMORY_STACK.top());
-					LOCAL_MEM.set_return_addr(IP + 1);
+					LOCAL_MEM = &(MEMORY_STACK.top());
+					LOCAL_MEM->set_return_addr(IP + 1);
 					IP = func_start_addr;
 				}
 				break;
@@ -728,7 +843,7 @@ void run(){
 			case 18:			// PRNTBFFR
 				{
 					Value printable = read_from_memory(QUADS[IP][3]);
-					if (LOCAL_MEM.active) LOCAL_MEM.add_to_print_buffer(printable.to_str());
+					if (LOCAL_MEM->active) LOCAL_MEM->add_to_print_buffer(printable.to_str());
 					else GLOBAL_MEM.add_to_print_buffer(printable.to_str());
 					IP++;
 				}
@@ -736,7 +851,7 @@ void run(){
 
       case 19:			// PRNT
         {
-          string printable = (LOCAL_MEM.active) ? LOCAL_MEM.flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+          string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
           cout << printable;
           IP++;
         }
@@ -744,7 +859,7 @@ void run(){
 
 			case 20:			// PRNTLN
         {
-					string printable = (LOCAL_MEM.active) ? LOCAL_MEM.flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+					string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
           cout << printable << endl;
           IP++;
         }
@@ -771,9 +886,9 @@ void run(){
 
 			case 23:			// ENDFNC
 				{
-					int return_addr = LOCAL_MEM.return_addr;
+					int return_addr = LOCAL_MEM->return_addr;
 					MEMORY_STACK.pop();
-					LOCAL_MEM = (MEMORY_STACK.size()) ? MemoryMap(MEMORY_STACK.top()) : MemoryMap();
+					LOCAL_MEM = (MEMORY_STACK.size()) ? &(MEMORY_STACK.top()) : new MemoryMap();
 					IP = return_addr;
 				}
 				break;

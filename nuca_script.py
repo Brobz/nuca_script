@@ -182,6 +182,7 @@ Preliminary Memory Model:
 
         /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
+// TODO : Allow negative sign (-) to be placed before terms (a = -5; if (b < -5); g = 5 + (-5))
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
