@@ -5,6 +5,7 @@ class FunctionDirectory(object):
     """docstring for FunctionDirectory."""
 
     MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean"]
+    VAR_TYPES = len(MEMORY_SECTOR_INDICES)
 
     def __init__(self, mem_constraints):
         self.current_scope = None

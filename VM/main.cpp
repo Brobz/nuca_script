@@ -14,11 +14,10 @@ using namespace std;
 
 
 // MEMORY //
-
 const int MAX_CONSTANTS = 1000, MAX_SYMBOLS = 3000, MAX_TMP_SYMBOLS = 3000, VAR_TYPES = 4;
 
 const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{63, {{6,3,1,1}, {3,0,3,1}, {4,0,18,0}}},
+										{63, {{6,3,1,1}, {12,1,4,1}, {7,1,20,0}}},
 										{1, {{1,0,0,0}, {2,0,0,1}}},
 										{9, {{3,0,1,0}, {9,0,11,1}}},
 										{48, {{1,0,0,0}, {3,0,0,1}}},
@@ -34,22 +33,28 @@ const map<int, string> CONSTANTS = {
 										{2001, " = "},
 										{2002, "\t"},
 										{2, "2"},
-										{2003, ">> Enter an integer\n-- a = "},
-										{2004, ">> Enter a string\n-- f = "},
-										{3, "12"},
-										{2005, "! = "},
-										{2006, "Global a:"},
-										{2007, "------------------------"},
-										{2008, "HI "},
-										{2009, " print() "},
-										{2010, " prints inline,"},
-										{2011, " and needs this next param for a newline:"},
-										{2012, "\n"},
-										{2013, "Hello from another line!"},
-										{2014, " println() acts just like print, "},
-										{2015, "but always adds a '\\n' parameter at the end!"},
-										{2016, "And this will skip two lines!"},
-										{2017, "Nice : )"},
+										{2003, "-'hola' = "},
+										{2004, "hola"},
+										{3, "3"},
+										{4, "15"},
+										{5, "5"},
+										{1000, "25.5"},
+										{2005, ">> Enter an integer\n-- a = "},
+										{2006, ">> Enter a string\n-- f = "},
+										{6, "12"},
+										{2007, "! = "},
+										{2008, "Global a:"},
+										{2009, "------------------------"},
+										{2010, "HI "},
+										{2011, " print() "},
+										{2012, " prints inline,"},
+										{2013, " and needs this next param for a newline:"},
+										{2014, "\n"},
+										{2015, "Hello from another line!"},
+										{2016, " println() acts just like print, "},
+										{2017, "but always adds a '\\n' parameter at the end!"},
+										{2018, "And this will skip two lines!"},
+										{2019, "Nice : )"},
 										};
 // CONSTANTS //
 
@@ -58,17 +63,17 @@ const vector<vector<int>> QUADS = {
 										{21, -1, -1, 63},
 										{7, 28000, 0, 49000},
 										{22, -1, 49000, 7},
-										{2, 0, 1, 40000},
+										{2, -1, 1, 40000},
 										{3, 28000, 40000, 40001},
 										{0, -1, 40001, 4003},
 										{23, -1, -1, -1},
 										{0, -1, 28000, 4003},
 										{23, -1, -1, -1},
-										{2, 0, 1, 40000},
+										{2, -1, 1, 40000},
 										{3, 28001, 40000, 40001},
 										{7, 28000, 40001, 49000},
 										{22, -1, 49000, 18},
-										{2, 0, 1, 40002},
+										{2, -1, 1, 40002},
 										{3, 28001, 40002, 40003},
 										{2, 40003, 1, 40004},
 										{0, -1, 40004, 4004},
@@ -119,9 +124,37 @@ const vector<vector<int>> QUADS = {
 										{16, -1, -1, 60},
 										{23, -1, -1, -1},
 										{18, -1, -1, 2003},
+										{2, -1, 2004, 22000},
+										{18, -1, -1, 22000},
+										{2, -1, 4, 16000},
+										{3, 3, 16000, 16001},
+										{1, 16001, 5, 16002},
+										{2, -1, 5, 16003},
+										{1, 16002, 16003, 16004},
+										{18, -1, -1, 16004},
+										{2, -1, 1000, 19000},
+										{18, -1, -1, 19000},
+										{14, -1, -1, 1},
+										{2, -1, 1, 16005},
+										{15, -1, 16005, 28000},
+										{16, -1, -1, 1},
+										{0, -1, 4003, 16006},
+										{18, -1, -1, 16006},
+										{14, -1, -1, 1},
+										{15, -1, 0, 28000},
+										{16, -1, -1, 1},
+										{0, -1, 4003, 16007},
+										{18, -1, -1, 16007},
+										{14, -1, -1, 1},
+										{15, -1, 1, 28000},
+										{16, -1, -1, 1},
+										{0, -1, 4003, 16008},
+										{18, -1, -1, 16008},
+										{20, -1, -1, -1},
+										{18, -1, -1, 2005},
 										{19, -1, -1, -1},
 										{17, -1, -1, 4000},
-										{18, -1, -1, 2004},
+										{18, -1, -1, 2006},
 										{19, -1, -1, -1},
 										{17, -1, -1, 10000},
 										{14, -1, -1, 9},
@@ -129,40 +162,40 @@ const vector<vector<int>> QUADS = {
 										{15, -1, 4000, 28000},
 										{15, -1, 4000, 28001},
 										{16, -1, -1, 9},
-										{0, -1, 4004, 16000},
+										{0, -1, 4004, 16009},
 										{0, -1, 0, 4000},
-										{9, 4000, 3, 25000},
-										{22, -1, 25000, 89},
-										{1, 4000, 2005, 22000},
+										{9, 4000, 6, 25000},
+										{22, -1, 25000, 117},
+										{1, 4000, 2007, 22001},
 										{14, -1, -1, 48},
 										{15, -1, 4000, 28000},
 										{16, -1, -1, 48},
-										{0, -1, 4005, 16002},
-										{1, 22000, 16002, 22001},
-										{18, -1, -1, 22001},
+										{0, -1, 4005, 16011},
+										{1, 22001, 16011, 22002},
+										{18, -1, -1, 22002},
 										{20, -1, -1, -1},
-										{1, 4000, 1, 16001},
-										{0, -1, 16001, 4000},
-										{21, -1, -1, 76},
-										{18, -1, -1, 2006},
+										{1, 4000, 1, 16010},
+										{0, -1, 16010, 4000},
+										{21, -1, -1, 104},
+										{18, -1, -1, 2008},
 										{18, -1, -1, 4000},
 										{20, -1, -1, -1},
-										{18, -1, -1, 2007},
-										{20, -1, -1, -1},
-										{18, -1, -1, 2008},
 										{18, -1, -1, 2009},
+										{20, -1, -1, -1},
 										{18, -1, -1, 2010},
 										{18, -1, -1, 2011},
 										{18, -1, -1, 2012},
-										{19, -1, -1, -1},
 										{18, -1, -1, 2013},
-										{1, 2014, 2015, 22002},
-										{18, -1, -1, 22002},
+										{18, -1, -1, 2014},
+										{19, -1, -1, -1},
+										{18, -1, -1, 2015},
+										{1, 2016, 2017, 22003},
+										{18, -1, -1, 22003},
 										{20, -1, -1, -1},
-										{18, -1, -1, 2016},
-										{18, -1, -1, 2012},
+										{18, -1, -1, 2018},
+										{18, -1, -1, 2014},
 										{20, -1, -1, -1},
-										{18, -1, -1, 2017},
+										{18, -1, -1, 2019},
 										{20, -1, -1, -1},
 										{24, -1, -1, -1},
 										};
@@ -595,13 +628,19 @@ void run(){
 			continue;
 		}
 
-		else if (op < 13){
-			// Arithmetic Epxressions (two operands, one solution)
+		else if (op <= 13){
+			// Arithmetic Epxressions (unary and binary)
 
 			int result_dir = QUADS[IP][3];
 
-			Value left_value = read_from_memory(QUADS[IP][1]);
-			Value right_value = read_from_memory(QUADS[IP][2]);
+			Value left_value, right_value;
+
+			// May be a unary expression
+			if (QUADS[IP][1] >= 0){
+				left_value = read_from_memory(QUADS[IP][1]);
+			}
+
+			right_value = read_from_memory(QUADS[IP][2]);
 
 			switch (op) {
 				case 1:				// +
@@ -614,8 +653,13 @@ void run(){
 
 				case 2:				// -
 					{
-						// Subtract !
-						Value res_value = left_value - right_value;
+						Value res_value;
+						if (left_value.has_value())
+							// Subtract !
+							res_value = left_value - right_value;
+						else
+							// Negate !
+							res_value = -right_value;
 						write_to_memory(result_dir, res_value.to_str());
 					}
 					break;
@@ -699,6 +743,14 @@ void run(){
 						write_to_memory(result_dir, res_value.to_str());
 					}
 					break;
+				case 13:			// !
+					{
+						// Negate!
+						Value res_value = !right_value;
+						write_to_memory(result_dir, res_value.to_str());
+						IP++;
+					}
+					break;
 			}
 			IP++;
 			continue;
@@ -706,21 +758,6 @@ void run(){
 
     switch(op) {
 			// Other operations
-
-			case 13:			// !
-				{
-					// Negate!
-					int result_dir = QUADS[IP][3];
-
-					Value right_value = read_from_memory(QUADS[IP][2]);
-
-					Value res_value = !right_value;
-
-					write_to_memory(result_dir, res_value.to_str());
-
-					IP++;
-				}
-				break;
 
 			case 14:		// ERA
 				{

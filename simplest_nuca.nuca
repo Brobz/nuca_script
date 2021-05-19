@@ -9,7 +9,7 @@ int abs(n : int)
 VARS{}
 {
   if(n < 0){
-    return n * (0 - 1);
+    return n * -1;
   }
   return n;
 }
@@ -19,8 +19,8 @@ VARS {
   i : int;
 }
 {
-  if(n < big_n * (0 - 1)){
-    return big_n * (0 - 1) - 1;
+  if(n < big_n * -1){
+    return big_n * -1 - 1;
   }
   i = recursive_print(s, n - 1, big_n);
   println(s + " * " + i + " = " + s * i,  ((big_n - abs(n)))  * "\t", s * i + " = " + i + " * " + s);
@@ -47,6 +47,7 @@ VARS{
 }
 
 main (){
+  println("-'hola' = ", -"hola", 3 * -15 + 5 + (-5), -25.5, abs(-1), abs(0), abs(1));
   print(">> Enter an integer\n-- a = ");
   read(a);
   print(">> Enter a string\n-- f = ");

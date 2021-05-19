@@ -84,6 +84,15 @@ SemanticCube["void"] = {
                          "-" : {"int" : "err", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err"}
                         }
 
+# Unary Minus
+SemanticCube["-"] = {
+                        "int" : "int",
+                        "float" : "float",
+                        "string" : "string",
+                        "boolean" : "err"
+                        }
+
+# Unary Negtaion
 SemanticCube["!"] = {
                         "int" : "boolean",
                         "float" : "err",

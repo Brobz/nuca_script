@@ -6,6 +6,7 @@ using namespace std;
 
 class Value{
     public:
+
       int type;
 
       int i = 0;
@@ -13,7 +14,9 @@ class Value{
       string s = "";
       bool b = false;
 
-      Value(){};
+      Value(){
+        type = -1;
+      };
 
       Value(int _i){
         type = 0;
@@ -34,6 +37,10 @@ class Value{
         type = 3;
         b = _b;
       };
+
+      bool has_value(){
+        return type >= 0;
+      }
 
       string to_str(){
         switch(type){
@@ -575,6 +582,34 @@ class Value{
           default:
           {
             cout << ">> Error: Cannot && case " <<  operation_case << endl;
+            exit(EXIT_FAILURE);
+          }
+        }
+        return temp;
+      }
+
+      Value operator-(){
+        Value temp;
+        int operation_case = type;
+        switch(operation_case){
+          case 0: // -INT
+          {
+            temp.set_i(-i);
+          } break;
+          case 1: // -FLOAT
+          {
+            temp.set_f(-f);
+          } break;
+          case 2: // -STRING
+          {
+            string copy(s);
+            reverse(copy.begin(), copy.end());
+            temp.set_s(copy);
+          } break;
+
+          default:
+          {
+            cout << ">> Error: Cannot unary - case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }

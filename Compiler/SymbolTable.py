@@ -3,11 +3,14 @@ from Compiler.Avail import *
 class SymbolTable(object):
     """docstring for SymbolTable."""
 
+    #                                   // Memory Signature Translation
+    #
     #                                           0 -> INT
     #                       0 -> CONSANT        1 -> FLOAT
     #                       1 -> GLOBAL         2 -> STRING         0 -> VAR
     #                       2 -> LOCAL          3 -> BOOL           1 -> TMP
 
+    SYMBOL_CLASSES = ["constant", "symbol", "temporal variable"]
     MEMORY_SECTOR_SIGN = [["0", "1", "2"], ["0", "1", "2", "3"], ["0", "1"]]
     MEMORY_SECTOR_SHIFTS = None
 
@@ -21,7 +24,6 @@ class SymbolTable(object):
         self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0 } # FOR GLOBAL SCOPE ONLY
         self.mem_constraints = mem_constraints
         self.program_name = program_name
-        self.symbol_classes = ["constant", "symbol", "temporal variable"]
 
         if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
             self.build_memory_secor_shift(self.mem_constraints)
@@ -119,7 +121,7 @@ class SymbolTable(object):
         limit = self.mem_constraints[int(mem_sec_sign[0])]
         if displacement >= limit:
             # TOO MANY VARIABLES!
-            raise Exception("Memory Error: Program " + self.program_name + " exceeds " + self.symbol_classes[int(mem_sec_sign[0])] + " limit of " + str(limit))
+            raise Exception("Memory Error: Program " + self.program_name + " exceeds " + SymbolTable.SYMBOL_CLASSES[int(mem_sec_sign[0])] + " limit of " + str(limit))
 
         mem_index += displacement
 

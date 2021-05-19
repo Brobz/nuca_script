@@ -144,34 +144,37 @@ lexer = lex.lex()
         -> default arguments?
         -> builtin methods? (wait, exit, etc..)
 
+    OTHER:
+
+        -> allow max memory customization (also max call stack) via command line inpus (argv)
+        -> atom syntactic highliter ?
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     Memory Model:
 
-    [0, MAX_CONSTANTS - 1]                                                                                                      ->          Constant Ints
-    [MAX_CONSTANTS, 2MAX_CONSTANTS - 1]                                                                                         ->          Constant Floats
-    [2MAX_CONSTANTS, 3MAX_CONSTANTS - 1]                                                                                        ->          Constant Strings
-    [3MAX_CONSTANTS, 4MAX_CONSTANTS - 1]                                                                                        ->          Constant Booleans
-    [4MAX_CONSTANTS, 4MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                                          ->          Global Ints
-    [4MAX_CONSTANTS + MAX_SYMBOLS, 4MAX_CONSTANTS + 2MAX_SYMBOLS - 1]                                                           ->          Global Floats
-    [4MAX_CONSTANTS + 2MAX_SYMBOLS, 4MAX_CONSTANTS + 3MAX_SYMBOLS - 1]                                                          ->          Global Strings
-    [4MAX_CONSTANTS + 3MAX_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS - 1]                                                          ->          Global Booleans
-    [4MAX_CONSTANTS + 4MAX_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                        ->          Global Temp Ints
-    [4MAX_CONSTANTS + 4MAX_SYMBOLS + MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + 2MAX_TMP_SYMBOLS - 1]                     ->          Global Temp Floats
-    [4MAX_CONSTANTS + 4MAX_SYMBOLS + 2MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + 3MAX_TMP_SYMBOLS - 1]                    ->          Global Temp Strings
-    [4MAX_CONSTANTS + 4MAX_SYMBOLS + 3MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Global Temp Booleans
-    [4MAX_CONSTANTS + 4MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 5MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Ints
-    [4MAX_CONSTANTS + 5MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 6MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Floats
-    [4MAX_CONSTANTS + 6MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 7MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Strings
-    [4MAX_CONSTANTS + 7MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Booleans
-    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 5MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Ints
-    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 5MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 6MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Floats
-    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 6MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 7MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Strings
-    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 7MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 8MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Booleans
+    [0, MAX_CONSTANTS - 1]                                                                                                                      ->          Constant Ints
+    [MAX_CONSTANTS, 2 * MAX_CONSTANTS - 1]                                                                                                      ->          Constant Floats
+    [2 * MAX_CONSTANTS, 3 * MAX_CONSTANTS - 1]                                                                                                  ->          Constant Strings
+    [3 * MAX_CONSTANTS, 4 * MAX_CONSTANTS - 1]                                                                                                  ->          Constant Booleans
+    [4 * MAX_CONSTANTS, 4 * MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                                                    ->          Global Ints
+    [4 * MAX_CONSTANTS + MAX_SYMBOLS, 4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS - 1]                                                                  ->          Global Floats
+    [4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS, 4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS - 1]                                                              ->          Global Strings
+    [4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS - 1]                                                              ->          Global Booleans
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                            ->          Global Temp Ints
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS - 1]                      ->          Global Temp Floats
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Strings
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Booleans
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Ints
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Floats
+    [4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Strings
+    [4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Booleans
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Ints
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Floats
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Strings
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Booleans
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// TODO : Allow negative sign (-) to be placed before terms (a = -5; if (b < -5); g = 5 + (-5))
 
 // TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
 
@@ -414,6 +417,7 @@ def p_seen_equals(p):
 
 def p_exp(p):
     ''' EXP :   TERM seen_term EXP_P
+              | MINUS seen_unary_minus EXP pop_unary_minus
               | NOT seen_not EXP pop_not'''
 
 def p_seen_term(p):
@@ -457,6 +461,7 @@ def p_comp(p):
 def p_factor(p):
     ''' FACTOR :  OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis
                 | NOT seen_not FACTOR pop_not
+                | MINUS seen_unary_minus FACTOR pop_unary_minus
                 | FUNC_CALL
                 | ID seen_id
                 | CNST '''
@@ -478,6 +483,28 @@ def p_pop_not(p):
 def p_seen_not(p):
     ''' seen_not : empty '''
     OPERATOR_STACK.append(p[-1])
+
+def p_pop_unary_minus(p):
+    ''' pop_unary_minus : empty '''
+    OPERATOR_STACK.pop() # Pop Fake Wall
+    op = OPERATOR_STACK.pop()
+    right_operand = OPERAND_STACK.pop()
+    right_type = TYPE_STACK.pop()
+    res_type = SemanticCube[op][right_type]
+    res = FUNC_DIR.next_avail(res_type)
+    if res_type != "err":
+        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
+        OPERAND_STACK.append(res)
+        TYPE_STACK.append(res_type)
+    else:
+        raise Exception("Type Mismatch: " + op + right_operand)
+
+
+
+def p_seen_unary_minus(p):
+    ''' seen_unary_minus : empty '''
+    OPERATOR_STACK.append(p[-1])
+    OPERATOR_STACK.append("|UNARY_MINUS_WALL|") # Fake  Wall for parsing
 
 def p_seen_open_parenthesis(p):
     ''' seen_open_parenthesis : empty '''
@@ -908,7 +935,7 @@ def main(argv):
                 temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
                 vm_memory.append(mem_sign + ", " + temp_sign)
 
-    mem_constraints_str = "\nconst int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", VAR_TYPES = " + str(len(FunctionDirectory.MEMORY_SECTOR_INDICES)) + ";\n\n"
+    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ";\n\n"
 
     fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, mem_constraints_str + VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
 
