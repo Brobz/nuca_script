@@ -146,52 +146,30 @@ lexer = lex.lex()
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Preliminary Memory Model:
+    Memory Model:
 
-    0 - 0.25k - Constant Ints
-    0.25k - 0.5k - Constant Floats
-    0.5k - 0.75k - Constant Strings
-    0.75k - 1k - Constant Booleans
-    1k - 2k - Global Ints
-    2k - 3k - Global Floats
-    3k - 4k - Global Strings
-    4k - 5k - Global Booleans
-    5k - 6k - Global Temp Ints
-    6k - 7k - Global Temp Floats
-    7k - 8k - Global Temp Strings
-    8k - 9k - Global Temp Booleans
-    9k - 10k - Local Ints
-    10k - 11k - Local Floats
-    11k - 12k - Local Strings
-    12k - 13k - Local Booleans
-    13k - 14k - Local Temp Ints
-    14k - 15k - Local Temp Floats
-    15k - 16k - Local Temp Strings
-    16k - 17k - Local Temp Booleans
+    [0, MAX_CONSTANTS - 1]                                                                                                      ->          Constant Ints
+    [MAX_CONSTANTS, 2MAX_CONSTANTS - 1]                                                                                         ->          Constant Floats
+    [2MAX_CONSTANTS, 3MAX_CONSTANTS - 1]                                                                                        ->          Constant Strings
+    [3MAX_CONSTANTS, 4MAX_CONSTANTS - 1]                                                                                        ->          Constant Booleans
+    [4MAX_CONSTANTS, 4MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                                          ->          Global Ints
+    [4MAX_CONSTANTS + MAX_SYMBOLS, 4MAX_CONSTANTS + 2MAX_SYMBOLS - 1]                                                           ->          Global Floats
+    [4MAX_CONSTANTS + 2MAX_SYMBOLS, 4MAX_CONSTANTS + 3MAX_SYMBOLS - 1]                                                          ->          Global Strings
+    [4MAX_CONSTANTS + 3MAX_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS - 1]                                                          ->          Global Booleans
+    [4MAX_CONSTANTS + 4MAX_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                        ->          Global Temp Ints
+    [4MAX_CONSTANTS + 4MAX_SYMBOLS + MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + 2MAX_TMP_SYMBOLS - 1]                     ->          Global Temp Floats
+    [4MAX_CONSTANTS + 4MAX_SYMBOLS + 2MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + 3MAX_TMP_SYMBOLS - 1]                    ->          Global Temp Strings
+    [4MAX_CONSTANTS + 4MAX_SYMBOLS + 3MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 4MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Global Temp Booleans
+    [4MAX_CONSTANTS + 4MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 5MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Ints
+    [4MAX_CONSTANTS + 5MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 6MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Floats
+    [4MAX_CONSTANTS + 6MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 7MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Strings
+    [4MAX_CONSTANTS + 7MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 4MAX_TMP_SYMBOLS - 1]                    ->          Local Booleans
+    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 4MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 5MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Ints
+    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 5MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 6MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Floats
+    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 6MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 7MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Strings
+    [4MAX_CONSTANTS + 8MAX_SYMBOLS + 7MAX_TMP_SYMBOLS, 4MAX_CONSTANTS + 8MAX_SYMBOLS + 8MAX_TMP_SYMBOLS - 1]                    ->          Local Temp Booleans
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// TODO:
-
-        /*//*//*/ IMPORTANT /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
-
-        1. CHECK FOR "TOO MANY VARIABLES" OVERFLOW WHEN DECLARING SYMBOLS
-
-            Build memory model from constants (TO FIX MAGIC NUMBERS):
-
-            [250,                   1000,           1000,           1000]
-            [AllowedConstants, AllowedGlobals, AllowedLocals, AllowedTemps] # For each type
-            [int, float, string, boolean]
-
-            -> maybe use SymbolTable's MEMORY_SECTOR_SHIFTS ?
-
-            -> probably bump up variable numers, * 5
-
-            write this values to VM, use them inside of memory methods instead of magic numbers
-
-        2. Optimize the way main.cpp converts from index (int) to memory_sector_signature (string) using the reverse method of what SymbolTable does with the for loop
-
-        /*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*/
 
 // TODO : Allow negative sign (-) to be placed before terms (a = -5; if (b < -5); g = 5 + (-5))
 
@@ -215,7 +193,11 @@ Preliminary Memory Model:
 
 # Now to parsing!
 
-FUNC_DIR = FunctionDirectory()
+MAX_CONSTANTS = 1000        # (per type)
+MAX_SYMBOLS = 3000          # (per type)
+MAX_TMP_SYMBOLS = 3000      # (per type)
+
+FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS])
 OPERATOR_STACK = []
 OPERAND_STACK = []
 TYPE_STACK = []
@@ -926,7 +908,9 @@ def main(argv):
                 temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
                 vm_memory.append(mem_sign + ", " + temp_sign)
 
-    fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
+    mem_constraints_str = "\nconst int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", VAR_TYPES = " + str(len(FunctionDirectory.MEMORY_SECTOR_INDICES)) + ";\n\n"
+
+    fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, mem_constraints_str + VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
 
     vm_constants = []
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():

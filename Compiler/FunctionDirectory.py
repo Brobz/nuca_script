@@ -6,12 +6,13 @@ class FunctionDirectory(object):
 
     MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean"]
 
-    def __init__(self):
+    def __init__(self, mem_constraints):
         self.current_scope = None
         self.program_name = None
         self.main_start_addr = None
         self.FUNCS = {"GLOBAL" : {}}
         self.AVAIL = Avail()
+        self.mem_constraints = mem_constraints
 
 
     def get_param_mem_index(self, func_id, k, scope = "GLOBAL"):
@@ -25,11 +26,11 @@ class FunctionDirectory(object):
 
     def get_symbol_mem_index(self, sym_id, scope = "GLOBAL"):
         if self.current_scope == None:
-            return self.FUNCS[self.program_name].get_mem_index(sym_id, self.program_name)
+            return self.FUNCS[self.program_name].get_mem_index(sym_id)
         else:
-            mem_index = self.FUNCS[scope][self.current_scope][2].get_mem_index(sym_id, self.program_name)
+            mem_index = self.FUNCS[scope][self.current_scope][2].get_mem_index(sym_id)
             if mem_index == -1:
-                return self.FUNCS[self.program_name].get_mem_index(sym_id, self.program_name)
+                return self.FUNCS[self.program_name].get_mem_index(sym_id)
             return mem_index
 
     def next_avail(self, type, scope = "GLOBAL"):
@@ -187,10 +188,10 @@ class FunctionDirectory(object):
     def declare_function(self, func_id, func_type, scope = "GLOBAL"):
         if scope == "PROGRAM":
             self.program_name = func_id
-            self.FUNCS[self.program_name] = SymbolTable(func_id)
+            self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, self.program_name)
         elif func_id not in self.FUNCS[scope]:
             self.declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
-            self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param"), SymbolTable(func_id), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+            self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, self.program_name), SymbolTable(func_id, self.mem_constraints, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)

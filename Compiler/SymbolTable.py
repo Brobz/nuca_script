@@ -3,23 +3,37 @@ from Compiler.Avail import *
 class SymbolTable(object):
     """docstring for SymbolTable."""
 
+    #                                           0 -> INT
+    #                       0 -> CONSANT        1 -> FLOAT
+    #                       1 -> GLOBAL         2 -> STRING         0 -> VAR
+    #                       2 -> LOCAL          3 -> BOOL           1 -> TMP
+
     MEMORY_SECTOR_SIGN = [["0", "1", "2"], ["0", "1", "2", "3"], ["0", "1"]]
-    MEMORY_SECTOR_SHIFTS = [[0, 1000, 9000], [0, 250, 500, 750], [0, 1000]]
+    MEMORY_SECTOR_SHIFTS = None
 
 
-    def __init__(self, scope):
+    def __init__(self, scope, mem_constraints, program_name):
         self.scope = scope
         self.SYMBOLS = {}
         self.param_indices = []
         self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0}
         self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0 }
         self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0 } # FOR GLOBAL SCOPE ONLY
+        self.mem_constraints = mem_constraints
+        self.program_name = program_name
+        self.symbol_classes = ["constant", "symbol", "temporal variable"]
 
-    def get_mem_index(self, sym_id, global_scope):
+        if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
+            self.build_memory_secor_shift(self.mem_constraints)
+
+    def build_memory_secor_shift(self, mem_constraints):
+        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * 4, mem_constraints[0] * 4 + (mem_constraints[1] + mem_constraints[2]) * 4], [0, mem_constraints[2] * 4]]
+
+    def get_mem_index(self, sym_id):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][1]
         else:
-            if self.scope == global_scope:
+            if self.scope == self.program_name:
                 raise Exception("Cannot get memory index for symbol " + sym_id + " in " + self.scope)
             return -1
 
@@ -79,11 +93,20 @@ class SymbolTable(object):
         # Here we define where in memory to place this based on the memory sector signature
         mem_index = 0
         is_cnst = (mem_sec_sign[0] == "0")
+        is_tmp = (mem_sec_sign[2] == "1")
         for i, char in enumerate(mem_sec_sign):
             shift_index = SymbolTable.MEMORY_SECTOR_SIGN[i].index(char)
-            shift = SymbolTable.MEMORY_SECTOR_SHIFTS[i][shift_index]
-            if not is_cnst and i:
-                shift *= 4
+            if i != 1:
+                if i >= len(SymbolTable.MEMORY_SECTOR_SHIFTS):
+                    i = len(SymbolTable.MEMORY_SECTOR_SHIFTS) - 1
+                shift = SymbolTable.MEMORY_SECTOR_SHIFTS[i][shift_index]
+            elif is_cnst:
+                shift = self.mem_constraints[0] * shift_index
+            elif is_tmp:
+                shift = self.mem_constraints[2] * shift_index
+            else:
+                shift = self.mem_constraints[1] * shift_index
+
             mem_index += shift
 
         if mem_sec_sign[2] == "1":
@@ -92,6 +115,11 @@ class SymbolTable(object):
             displacement = list(self.const_memory_signature.values())[int(mem_sec_sign[1])]
         else:
             displacement = list(self.var_memory_signature.values())[int(mem_sec_sign[1])]
+
+        limit = self.mem_constraints[int(mem_sec_sign[0])]
+        if displacement >= limit:
+            # TOO MANY VARIABLES!
+            raise Exception("Memory Error: Program " + self.program_name + " exceeds " + self.symbol_classes[int(mem_sec_sign[0])] + " limit of " + str(limit))
 
         mem_index += displacement
 

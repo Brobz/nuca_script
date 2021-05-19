@@ -14,6 +14,9 @@ using namespace std;
 
 
 // MEMORY //
+
+const int MAX_CONSTANTS = 1000, MAX_SYMBOLS = 3000, MAX_TMP_SYMBOLS = 3000, VAR_TYPES = 4;
+
 const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
 										{63, {{6,3,1,1}, {3,0,3,1}, {4,0,18,0}}},
 										{1, {{1,0,0,0}, {2,0,0,1}}},
@@ -27,139 +30,139 @@ const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
 const map<int, string> CONSTANTS = {
 										{0, "0"},
 										{1, "1"},
-										{500, " * "},
-										{501, " = "},
-										{502, "\t"},
+										{2000, " * "},
+										{2001, " = "},
+										{2002, "\t"},
 										{2, "2"},
-										{503, ">> Enter an integer\n-- a = "},
-										{504, ">> Enter a string\n-- f = "},
+										{2003, ">> Enter an integer\n-- a = "},
+										{2004, ">> Enter a string\n-- f = "},
 										{3, "12"},
-										{505, "! = "},
-										{506, "Global a:"},
-										{507, "------------------------"},
-										{508, "HI "},
-										{509, " print() "},
-										{510, " prints inline,"},
-										{511, " and needs this next param for a newline:"},
-										{512, "\n"},
-										{513, "Hello from another line!"},
-										{514, " println() acts just like print, "},
-										{515, "but always adds a '\\n' parameter at the end!"},
-										{516, "And this will skip two lines!"},
-										{517, "Nice : )"},
+										{2005, "! = "},
+										{2006, "Global a:"},
+										{2007, "------------------------"},
+										{2008, "HI "},
+										{2009, " print() "},
+										{2010, " prints inline,"},
+										{2011, " and needs this next param for a newline:"},
+										{2012, "\n"},
+										{2013, "Hello from another line!"},
+										{2014, " println() acts just like print, "},
+										{2015, "but always adds a '\\n' parameter at the end!"},
+										{2016, "And this will skip two lines!"},
+										{2017, "Nice : )"},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
 										{21, -1, -1, 63},
-										{7, 9000, 0, 16000},
-										{22, -1, 16000, 7},
-										{2, 0, 1, 13000},
-										{3, 9000, 13000, 13001},
-										{0, -1, 13001, 1003},
+										{7, 28000, 0, 49000},
+										{22, -1, 49000, 7},
+										{2, 0, 1, 40000},
+										{3, 28000, 40000, 40001},
+										{0, -1, 40001, 4003},
 										{23, -1, -1, -1},
-										{0, -1, 9000, 1003},
+										{0, -1, 28000, 4003},
 										{23, -1, -1, -1},
-										{2, 0, 1, 13000},
-										{3, 9001, 13000, 13001},
-										{7, 9000, 13001, 16000},
-										{22, -1, 16000, 18},
-										{2, 0, 1, 13002},
-										{3, 9001, 13002, 13003},
-										{2, 13003, 1, 13004},
-										{0, -1, 13004, 1004},
+										{2, 0, 1, 40000},
+										{3, 28001, 40000, 40001},
+										{7, 28000, 40001, 49000},
+										{22, -1, 49000, 18},
+										{2, 0, 1, 40002},
+										{3, 28001, 40002, 40003},
+										{2, 40003, 1, 40004},
+										{0, -1, 40004, 4004},
 										{23, -1, -1, -1},
 										{14, -1, -1, 9},
-										{15, -1, 11000, 11000},
-										{2, 9000, 1, 13005},
-										{15, -1, 13005, 9000},
-										{15, -1, 9001, 9001},
+										{15, -1, 34000, 34000},
+										{2, 28000, 1, 40005},
+										{15, -1, 40005, 28000},
+										{15, -1, 28001, 28001},
 										{16, -1, -1, 9},
-										{0, -1, 1004, 13006},
-										{0, -1, 13006, 9002},
-										{1, 11000, 500, 15000},
-										{1, 15000, 9002, 15001},
-										{1, 15001, 501, 15002},
-										{3, 11000, 9002, 15003},
-										{1, 15002, 15003, 15004},
-										{18, -1, -1, 15004},
+										{0, -1, 4004, 40006},
+										{0, -1, 40006, 28002},
+										{1, 34000, 2000, 46000},
+										{1, 46000, 28002, 46001},
+										{1, 46001, 2001, 46002},
+										{3, 34000, 28002, 46003},
+										{1, 46002, 46003, 46004},
+										{18, -1, -1, 46004},
 										{14, -1, -1, 1},
-										{15, -1, 9000, 9000},
+										{15, -1, 28000, 28000},
 										{16, -1, -1, 1},
-										{0, -1, 1003, 13007},
-										{2, 9001, 13007, 13008},
-										{3, 13008, 502, 15005},
-										{18, -1, -1, 15005},
-										{3, 11000, 9002, 15006},
-										{1, 15006, 501, 15007},
-										{1, 15007, 9002, 15008},
-										{1, 15008, 500, 15009},
-										{1, 15009, 11000, 15010},
-										{18, -1, -1, 15010},
+										{0, -1, 4003, 40007},
+										{2, 28001, 40007, 40008},
+										{3, 40008, 2002, 46005},
+										{18, -1, -1, 46005},
+										{3, 34000, 28002, 46006},
+										{1, 46006, 2001, 46007},
+										{1, 46007, 28002, 46008},
+										{1, 46008, 2000, 46009},
+										{1, 46009, 34000, 46010},
+										{18, -1, -1, 46010},
 										{20, -1, -1, -1},
-										{0, -1, 9000, 1004},
+										{0, -1, 28000, 4004},
 										{23, -1, -1, -1},
-										{7, 9000, 2, 16000},
-										{22, -1, 16000, 52},
-										{0, -1, 1, 1005},
+										{7, 28000, 2, 49000},
+										{22, -1, 49000, 52},
+										{0, -1, 1, 4005},
 										{23, -1, -1, -1},
 										{14, -1, -1, 48},
-										{2, 9000, 1, 13000},
-										{15, -1, 13000, 9000},
+										{2, 28000, 1, 40000},
+										{15, -1, 40000, 28000},
 										{16, -1, -1, 48},
-										{0, -1, 1005, 13001},
-										{3, 9000, 13001, 13002},
-										{0, -1, 13002, 1005},
+										{0, -1, 4005, 40001},
+										{3, 28000, 40001, 40002},
+										{0, -1, 40002, 4005},
 										{23, -1, -1, -1},
 										{14, -1, -1, 60},
 										{16, -1, -1, 60},
 										{23, -1, -1, -1},
-										{18, -1, -1, 503},
+										{18, -1, -1, 2003},
 										{19, -1, -1, -1},
-										{17, -1, -1, 1000},
-										{18, -1, -1, 504},
+										{17, -1, -1, 4000},
+										{18, -1, -1, 2004},
 										{19, -1, -1, -1},
-										{17, -1, -1, 3000},
+										{17, -1, -1, 10000},
 										{14, -1, -1, 9},
-										{15, -1, 3000, 11000},
-										{15, -1, 1000, 9000},
-										{15, -1, 1000, 9001},
+										{15, -1, 10000, 34000},
+										{15, -1, 4000, 28000},
+										{15, -1, 4000, 28001},
 										{16, -1, -1, 9},
-										{0, -1, 1004, 5000},
-										{0, -1, 0, 1000},
-										{9, 1000, 3, 8000},
-										{22, -1, 8000, 89},
-										{1, 1000, 505, 7000},
+										{0, -1, 4004, 16000},
+										{0, -1, 0, 4000},
+										{9, 4000, 3, 25000},
+										{22, -1, 25000, 89},
+										{1, 4000, 2005, 22000},
 										{14, -1, -1, 48},
-										{15, -1, 1000, 9000},
+										{15, -1, 4000, 28000},
 										{16, -1, -1, 48},
-										{0, -1, 1005, 5002},
-										{1, 7000, 5002, 7001},
-										{18, -1, -1, 7001},
+										{0, -1, 4005, 16002},
+										{1, 22000, 16002, 22001},
+										{18, -1, -1, 22001},
 										{20, -1, -1, -1},
-										{1, 1000, 1, 5001},
-										{0, -1, 5001, 1000},
+										{1, 4000, 1, 16001},
+										{0, -1, 16001, 4000},
 										{21, -1, -1, 76},
-										{18, -1, -1, 506},
-										{18, -1, -1, 1000},
+										{18, -1, -1, 2006},
+										{18, -1, -1, 4000},
 										{20, -1, -1, -1},
-										{18, -1, -1, 507},
+										{18, -1, -1, 2007},
 										{20, -1, -1, -1},
-										{18, -1, -1, 508},
-										{18, -1, -1, 509},
-										{18, -1, -1, 510},
-										{18, -1, -1, 511},
-										{18, -1, -1, 512},
+										{18, -1, -1, 2008},
+										{18, -1, -1, 2009},
+										{18, -1, -1, 2010},
+										{18, -1, -1, 2011},
+										{18, -1, -1, 2012},
 										{19, -1, -1, -1},
-										{18, -1, -1, 513},
-										{1, 514, 515, 7002},
-										{18, -1, -1, 7002},
+										{18, -1, -1, 2013},
+										{1, 2014, 2015, 22002},
+										{18, -1, -1, 22002},
 										{20, -1, -1, -1},
-										{18, -1, -1, 516},
-										{18, -1, -1, 512},
+										{18, -1, -1, 2016},
+										{18, -1, -1, 2012},
 										{20, -1, -1, -1},
-										{18, -1, -1, 517},
+										{18, -1, -1, 2017},
 										{20, -1, -1, -1},
 										{24, -1, -1, -1},
 										};
@@ -217,86 +220,56 @@ bool s_stob(string s){
 	}
 }
 
-string mem_index_to_mem_signature(int index){
-  if (index < 1000){ // CONSTANTS
-    if (index < 250){
-      return "000";
-    }
-    else if (index < 500){
-      return "010";
-    }
-    else if (index < 750){
-      return "020";
-    }
-    else{
-      return "030";
-    }
+string mem_index_to_mem_sign(int index){
+  if (index < MAX_CONSTANTS * VAR_TYPES){ // CONSTANTS
+		string mem_sign = "0" + to_string(index / MAX_CONSTANTS) + "0";
+		return mem_sign;
   }
-  else if (index < 9000){ // GLOBALS
-    // VARIABLES
-    if (index < 2000){
-      return "100";
-    }
-    else if (index < 3000){
-      return "110";
-    }
-    else if (index < 4000){
-      return "120";
-    }
-    else if (index < 5000){
-      return "130";
-    }
-    // TEMPS
-    else if (index < 6000){
-      return "101";
-    }
-    else if (index < 7000){
-      return "111";
-    }
-    else if (index < 8000){
-      return "121";
-    }
-    else {
-      return "131";
-    }
+  else if (index < MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES){ // GLOBALS
+		string mem_sign = "1" + to_string(((index - MAX_CONSTANTS * VAR_TYPES) / MAX_SYMBOLS) % VAR_TYPES);
+		mem_sign += ((index - MAX_CONSTANTS * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES) ? "1" : "0";
+		return mem_sign;
   }
   else{ // LOCALS
-    // VARIABLES
-    if (index < 10000){
-      return "200";
-    }
-    else if (index < 11000){
-      return "210";
-    }
-    else if (index < 12000){
-      return "220";
-    }
-    else if (index < 13000){
-      return "230";
-    }
-    // TEMPS
-    else if (index < 14000){
-      return "201";
-    }
-    else if (index < 15000){
-      return "211";
-    }
-    else if (index < 16000){
-      return "221";
-    }
-    else {
-      return "231";
-    }
+		string mem_sign = "2" + to_string(((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES)) / MAX_SYMBOLS) % VAR_TYPES);
+		mem_sign += ((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES)) ? "1" : "0";
+		return mem_sign;
   }
 
   // ERROR! Nothing was written
-  cout << ">> Error: could not read "  << index << " from memory" << endl;
+  cout << ">> Error: could not locate "  << index << " in memory" << endl;
   exit(EXIT_FAILURE);
 }
+
+int mem_sign_to_index_displacement(string mem_sign){
+	int index_displacement = 0;
+	int mem_class = mem_sign[0] - '0', var_type = mem_sign[1] - '0', is_temp = mem_sign[2] - '0';
+
+	switch (mem_class) {
+		case 1: // GLOBAL
+		{
+			index_displacement += MAX_CONSTANTS * VAR_TYPES;
+		} break;
+		case 2: // LOCAL
+		{
+			index_displacement += MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES;
+		} break;
+	}
+
+	int type_displacement_mult = (mem_class) ? MAX_SYMBOLS : MAX_CONSTANTS;
+
+	index_displacement += var_type * type_displacement_mult;
+	index_displacement += (is_temp) ? MAX_SYMBOLS * VAR_TYPES : 0;
+
+	return index_displacement;
+}
+
 // HELPER METHODS //
 
+
+
 Value read_from_memory(int index){
-  string mem_sign = mem_index_to_mem_signature(index);
+  string mem_sign = mem_index_to_mem_sign(index);
   if(mem_sign[0] == '2'){
     if (!LOCAL_MEM->active){
       cout << ">> Error: No local context to read "  << index << " from memory" << endl;
@@ -305,8 +278,10 @@ Value read_from_memory(int index){
   }
 
   Value v;
+	int int_mem_sign = stoi(mem_sign);
+	int index_displacement = mem_sign_to_index_displacement(mem_sign);
 
-  switch (stoi(mem_sign)) {
+  switch (int_mem_sign) {
     case 0:
       {
         v.set_i(GLOBAL_MEM.const_mem.ints[index]);
@@ -314,97 +289,97 @@ Value read_from_memory(int index){
       break;
     case 10:
       {
-        v.set_f(GLOBAL_MEM.const_mem.floats[index - 250]);
+        v.set_f(GLOBAL_MEM.const_mem.floats[index - index_displacement]);
       }
       break;
     case 20:
       {
-        v.set_s(GLOBAL_MEM.const_mem.strings[index - 500]);
+        v.set_s(GLOBAL_MEM.const_mem.strings[index - index_displacement]);
       }
       break;
     case 30:
       {
-        v.set_b(GLOBAL_MEM.const_mem.booleans[index - 750]);
+        v.set_b(GLOBAL_MEM.const_mem.booleans[index - index_displacement]);
       }
       break;
     case 100:
       {
-        v.set_i(GLOBAL_MEM.local_mem.ints[index - 1000]);
+        v.set_i(GLOBAL_MEM.local_mem.ints[index - index_displacement]);
       }
       break;
     case 110:
       {
-        v.set_f(GLOBAL_MEM.local_mem.floats[index - 2000]);
+        v.set_f(GLOBAL_MEM.local_mem.floats[index - index_displacement]);
       }
       break;
     case 120:
       {
-        v.set_s(GLOBAL_MEM.local_mem.strings[index - 3000]);
+        v.set_s(GLOBAL_MEM.local_mem.strings[index - index_displacement]);
       }
       break;
     case 130:
       {
-        v.set_b(GLOBAL_MEM.local_mem.booleans[index - 4000]);
+        v.set_b(GLOBAL_MEM.local_mem.booleans[index - index_displacement]);
       }
       break;
     case 101:
       {
-        v.set_i(GLOBAL_MEM.temp_mem.ints[index - 5000]);
+        v.set_i(GLOBAL_MEM.temp_mem.ints[index - index_displacement]);
       }
       break;
     case 111:
       {
-        v.set_f(GLOBAL_MEM.temp_mem.floats[index - 6000]);
+        v.set_f(GLOBAL_MEM.temp_mem.floats[index - index_displacement]);
       }
       break;
     case 121:
       {
-        v.set_s(GLOBAL_MEM.temp_mem.strings[index - 7000]);
+        v.set_s(GLOBAL_MEM.temp_mem.strings[index - index_displacement]);
       }
       break;
     case 131:
       {
-        v.set_b(GLOBAL_MEM.temp_mem.booleans[index - 8000]);
+        v.set_b(GLOBAL_MEM.temp_mem.booleans[index - index_displacement]);
       }
       break;
     case 200:
       {
-        v.set_i(LOCAL_MEM->local_mem.ints[index - 9000]);
+        v.set_i(LOCAL_MEM->local_mem.ints[index - index_displacement]);
       }
       break;
     case 210:
       {
-        v.set_f(LOCAL_MEM->local_mem.floats[index - 10000]);
+        v.set_f(LOCAL_MEM->local_mem.floats[index - index_displacement]);
       }
       break;
     case 220:
       {
-        v.set_s(LOCAL_MEM->local_mem.strings[index - 11000]);
+        v.set_s(LOCAL_MEM->local_mem.strings[index - index_displacement]);
       }
       break;
     case 230:
       {
-        v.set_b(LOCAL_MEM->local_mem.booleans[index - 12000]);
+        v.set_b(LOCAL_MEM->local_mem.booleans[index - index_displacement]);
       }
       break;
     case 201:
       {
-        v.set_i(LOCAL_MEM->temp_mem.ints[index - 13000]);
+        v.set_i(LOCAL_MEM->temp_mem.ints[index - index_displacement]);
       }
       break;
     case 211:
       {
-        v.set_f(LOCAL_MEM->temp_mem.floats[index - 14000]);
+        v.set_f(LOCAL_MEM->temp_mem.floats[index - index_displacement]);
       }
       break;
     case 221:
       {
-        v.set_s(LOCAL_MEM->temp_mem.strings[index - 15000]);
+        v.set_s(LOCAL_MEM->temp_mem.strings[index - index_displacement]);
       }
       break;
     case 231:
       {
-        v.set_b(LOCAL_MEM->temp_mem.booleans[index - 16000]);
+        v.set_b(LOCAL_MEM->temp_mem.booleans[index - index_displacement]);
       }
       break;
     default:
@@ -419,14 +394,18 @@ Value read_from_memory(int index){
 }
 
 int write_to_memory(int index, string value){
-  string mem_sign = mem_index_to_mem_signature(index);
-  if(mem_sign[0] == '2'){
+  string mem_sign = mem_index_to_mem_sign(index);
+
+	if(mem_sign[0] == '2'){
     if (!LOCAL_MEM->active){
       cout << ">> Error: No local context to write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE); // ERROR! No context to write local variable to
     }
   }
-  int int_mem_sign = stoi(mem_sign);
+
+	int int_mem_sign = stoi(mem_sign);
+	int index_displacement = mem_sign_to_index_displacement(mem_sign);
+
   switch (int_mem_sign) {
     case 0:
       {
@@ -435,97 +414,97 @@ int write_to_memory(int index, string value){
       break;
     case 10:
       {
-        GLOBAL_MEM.const_mem.floats[index - 250] = s_stof(value);
+        GLOBAL_MEM.const_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 20:
       {
-        GLOBAL_MEM.const_mem.strings[index - 500] = value;
+        GLOBAL_MEM.const_mem.strings[index - index_displacement] = value;
       }
       break;
     case 30:
       {
-        GLOBAL_MEM.const_mem.booleans[index - 750] = s_stob(value);
+        GLOBAL_MEM.const_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     case 100:
       {
-        GLOBAL_MEM.local_mem.ints[index - 1000] = s_stoi(value);
+        GLOBAL_MEM.local_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 110:
       {
-        GLOBAL_MEM.local_mem.floats[index - 2000] = s_stof(value);
+        GLOBAL_MEM.local_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 120:
       {
-        GLOBAL_MEM.local_mem.strings[index - 3000] = value;
+        GLOBAL_MEM.local_mem.strings[index - index_displacement] = value;
       }
       break;
     case 130:
       {
-        GLOBAL_MEM.local_mem.booleans[index - 4000] = s_stob(value);
+        GLOBAL_MEM.local_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     case 101:
       {
-        GLOBAL_MEM.temp_mem.ints[index - 5000] = s_stoi(value);
+        GLOBAL_MEM.temp_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 111:
       {
-        GLOBAL_MEM.temp_mem.floats[index - 6000] = s_stof(value);
+        GLOBAL_MEM.temp_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 121:
       {
-        GLOBAL_MEM.temp_mem.strings[index - 7000] = value;
+        GLOBAL_MEM.temp_mem.strings[index - index_displacement] = value;
       }
       break;
     case 131:
       {
-        GLOBAL_MEM.temp_mem.booleans[index - 8000] = s_stob(value);
+        GLOBAL_MEM.temp_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     case 200:
       {
-      LOCAL_MEM->local_mem.ints[index - 9000] = s_stoi(value);
+      LOCAL_MEM->local_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 210:
       {
-      LOCAL_MEM->local_mem.floats[index - 10000] = s_stof(value);
+      LOCAL_MEM->local_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 220:
       {
-      LOCAL_MEM->local_mem.strings[index - 11000] = value;
+      LOCAL_MEM->local_mem.strings[index - index_displacement] = value;
       }
       break;
     case 230:
       {
-      LOCAL_MEM->local_mem.booleans[index - 12000] = s_stob(value);
+      LOCAL_MEM->local_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     case 201:
       {
-      LOCAL_MEM->temp_mem.ints[index - 13000] = s_stoi(value);
+      LOCAL_MEM->temp_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 211:
       {
-      LOCAL_MEM->temp_mem.floats[index - 14000] = s_stof(value);
+      LOCAL_MEM->temp_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 221:
       {
-      LOCAL_MEM->temp_mem.strings[index - 15000] = value;
+      LOCAL_MEM->temp_mem.strings[index - index_displacement] = value;
       }
       break;
     case 231:
       {
-      LOCAL_MEM->temp_mem.booleans[index - 16000] = s_stob(value);
+      LOCAL_MEM->temp_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     default:
@@ -539,7 +518,7 @@ int write_to_memory(int index, string value){
 }
 
 void write_to_param(int index, string value){
-	string mem_sign = mem_index_to_mem_signature(index);
+	string mem_sign = mem_index_to_mem_sign(index);
   if(mem_sign[0] == '2'){
     if (!MEMORY_STACK.size()){
       cout << ">> Error: No local context to write "  << value << " to " << index << endl;
@@ -548,31 +527,33 @@ void write_to_param(int index, string value){
   }
 
 	int int_mem_sign = stoi(mem_sign);
+	int index_displacement = mem_sign_to_index_displacement(mem_sign);
+
   switch (int_mem_sign) {
 		case 200:
       {
-        MEMORY_STACK.top().local_mem.ints[index - 9000] = s_stoi(value);
+        MEMORY_STACK.top().local_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 210:
       {
-        MEMORY_STACK.top().local_mem.floats[index - 10000] = s_stof(value);
+        MEMORY_STACK.top().local_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 220:
       {
-        MEMORY_STACK.top().local_mem.strings[index - 11000] = value;
+        MEMORY_STACK.top().local_mem.strings[index - index_displacement] = value;
       }
       break;
     case 230:
       {
-        MEMORY_STACK.top().local_mem.booleans[index - 12000] = s_stob(value);
+        MEMORY_STACK.top().local_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
 		default:
 			{
-				// ERROR! Nothing was read
-	      cout << ">> Error: could not write "  << index << " to memory" << endl;
+				// ERROR! Nothing was written
+	      cout << ">> Error: could not write "  << value << " to param at " << index << endl;
 	      exit(EXIT_FAILURE);
 			}
 			break;
