@@ -16,6 +16,27 @@ class FunctionDirectory(object):
         self.mem_constraints = mem_constraints
 
 
+    def is_sym_ptr(self, sym_id, scope = "GLOBAL"):
+        if self.current_scope == None:
+            return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+        else:
+            is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_ptr(sym_id)
+            if is_ptr == -1:
+                return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+            return is_ptr
+
+
+
+    def get_symbol_dimensions(self, sym_id, scope = "GLOBAL"):
+        if self.current_scope == None:
+            return self.FUNCS[self.program_name].get_dimensions(sym_id)
+        else:
+            dimensions = self.FUNCS[scope][self.current_scope][2].get_dimensions(sym_id)
+            if dimensions == -1:
+                return self.FUNCS[self.program_name].get_dimensions(sym_id)
+            return dimensions
+
+
     def get_param_mem_index(self, func_id, k, scope = "GLOBAL"):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
@@ -34,14 +55,14 @@ class FunctionDirectory(object):
                 return self.FUNCS[self.program_name].get_mem_index(sym_id)
             return mem_index
 
-    def next_avail(self, type, scope = "GLOBAL"):
+    def next_avail(self, type, scope = "GLOBAL", is_ptr = False):
         if type == "void": # Nope?
             return
         t_id = self.AVAIL.next()
         if self.current_scope == None:
-            self.FUNCS[self.program_name].next_avail(t_id, type, "1" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1")
+            self.FUNCS[self.program_name].next_avail(t_id, type, "1" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
         else:
-            self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1")
+            self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
 
         return t_id
 
@@ -143,7 +164,7 @@ class FunctionDirectory(object):
         else:
             raise Exception("Scope Error: Cant get func start addr")
 
-    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False, give_warning = True):
+    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False, give_warning = True, is_array = False, dimensions = [1]):
         if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!
             return
 
@@ -152,7 +173,6 @@ class FunctionDirectory(object):
 
         # Here we decide where in memory to place this symbol
         memory_sector_signature = list(str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(sym_type)) + "0")
-
 
         if is_cnst:
             memory_sector_signature.insert(0, "0") # Global Constant
@@ -163,12 +183,12 @@ class FunctionDirectory(object):
             sym_table_index = 2
             if is_param:
                 sym_table_index = 1
-            self.FUNCS[scope][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, not give_warning)
+            self.FUNCS[scope][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, not give_warning, is_array, dimensions)
             return
         else:
             memory_sector_signature.insert(0, "1") # Global Variable
 
-        self.FUNCS[self.program_name].declare_symbol(sym_id,  sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst)
+        self.FUNCS[self.program_name].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, False, is_array, dimensions)
 
 
     def declare_param(self, param_id, param_type, scope = "GLOBAL"):

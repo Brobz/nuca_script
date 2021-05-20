@@ -28,6 +28,24 @@ class SymbolTable(object):
         if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
             self.build_memory_secor_shift(self.mem_constraints)
 
+    def is_sym_ptr(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][6]
+        else:
+            if self.scope == self.program_name:
+                raise Exception("Cannot check if " + sym_id + " is a pointer in " + self.scope)
+            return -1
+
+
+
+    def get_dimensions(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][5]
+        else:
+            if self.scope == self.program_name:
+                raise Exception("Cannot get dimensions for symbol " + sym_id + " in " + self.scope)
+            return -1
+
     def build_memory_secor_shift(self, mem_constraints):
         SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * 4, mem_constraints[0] * 4 + (mem_constraints[1] + mem_constraints[2]) * 4], [0, mem_constraints[2] * 4]]
 
@@ -40,30 +58,48 @@ class SymbolTable(object):
             return -1
 
 
-    def next_avail(self, t_id, type, mem_sec_sign):
-        self.declare_symbol(t_id, type, mem_sec_sign, is_temp = True)
+    def next_avail(self, t_id, type, mem_sec_sign, is_ptr):
+        self.declare_symbol(t_id, type, mem_sec_sign, is_temp = True, is_ptr = is_ptr)
 
 
-    def update_const_mem_sign(self, type):
+    def update_const_mem_sign(self, type, dimensions = None):
+        is_arr = dimensions != None
+
         if type not in self.const_memory_signature:
             if type == "void":
                 return
             raise Exception("Type error: type " + type + " is unknown")
-        self.const_memory_signature[type] += 1
 
-    def update_temp_mem_sign(self, type):
+        if is_arr:
+            self.const_memory_signature[type] += self.get_array_element_size(dimensions)
+        else:
+            self.const_memory_signature[type] += 1
+
+    def update_temp_mem_sign(self, type, dimensions = None):
+        is_arr = dimensions != None
+
         if type not in self.temp_memory_signature:
             if type == "void":
                 return
             raise Exception("Type error: type " + type + " is unknown")
-        self.temp_memory_signature[type] += 1
 
-    def update_var_mem_sign(self, type):
+        if is_arr:
+            self.temp_memory_signature[type] += self.get_array_element_size(dimensions)
+        else:
+            self.temp_memory_signature[type] += 1
+
+    def update_var_mem_sign(self, type, dimensions = None):
+        is_arr = dimensions != None
+
         if type not in self.var_memory_signature:
             if type == "void":
                 return
             raise Exception("Type error: type " + type + " is unknown")
-        self.var_memory_signature[type] += 1
+
+        if is_arr:
+            self.var_memory_signature[type] += self.get_array_element_size(dimensions)
+        else:
+            self.var_memory_signature[type] += 1
 
     def get_types_list(self): # FOR FUNCTION ARGUMENT VERIFICATION
         l = []
@@ -71,20 +107,27 @@ class SymbolTable(object):
             l.append(tuple[0])
         return l
 
-    def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False):
+    def get_array_element_size(self, dimensions):
+        element_size = 1
+        for d in dimensions:
+            element_size *= d
+
+        return element_size
+
+    def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False, is_array = False, dimensions = None, is_ptr = False):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
-            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst)
+            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr)
+
             if is_cnst:
-                self.update_const_mem_sign(sym_type)
+                self.update_const_mem_sign(sym_type, dimensions)
             elif not is_temp:
-                self.update_var_mem_sign(sym_type)
+                self.update_var_mem_sign(sym_type, dimensions)
             else:
-                self.update_temp_mem_sign(sym_type)
+                self.update_temp_mem_sign(sym_type, dimensions)
 
             if is_param:
                 self.param_indices.append(mem_index)
-
         else:
             if is_cnst:
                 pass
@@ -128,15 +171,29 @@ class SymbolTable(object):
         return mem_index
 
     def symbol_lookup(self, sym_id):
-        if sym_id in self.SYMBOLS:
-            if self.SYMBOLS[sym_id][2]: # This symbol is marked as TEMPORARY, meaning it is used as a global storage for the function with the same name to store its return value
-                raise Exception("Syntax Error: Use of function name " + sym_id + " as variable ID. (Maybe missing '()' ?)")
+        in_table_id = sym_id
+
+        if "+" in sym_id:
+            # It is an array!
+            _plus_index = sym_id.index("+")
+            in_table_id = sym_id[:_plus_index]
+
+        if in_table_id in self.SYMBOLS:
+            if self.SYMBOLS[in_table_id][2]: # This symbol is marked as RETURN VALUE, meaning it is used as a global storage for the function with the same name to store its return value
+                raise Exception("Syntax Error: Use of function name " + in_table_id + " as variable ID. (Maybe missing '()' ?)")
             return sym_id
         else:
-            raise Exception("Unseen symbol " + sym_id + " in " + self.scope)
+            raise Exception("Unseen symbol " + in_table_id + " in " + self.scope)
 
     def type_lookup(self, sym_id):
-        if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][0]
+        in_table_id = sym_id
+
+        if "+" in sym_id:
+            # It is an array!
+            _plus_index = sym_id.index("+")
+            in_table_id = sym_id[:_plus_index]
+
+        if in_table_id in self.SYMBOLS:
+            return self.SYMBOLS[in_table_id][0]
         else:
-            raise Exception("Unseen symbol " + sym_id + " in " + self.scope)
+            raise Exception("Unseen symbol " + in_table_id + " in " + self.scope)

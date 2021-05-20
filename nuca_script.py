@@ -19,6 +19,8 @@ tokens = [
 'COMMA',
 'OPEN_CURLY',
 'CLOSE_CURLY',
+'OPEN_BRACKET',
+'CLOSE_BRACKET',
 'EQUALS',
 'NOT',
 'DOUBLE_EQUALS',
@@ -76,6 +78,8 @@ t_COLON                     =   r':'
 t_COMMA                     =   r','
 t_OPEN_CURLY                =   r'\{'
 t_CLOSE_CURLY               =   r'\}'
+t_OPEN_BRACKET                =   r'\['
+t_CLOSE_BRACKET               =   r'\]'
 t_OPEN_PARENTHESIS          =   r'\('
 t_CLOSE_PARENTHESIS         =   r'\)'
 t_DOUBLE_EQUALS             =   r'=='
@@ -151,34 +155,41 @@ lexer = lex.lex()
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    Memory Model:
+// VIRTUAL MEMORY MODEL //
 
-    [0, MAX_CONSTANTS - 1]                                                                                                                      ->          Constant Ints
-    [MAX_CONSTANTS, 2 * MAX_CONSTANTS - 1]                                                                                                      ->          Constant Floats
-    [2 * MAX_CONSTANTS, 3 * MAX_CONSTANTS - 1]                                                                                                  ->          Constant Strings
-    [3 * MAX_CONSTANTS, 4 * MAX_CONSTANTS - 1]                                                                                                  ->          Constant Booleans
-    [4 * MAX_CONSTANTS, 4 * MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                                                    ->          Global Ints
-    [4 * MAX_CONSTANTS + MAX_SYMBOLS, 4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS - 1]                                                                  ->          Global Floats
-    [4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS, 4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS - 1]                                                              ->          Global Strings
-    [4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS - 1]                                                              ->          Global Booleans
-    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                            ->          Global Temp Ints
-    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS - 1]                      ->          Global Temp Floats
-    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Strings
-    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Booleans
-    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Ints
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Floats
-    [4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Strings
-    [4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Booleans
-    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Ints
-    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Floats
-    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Strings
-    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS, 4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Booleans
+    [0,                                                                             MAX_CONSTANTS - 1]                                                              ->          Constant Ints
+    [MAX_CONSTANTS,                                                                 2 * MAX_CONSTANTS - 1]                                                          ->          Constant Floats
+    [2 * MAX_CONSTANTS,                                                             3 * MAX_CONSTANTS - 1]                                                          ->          Constant Strings
+    [3 * MAX_CONSTANTS,                                                             4 * MAX_CONSTANTS - 1]                                                          ->          Constant Booleans
+    [4 * MAX_CONSTANTS,                                                             4 * MAX_CONSTANTS + MAX_SYMBOLS - 1]                                            ->          Global Ints
+    [4 * MAX_CONSTANTS + MAX_SYMBOLS,                                               4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS - 1]                                        ->          Global Floats
+    [4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS,                                           4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS - 1]                                        ->          Global Strings
+    [4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS,                                           4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS - 1]                                        ->          Global Booleans
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS,                                           4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                      ->          Global Temp Ints
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + MAX_TMP_SYMBOLS,                         4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Floats
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Strings
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Global Temp Booleans
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Ints
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Floats
+    [4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Strings
+    [4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                  ->          Local Booleans
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Ints
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Floats
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Strings
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS,                     4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                  ->          Local Temp Booleans
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// SPRINT //
+
+// TODO : Implement list syntax and quad generation!
+
+    1. Implement a way to check during runtime wether or not the array is being indexed out of bounds
+    2. Have funcs take arrays as arguments
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// TODO : Implement list syntax and quad generation! arr[3] : int; arr = [1, 2, 3]; arr[0] = 1;
-
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// BACKLOG //
 
 // TODO : Refactor files and methods
 
@@ -199,6 +210,7 @@ lexer = lex.lex()
 MAX_CONSTANTS = 1000        # (per type)
 MAX_SYMBOLS = 3000          # (per type)
 MAX_TMP_SYMBOLS = 3000      # (per type)
+MEMORY_STACK_LIMIT = 100000
 
 FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS])
 OPERATOR_STACK = []
@@ -206,6 +218,7 @@ OPERAND_STACK = []
 TYPE_STACK = []
 JUMP_STACK = []
 FUNC_CALL_STACK = []
+ARRAY_DIMENSION_STACK = []
 QUAD_POINTER = 1
 QUADS = [Quad("GOTO", -1, -1, "PND")]
 
@@ -274,28 +287,30 @@ def p_var_list_star(p):
             p[0] += "||" + p[2]
 
 def p_var_list(p):
-    ''' VAR_LIST : ID_LIST COLON TYPE SEMI_COLON '''
+    ''' VAR_LIST : SYMBOL_LIST COLON TYPE SEMI_COLON '''
     p[0] = p[1] + ":" + p[3]
 
-def p_id_list(p):
-    ''' ID_LIST : ID ID_LIST_P '''
+def p_symbol_list(p):
+    ''' SYMBOL_LIST : ID SYMBOL_LIST_P
+                    | ARRAY_DEFINITION SYMBOL_LIST_P  '''
     p[0] = p[1]
     if p[2] != None:
         p[0] += p[2]
 
-def p_id_list_p(p):
-    ''' ID_LIST_P : COMMA ID ID_LIST_P
-                  | empty '''
+def p_symbol_list_p(p):
+    ''' SYMBOL_LIST_P : COMMA ID SYMBOL_LIST_P
+                    |   COMMA ARRAY_DEFINITION SYMBOL_LIST_P
+                    | empty '''
     if p[1] == ',':
         p[0] = ',' + p[2]
         if p[3] != None:
             p[0] += p[3]
 
 def p_readable_list(p):
-    ''' READABLE_LIST : ID seen_readable READABLE_LIST_P '''
+    ''' READABLE_LIST : VAR seen_readable READABLE_LIST_P '''
 
 def p_readable_list_p(p):
-    ''' READABLE_LIST_P : COMMA ID seen_readable READABLE_LIST_P
+    ''' READABLE_LIST_P : COMMA VAR seen_readable READABLE_LIST_P
                   | empty '''
 
 def p_seen_readable(p):
@@ -307,7 +322,11 @@ def p_global_var(p):
     for list in p[1].split("||"):
         type = list.split(":")[1]
         for id in list.split(":")[0].split(','):
-            FUNC_DIR.declare_symbol(id, type)
+            if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
+                dims = ARRAY_DIMENSION_STACK.pop(0)
+                FUNC_DIR.declare_symbol(id, type, is_array = True, dimensions = dims[1:])
+            else:
+                FUNC_DIR.declare_symbol(id, type)
 
 def p_func_def_star(p):
     ''' FUNC_DEF_STAR : FUNC_DEF FUNC_DEF_STAR
@@ -340,12 +359,16 @@ def p_seen_func_vars(p):
         for list in p[-1].split("||"):
             type = list.split(":")[1]
             for id in list.split(":")[0].split(','):
-                FUNC_DIR.declare_symbol(id, type)
+                if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
+                    dims = ARRAY_DIMENSION_STACK.pop(0)
+                    FUNC_DIR.declare_symbol(id, type, is_array = True, dimensions = dims[1:])
+                else:
+                    FUNC_DIR.declare_symbol(id, type)
 
     FUNC_DIR.set_start_addr(QUAD_POINTER)
 
 def p_func_param(p):
-    ''' FUNC_PARAM : VAR FUNC_PARAM_P
+    ''' FUNC_PARAM : VAR_DECLARATION FUNC_PARAM_P
                    | empty '''
 
     if len(p) > 2:
@@ -354,7 +377,7 @@ def p_func_param(p):
             p[0] += p[2]
 
 def p_func_param_p(p):
-    ''' FUNC_PARAM_P : COMMA VAR FUNC_PARAM_P
+    ''' FUNC_PARAM_P : COMMA VAR_DECLARATION FUNC_PARAM_P
                      | empty '''
 
     if len(p) > 2:
@@ -362,8 +385,8 @@ def p_func_param_p(p):
         if p[3] != None:
             p[0] += p[3]
 
-def p_var(p):
-    ''' VAR : ID COLON TYPE '''
+def p_var_declaration(p):
+    ''' VAR_DECLARATION : ID COLON TYPE '''
     p[0] = p[1] + ":" + p[3]
 
 def p_vars(p):
@@ -408,7 +431,7 @@ def p_for_incr_statement(p):
                               | PRINTLN '''
 
 def p_assign(p):
-    ''' ASSIGN : ID seen_id EQUALS seen_equals EXPRESSION '''
+    ''' ASSIGN : VAR seen_id_in_assign EQUALS seen_equals EXPRESSION '''
     assign_to_var()
 
 def p_seen_equals(p):
@@ -463,7 +486,7 @@ def p_factor(p):
                 | NOT seen_not FACTOR pop_not
                 | MINUS seen_unary_minus FACTOR pop_unary_minus
                 | FUNC_CALL
-                | ID seen_id
+                | VAR seen_id_as_factor
                 | CNST '''
 
 def p_pop_not(p):
@@ -472,13 +495,13 @@ def p_pop_not(p):
     right_operand = OPERAND_STACK.pop()
     right_type = TYPE_STACK.pop()
     res_type = SemanticCube[op][right_type]
-    res = FUNC_DIR.next_avail(res_type)
     if res_type != "err":
+        res = FUNC_DIR.next_avail(res_type)
         push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
-        raise Exception("Type Mismatch: " + op + right_operand)
+        raise Exception("Type Mismatch: " + op + right_type)
 
 def p_seen_not(p):
     ''' seen_not : empty '''
@@ -491,13 +514,16 @@ def p_pop_unary_minus(p):
     right_operand = OPERAND_STACK.pop()
     right_type = TYPE_STACK.pop()
     res_type = SemanticCube[op][right_type]
-    res = FUNC_DIR.next_avail(res_type)
     if res_type != "err":
+        res = FUNC_DIR.next_avail(res_type)
         push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
-        raise Exception("Type Mismatch: " + op + right_operand)
+        exception_txt = "Type Mismatch: " + op + right_type
+        if right_type == "boolean":
+            exception_txt += " (maybe use !boolean instead?)"
+        raise Exception(exception_txt)
 
 
 
@@ -514,10 +540,65 @@ def p_seen_close_parenthesis(p):
     ''' seen_close_parenthesis : empty '''
     OPERATOR_STACK.pop()
 
-def p_seen_id(p):
-    ''' seen_id :  '''
-    OPERAND_STACK.append(FUNC_DIR.symbol_lookup(p[-1]))
-    TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(p[-1]))
+def p_seen_id_in_assign(p):
+    ''' seen_id_in_assign :  empty '''
+    parse_id(p[-1], 0)
+
+def p_seen_id_as_factor(p):
+    ''' seen_id_as_factor : empty '''
+    parse_id(p[-1], 1)
+
+
+def parse_id(id, mode):
+    if "+" in id:
+        # It is an array!
+        array_id = id[:id.index("+")]
+        dims = FUNC_DIR.get_symbol_dimensions(id[:id.index("+")])
+        access_values = id[id.index("+") + 1:].split(",")[:-1]
+        if len(access_values) != len(dims):
+            # Accessing array incompletely (would need to return an array obj)
+            raise Exception("Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
+        final_access_value = FUNC_DIR.next_avail("int")
+        for i, d in enumerate(access_values):
+
+            '''
+            if int(d) >= dims[i]:
+                # Index out of bounds!
+                raise Exception("Index Error: index " + d + " is out of range for " + array_id)
+            '''
+
+            try:
+                d = int(d) # might be an ID, might be a stright up int
+            except:
+                pass
+
+            if i == len(access_values) - 1:
+                push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(final_access_value)))
+            else:
+                access_increment = FUNC_DIR.next_avail("int")
+                push_to_quads(Quad("=", -1,  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(access_increment)))
+                for j, size in enumerate(dims):
+                    if i < j:
+                        push_to_quads(Quad("*", FUNC_DIR.get_symbol_mem_index(access_increment),  FUNC_DIR.get_symbol_mem_index(int(size)), FUNC_DIR.get_symbol_mem_index(access_increment)))
+
+                push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value),  FUNC_DIR.get_symbol_mem_index(access_increment), FUNC_DIR.get_symbol_mem_index(final_access_value)))
+
+        array_type = FUNC_DIR.symbol_type_lookup(array_id)
+        ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, is_ptr = True)
+        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id),  FUNC_DIR.get_symbol_mem_index(final_access_value), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index)))
+
+        if not mode: # We are assigning to this array, need a pointer
+            OPERAND_STACK.append(FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index))
+            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(ptr_to_array_value_at_index))
+
+        else: # We are just using the value at this index, no need for a pointer; Can resolve into a tmp
+            value_at_index = FUNC_DIR.next_avail(array_type)
+            push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index), FUNC_DIR.get_symbol_mem_index(value_at_index)))
+            OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index))
+            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index))
+    else:
+        OPERAND_STACK.append(FUNC_DIR.symbol_lookup(id))
+        TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id))
 
 def p_seen_cte_i(p):
     ''' seen_cte_i :  '''
@@ -544,6 +625,58 @@ def p_cnst(p):
 
     p[0] = p[1]
 
+
+def p_var(p):
+    ''' VAR :       ID
+                |   ARRAY'''
+    p[0] = p[1]
+
+def p_array(p):
+    ''' ARRAY : ID seen_array_id OPEN_BRACKET EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P '''
+    p[0] = ""
+    dims = ARRAY_DIMENSION_STACK.pop()
+    for dim in dims:
+            if dim == p[1]:
+                p[0] += p[1] + "+"
+            else:
+                p[0] += str(dim) + ","
+
+def p_array_p(p):
+    ''' ARRAY_P :       OPEN_BRACKET EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P
+                    |   empty '''
+
+def p_seen_array_id(p):
+    ''' seen_array_id : empty '''
+    ARRAY_DIMENSION_STACK.append([p[-1]])
+
+def p_seen_array_access(p):
+    ''' seen_array_access : empty '''
+    access = OPERAND_STACK.pop()
+    access_type = TYPE_STACK.pop()
+    if access_type not in ["int", "bool"]:
+        raise Exception("TypeError: Cannot use " + access_type + " as access index for " + ARRAY_DIMENSION_STACK[-1][0])
+
+    ARRAY_DIMENSION_STACK[-1].append(access)
+
+
+def p_array_definition(p):
+    ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
+    p[0] = p[1]
+
+def p_array_definition_p(p):
+    ''' ARRAY_DEFINITION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P
+                    |   empty'''
+
+
+def p_seen_array_def_id(p):
+    ''' seen_array_def_id : empty '''
+    ARRAY_DIMENSION_STACK.append([p[-1]])
+
+def p_seen_array_def_dim(p):
+    ''' seen_array_def_dim : empty '''
+    dim = p[-2]
+    ARRAY_DIMENSION_STACK[-1].append(dim)
+
 def p_term(p):
     ''' TERM : FACTOR seen_factor TERM_P  '''
 
@@ -569,7 +702,7 @@ def p_func_call(p):
 
     FUNC_CALL_STACK.pop()
     if len(FUNC_CALL_STACK):
-        FUNC_DIR.set_param_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1])
+        FUNC_DIR.set_param_index(FUNC_CALL_STACK[-1][0], FUNC_CALL_STACK[-1][1])
 
     return_type = FUNC_DIR.func_type_lookup(p[1])
 
@@ -577,8 +710,9 @@ def p_func_call(p):
     temp = FUNC_DIR.next_avail(return_type)
     OPERAND_STACK.append(temp)
     TYPE_STACK.append(return_type)
+    rtn_obj_name = FUNC_DIR.get_return_obj_name(p[1])
     if return_type != "void":
-        push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name(p[1])), FUNC_DIR.get_symbol_mem_index(temp)))
+        push_to_quads(Quad("=", get_ptr_value(rtn_obj_name, temp), FUNC_DIR.get_symbol_mem_index(rtn_obj_name), FUNC_DIR.get_symbol_mem_index(temp)))
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
@@ -590,7 +724,7 @@ def p_seen_func_call_id(p):
     FUNC_CALL_STACK.append([p[-1], 0])
 
 def p_arg_list(p):
-    ''' ARG_LIST : ID seen_arg ARG_LIST_P
+    ''' ARG_LIST : VAR seen_id_as_factor seen_arg ARG_LIST_P
                  | EXPRESSION seen_arg ARG_LIST_P
                  | FUNC_CALL seen_arg ARG_LIST_P
                  | empty '''
@@ -598,7 +732,7 @@ def p_arg_list(p):
     OPERATOR_STACK.pop()  # POP 'ARGUMENT FAKE WALL'
 
 def p_arg_list_p(p):
-    ''' ARG_LIST_P : COMMA ID seen_arg ARG_LIST_P
+    ''' ARG_LIST_P : COMMA VAR seen_id_as_factor seen_arg ARG_LIST_P
                    | COMMA EXPRESSION seen_arg ARG_LIST_P
                    | COMMA FUNC_CALL seen_arg ARG_LIST_P
                    | empty '''
@@ -607,9 +741,9 @@ def p_seen_arg(p):
     ''' seen_arg : '''
     arg = OPERAND_STACK.pop()
     arg_type = TYPE_STACK.pop()
-    k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], arg_type)
-    push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][0], k)))
-    FUNC_CALL_STACK[len(FUNC_CALL_STACK) - 1][1] = k
+    k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[-1][0], arg_type)
+    push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[-1][0], k)))
+    FUNC_CALL_STACK[-1][1] = k
 
 def p_func_return(p):
     ''' FUNC_RETURN :   RETURN_KWD EXPRESSION SEMI_COLON
@@ -617,8 +751,9 @@ def p_func_return(p):
 
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
+    rtn_obj_name = FUNC_DIR.get_return_obj_name()
 
-    push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(rtn_id), FUNC_DIR.get_symbol_mem_index(FUNC_DIR.get_return_obj_name())))
+    push_to_quads(Quad("=", get_ptr_value(rtn_id, rtn_obj_name), FUNC_DIR.get_symbol_mem_index(rtn_id), FUNC_DIR.get_symbol_mem_index(rtn_obj_name)))
     push_to_quads(Quad("ENDFNC", -1, -1, -1))
 
     FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1)
@@ -698,7 +833,7 @@ def p_func_conditional_rep(p):
     seen_conditional_rep()
 
 def p_func_unconditional_rep(p):
-    ''' FUNC_UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
+    ''' FUNC_UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS VAR seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     seen_unconditional_rep()
 
 def p_repetition(p):
@@ -724,7 +859,7 @@ def p_seen_while_exp(p):
     decision_statement()
 
 def p_unconditional_rep(p):
-    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS ID seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS VAR seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
     seen_unconditional_rep()
 
 def seen_unconditional_rep():
@@ -788,6 +923,21 @@ def p_error(p):
     print(p)
     exit()
 
+def get_ptr_value(left, right):
+    ptr_value = -1
+
+    if FUNC_DIR.is_sym_ptr(left):
+        ptr_value = 1
+
+    if FUNC_DIR.is_sym_ptr(right):
+        if ptr_value > 0:
+            ptr_value = 3
+        else:
+            ptr_value = 2
+
+    return ptr_value
+
+
 def generateExpressionQuad():
     right_operand = OPERAND_STACK.pop()
     right_type = TYPE_STACK.pop()
@@ -812,7 +962,7 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     if SemanticCube[res_type][op][right_type] == "err":
         raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
     else:
-        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
+        push_to_quads(Quad(op, get_ptr_value(right_operand, res), FUNC_DIR.get_symbol_mem_index(right_operand), FUNC_DIR.get_symbol_mem_index(res)))
         if push_back_operand:
             OPERAND_STACK.append(res)
         if push_back_type:
@@ -935,7 +1085,7 @@ def main(argv):
                 temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
                 vm_memory.append(mem_sign + ", " + temp_sign)
 
-    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ";\n\n"
+    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";\n\n"
 
     fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, mem_constraints_str + VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
 

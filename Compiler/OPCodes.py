@@ -25,5 +25,6 @@ OPCodes = {
                 "GOTOF" :       22,     # IMPLEMENTED
                 "ENDFNC" :      23,     # IMPLEMENTED
                 "END" :         24,     # IMPLEMENTED
+                "ACCESS" :      25,     #
 
 }

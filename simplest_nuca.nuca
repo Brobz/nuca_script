@@ -1,5 +1,7 @@
 program SIMPLEST;
 
+// Simple Variables //
+
 a, b, c : int;
 d, e, f : float;
 g : string;

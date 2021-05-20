@@ -1,0 +1,36 @@
+program ARRAYS;
+
+// Arays //
+
+int_arr[100], int_matrix[3][3], int_cube[3][3][3] : int;
+
+// Vars //
+
+idx : int;
+
+void print_array(arr : int)
+VARS{
+  i : int;
+}
+{
+  for(i = 0; i < 10; i = i + 1){
+    // println(arr[1]);  TODO : HAVE PARAMAS TAKE IN ARRAYS AS WELL //
+  }
+}
+
+int times_two(i : int)
+VARS{}
+{
+  return i * 2;
+}
+
+main (){
+  idx = 2;
+  println(idx);
+  int_arr[idx] = 1;
+  println(int_arr[idx]);
+  int_matrix[2][2] = 10;
+  int_matrix[0][2] = times_two(idx);
+  println(int_arr[0], int_arr[2], int_matrix[0][0], int_matrix[0][2], int_matrix[1][0], int_matrix[1][1], int_matrix[2][0], int_matrix[2][2]);
+  println(int_arr[95]);
+}
