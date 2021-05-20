@@ -17,7 +17,7 @@ OPCodes = {
                 "!=" :          12,     # IMPLEMENTED
                 "!" :           13,     # IMPLEMENTED
                 "ACCESS" :      14,     # IMPLEMENTED
-                "ARR_BNDS" :  15,     # IMPLEMENTED
+                "ARR_BNDS" :    15,     # IMPLEMENTED
                 "ERA" :         16,     # IMPLEMENTED
                 "PARAM" :       17,     # IMPLEMENTED
                 "GOSUB" :       18,     # IMPLEMENTED

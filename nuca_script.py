@@ -133,14 +133,16 @@ lexer = lex.lex()
 
 // IDEAS //
 
-    FUNCTIONS:
+    VM:
+        -> check if poping from memory stack actually frees up memory
+        -> change types internally to long and double instead of int and float
 
+    FUNCTIONS:
         -> overloaded functions?
         -> default arguments?
         -> builtin methods? (wait, exit, etc..)
 
     OTHER:
-
         -> allow max memory customization (also max call stack) via command line inpus (argv)
         -> atom syntactic highliter ?
 
@@ -173,9 +175,11 @@ lexer = lex.lex()
 
 // SPRINT //
 
-// TODO : Implement list syntax and quad generation!
+// TODO : Add Object quad generation
 
-    1. Have funcs take arrays as arguments
+        1. Review grammar
+        2. Work on memory structure generation
+        3. Work on accessing class elements
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -297,15 +301,20 @@ def p_symbol_list_p(p):
             p[0] += p[3]
 
 def p_readable_list(p):
-    ''' READABLE_LIST : VAR seen_readable READABLE_LIST_P '''
+    ''' READABLE_LIST : VAR seen_id_in_assign seen_readable READABLE_LIST_P '''
 
 def p_readable_list_p(p):
-    ''' READABLE_LIST_P : COMMA VAR seen_readable READABLE_LIST_P
+    ''' READABLE_LIST_P : COMMA VAR seen_id_in_assign seen_readable READABLE_LIST_P
                   | empty '''
 
 def p_seen_readable(p):
     ''' seen_readable  : empty '''
-    push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(p[-1]))))
+    id = OPERAND_STACK.pop()
+    type = TYPE_STACK.pop()
+    if FUNC_DIR.is_sym_ptr(id):
+        push_to_quads(Quad("READ", -1, 1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id))))
+    else:
+        push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id))))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -563,7 +572,14 @@ def parse_id(id, mode):
             push_to_quads(Quad("ARR_BNDS", -1, FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(dims[i])))
 
             if i == len(access_values) - 1:
-                push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(final_access_value)))
+                # We are reading the last dimension of the access values
+                if len(access_values) == 1:
+                    # This is a linear vector; simply access whatever index we just read
+                    push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(final_access_value)))
+                else:
+                    # This is a matrix; add the dimension we read to the final access_value
+                    push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(final_access_value)))
+
             else:
                 access_increment = FUNC_DIR.next_avail("int")
                 push_to_quads(Quad("=", -1,  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(access_increment)))
@@ -590,6 +606,11 @@ def parse_id(id, mode):
 
     else:
         # It is a regular variable!
+
+        if FUNC_DIR.is_sym_arr(id):
+            # Trying to access an array symbol without [] !
+            raise Exception("Name Error: symol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
+
         OPERAND_STACK.append(FUNC_DIR.symbol_lookup(id))
         TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id))
 

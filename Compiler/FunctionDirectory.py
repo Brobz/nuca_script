@@ -200,12 +200,12 @@ class FunctionDirectory(object):
         self.FUNCS[self.program_name].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, False, is_array, dimensions)
 
 
-    def declare_param(self, param_id, param_type, scope = "GLOBAL"):
+    def declare_param(self, param_id, param_type, scope = "GLOBAL", is_array = False, dimensions = None):
         if self.current_scope == None:
             raise Exception("Scope Error: Cant declare param")
 
-        self.declare_symbol(param_id, param_type, is_param = True)
-        self.declare_symbol(param_id, param_type, give_warning = False)
+        self.declare_symbol(param_id, param_type, is_array = is_array, dimensions = dimensions, is_param = True)
+        self.declare_symbol(param_id, param_type, is_array = is_array, dimensions = dimensions, give_warning = False)
 
 
 

@@ -8,13 +8,13 @@ int_arr[100], int_matrix[3][3], int_cube[3][3][3] : int;
 
 idx : int;
 
-void print_array(arr : int)
+void print_array(i : int)
 VARS{
-  i : int;
+  arr[100], j : int;
 }
 {
-  for(i = 0; i < 10; i = i + 1){
-    // println(arr[1]);  TODO : HAVE PARAMAS TAKE IN ARRAYS AS WELL //
+  for(j = 0; j < i; j = j + 1){
+    println(j, arr[j]);
   }
 }
 
@@ -27,12 +27,12 @@ VARS{}
 main (){
   idx = 2;
   println(idx);
-  int_arr[idx] = 1;
+  int_arr[idx] = 2;
   println(int_arr[idx]);
   int_matrix[2][2] = 10;
-  int_matrix[0][2] = times_two(idx);
+  int_matrix[0][2] = times_two(-int_arr[idx] * 10);
   int_matrix[0][0] = 25 + 3;
-  println(int_arr[0], int_arr[2], int_matrix[0][0], int_matrix[0][2], int_matrix[2][0], int_matrix[1][1], int_matrix[2][0], int_matrix[2][2]);
+  println(int_matrix[0][0], int_matrix[0][2], int_matrix[2][0], int_matrix[1][1], int_matrix[2][0], int_matrix[2][2]);
   int_arr[95] = int_matrix[0][0];
   int_arr[10] = 0;
   int_arr[20] = 1;
@@ -44,5 +44,9 @@ main (){
   println("------------------");
   int_cube[0][0][0] = 3;
   println(int_cube[0][0][0], int_cube[0][1][2], int_cube[0][2][2], int_cube[1][2][0], int_cube[2][2][2]);
+  println("------------------");
+  print(">>  Elements to read (max 100):\n-- ");
+  read(int_arr[96]);
+  print_array(int_arr[96]);
 
 }
