@@ -14,17 +14,18 @@ OPCodes = {
                 "||" :          11,     # IMPLEMENTED
                 "!=" :          12,     # IMPLEMENTED
                 "!" :           13,     # IMPLEMENTED
-                "ERA" :         14,     # IMPLEMENTED
-                "PARAM" :       15,     # IMPLEMENTED
-                "GOSUB" :       16,     # IMPLEMENTED
-                "READ" :        17,     # IMPLEMENTED
-                "PRNTBFFR" :    18,     # IMPLEMENTED
-                "PRNT" :        19,     # IMPLEMENTED
-                "PRNTLN" :      20,     # IMPLEMENTED
-                "GOTO" :        21,     # IMPLEMENTED
-                "GOTOF" :       22,     # IMPLEMENTED
-                "ENDFNC" :      23,     # IMPLEMENTED
-                "END" :         24,     # IMPLEMENTED
-                "ACCESS" :      25,     #
+                "ACCESS" :      14,     # IMPLEMENTED
+                "ERA" :         15,     # IMPLEMENTED
+                "PARAM" :       16,     # IMPLEMENTED
+                "GOSUB" :       17,     # IMPLEMENTED
+                "READ" :        18,     # IMPLEMENTED
+                "PRNTBFFR" :    19,     # IMPLEMENTED
+                "PRNT" :        20,     # IMPLEMENTED
+                "PRNTLN" :      21,     # IMPLEMENTED
+                "GOTO" :        22,     # IMPLEMENTED
+                "GOTOF" :       23,     # IMPLEMENTED
+                "ENDFNC" :      24,     # IMPLEMENTED
+                "END" :         25,     # IMPLEMENTED
+
 
 }

@@ -41,110 +41,110 @@ const map<int, string> CONSTANTS = {
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{21, -1, -1, 11},
+										{22, -1, -1, 11},
 										{0, -1, 2, 28001},
 										{7, 28001, 3, 49000},
-										{22, -1, 49000, 7},
+										{23, -1, 49000, 7},
 										{1, 28001, 4, 40000},
 										{0, -1, 40000, 28001},
-										{21, -1, -1, 2},
-										{23, -1, -1, -1},
+										{22, -1, -1, 2},
+										{24, -1, -1, -1},
 										{3, 28000, 5, 40000},
 										{0, -1, 40000, 4137},
-										{23, -1, -1, -1},
+										{24, -1, -1, -1},
 										{0, -1, 5, 4136},
-										{18, -1, -1, 4136},
-										{20, -1, -1, -1},
+										{19, -1, -1, 4136},
+										{21, -1, -1, -1},
 										{1, 16000, 4136, 16000},
-										{25, 4000, 16000, 16001, 100},
+										{14, 4000, 16000, 16001, 100},
 										{0, 2, 4, 16001},
 										{1, 16002, 4136, 16002},
-										{25, 4000, 16002, 16003, 100},
+										{14, 4000, 16002, 16003, 100},
 										{0, 1, 16003, 16004},
-										{18, -1, -1, 16004},
-										{20, -1, -1, -1},
+										{19, -1, -1, 16004},
+										{21, -1, -1, -1},
 										{0, -1, 5, 16006},
 										{3, 16006, 1, 16006},
 										{1, 16005, 16006, 16005},
 										{1, 16005, 5, 16005},
-										{25, 4100, 16005, 16007, 9},
+										{14, 4100, 16005, 16007, 9},
 										{0, 2, 3, 16007},
 										{0, -1, 2, 16009},
 										{3, 16009, 1, 16009},
 										{1, 16008, 16009, 16008},
 										{1, 16008, 5, 16008},
-										{25, 4100, 16008, 16010, 9},
-										{14, -1, -1, 8},
-										{15, -1, 4136, 28000},
-										{16, -1, -1, 8},
+										{14, 4100, 16008, 16010, 9},
+										{15, -1, -1, 8},
+										{16, -1, 4136, 28000},
+										{17, -1, -1, 8},
 										{0, -1, 4137, 16011},
 										{0, 2, 16011, 16010},
 										{0, -1, 2, 16013},
 										{3, 16013, 1, 16013},
 										{1, 16012, 16013, 16012},
 										{1, 16012, 2, 16012},
-										{25, 4100, 16012, 16014, 9},
+										{14, 4100, 16012, 16014, 9},
 										{1, 6, 1, 16015},
 										{0, 2, 16015, 16014},
 										{1, 16016, 2, 16016},
-										{25, 4000, 16016, 16017, 100},
+										{14, 4000, 16016, 16017, 100},
 										{0, 1, 16017, 16018},
-										{18, -1, -1, 16018},
+										{19, -1, -1, 16018},
 										{1, 16019, 5, 16019},
-										{25, 4000, 16019, 16020, 100},
+										{14, 4000, 16019, 16020, 100},
 										{0, 1, 16020, 16021},
-										{18, -1, -1, 16021},
+										{19, -1, -1, 16021},
 										{0, -1, 2, 16023},
 										{3, 16023, 1, 16023},
 										{1, 16022, 16023, 16022},
 										{1, 16022, 2, 16022},
-										{25, 4100, 16022, 16024, 9},
+										{14, 4100, 16022, 16024, 9},
 										{0, 1, 16024, 16025},
-										{18, -1, -1, 16025},
+										{19, -1, -1, 16025},
 										{0, -1, 2, 16027},
 										{3, 16027, 1, 16027},
 										{1, 16026, 16027, 16026},
 										{1, 16026, 5, 16026},
-										{25, 4100, 16026, 16028, 9},
+										{14, 4100, 16026, 16028, 9},
 										{0, 1, 16028, 16029},
-										{18, -1, -1, 16029},
+										{19, -1, -1, 16029},
 										{2, -1, 7, 16030},
 										{0, -1, 5, 16032},
 										{3, 16032, 1, 16032},
 										{1, 16031, 16032, 16031},
 										{1, 16031, 16030, 16031},
-										{25, 4100, 16031, 16033, 9},
+										{14, 4100, 16031, 16033, 9},
 										{0, 1, 16033, 16034},
-										{18, -1, -1, 16034},
+										{19, -1, -1, 16034},
 										{0, -1, 4, 16036},
 										{3, 16036, 1, 16036},
 										{1, 16035, 16036, 16035},
 										{1, 16035, 4, 16035},
-										{25, 4100, 16035, 16037, 9},
+										{14, 4100, 16035, 16037, 9},
 										{0, 1, 16037, 16038},
-										{18, -1, -1, 16038},
+										{19, -1, -1, 16038},
 										{0, -1, 5, 16040},
 										{3, 16040, 1, 16040},
 										{1, 16039, 16040, 16039},
 										{1, 16039, 2, 16039},
-										{25, 4100, 16039, 16041, 9},
+										{14, 4100, 16039, 16041, 9},
 										{0, 1, 16041, 16042},
-										{18, -1, -1, 16042},
+										{19, -1, -1, 16042},
 										{0, -1, 5, 16044},
 										{3, 16044, 1, 16044},
 										{1, 16043, 16044, 16043},
 										{1, 16043, 5, 16043},
-										{25, 4100, 16043, 16045, 9},
+										{14, 4100, 16043, 16045, 9},
 										{0, 1, 16045, 16046},
-										{18, -1, -1, 16046},
-										{20, -1, -1, -1},
+										{19, -1, -1, 16046},
+										{21, -1, -1, -1},
 										{1, 16047, 8, 16047},
-										{25, 4000, 16047, 16048, 100},
+										{14, 4000, 16047, 16048, 100},
 										{0, 1, 16048, 16049},
-										{18, -1, -1, 16049},
-										{20, -1, -1, -1},
-										{18, -1, -1, 2000},
-										{20, -1, -1, -1},
+										{19, -1, -1, 16049},
+										{21, -1, -1, -1},
+										{19, -1, -1, 2000},
+										{21, -1, -1, -1},
 										{0, -1, 2, 16051},
 										{3, 16051, 1, 16051},
 										{3, 16051, 1, 16051},
@@ -153,7 +153,7 @@ const vector<vector<int>> QUADS = {
 										{3, 16052, 1, 16052},
 										{1, 16050, 16052, 16050},
 										{1, 16050, 2, 16050},
-										{25, 4109, 16050, 16053, 27},
+										{14, 4109, 16050, 16053, 27},
 										{0, 2, 1, 16053},
 										{0, -1, 2, 16055},
 										{3, 16055, 1, 16055},
@@ -163,9 +163,9 @@ const vector<vector<int>> QUADS = {
 										{3, 16056, 1, 16056},
 										{1, 16054, 16056, 16054},
 										{1, 16054, 2, 16054},
-										{25, 4109, 16054, 16057, 27},
+										{14, 4109, 16054, 16057, 27},
 										{0, 1, 16057, 16058},
-										{18, -1, -1, 16058},
+										{19, -1, -1, 16058},
 										{2, -1, 1, 16059},
 										{0, -1, 2, 16061},
 										{3, 16061, 1, 16061},
@@ -175,9 +175,9 @@ const vector<vector<int>> QUADS = {
 										{3, 16062, 1, 16062},
 										{1, 16060, 16062, 16060},
 										{1, 16060, 16059, 16060},
-										{25, 4109, 16060, 16063, 27},
+										{14, 4109, 16060, 16063, 27},
 										{0, 1, 16063, 16064},
-										{18, -1, -1, 16064},
+										{19, -1, -1, 16064},
 										{2, -1, 7, 16065},
 										{0, -1, 2, 16067},
 										{3, 16067, 1, 16067},
@@ -187,9 +187,9 @@ const vector<vector<int>> QUADS = {
 										{3, 16068, 1, 16068},
 										{1, 16066, 16068, 16066},
 										{1, 16066, 16065, 16066},
-										{25, 4109, 16066, 16069, 27},
+										{14, 4109, 16066, 16069, 27},
 										{0, 1, 16069, 16070},
-										{18, -1, -1, 16070},
+										{19, -1, -1, 16070},
 										{2, -1, 1, 16071},
 										{0, -1, 4, 16073},
 										{3, 16073, 1, 16073},
@@ -199,9 +199,9 @@ const vector<vector<int>> QUADS = {
 										{3, 16074, 1, 16074},
 										{1, 16072, 16074, 16072},
 										{1, 16072, 2, 16072},
-										{25, 4109, 16072, 16075, 27},
+										{14, 4109, 16072, 16075, 27},
 										{0, 1, 16075, 16076},
-										{18, -1, -1, 16076},
+										{19, -1, -1, 16076},
 										{2, -1, 9, 16077},
 										{2, -1, 1, 16078},
 										{0, -1, 5, 16080},
@@ -212,11 +212,11 @@ const vector<vector<int>> QUADS = {
 										{3, 16081, 1, 16081},
 										{1, 16079, 16081, 16079},
 										{1, 16079, 16078, 16079},
-										{25, 4109, 16079, 16082, 27},
+										{14, 4109, 16079, 16082, 27},
 										{0, 1, 16082, 16083},
-										{18, -1, -1, 16083},
-										{20, -1, -1, -1},
-										{24, -1, -1, -1},
+										{19, -1, -1, 16083},
+										{21, -1, -1, -1},
+										{25, -1, -1, -1},
 										};
 // QUADS //
 
@@ -519,42 +519,42 @@ int write_to_memory(int index, string value){
       break;
     case 200:
       {
-      LOCAL_MEM->local_mem.ints[index - index_displacement] = s_stoi(value);
+      	LOCAL_MEM->local_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 210:
       {
-      LOCAL_MEM->local_mem.floats[index - index_displacement] = s_stof(value);
+      	LOCAL_MEM->local_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 220:
       {
-      LOCAL_MEM->local_mem.strings[index - index_displacement] = value;
+      	LOCAL_MEM->local_mem.strings[index - index_displacement] = value;
       }
       break;
     case 230:
       {
-      LOCAL_MEM->local_mem.booleans[index - index_displacement] = s_stob(value);
+      	LOCAL_MEM->local_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     case 201:
       {
-      LOCAL_MEM->temp_mem.ints[index - index_displacement] = s_stoi(value);
+      	LOCAL_MEM->temp_mem.ints[index - index_displacement] = s_stoi(value);
       }
       break;
     case 211:
       {
-      LOCAL_MEM->temp_mem.floats[index - index_displacement] = s_stof(value);
+      	LOCAL_MEM->temp_mem.floats[index - index_displacement] = s_stof(value);
       }
       break;
     case 221:
       {
-      LOCAL_MEM->temp_mem.strings[index - index_displacement] = value;
+      	LOCAL_MEM->temp_mem.strings[index - index_displacement] = value;
       }
       break;
     case 231:
       {
-      LOCAL_MEM->temp_mem.booleans[index - index_displacement] = s_stob(value);
+      	LOCAL_MEM->temp_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
     default:
@@ -788,114 +788,7 @@ void run(){
     switch(op) {
 			// Other operations
 
-			case 14:		// ERA
-				{
-					int func_start_addr = QUADS[IP][3];
-					if (MEMORY_STACK.size() > MEMORY_STACK_LIMIT){
-						// Too many functions on the stack!
-						cout << ">> Error: Memory Stack Limit reached (infinite recursion?). Terminating..." << endl;
-						exit(EXIT_FAILURE);
-					}
-
-					MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN.at(func_start_addr).at(0), MEMORY_MAP_SIGN.at(func_start_addr).at(1)));
-					IP++;
-				}
-				break;
-
-			case 15:		// PARAM
-				{
-
-					Value param_value = read_from_memory(QUADS[IP][2]);
-					int param_addr = QUADS[IP][3];
-
-					write_to_param(param_addr, param_value.to_str());
-					IP++;
-				}
-				break;
-
-			case 16:		// GOSUB
-				{
-					int func_start_addr = QUADS[IP][3];
-					LOCAL_MEM = &(MEMORY_STACK.top());
-					LOCAL_MEM->set_return_addr(IP + 1);
-					IP = func_start_addr;
-				}
-				break;
-
-			case 17:		// READ
-				{
-
-					int result_dir = QUADS[IP][3];
-
-					string user_input;
-					cin >> user_input;
-
-					write_to_memory(result_dir, user_input);
-
-					IP++;
-				}
-				break;
-
-			case 18:			// PRNTBFFR
-				{
-					Value printable = read_from_memory(QUADS[IP][3]);
-					if (LOCAL_MEM->active) LOCAL_MEM->add_to_print_buffer(printable.to_str());
-					else GLOBAL_MEM.add_to_print_buffer(printable.to_str());
-					IP++;
-				}
-				break;
-
-      case 19:			// PRNT
-        {
-          string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
-          cout << printable;
-          IP++;
-        }
-        break;
-
-			case 20:			// PRNTLN
-        {
-					string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
-          cout << printable << endl;
-          IP++;
-        }
-        break;
-
-      case 21:			// GOTO
-        {
-          int to_addr = QUADS[IP][3];
-          IP = to_addr;
-        }
-        break;
-
-			case 22:			// GOTOF
-				{
-					int to_addr = QUADS[IP][3];
-					Value condition = read_from_memory(QUADS[IP][2]);
-					Value false_value = Value(false);
-					Value result = condition == false_value;
-					if(result.b) IP = to_addr;
-					else IP++;
-				}
-				break;
-
-
-			case 23:			// ENDFNC
-				{
-					int return_addr = LOCAL_MEM->return_addr;
-					MEMORY_STACK.pop();
-					LOCAL_MEM = (MEMORY_STACK.size()) ? &(MEMORY_STACK.top()) : new MemoryMap();
-					IP = return_addr;
-				}
-				break;
-
-      case 24:			// END
-        {
-          RUNNING = false;
-        }
-        break;
-
-			case 25:			// ACCESS
+			case 14:			// ACCESS
         {
 					int result_dir = QUADS[IP][3];
 
@@ -912,6 +805,112 @@ void run(){
 
 					write_to_memory(result_dir, result.to_str());
 					IP++;
+        }
+        break;
+
+			case 15:		// ERA
+				{
+					int func_start_addr = QUADS[IP][3];
+					if (MEMORY_STACK.size() > MEMORY_STACK_LIMIT){
+						// Too many functions on the stack!
+						cout << ">> Error: Memory Stack Limit reached (infinite recursion?). Terminating..." << endl;
+						exit(EXIT_FAILURE);
+					}
+
+					MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN.at(func_start_addr).at(0), MEMORY_MAP_SIGN.at(func_start_addr).at(1)));
+					IP++;
+				}
+				break;
+
+			case 16:		// PARAM
+				{
+
+					Value param_value = read_from_memory(QUADS[IP][2]);
+					int param_addr = QUADS[IP][3];
+
+					write_to_param(param_addr, param_value.to_str());
+					IP++;
+				}
+				break;
+
+			case 17:		// GOSUB
+				{
+					int func_start_addr = QUADS[IP][3];
+					LOCAL_MEM = &(MEMORY_STACK.top());
+					LOCAL_MEM->set_return_addr(IP + 1);
+					IP = func_start_addr;
+				}
+				break;
+
+			case 18:		// READ
+				{
+
+					int result_dir = QUADS[IP][3];
+
+					string user_input;
+					cin >> user_input;
+
+					write_to_memory(result_dir, user_input);
+
+					IP++;
+				}
+				break;
+
+			case 19:			// PRNTBFFR
+				{
+					Value printable = read_from_memory(QUADS[IP][3]);
+					if (LOCAL_MEM->active) LOCAL_MEM->add_to_print_buffer(printable.to_str());
+					else GLOBAL_MEM.add_to_print_buffer(printable.to_str());
+					IP++;
+				}
+				break;
+
+      case 20:			// PRNT
+        {
+          string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+          cout << printable;
+          IP++;
+        }
+        break;
+
+			case 21:			// PRNTLN
+        {
+					string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
+          cout << printable << endl;
+          IP++;
+        }
+        break;
+
+      case 22:			// GOTO
+        {
+          int to_addr = QUADS[IP][3];
+          IP = to_addr;
+        }
+        break;
+
+			case 23:			// GOTOF
+				{
+					int to_addr = QUADS[IP][3];
+					Value condition = read_from_memory(QUADS[IP][2]);
+					Value false_value = Value(false);
+					Value result = condition == false_value;
+					if(result.b) IP = to_addr;
+					else IP++;
+				}
+				break;
+
+			case 24:			// ENDFNC
+				{
+					int return_addr = LOCAL_MEM->return_addr;
+					MEMORY_STACK.pop();
+					LOCAL_MEM = (MEMORY_STACK.size()) ? &(MEMORY_STACK.top()) : new MemoryMap();
+					IP = return_addr;
+				}
+				break;
+
+      case 25:			// END
+        {
+          RUNNING = false;
         }
         break;
 
