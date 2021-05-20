@@ -1,5 +1,7 @@
 OPCodes = {
 
+                # REGUAL OPS #
+
                 "=" :           0,      # IMPLEMENTED
                 "+" :           1,      # IMPLEMENTED
                 "-" :           2,      # IMPLEMENTED
@@ -26,6 +28,10 @@ OPCodes = {
                 "GOTOF" :       23,     # IMPLEMENTED
                 "ENDFNC" :      24,     # IMPLEMENTED
                 "END" :         25,     # IMPLEMENTED
+
+                # ERROR OPS #
+
+                "OOB_ERR" :     26,     # IMPLEMENTED
 
 
 }

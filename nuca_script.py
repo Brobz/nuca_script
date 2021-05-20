@@ -133,11 +133,6 @@ lexer = lex.lex()
 
 // IDEAS //
 
-
-    ARRAYS:
-
-        -> disallow negative indices in multidemnsional arrays by implementing an abs() quad when calculating the access_value?
-
     FUNCTIONS:
 
         -> overloaded functions?
@@ -547,18 +542,35 @@ def p_seen_id_as_factor(p):
 def parse_id(id, mode):
     if "+" in id:
         # It is an array!
+
         array_id = id[:id.index("+")]
         dims = FUNC_DIR.get_symbol_dimensions(id[:id.index("+")])
         access_values = id[id.index("+") + 1:].split(",")[:-1]
+
         if len(access_values) != len(dims):
             # Accessing array incompletely (would need to return an array obj)
             raise Exception("Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
+
         final_access_value = FUNC_DIR.next_avail("int")
+
         for i, d in enumerate(access_values):
             try:
-                d = int(d) # might be an ID, might be a stright up int
+                d = int(d) # d might be an ID, or it might be a a CTE_I
             except:
                 pass
+
+            zero = FUNC_DIR.next_avail("int")
+            push_to_quads(Quad("-", FUNC_DIR.get_symbol_mem_index(d),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(zero)))
+
+            positive = FUNC_DIR.next_avail("boolean")
+            in_bounds = FUNC_DIR.next_avail("boolean")
+
+            push_to_quads(Quad("<", FUNC_DIR.get_symbol_mem_index(d),  FUNC_DIR.get_symbol_mem_index(dims[i]), FUNC_DIR.get_symbol_mem_index(in_bounds)))
+            push_to_quads(Quad(">=", FUNC_DIR.get_symbol_mem_index(d),  FUNC_DIR.get_symbol_mem_index(zero), FUNC_DIR.get_symbol_mem_index(positive)))
+            push_to_quads(Quad("&&", FUNC_DIR.get_symbol_mem_index(positive),  FUNC_DIR.get_symbol_mem_index(in_bounds), FUNC_DIR.get_symbol_mem_index(in_bounds)))
+            push_to_quads(Quad("GOTOF", -1,  FUNC_DIR.get_symbol_mem_index(in_bounds), QUAD_POINTER + 2))
+            push_to_quads(Quad("GOTO", -1,  -1, QUAD_POINTER + 2))
+            push_to_quads(Quad("OOB_ERR", -1, -1, -1))
 
             if i == len(access_values) - 1:
                 push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(final_access_value)))
@@ -573,7 +585,7 @@ def parse_id(id, mode):
 
         array_type = FUNC_DIR.symbol_type_lookup(array_id)
         ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, is_ptr = True)
-        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id),  FUNC_DIR.get_symbol_mem_index(final_access_value), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index), SymbolTable.get_array_element_size(dims)))
+        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id),  FUNC_DIR.get_symbol_mem_index(final_access_value), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index)))
 
         if not mode: # We are assigning to this array, need a pointer
             OPERAND_STACK.append(FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index))
@@ -584,7 +596,9 @@ def parse_id(id, mode):
             push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index), FUNC_DIR.get_symbol_mem_index(value_at_index)))
             OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index))
             TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index))
+
     else:
+        # It is a regular variable!
         OPERAND_STACK.append(FUNC_DIR.symbol_lookup(id))
         TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id))
 
