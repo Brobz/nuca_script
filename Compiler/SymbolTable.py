@@ -36,8 +36,6 @@ class SymbolTable(object):
                 raise Exception("Cannot check if " + sym_id + " is a pointer in " + self.scope)
             return -1
 
-
-
     def get_dimensions(self, sym_id):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][5]
@@ -71,7 +69,7 @@ class SymbolTable(object):
             raise Exception("Type error: type " + type + " is unknown")
 
         if is_arr:
-            self.const_memory_signature[type] += self.get_array_element_size(dimensions)
+            self.const_memory_signature[type] += SymbolTable.get_array_element_size(dimensions)
         else:
             self.const_memory_signature[type] += 1
 
@@ -84,7 +82,7 @@ class SymbolTable(object):
             raise Exception("Type error: type " + type + " is unknown")
 
         if is_arr:
-            self.temp_memory_signature[type] += self.get_array_element_size(dimensions)
+            self.temp_memory_signature[type] += SymbolTable.get_array_element_size(dimensions)
         else:
             self.temp_memory_signature[type] += 1
 
@@ -97,7 +95,7 @@ class SymbolTable(object):
             raise Exception("Type error: type " + type + " is unknown")
 
         if is_arr:
-            self.var_memory_signature[type] += self.get_array_element_size(dimensions)
+            self.var_memory_signature[type] += SymbolTable.get_array_element_size(dimensions)
         else:
             self.var_memory_signature[type] += 1
 
@@ -107,7 +105,8 @@ class SymbolTable(object):
             l.append(tuple[0])
         return l
 
-    def get_array_element_size(self, dimensions):
+    @classmethod
+    def get_array_element_size(cls, dimensions):
         element_size = 1
         for d in dimensions:
             element_size *= d

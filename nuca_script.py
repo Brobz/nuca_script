@@ -12,7 +12,6 @@ from Compiler.SymbolTable import *
 from Compiler.FunctionDirectory import *
 from Compiler.Quad import *
 
-# List of token names.   This is always required
 tokens = [
 'SEMI_COLON',
 'COLON',
@@ -37,17 +36,13 @@ tokens = [
 'SMALLER',
 'SMALLER_EQ',
 'DIFFERENT',
-
 'CTE_I',
 'CTE_F',
 'CTE_S',
 'ID',
-
-
 ]
 
 reserved = {
-
     'program' : 'PROGRAM_KWD',
     'ATTR' : 'ATTR_KWD',
     'VARS' : 'VARS_KWD',
@@ -72,7 +67,6 @@ reserved = {
 
 tokens += list(reserved.values())
 
-# A string containing ignored characters (spaces and tabs)
 t_SEMI_COLON                =   r';'
 t_COLON                     =   r':'
 t_COMMA                     =   r','
@@ -97,8 +91,6 @@ t_SMALLER_EQ                =   r'\<='
 t_SMALLER                   =   r'\<'
 t_DIFFERENT                 =   r'\<\>'
 
-
-
 t_ignore  = ' \t'
 
 def t_ID(t):
@@ -106,12 +98,10 @@ def t_ID(t):
      t.type = reserved.get(t.value, 'ID')    # Check for reserved words
      return t
 
-
 def t_CTE_F(t):
     r'[0-9]+\.[0-9]+'
     t.value = float(t.value)
     return t
-
 
 def t_CTE_I(t):
     r'[0-9]+'
@@ -139,8 +129,14 @@ def t_error(t):
 lexer = lex.lex()
 
 '''
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // IDEAS //
+
+
+    ARRAYS:
+
+        -> disallow negative indices in multidemnsional arrays by implementing an abs() quad when calculating the access_value?
 
     FUNCTIONS:
 
@@ -184,16 +180,15 @@ lexer = lex.lex()
 
 // TODO : Implement list syntax and quad generation!
 
-    1. Implement a way to check during runtime wether or not the array is being indexed out of bounds
-    2. Have funcs take arrays as arguments
+    1. Have funcs take arrays as arguments
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BACKLOG //
 
-// TODO : Refactor files and methods
-
 // TODO : Add +=,-=, *= and /= operators as possible ASSIGN statements in grammar and SemanticCube
+
+// TODO : Refactor files and methods
 
 // TODO : Fix shift/reduce && reduce/reduce conflict warnings
 
@@ -560,13 +555,6 @@ def parse_id(id, mode):
             raise Exception("Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
         final_access_value = FUNC_DIR.next_avail("int")
         for i, d in enumerate(access_values):
-
-            '''
-            if int(d) >= dims[i]:
-                # Index out of bounds!
-                raise Exception("Index Error: index " + d + " is out of range for " + array_id)
-            '''
-
             try:
                 d = int(d) # might be an ID, might be a stright up int
             except:
@@ -585,7 +573,7 @@ def parse_id(id, mode):
 
         array_type = FUNC_DIR.symbol_type_lookup(array_id)
         ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, is_ptr = True)
-        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id),  FUNC_DIR.get_symbol_mem_index(final_access_value), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index)))
+        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id),  FUNC_DIR.get_symbol_mem_index(final_access_value), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index), SymbolTable.get_array_element_size(dims)))
 
         if not mode: # We are assigning to this array, need a pointer
             OPERAND_STACK.append(FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index))

@@ -164,7 +164,7 @@ class FunctionDirectory(object):
         else:
             raise Exception("Scope Error: Cant get func start addr")
 
-    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False, give_warning = True, is_array = False, dimensions = [1]):
+    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False, give_warning = True, is_array = False, dimensions = None):
         if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!
             return
 
