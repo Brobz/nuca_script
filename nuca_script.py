@@ -620,7 +620,7 @@ def p_var(p):
     p[0] = p[1]
 
 def p_array(p):
-    ''' ARRAY : ID seen_array_id OPEN_BRACKET EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P '''
+    ''' ARRAY : ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P '''
     p[0] = ""
     dims = ARRAY_DIMENSION_STACK.pop()
     for dim in dims:
@@ -630,12 +630,17 @@ def p_array(p):
                 p[0] += str(dim) + ","
 
 def p_array_p(p):
-    ''' ARRAY_P :       OPEN_BRACKET EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P
+    ''' ARRAY_P :       OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P
                     |   empty '''
 
 def p_seen_array_id(p):
     ''' seen_array_id : empty '''
     ARRAY_DIMENSION_STACK.append([p[-1]])
+
+
+def p_seen_open_bracket(p):
+    ''' seen_open_bracket : empty '''
+    OPERATOR_STACK.append("|ARRAY_ACCESS_WALL|") # Stack Fake Wall
 
 def p_seen_array_access(p):
     ''' seen_array_access : empty '''
@@ -646,6 +651,7 @@ def p_seen_array_access(p):
 
     ARRAY_DIMENSION_STACK[-1].append(access)
 
+    OPERATOR_STACK.pop() # Pop Fake Wall
 
 def p_array_definition(p):
     ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
