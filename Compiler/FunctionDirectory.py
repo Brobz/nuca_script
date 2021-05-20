@@ -26,6 +26,15 @@ class FunctionDirectory(object):
             return is_ptr
 
 
+    def is_sym_arr(self, sym_id, scope = "GLOBAL"):
+        if self.current_scope == None:
+            return self.FUNCS[self.program_name].is_sym_arr(sym_id)
+        else:
+            is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_arr(sym_id)
+            if is_ptr == -1:
+                return self.FUNCS[self.program_name].is_sym_arr(sym_id)
+            return is_ptr
+
 
     def get_symbol_dimensions(self, sym_id, scope = "GLOBAL"):
         if self.current_scope == None:

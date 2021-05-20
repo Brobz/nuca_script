@@ -17,21 +17,18 @@ OPCodes = {
                 "!=" :          12,     # IMPLEMENTED
                 "!" :           13,     # IMPLEMENTED
                 "ACCESS" :      14,     # IMPLEMENTED
-                "ERA" :         15,     # IMPLEMENTED
-                "PARAM" :       16,     # IMPLEMENTED
-                "GOSUB" :       17,     # IMPLEMENTED
-                "READ" :        18,     # IMPLEMENTED
-                "PRNTBFFR" :    19,     # IMPLEMENTED
-                "PRNT" :        20,     # IMPLEMENTED
-                "PRNTLN" :      21,     # IMPLEMENTED
-                "GOTO" :        22,     # IMPLEMENTED
-                "GOTOF" :       23,     # IMPLEMENTED
-                "ENDFNC" :      24,     # IMPLEMENTED
-                "END" :         25,     # IMPLEMENTED
-
-                # ERROR OPS #
-
-                "OOB_ERR" :     26,     # IMPLEMENTED
+                "ARR_BNDS" :  15,     # IMPLEMENTED
+                "ERA" :         16,     # IMPLEMENTED
+                "PARAM" :       17,     # IMPLEMENTED
+                "GOSUB" :       18,     # IMPLEMENTED
+                "READ" :        19,     # IMPLEMENTED
+                "PRNTBFFR" :    20,     # IMPLEMENTED
+                "PRNT" :        21,     # IMPLEMENTED
+                "PRNTLN" :      22,     # IMPLEMENTED
+                "GOTO" :        23,     # IMPLEMENTED
+                "GOTOF" :       24,     # IMPLEMENTED
+                "ENDFNC" :      25,     # IMPLEMENTED
+                "END" :         26,     # IMPLEMENTED
 
 
 }

@@ -559,18 +559,8 @@ def parse_id(id, mode):
             except:
                 pass
 
-            zero = FUNC_DIR.next_avail("int")
-            push_to_quads(Quad("-", FUNC_DIR.get_symbol_mem_index(d),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(zero)))
-
-            positive = FUNC_DIR.next_avail("boolean")
-            in_bounds = FUNC_DIR.next_avail("boolean")
-
-            push_to_quads(Quad("<", FUNC_DIR.get_symbol_mem_index(d),  FUNC_DIR.get_symbol_mem_index(dims[i]), FUNC_DIR.get_symbol_mem_index(in_bounds)))
-            push_to_quads(Quad(">=", FUNC_DIR.get_symbol_mem_index(d),  FUNC_DIR.get_symbol_mem_index(zero), FUNC_DIR.get_symbol_mem_index(positive)))
-            push_to_quads(Quad("&&", FUNC_DIR.get_symbol_mem_index(positive),  FUNC_DIR.get_symbol_mem_index(in_bounds), FUNC_DIR.get_symbol_mem_index(in_bounds)))
-            push_to_quads(Quad("GOTOF", -1,  FUNC_DIR.get_symbol_mem_index(in_bounds), QUAD_POINTER + 2))
-            push_to_quads(Quad("GOTO", -1,  -1, QUAD_POINTER + 2))
-            push_to_quads(Quad("OOB_ERR", -1, -1, -1))
+            # Check if access value is in bounds
+            push_to_quads(Quad("ARR_BNDS", -1, FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(dims[i])))
 
             if i == len(access_values) - 1:
                 push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value),  FUNC_DIR.get_symbol_mem_index(d), FUNC_DIR.get_symbol_mem_index(final_access_value)))
@@ -585,6 +575,7 @@ def parse_id(id, mode):
 
         array_type = FUNC_DIR.symbol_type_lookup(array_id)
         ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, is_ptr = True)
+        # Check array value at index
         push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id),  FUNC_DIR.get_symbol_mem_index(final_access_value), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index)))
 
         if not mode: # We are assigning to this array, need a pointer
@@ -649,7 +640,11 @@ def p_array_p(p):
 
 def p_seen_array_id(p):
     ''' seen_array_id : empty '''
-    ARRAY_DIMENSION_STACK.append([p[-1]])
+    id = p[-1]
+    FUNC_DIR.symbol_lookup(id)
+    if not FUNC_DIR.is_sym_arr(id):
+        raise Exception(">> Name Error: Cannot access non-array symbol " + id + " with [] operator")
+    ARRAY_DIMENSION_STACK.append([id])
 
 
 def p_seen_open_bracket(p):

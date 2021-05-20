@@ -28,6 +28,15 @@ class SymbolTable(object):
         if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
             self.build_memory_secor_shift(self.mem_constraints)
 
+
+    def is_sym_arr(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][4]
+        else:
+            if self.scope == self.program_name:
+                raise Exception("Cannot check if " + sym_id + " is an array in " + self.scope)
+            return -1
+
     def is_sym_ptr(self, sym_id):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][6]
