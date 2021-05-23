@@ -4,7 +4,7 @@ from Compiler.SymbolTable import *
 class FunctionDirectory(object):
     """docstring for FunctionDirectory."""
 
-    MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean"]
+    MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean", "object"]
     VAR_TYPES = len(MEMORY_SECTOR_INDICES)
 
     def __init__(self, mem_constraints):
@@ -16,27 +16,93 @@ class FunctionDirectory(object):
         self.mem_constraints = mem_constraints
 
 
-    def is_sym_ptr(self, sym_id, scope = "GLOBAL"):
-        if self.current_scope == None:
-            return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+    def valid_class_check(self, cls):
+        if cls == "GLOBAL" or cls == self.program_name:
+            return False
+
+        if cls not in self.FUNCS:
+            raise Exception("Name Error: " + cls + " is not a valid Class Name")
+
+    def set_symbol_object_type(self, sym_id, obj_type, scope):
+        if scope == "GLOBAL":
+            if self.current_scope != None:
+                self.FUNCS[scope][self.current_scope][2].set_sym_obj_type(sym_id, obj_type)
+            else:
+                self.FUNCS[self.program_name].set_sym_obj_type(sym_id, obj_type)
         else:
-            is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_ptr(sym_id)
-            if is_ptr == -1:
+            if self.current_scope != None:
+                self.FUNCS[scope]["FUNCS"][self.current_scope][2].set_sym_obj_type(sym_id, obj_type)
+            else:
+                raise Exception("???")
+
+
+    def get_object_symbol_type(self, sym_id, scope):
+        if scope == "GLOBAL":
+            if self.current_scope != None:
+                return self.FUNCS[scope][self.current_scope][2].get_object_symbol_type(sym_id)
+            else:
+                return self.FUNCS[self.program_name].get_object_symbol_type(sym_id)
+        else:
+            if self.current_scope != None:
+                return self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_object_symbol_type(sym_id)
+            else:
+                raise Exception("???")
+
+    def declare_object_type(self, object_type):
+        if object_type in self.FUNCS:
+            raise Exception("Name Error: object type " + object_type + " is already defined")
+        if object_type in self.FUNCS[self.program_name].SYMBOLS:
+            raise Exception("Name Error: " + object_type + " is already defined as a symbol in " + self.program_name)
+
+        self.FUNCS[object_type]= {"SYMBOLS" : SymbolTable(object_type, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), "FUNCS" : {}}
+
+    def is_sym_ptr(self, sym_id, scope):
+        if self.current_scope == None:
+            if scope == "GLOBAL":
                 return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
-            return is_ptr
-
-
-    def is_sym_arr(self, sym_id, scope = "GLOBAL"):
-        if self.current_scope == None:
-            return self.FUNCS[self.program_name].is_sym_arr(sym_id)
+            else:
+                is_ptr = self.FUNCS[scope]["SYMBOLS"].is_sym_ptr(sym_id)
+                if is_ptr == -1:
+                    return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                return is_ptr
         else:
-            is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_arr(sym_id)
-            if is_ptr == -1:
+            if scope == "GLOBAL":
+                is_ptr = -1
+                if self.current_scope in self.FUNCS[scope]:
+                    is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_ptr(sym_id)
+                if is_ptr == -1:
+                    return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                return is_ptr
+            else:
+                is_ptr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_ptr(sym_id)
+                if is_ptr == -1:
+                    return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                return is_ptr
+
+    def is_sym_arr(self, sym_id, scope):
+        if self.current_scope == None:
+            if scope == "GLOBAL":
                 return self.FUNCS[self.program_name].is_sym_arr(sym_id)
-            return is_ptr
+            else:
+                is_arr = self.FUNCS[scope]["SYMBOLS"].is_sym_arr(sym_id)
+                if is_arr == -1:
+                    return self.FUNCS[self.program_name].is_sym_arr(sym_id)
+                return is_arr
+        else:
+            if scope == "GLOBAL":
+                is_arr = -1
+                if self.current_scope in self.FUNCS[scope]:
+                    is_arr = self.FUNCS[scope][self.current_scope][2].is_sym_arr(sym_id)
+                if is_arr == -1:
+                    return self.FUNCS[self.program_name].is_sym_arr(sym_id)
+                return is_arr
+            else:
+                is_arr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_arr(sym_id)
+                if is_arr == -1:
+                    return self.FUNCS[self.program_name].is_sym_arr(sym_id)
+                return is_arr
 
-
-    def get_symbol_dimensions(self, sym_id, scope = "GLOBAL"):
+    def get_symbol_dimensions(self, sym_id, scope):
         if self.current_scope == None:
             return self.FUNCS[self.program_name].get_dimensions(sym_id)
         else:
@@ -46,63 +112,86 @@ class FunctionDirectory(object):
             return dimensions
 
 
-    def get_param_mem_index(self, func_id, k, scope = "GLOBAL"):
+    def get_param_mem_index(self, func_id, k, scope):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
 
         return self.FUNCS[scope][func_id][2].param_indices[k - 1]
 
     def declare_constant(self, cnst_id, cnst_type):
-        self.declare_symbol(cnst_id, cnst_type, is_cnst = True)
+        self.declare_symbol(cnst_id, cnst_type, "GLOBAL", is_cnst = True)
 
-    def get_symbol_mem_index(self, sym_id, scope = "GLOBAL"):
+    def get_symbol_mem_index(self, sym_id, scope):
         if self.current_scope == None:
             return self.FUNCS[self.program_name].get_mem_index(sym_id)
         else:
-            mem_index = self.FUNCS[scope][self.current_scope][2].get_mem_index(sym_id)
+            mem_index = -1
+            if scope == "GLOBAL":
+                if self.current_scope in self.FUNCS[scope]:
+                    mem_index = self.FUNCS[scope][self.current_scope][2].get_mem_index(sym_id)
+            else:
+                mem_index = self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_mem_index(sym_id)
             if mem_index == -1:
                 return self.FUNCS[self.program_name].get_mem_index(sym_id)
             return mem_index
 
-    def next_avail(self, type, scope = "GLOBAL", is_ptr = False):
+    def next_avail(self, type, scope, is_ptr = False):
         if type == "void": # Nope?
             return
         t_id = self.AVAIL.next()
         if self.current_scope == None:
             self.FUNCS[self.program_name].next_avail(t_id, type, "1" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
         else:
-            self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
-
+            if scope == "GLOBAL":
+                self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
+            else:
+                self.FUNCS[scope]["FUNCS"][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
         return t_id
 
-    def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):
+    def get_return_obj_name(self, scope, func_name =  None):
         if func_name == None:
             if self.current_scope == None:
                 raise Exception("Scope error: cannot get function return object name for " + func_name)
             func_name = self.current_scope
 
-        if func_name not in self.FUNCS[scope]:
+        if func_name not in self.FUNCS[self.program_name].SYMBOLS:
             raise  Exception("Name error: cannot get function return object name for " + func_name  + " in " + scope)
 
         return func_name
 
-    def valid_return_check(self, ptr, scope = "GLOBAL"):
+    def valid_return_check(self, ptr, scope):
         if self.current_scope == None:
             raise Exception("Scope error: cant check for valid return")
 
-        return self.FUNCS[scope][self.current_scope][5] == ptr
+        if scope == "GLOBAL":
+            return self.FUNCS[scope][self.current_scope][5] == ptr
+        else:
+            return self.FUNCS[scope]["FUNCS"][self.current_scope][5] == ptr
 
-    def return_type_check(self, rtn_type, ptr, scope = "GLOBAL"):
+    def return_type_check(self, rtn_type, ptr, scope):
         if self.current_scope == None:
             raise Exception("Scope error: cant check return type")
 
-        func_type = self.FUNCS[scope][self.current_scope][0]
+        func_type = None
+
+        if scope == "GLOBAL":
+            if self.current_scope in self.FUNCS[scope]:
+                func_type = self.FUNCS[scope][self.current_scope][0]
+        else:
+            func_type = self.FUNCS[scope]["FUNCS"][self.current_scope][0]
+
+        if func_type == None:
+            raise Exception("Cannot check return type for rtn_addr " + str(ptr))
+
         if SemanticCube[rtn_type]["=="][func_type] == "err":
             raise Exception("Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead. Maybe missing default return statement?")
 
-        self.FUNCS[scope][self.current_scope][5] = ptr
+        if scope == "GLOBAL":
+            self.FUNCS[scope][self.current_scope][5] = ptr
+        else:
+            self.FUNCS[scope]["FUNCS"][self.current_scope][5] = ptr
 
-    def args_ok(self, func_id, scope = "GLOBAL"):
+    def args_ok(self, func_id, scope):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
 
@@ -113,7 +202,7 @@ class FunctionDirectory(object):
             elif k < 0:
                 raise Exception("Argument mismatch: Call to " + func_id + " received parameters, was expecting " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
 
-    def verify_arg_type(self, func_id, arg_type, scope = "GLOBAL"):
+    def verify_arg_type(self, func_id, arg_type, scope):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
 
@@ -133,13 +222,13 @@ class FunctionDirectory(object):
         self.goto_next_param(func_id, scope)
         return k + 1
 
-    def set_param_index(self, func_id, index, scope = "GLOBAL"):
+    def set_param_index(self, func_id, index, scope):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
 
         self.FUNCS[scope][func_id][4] = index
 
-    def goto_next_param(self, func_id, scope = "GLOBAL"):
+    def goto_next_param(self, func_id, scope):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
 
@@ -149,7 +238,7 @@ class FunctionDirectory(object):
 
         self.FUNCS[scope][func_id][4] += 1
 
-    def get_func_size(self, func_id, scope = "GLOBAL"):
+    def get_func_size(self, func_id, scope):
         if func_id not in self.FUNCS[scope]:
             raise Exception("Unseen function: " + func_id)
         return len(self.FUNCS[scope][func_id][2].SYMBOLS)
@@ -161,19 +250,26 @@ class FunctionDirectory(object):
     def get_main_start_addr(self):
         return self.main_start_addr
 
-    def set_start_addr(self, addr, scope = "GLOBAL"):
+    def set_start_addr(self, addr, scope):
         if self.current_scope != None:
-            self.FUNCS[scope][self.current_scope][3] = addr # INDEX 3 IS START_ADDR
+            if scope == "GLOBAL":
+                self.FUNCS[scope][self.current_scope][3] = addr # INDEX 3 IS START_ADDR
+            else:
+                self.FUNCS[scope]["FUNCS"][self.current_scope][3] = addr # INDEX 3 IS START_ADDR
         else:
             raise Exception("Scope Error: Cant declare func start addr")
 
-    def get_start_addr(self, func_id, scope = "GLOBAL"):
-        if func_id in self.FUNCS[scope]:
-            return self.FUNCS[scope][func_id][3] # INDEX 3 IS START_ADDR
+    def get_start_addr(self, func_id, scope):
+        if scope == "GLOBAL":
+            if func_id in self.FUNCS[scope]:
+                return self.FUNCS[scope][func_id][3] # INDEX 3 IS START_ADDR
         else:
-            raise Exception("Scope Error: Cant get func start addr")
+            if func_id in self.FUNCS[scope]["FUNCS"]:
+                return self.FUNCS[scope]["FUNCS"][func_id][3] # INDEX 3 IS START_ADDR
 
-    def declare_symbol(self, sym_id, sym_type, is_return_value = False, scope = "GLOBAL", is_param = False, is_cnst = False, give_warning = True, is_array = False, dimensions = None):
+        raise Exception("Scope Error: Cant get " + func_id + " start addr in " + scope)
+
+    def declare_symbol(self, sym_id, sym_type, scope, is_return_value = False, is_param = False, is_cnst = False, give_warning = True, is_array = False, dimensions = None):
         if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!
             return
 
@@ -185,7 +281,7 @@ class FunctionDirectory(object):
 
         if is_cnst:
             memory_sector_signature.insert(0, "0") # Global Constant
-        elif self.current_scope != None:
+        elif self.current_scope != None and scope == "GLOBAL":
             memory_sector_signature.insert(0, "2") # Local Variable
             if sym_id in self.FUNCS[self.program_name].SYMBOLS and give_warning:
                 print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
@@ -194,20 +290,31 @@ class FunctionDirectory(object):
                 sym_table_index = 1
             self.FUNCS[scope][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, not give_warning, is_array, dimensions)
             return
+        elif self.current_scope != None and scope != "GLOBAL":
+            memory_sector_signature.insert(0, "2") # Local Variable
+            if sym_id in self.FUNCS[self.program_name].SYMBOLS and give_warning:
+                print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
+            sym_table_index = 2
+            if is_param:
+                sym_table_index = 1
+            self.FUNCS[scope]["FUNCS"][self.current_scope][sym_table_index].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, not give_warning, is_array, dimensions)
+            return
+        elif scope != "GLOBAL" and not is_return_value:
+            memory_sector_signature.insert(0, "3") # Class Attribute
+            self.FUNCS[scope]["SYMBOLS"].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, False, is_array, dimensions)
+            return
         else:
             memory_sector_signature.insert(0, "1") # Global Variable
 
         self.FUNCS[self.program_name].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, False, is_array, dimensions)
 
 
-    def declare_param(self, param_id, param_type, scope = "GLOBAL", is_array = False, dimensions = None):
+    def declare_param(self, param_id, param_type, scope):
         if self.current_scope == None:
             raise Exception("Scope Error: Cant declare param")
 
-        self.declare_symbol(param_id, param_type, is_array = is_array, dimensions = dimensions, is_param = True)
-        self.declare_symbol(param_id, param_type, is_array = is_array, dimensions = dimensions, give_warning = False)
-
-
+        self.declare_symbol(param_id, param_type, scope, is_param = True)
+        self.declare_symbol(param_id, param_type, scope, give_warning = False)
 
     def define_symbol(self, sym_id, sym_dir):
         if self.current_scope != None:
@@ -215,38 +322,61 @@ class FunctionDirectory(object):
         else:
             self.FUNCS[self.program_name].define_symbol(sym_id,  sym_dir)
 
-    def declare_function(self, func_id, func_type, scope = "GLOBAL"):
+    def declare_function(self, func_id, func_type, scope):
         if scope == "PROGRAM":
             self.program_name = func_id
-            self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, self.program_name)
+            self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name)
         elif func_id not in self.FUNCS[scope]:
-            self.declare_symbol(func_id, func_type, True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
-            self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, self.program_name), SymbolTable(func_id, self.mem_constraints, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+            self.declare_symbol(func_id, func_type, scope, is_return_value = True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
+            if scope == "GLOBAL":
+                self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+            else:
+                self.FUNCS[scope]["FUNCS"][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
             self.current_scope = func_id
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)
 
-    def symbol_lookup(self, sym_id, scope = "GLOBAL"):
-        if self.current_scope != None:
-            try:
+    def symbol_lookup(self, sym_id, scope, is_class_attr = False):
+        if scope == "GLOBAL":
+            if self.current_scope != None:
                 return self.FUNCS[scope][self.current_scope][2].symbol_lookup(sym_id)
+            else:
+                pass
+        else:
+            try:
+                if self.current_scope != None:
+                    return self.FUNCS[scope]["FUNCS"][self.current_scope][2].symbol_lookup(sym_id)
+                else:
+                    return self.FUNCS[scope]["SYMBOLS"].symbol_lookup(sym_id)
             except:
+                if is_class_attr:
+                    raise Exception("Name Error: Class " + scope + " has no attribute " + sym_id)
                 return self.FUNCS[self.program_name].symbol_lookup(sym_id)
 
         return self.FUNCS[self.program_name].symbol_lookup(sym_id)
 
 
-    def symbol_type_lookup(self, sym_id, scope = "GLOBAL"):
-        if self.current_scope != None:
-            try:
+    def symbol_type_lookup(self, sym_id, scope, is_class_attr = False):
+        if scope == "GLOBAL":
+            if self.current_scope != None:
                 return self.FUNCS[scope][self.current_scope][2].type_lookup(sym_id)
+            else:
+                pass
+        else:
+            try:
+                if self.current_scope != None:
+                    return self.FUNCS[scope]["FUNCS"][self.current_scope][2].type_lookup(sym_id)
+                else:
+                    return self.FUNCS[scope]["SYMBOLS"].type_lookup(sym_id)
             except:
+                if is_class_attr:
+                    raise Exception("Name Error: Class " + scope + " has no attribute " + sym_id)
                 return self.FUNCS[self.program_name].type_lookup(sym_id)
 
         return self.FUNCS[self.program_name].type_lookup(sym_id)
 
 
-    def func_type_lookup(self, func_id, scope = "GLOBAL"):
+    def func_type_lookup(self, func_id, scope):
         if func_id in self.FUNCS[scope]:
             return self.FUNCS[scope][func_id][0]
         else:

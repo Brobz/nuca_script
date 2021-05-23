@@ -1,0 +1,38 @@
+program OBJS;
+
+v : object;
+f : int;
+
+class Value {
+  ATTR{
+    value_f : int;
+    value_other : string;
+  }
+  int times_two(i : int)
+  VARS{}
+  {
+    return f;
+  }
+}
+
+class No_Attr {
+  ATTR{}
+  int times_two(i : int)
+  VARS{}
+  {
+    return f;
+  }
+}
+
+
+int times_two(i : int)
+VARS{}
+{
+  return i * 2;
+}
+
+
+main (){
+  v = new Value();
+  f = v.value_f;
+}

@@ -7,196 +7,41 @@
 #include <stack>
 #include <map>
 
-#include "MemoryMap.h"
+#include "MemoryContext.h"
 #include "Value.h"
 
 using namespace std;
 
 
 // MEMORY //
-const int MAX_CONSTANTS = 1000, MAX_SYMBOLS = 3000, MAX_TMP_SYMBOLS = 3000, VAR_TYPES = 4, MEMORY_STACK_LIMIT = 100000;
+const int MAX_CONSTANTS = 3000, MAX_SYMBOLS = 5000, MAX_TMP_SYMBOLS = 5000, MAX_OBJ_SYMBOLS = 5000, MAX_OBJ_TMP_SYMBOLS = 5000, VAR_TYPES = 5, MEMORY_STACK_LIMIT = 100000;
 
-const map<int, vector<vector<int>>> MEMORY_MAP_SIGN = {
-										{63, {{6,3,1,1}, {12,1,4,1}, {7,1,20,0}}},
-										{1, {{1,0,0,0}, {2,0,0,1}}},
-										{9, {{3,0,1,0}, {9,0,11,1}}},
-										{48, {{1,0,0,0}, {3,0,0,1}}},
-										{60, {{3,0,1,0}, {0,0,0,0}}},
+const map<int, vector<vector<int>>> MEMORY_CONTEXT_SIGN = {
+										{8, {{2,0,0,0,1}, {1,0,0,0,1}, {1,0,0,0,0}}},
+										{5, {{1,0,0,0,0}, {1,0,0,0,0}}},
+										{1, {{1,0,0,0,0}, {0,0,0,0,0}}},
+										{3, {{1,0,0,0,0}, {0,0,0,0,0}}},
 										};
 // MEMORY //
 
 // CONSTANTS //
 const map<int, string> CONSTANTS = {
-										{0, "0"},
-										{1, "1"},
-										{2000, " * "},
-										{2001, " = "},
-										{2002, "\t"},
-										{2, "2"},
-										{2003, "-'hola' = "},
-										{2004, "hola"},
-										{3, "3"},
-										{4, "15"},
-										{5, "5"},
-										{1000, "25.5"},
-										{2005, ">> Enter an integer\n-- a = "},
-										{2006, ">> Enter a string\n-- f = "},
-										{6, "12"},
-										{2007, "! = "},
-										{2008, "Global a:"},
-										{2009, "------------------------"},
-										{2010, "HI "},
-										{2011, " print() "},
-										{2012, " prints inline,"},
-										{2013, " and needs this next param for a newline:"},
-										{2014, "\n"},
-										{2015, "Hello from another line!"},
-										{2016, " println() acts just like print, "},
-										{2017, "but always adds a '\\n' parameter at the end!"},
-										{2018, "And this will skip two lines!"},
-										{2019, "Nice : )"},
+										{0, "2"},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{23, -1, -1, 63},
-										{7, 28000, 0, 49000},
-										{24, -1, 49000, 7},
-										{2, -1, 1, 40000},
-										{3, 28000, 40000, 40001},
-										{0, -1, 40001, 4003},
+										{23, -1, -1, 8},
+										{0, -1, 15000, 15001},
 										{25, -1, -1, -1},
-										{0, -1, 28000, 4003},
+										{0, -1, 15000, 15001},
 										{25, -1, -1, -1},
-										{2, -1, 1, 40000},
-										{3, 28001, 40000, 40001},
-										{7, 28000, 40001, 49000},
-										{24, -1, 49000, 18},
-										{2, -1, 1, 40002},
-										{3, 28001, 40002, 40003},
-										{2, 40003, 1, 40004},
-										{0, -1, 40004, 4004},
+										{3, 65000, 0, 90000},
+										{0, -1, 90000, 15001},
 										{25, -1, -1, -1},
-										{16, -1, -1, 9},
-										{17, -1, 34000, 34000},
-										{2, 28000, 1, 40005},
-										{17, -1, 40005, 28000},
-										{17, -1, 28001, 28001},
-										{18, -1, -1, 9},
-										{0, -1, 4004, 40006},
-										{0, -1, 40006, 28002},
-										{1, 34000, 2000, 46000},
-										{1, 46000, 28002, 46001},
-										{1, 46001, 2001, 46002},
-										{3, 34000, 28002, 46003},
-										{1, 46002, 46003, 46004},
-										{20, -1, -1, 46004},
-										{16, -1, -1, 1},
-										{17, -1, 28000, 28000},
-										{18, -1, -1, 1},
-										{0, -1, 4003, 40007},
-										{2, 28001, 40007, 40008},
-										{3, 40008, 2002, 46005},
-										{20, -1, -1, 46005},
-										{3, 34000, 28002, 46006},
-										{1, 46006, 2001, 46007},
-										{1, 46007, 28002, 46008},
-										{1, 46008, 2000, 46009},
-										{1, 46009, 34000, 46010},
-										{20, -1, -1, 46010},
-										{22, -1, -1, -1},
-										{0, -1, 28000, 4004},
-										{25, -1, -1, -1},
-										{7, 28000, 2, 49000},
-										{24, -1, 49000, 52},
-										{0, -1, 1, 4005},
-										{25, -1, -1, -1},
-										{16, -1, -1, 48},
-										{2, 28000, 1, 40000},
-										{17, -1, 40000, 28000},
-										{18, -1, -1, 48},
-										{0, -1, 4005, 40001},
-										{3, 28000, 40001, 40002},
-										{0, -1, 40002, 4005},
-										{25, -1, -1, -1},
-										{16, -1, -1, 60},
-										{18, -1, -1, 60},
-										{25, -1, -1, -1},
-										{20, -1, -1, 2003},
-										{2, -1, 2004, 22000},
-										{20, -1, -1, 22000},
-										{2, -1, 4, 16000},
-										{3, 3, 16000, 16001},
-										{1, 16001, 5, 16002},
-										{2, -1, 5, 16003},
-										{1, 16002, 16003, 16004},
-										{20, -1, -1, 16004},
-										{2, -1, 1000, 19000},
-										{20, -1, -1, 19000},
-										{16, -1, -1, 1},
-										{2, -1, 1, 16005},
-										{17, -1, 16005, 28000},
-										{18, -1, -1, 1},
-										{0, -1, 4003, 16006},
-										{20, -1, -1, 16006},
-										{16, -1, -1, 1},
-										{17, -1, 0, 28000},
-										{18, -1, -1, 1},
-										{0, -1, 4003, 16007},
-										{20, -1, -1, 16007},
-										{16, -1, -1, 1},
-										{17, -1, 1, 28000},
-										{18, -1, -1, 1},
-										{0, -1, 4003, 16008},
-										{20, -1, -1, 16008},
-										{22, -1, -1, -1},
-										{20, -1, -1, 2005},
-										{21, -1, -1, -1},
-										{19, -1, -1, 4000},
-										{20, -1, -1, 2006},
-										{21, -1, -1, -1},
-										{19, -1, -1, 10000},
-										{16, -1, -1, 9},
-										{17, -1, 10000, 34000},
-										{17, -1, 4000, 28000},
-										{17, -1, 4000, 28001},
-										{18, -1, -1, 9},
-										{0, -1, 4004, 16009},
-										{0, -1, 0, 4000},
-										{9, 4000, 6, 25000},
-										{24, -1, 25000, 117},
-										{1, 4000, 2007, 22001},
-										{16, -1, -1, 48},
-										{17, -1, 4000, 28000},
-										{18, -1, -1, 48},
-										{0, -1, 4005, 16011},
-										{1, 22001, 16011, 22002},
-										{20, -1, -1, 22002},
-										{22, -1, -1, -1},
-										{1, 4000, 1, 16010},
-										{0, -1, 16010, 4000},
-										{23, -1, -1, 104},
-										{20, -1, -1, 2008},
-										{20, -1, -1, 4000},
-										{22, -1, -1, -1},
-										{20, -1, -1, 2009},
-										{22, -1, -1, -1},
-										{20, -1, -1, 2010},
-										{20, -1, -1, 2011},
-										{20, -1, -1, 2012},
-										{20, -1, -1, 2013},
-										{20, -1, -1, 2014},
-										{21, -1, -1, -1},
-										{20, -1, -1, 2015},
-										{1, 2016, 2017, 22003},
-										{20, -1, -1, 22003},
-										{22, -1, -1, -1},
-										{20, -1, -1, 2018},
-										{20, -1, -1, 2014},
-										{22, -1, -1, -1},
-										{20, -1, -1, 2019},
-										{22, -1, -1, -1},
+										{0, -1, 60000, 35000},
+										{0, -1, 40000, 15000},
 										{26, -1, -1, -1},
 										};
 // QUADS //
@@ -205,9 +50,10 @@ const vector<vector<int>> QUADS = {
 int PROGRAM_START; // Quad index of the start of main()
 bool RUNNING = false;
 int IP; // Instruction Pointer
-MemoryMap GLOBAL_MEM;
-MemoryMap* LOCAL_MEM;
-stack<MemoryMap> MEMORY_STACK;
+MemoryContext GLOBAL_MEM;
+MemoryContext* LOCAL_MEM;
+MemoryContext* THIS_MEM;
+stack<MemoryContext> MEMORY_STACK;
 // GLOBAL VARS //
 
 
@@ -606,7 +452,7 @@ void setup(){
 
 	RUNNING = true; // This will get the instruction pointer movin through the quads
   IP = 0; // Start execution at the first QUAD
-	LOCAL_MEM = new MemoryMap(); // Initialize LOCAL_MEM without parameters so that LOCAL_MEM->active is set to false
+	LOCAL_MEM = new MemoryContext(); // Initialize LOCAL_MEM without parameters so that LOCAL_MEM->active is set to false
 }
 
 void run(){
@@ -803,7 +649,7 @@ void run(){
 						exit(EXIT_FAILURE);
 					}
 
-					MEMORY_STACK.push(MemoryMap(MEMORY_MAP_SIGN.at(func_start_addr).at(0), MEMORY_MAP_SIGN.at(func_start_addr).at(1)));
+					MEMORY_STACK.push(MemoryContext(MEMORY_CONTEXT_SIGN.at(func_start_addr).at(0), MEMORY_CONTEXT_SIGN.at(func_start_addr).at(1)));
 					IP++;
 				}
 				break;
@@ -892,7 +738,7 @@ void run(){
 				{
 					int return_addr = LOCAL_MEM->return_addr;
 					MEMORY_STACK.pop();
-					LOCAL_MEM = (MEMORY_STACK.size()) ? &(MEMORY_STACK.top()) : new MemoryMap();
+					LOCAL_MEM = (MEMORY_STACK.size()) ? &(MEMORY_STACK.top()) : new MemoryContext();
 					IP = return_addr;
 				}
 				break;
@@ -915,10 +761,10 @@ void run(){
 int main () {
 
   // Memory signature with highest value is always pointing to the start of the main() method (no function can syntactically come after the main)
-  PROGRAM_START = MEMORY_MAP_SIGN.rbegin()->first;
+  PROGRAM_START = MEMORY_CONTEXT_SIGN.rbegin()->first;
 
-  // Generates global memory map
-  GLOBAL_MEM = MemoryMap(MEMORY_MAP_SIGN.at(PROGRAM_START).at(0), MEMORY_MAP_SIGN.at(PROGRAM_START).at(1), MEMORY_MAP_SIGN.at(PROGRAM_START).at(2));
+  // Generates global memory context
+  GLOBAL_MEM = MemoryContext(MEMORY_CONTEXT_SIGN.at(PROGRAM_START).at(0), MEMORY_CONTEXT_SIGN.at(PROGRAM_START).at(1), MEMORY_CONTEXT_SIGN.at(PROGRAM_START).at(2));
 
   // Setup virtual machine to run the program
   setup();

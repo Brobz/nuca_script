@@ -7,27 +7,42 @@ class SymbolTable(object):
     #
     #                                           0 -> INT
     #                       0 -> CONSANT        1 -> FLOAT
-    #                       1 -> GLOBAL         2 -> STRING         0 -> VAR
-    #                       2 -> LOCAL          3 -> BOOL           1 -> TMP
+    #                       1 -> GLOBAL         2 -> STRING
+    #                       2 -> LOCAL          3 -> BOOL           0 -> VAR
+    #                       3 -> CLASS          4 -> OBJECT         1 -> TMP
 
     SYMBOL_CLASSES = ["constant", "symbol", "temporal variable"]
-    MEMORY_SECTOR_SIGN = [["0", "1", "2"], ["0", "1", "2", "3"], ["0", "1"]]
+    MEMORY_SECTOR_SIGN = [["0", "1", "2", "3"], ["0", "1", "2", "3", "4"], ["0", "1"]]
     MEMORY_SECTOR_SHIFTS = None
 
 
-    def __init__(self, scope, mem_constraints, program_name):
+    def __init__(self, scope, mem_constraints, var_types, program_name):
         self.scope = scope
         self.SYMBOLS = {}
         self.param_indices = []
-        self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0}
-        self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0 }
-        self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0 } # FOR GLOBAL SCOPE ONLY
+        self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0}
+        self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 }
+        self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 } # FOR GLOBAL SCOPE ONLY
         self.mem_constraints = mem_constraints
+        self.var_types = var_types
         self.program_name = program_name
 
         if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
             self.build_memory_secor_shift(self.mem_constraints)
 
+
+    def set_sym_obj_type(self, sym_id, obj_type):
+        if sym_id in self.SYMBOLS:
+            self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2], self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type)
+        else:
+            raise Exception("Cannot set object type of " + sym_id + " to " + obj_type)
+
+
+    def get_object_symbol_type(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][7]
+
+        raise Exception("Cannot get objet symbol type for " + sym_id + " in " + self.scope)
 
     def is_sym_arr(self, sym_id):
         if sym_id in self.SYMBOLS:
@@ -54,7 +69,7 @@ class SymbolTable(object):
             return -1
 
     def build_memory_secor_shift(self, mem_constraints):
-        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * 4, mem_constraints[0] * 4 + (mem_constraints[1] + mem_constraints[2]) * 4], [0, mem_constraints[2] * 4]]
+        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * self.var_types, mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2]) * self.var_types, mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2] + mem_constraints[3] + mem_constraints[4]) * self.var_types], [0, mem_constraints[2] * self.var_types]]
 
     def get_mem_index(self, sym_id):
         if sym_id in self.SYMBOLS:
@@ -124,7 +139,7 @@ class SymbolTable(object):
     def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False, is_array = False, dimensions = None, is_ptr = False):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
-            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr)
+            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None)
 
             if is_cnst:
                 self.update_const_mem_sign(sym_type, dimensions)
@@ -136,7 +151,7 @@ class SymbolTable(object):
             if is_param:
                 self.param_indices.append(mem_index)
         else:
-            if is_cnst:
+            if is_cnst or is_return_value:
                 pass
             else:
                 raise Exception("Multiple Declarations of " + sym_id + " in " + self.scope)

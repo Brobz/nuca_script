@@ -4,7 +4,7 @@ using namespace std;
 
 const string STRING_BUFFER_PADDING = " ";
 
-class MemoryMap{
+class MemoryContext{
     public:
 
 
@@ -14,18 +14,18 @@ class MemoryMap{
       Memory const_mem, local_mem, temp_mem;
       vector<vector<int>> sizes;
 
-      MemoryMap(){
+      MemoryContext(){
         active = false;
       };
 
-      MemoryMap(vector<int> local_size, vector<int> temp_size){
+      MemoryContext(vector<int> local_size, vector<int> temp_size){
         sizes.push_back(local_size);
         sizes.push_back(temp_size);
         local_mem = Memory(local_size);
         temp_mem = Memory(temp_size);
       };
 
-      MemoryMap(vector<int> local_size, vector<int> temp_size, vector<int> const_size){
+      MemoryContext(vector<int> local_size, vector<int> temp_size, vector<int> const_size){
         sizes.push_back(local_size);
         sizes.push_back(temp_size);
         sizes.push_back(const_size);
