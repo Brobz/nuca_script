@@ -8,7 +8,7 @@ int_arr[100], int_matrix[3][3], int_cube[3][3][3] : int;
 
 idx : int;
 
-void print_array(i : int)
+int print_array(i : int)
 VARS{
   j : int;
 }
@@ -16,6 +16,8 @@ VARS{
   for(j = 0; j < i; j = j + 1){
     println(j, int_arr[j]);
   }
+
+  return int_arr[96];
 }
 
 int times_two(i : int)
@@ -48,6 +50,6 @@ main (){
   println("------------------");
   print(">>  Elements to read (max 100):\n-- ");
   read(int_arr[96]);
-  print_array(int_arr[96]);
+  println("you read:", print_array(int_arr[96]), "elements");
 
 }

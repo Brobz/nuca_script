@@ -212,9 +212,10 @@ lexer = lex.lex()
 
 // TODO : Add Object quad generation
 
-        1. Complete and update memory map to allow obejct instances to be stored
-        2. Work on memory structure generation
-        3. Work on accessing class elements
+        1a. Work on creating mem signature for each class type, and writing it into the VM (Compiler)
+        1b. Work on implementing missing cases into read/write_from_memory (VM)
+        2. Place OBJ_READ and OBJ_WRITE quads properly (Compiler)
+        3. Work on accepting calls to class functions on grammar (Compiler)
 
 
         -> Store class function quads just like any other function
@@ -394,7 +395,7 @@ def p_seen_readable(p):
     ''' seen_readable  : empty '''
     id = OPERAND_STACK.pop()
     type = TYPE_STACK.pop()
-    if FUNC_DIR.is_sym_ptr(id):
+    if FUNC_DIR.is_sym_ptr(id, SCOPES_STACK[-1]):
         push_to_quads(Quad("READ", -1, 1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1]), SCOPES_STACK[-1])))
     else:
         push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1]), SCOPES_STACK[-1])))
@@ -637,14 +638,14 @@ def parse_var(id, mode):
         # It is an array!
 
         array_id = id[:id.index("+")]
-        dims = FUNC_DIR.get_symbol_dimensions(id[:id.index("+")])
+        dims = FUNC_DIR.get_symbol_dimensions(id[:id.index("+")], SCOPES_STACK[-1])
         access_values = id[id.index("+") + 1:].split(",")[:-1]
 
         if len(access_values) != len(dims):
             # Accessing array incompletely (would need to return an array obj)
             raise Exception("Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
 
-        final_access_value = FUNC_DIR.next_avail(", SCOPES_STACK[-1]int")
+        final_access_value = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
 
         for i, d in enumerate(access_values):
             try:
@@ -665,7 +666,7 @@ def parse_var(id, mode):
                     push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(d, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
 
             else:
-                access_increment = FUNC_DIR.next_avail(", SCOPES_STACK[-1]int")
+                access_increment = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
                 push_to_quads(Quad("=", -1,  FUNC_DIR.get_symbol_mem_index(d, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1])))
                 for j, size in enumerate(dims):
                     if i < j:
@@ -835,7 +836,7 @@ def p_seen_factor_op(p):
 
 def p_func_call(p):
     ''' FUNC_CALL : ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS '''
-    FUNC_DIR.args_ok(p[1])
+    FUNC_DIR.args_ok(p[1], SCOPES_STACK[-1])
 
     push_to_quads(Quad("GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1], SCOPES_STACK[-1])))
 
@@ -843,23 +844,24 @@ def p_func_call(p):
     if len(FUNC_CALL_STACK):
         FUNC_DIR.set_param_index(FUNC_CALL_STACK[-1][0], FUNC_CALL_STACK[-1][1])
 
-    return_type = FUNC_DIR.func_type_lookup(p[1])
+    return_type = FUNC_DIR.func_type_lookup(p[1], SCOPES_STACK[-1])
 
 
     temp = FUNC_DIR.next_avail(return_type, SCOPES_STACK[-1])
     OPERAND_STACK.append(temp)
     TYPE_STACK.append(return_type)
-    rtn_obj_name = FUNC_DIR.get_return_obj_name(p[1], SCOPES_STACK[-1])
+
     if return_type != "void":
-        push_to_quads(Quad("=", get_ptr_value(None, temp), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(temp, SCOPES_STACK[-1])))
+        rtn_obj_name = FUNC_DIR.get_return_obj_name(SCOPES_STACK[-1], p[1])
+        push_to_quads(Quad("=", get_ptr_value(None, temp, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(temp, SCOPES_STACK[-1])))
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
     OPERATOR_STACK.append("|ARG_WALL|") # ARGUMENT 'FAKE WALL'
     func_type = FUNC_DIR.func_type_lookup(p[-1], SCOPES_STACK[-1])
-    size = FUNC_DIR.get_func_size(p[-1])
+    size = FUNC_DIR.get_func_size(p[-1], SCOPES_STACK[-1])
     push_to_quads(Quad("ERA", -1, -1, FUNC_DIR.get_start_addr(p[-1], SCOPES_STACK[-1])))
-    FUNC_DIR.set_param_index(p[-1], 0)
+    FUNC_DIR.set_param_index(p[-1], 0, SCOPES_STACK[-1])
     FUNC_CALL_STACK.append([p[-1], 0])
 
 def p_arg_list(p):
@@ -880,7 +882,7 @@ def p_seen_arg(p):
     ''' seen_arg : empty '''
     arg = OPERAND_STACK.pop()
     arg_type = TYPE_STACK.pop()
-    k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[-1][0], arg_type)
+    k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[-1][0], arg_type, SCOPES_STACK[-1])
     push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg, SCOPES_STACK[-1]), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[-1][0], k, SCOPES_STACK[-1])))
     FUNC_CALL_STACK[-1][1] = k
 
@@ -1017,8 +1019,8 @@ def seen_unconditional_rep():
 
 def p_seen_for_kwd(p):
     ''' seen_for_kwd : empty '''
-    OPERAND_STACK.append(FUNC_DIR.symbol_lookup(p, SCOPES_STACK[-1][-1]))
-    TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(p, SCOPES_STACK[-1][-1]))
+    OPERAND_STACK.append(FUNC_DIR.symbol_lookup(p[-1], SCOPES_STACK[-1]))
+    TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(p[-1], SCOPES_STACK[-1]))
     OPERATOR_STACK.append("=")
 
 def p_seen_for_incr_exp(p):
@@ -1114,7 +1116,7 @@ def decision_statement():
     expr_type = TYPE_STACK.pop()
     if SemanticCube[expr_type]["=="]["boolean"]:
         res = OPERAND_STACK.pop()
-        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res), "PND"))
+        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, SCOPES_STACK[-1]), "PND"))
         JUMP_STACK.append(QUAD_POINTER - 1)
     else:
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")

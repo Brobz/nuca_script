@@ -339,9 +339,10 @@ class FunctionDirectory(object):
     def symbol_lookup(self, sym_id, scope, is_class_attr = False):
         if scope == "GLOBAL":
             if self.current_scope != None:
-                return self.FUNCS[scope][self.current_scope][2].symbol_lookup(sym_id)
-            else:
-                pass
+                try:
+                    return self.FUNCS[scope][self.current_scope][2].symbol_lookup(sym_id)
+                except:
+                    pass
         else:
             try:
                 if self.current_scope != None:
@@ -359,9 +360,10 @@ class FunctionDirectory(object):
     def symbol_type_lookup(self, sym_id, scope, is_class_attr = False):
         if scope == "GLOBAL":
             if self.current_scope != None:
-                return self.FUNCS[scope][self.current_scope][2].type_lookup(sym_id)
-            else:
-                pass
+                try:
+                    return self.FUNCS[scope][self.current_scope][2].type_lookup(sym_id)
+                except:
+                    pass
         else:
             try:
                 if self.current_scope != None:

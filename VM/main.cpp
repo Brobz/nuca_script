@@ -17,31 +17,186 @@ using namespace std;
 const int MAX_CONSTANTS = 3000, MAX_SYMBOLS = 5000, MAX_TMP_SYMBOLS = 5000, MAX_OBJ_SYMBOLS = 5000, MAX_OBJ_TMP_SYMBOLS = 5000, VAR_TYPES = 5, MEMORY_STACK_LIMIT = 100000;
 
 const map<int, vector<vector<int>>> MEMORY_CONTEXT_SIGN = {
-										{8, {{2,0,0,0,1}, {1,0,0,0,1}, {1,0,0,0,0}}},
-										{5, {{1,0,0,0,0}, {1,0,0,0,0}}},
-										{1, {{1,0,0,0,0}, {0,0,0,0,0}}},
-										{3, {{1,0,0,0,0}, {0,0,0,0,0}}},
+										{63, {{6,3,1,1,0}, {12,1,4,1,0}, {7,1,20,0,0}}},
+										{1, {{1,0,0,0,0}, {2,0,0,1,0}}},
+										{9, {{3,0,1,0,0}, {9,0,11,1,0}}},
+										{48, {{1,0,0,0,0}, {3,0,0,1,0}}},
+										{60, {{3,0,1,0,0}, {0,0,0,0,0}}},
 										};
 // MEMORY //
 
 // CONSTANTS //
 const map<int, string> CONSTANTS = {
-										{0, "2"},
+										{0, "0"},
+										{1, "1"},
+										{6000, " * "},
+										{6001, " = "},
+										{6002, "\t"},
+										{2, "2"},
+										{6003, "-'hola' = "},
+										{6004, "hola"},
+										{3, "3"},
+										{4, "15"},
+										{5, "5"},
+										{3000, "25.5"},
+										{6005, ">> Enter an integer\n-- a = "},
+										{6006, ">> Enter a string\n-- f = "},
+										{6, "12"},
+										{6007, "! = "},
+										{6008, "Global a:"},
+										{6009, "------------------------"},
+										{6010, "HI "},
+										{6011, " print() "},
+										{6012, " prints inline,"},
+										{6013, " and needs this next param for a newline:"},
+										{6014, "\n"},
+										{6015, "Hello from another line!"},
+										{6016, " println() acts just like print, "},
+										{6017, "but always adds a '\\n' parameter at the end!"},
+										{6018, "And this will skip two lines!"},
+										{6019, "Nice : )"},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{23, -1, -1, 8},
-										{0, -1, 15000, 15001},
+										{23, -1, -1, 63},
+										{7, 65000, 0, 105000},
+										{24, -1, 105000, 7},
+										{2, -1, 1, 90000},
+										{3, 65000, 90000, 90001},
+										{0, -1, 90001, 15003},
 										{25, -1, -1, -1},
-										{0, -1, 15000, 15001},
+										{0, -1, 65000, 15003},
 										{25, -1, -1, -1},
-										{3, 65000, 0, 90000},
-										{0, -1, 90000, 15001},
+										{2, -1, 1, 90000},
+										{3, 65001, 90000, 90001},
+										{7, 65000, 90001, 105000},
+										{24, -1, 105000, 18},
+										{2, -1, 1, 90002},
+										{3, 65001, 90002, 90003},
+										{2, 90003, 1, 90004},
+										{0, -1, 90004, 15004},
 										{25, -1, -1, -1},
-										{0, -1, 60000, 35000},
-										{0, -1, 40000, 15000},
+										{16, -1, -1, 9},
+										{17, -1, 75000, 75000},
+										{2, 65000, 1, 90005},
+										{17, -1, 90005, 65000},
+										{17, -1, 65001, 65001},
+										{18, -1, -1, 9},
+										{0, -1, 15004, 90006},
+										{0, -1, 90006, 65002},
+										{1, 75000, 6000, 100000},
+										{1, 100000, 65002, 100001},
+										{1, 100001, 6001, 100002},
+										{3, 75000, 65002, 100003},
+										{1, 100002, 100003, 100004},
+										{20, -1, -1, 100004},
+										{16, -1, -1, 1},
+										{17, -1, 65000, 65000},
+										{18, -1, -1, 1},
+										{0, -1, 15003, 90007},
+										{2, 65001, 90007, 90008},
+										{3, 90008, 6002, 100005},
+										{20, -1, -1, 100005},
+										{3, 75000, 65002, 100006},
+										{1, 100006, 6001, 100007},
+										{1, 100007, 65002, 100008},
+										{1, 100008, 6000, 100009},
+										{1, 100009, 75000, 100010},
+										{20, -1, -1, 100010},
+										{22, -1, -1, -1},
+										{0, -1, 65000, 15004},
+										{25, -1, -1, -1},
+										{7, 65000, 2, 105000},
+										{24, -1, 105000, 52},
+										{0, -1, 1, 15005},
+										{25, -1, -1, -1},
+										{16, -1, -1, 48},
+										{2, 65000, 1, 90000},
+										{17, -1, 90000, 65000},
+										{18, -1, -1, 48},
+										{0, -1, 15005, 90001},
+										{3, 65000, 90001, 90002},
+										{0, -1, 90002, 15005},
+										{25, -1, -1, -1},
+										{16, -1, -1, 60},
+										{18, -1, -1, 60},
+										{25, -1, -1, -1},
+										{20, -1, -1, 6003},
+										{2, -1, 6004, 50000},
+										{20, -1, -1, 50000},
+										{2, -1, 4, 40000},
+										{3, 3, 40000, 40001},
+										{1, 40001, 5, 40002},
+										{2, -1, 5, 40003},
+										{1, 40002, 40003, 40004},
+										{20, -1, -1, 40004},
+										{2, -1, 3000, 45000},
+										{20, -1, -1, 45000},
+										{16, -1, -1, 1},
+										{2, -1, 1, 40005},
+										{17, -1, 40005, 65000},
+										{18, -1, -1, 1},
+										{0, -1, 15003, 40006},
+										{20, -1, -1, 40006},
+										{16, -1, -1, 1},
+										{17, -1, 0, 65000},
+										{18, -1, -1, 1},
+										{0, -1, 15003, 40007},
+										{20, -1, -1, 40007},
+										{16, -1, -1, 1},
+										{17, -1, 1, 65000},
+										{18, -1, -1, 1},
+										{0, -1, 15003, 40008},
+										{20, -1, -1, 40008},
+										{22, -1, -1, -1},
+										{20, -1, -1, 6005},
+										{21, -1, -1, -1},
+										{19, -1, -1, 15000},
+										{20, -1, -1, 6006},
+										{21, -1, -1, -1},
+										{19, -1, -1, 25000},
+										{16, -1, -1, 9},
+										{17, -1, 25000, 75000},
+										{17, -1, 15000, 65000},
+										{17, -1, 15000, 65001},
+										{18, -1, -1, 9},
+										{0, -1, 15004, 40009},
+										{0, -1, 0, 15000},
+										{9, 15000, 6, 55000},
+										{24, -1, 55000, 117},
+										{1, 15000, 6007, 50001},
+										{16, -1, -1, 48},
+										{17, -1, 15000, 65000},
+										{18, -1, -1, 48},
+										{0, -1, 15005, 40011},
+										{1, 50001, 40011, 50002},
+										{20, -1, -1, 50002},
+										{22, -1, -1, -1},
+										{1, 15000, 1, 40010},
+										{0, -1, 40010, 15000},
+										{23, -1, -1, 104},
+										{20, -1, -1, 6008},
+										{20, -1, -1, 15000},
+										{22, -1, -1, -1},
+										{20, -1, -1, 6009},
+										{22, -1, -1, -1},
+										{20, -1, -1, 6010},
+										{20, -1, -1, 6011},
+										{20, -1, -1, 6012},
+										{20, -1, -1, 6013},
+										{20, -1, -1, 6014},
+										{21, -1, -1, -1},
+										{20, -1, -1, 6015},
+										{1, 6016, 6017, 50003},
+										{20, -1, -1, 50003},
+										{22, -1, -1, -1},
+										{20, -1, -1, 6018},
+										{20, -1, -1, 6014},
+										{22, -1, -1, -1},
+										{20, -1, -1, 6019},
+										{22, -1, -1, -1},
 										{26, -1, -1, -1},
 										};
 // QUADS //
@@ -109,11 +264,16 @@ string mem_index_to_mem_sign(int index){
 		mem_sign += ((index - MAX_CONSTANTS * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES) ? "1" : "0";
 		return mem_sign;
   }
-  else{ // LOCALS
+  else if (index < MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2){ // LOCALS
 		string mem_sign = "2" + to_string(((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES)) / MAX_SYMBOLS) % VAR_TYPES);
 		mem_sign += ((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES)) ? "1" : "0";
 		return mem_sign;
   }
+	else{ // OBJECT
+		string mem_sign = "3" + to_string(((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2)) / MAX_OBJ_SYMBOLS) % VAR_TYPES);
+		mem_sign += ((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2) >= MAX_OBJ_SYMBOLS * VAR_TYPES)) ? "1" : "0";
+		return mem_sign;
+	}
 
   // ERROR! Nothing was written
   cout << ">> Error: could not locate "  << index << " in memory" << endl;
@@ -132,6 +292,10 @@ int mem_sign_to_index_displacement(string mem_sign){
 		case 2: // LOCAL
 		{
 			index_displacement += MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES;
+		} break;
+		case 3: // OBJECT
+		{
+			index_displacement += MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2;
 		} break;
 	}
 
@@ -179,6 +343,12 @@ Value read_from_memory(int index){
         v.set_b(GLOBAL_MEM.const_mem.booleans[index - index_displacement]);
       }
       break;
+		case 40:
+      {
+				cout << ">> Cannot read case 40" << endl;
+				exit(EXIT_FAILURE);
+      }
+      break;
     case 100:
       {
         v.set_i(GLOBAL_MEM.local_mem.ints[index - index_displacement]);
@@ -197,6 +367,12 @@ Value read_from_memory(int index){
     case 130:
       {
         v.set_b(GLOBAL_MEM.local_mem.booleans[index - index_displacement]);
+      }
+      break;
+		case 140:
+      {
+				cout << ">> Cannot read case 140" << endl;
+				exit(EXIT_FAILURE);
       }
       break;
     case 101:
@@ -219,6 +395,12 @@ Value read_from_memory(int index){
         v.set_b(GLOBAL_MEM.temp_mem.booleans[index - index_displacement]);
       }
       break;
+		case 141:
+      {
+				cout << ">> Cannot read case 141" << endl;
+				exit(EXIT_FAILURE);
+      }
+      break;
     case 200:
       {
         v.set_i(LOCAL_MEM->local_mem.ints[index - index_displacement]);
@@ -237,6 +419,12 @@ Value read_from_memory(int index){
     case 230:
       {
         v.set_b(LOCAL_MEM->local_mem.booleans[index - index_displacement]);
+      }
+      break;
+		case 240:
+      {
+				cout << ">> Cannot read case 240" << endl;
+				exit(EXIT_FAILURE);
       }
       break;
     case 201:
@@ -259,6 +447,62 @@ Value read_from_memory(int index){
         v.set_b(LOCAL_MEM->temp_mem.booleans[index - index_displacement]);
       }
       break;
+		case 241:
+      {
+				cout << ">> Cannot read case 241" << endl;
+				exit(EXIT_FAILURE);
+      }
+      break;
+		case 300:
+			{
+				cout << ">> Cannot read case 300" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 310:
+			{
+				cout << ">> Cannot read case 310" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 320:
+			{
+				cout << ">> Cannot read case 320" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 330:
+			{
+				cout << ">> Cannot read case 330" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 340:
+			{
+				cout << ">> Cannot read case 340" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 301:
+			{
+				cout << ">> Cannot read case 301" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 311:
+			{
+				cout << ">> Cannot read case 311" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 321:
+			{
+				cout << ">> Cannot read case 321" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 331:
+			{
+				cout << ">> Cannot read case 331" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 341:
+			{
+				cout << ">> Cannot read case 341" << endl;
+				exit(EXIT_FAILURE);
+			}
     default:
     {
       // ERROR! Nothing was read
@@ -304,6 +548,12 @@ int write_to_memory(int index, string value){
         GLOBAL_MEM.const_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
+		case 40:
+      {
+				cout << ">> Cannot write case 40" << endl;
+				exit(EXIT_FAILURE);
+      }
+      break;
     case 100:
       {
         GLOBAL_MEM.local_mem.ints[index - index_displacement] = s_stoi(value);
@@ -322,6 +572,12 @@ int write_to_memory(int index, string value){
     case 130:
       {
         GLOBAL_MEM.local_mem.booleans[index - index_displacement] = s_stob(value);
+      }
+      break;
+		case 140:
+      {
+				cout << ">> Cannot write case 140" << endl;
+				exit(EXIT_FAILURE);
       }
       break;
     case 101:
@@ -344,6 +600,12 @@ int write_to_memory(int index, string value){
         GLOBAL_MEM.temp_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
+		case 141:
+      {
+				cout << ">> Cannot write case 141" << endl;
+				exit(EXIT_FAILURE);
+      }
+      break;
     case 200:
       {
       	LOCAL_MEM->local_mem.ints[index - index_displacement] = s_stoi(value);
@@ -362,6 +624,12 @@ int write_to_memory(int index, string value){
     case 230:
       {
       	LOCAL_MEM->local_mem.booleans[index - index_displacement] = s_stob(value);
+      }
+      break;
+		case 240:
+      {
+				cout << ">> Cannot write case 240" << endl;
+				exit(EXIT_FAILURE);
       }
       break;
     case 201:
@@ -384,6 +652,62 @@ int write_to_memory(int index, string value){
       	LOCAL_MEM->temp_mem.booleans[index - index_displacement] = s_stob(value);
       }
       break;
+		case 241:
+      {
+				cout << ">> Cannot write case 241" << endl;
+				exit(EXIT_FAILURE);
+      }
+      break;
+		case 300:
+			{
+				cout << ">> Cannot write case 300" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 310:
+			{
+				cout << ">> Cannot write case 310" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 320:
+			{
+				cout << ">> Cannot write case 320" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 330:
+			{
+				cout << ">> Cannot write case 330" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 340:
+			{
+				cout << ">> Cannot write case 340" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 301:
+			{
+				cout << ">> Cannot write case 301" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 311:
+			{
+				cout << ">> Cannot write case 311" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 321:
+			{
+				cout << ">> Cannot write case 321" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 331:
+			{
+				cout << ">> Cannot write case 331" << endl;
+				exit(EXIT_FAILURE);
+			}
+		case 341:
+			{
+				cout << ">> Cannot write case 341" << endl;
+				exit(EXIT_FAILURE);
+			}
     default:
     {
       // ERROR! Nothing was written
