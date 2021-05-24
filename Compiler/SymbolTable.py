@@ -30,13 +30,15 @@ class SymbolTable(object):
         if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
             self.build_memory_secor_shift(self.mem_constraints)
 
+    def reset_object_symbol_types(self):
+        for sym_id in self.SYMBOLS:
+            self.set_sym_obj_type(sym_id, None)
 
     def set_sym_obj_type(self, sym_id, obj_type):
         if sym_id in self.SYMBOLS:
             self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2], self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type)
         else:
-            raise Exception("Cannot set object type of " + sym_id + " to " + obj_type)
-
+            raise Exception("Cannot set object type " + obj_type + " to " + sym_id + " in " + self.scope)
 
     def get_object_symbol_type(self, sym_id):
         if sym_id in self.SYMBOLS:

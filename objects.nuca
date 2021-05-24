@@ -1,38 +1,54 @@
 program OBJS;
 
-v : object;
-f : int;
+v, no : object;
+
+
+int times_two(i : string)
+VARS{}
+{
+  return 2;
+}
+
+f, value_fa : int;
+
+
+class No_Attr {
+  ATTR{
+    attr_string : string;
+  }
+  int times_two(i : int, k : int)
+  VARS{}
+  {
+    return f;
+  }
+}
+
 
 class Value {
   ATTR{
-    value_f : int;
+    value_f, other_int : int;
+    i : float;
     value_other : string;
   }
   int times_two(i : int)
-  VARS{}
+  VARS{
+    vvv, other_int : int;
+    value_f : string;
+    obj : object;
+  }
   {
-    return f;
+    println(this.value_f / 10);
+    println("HI" * i);
+    v = new Value();
+    obj = new No_Attr();
+    return f * vvv *  obj.times_two(this.times_two(other_int), 15) + this.value_f;
   }
 }
 
-class No_Attr {
-  ATTR{}
-  int times_two(i : int)
-  VARS{}
-  {
-    return f;
-  }
-}
-
-
-int times_two(i : int)
-VARS{}
-{
-  return i * 2;
-}
 
 
 main (){
   v = new Value();
-  f = v.value_f;
+  no = new No_Attr();
+  no.attr_string = no.attr_string * v.value_f;
 }
