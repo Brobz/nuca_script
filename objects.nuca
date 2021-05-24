@@ -50,5 +50,5 @@ class Value {
 main (){
   v = new Value();
   no = new No_Attr();
-  no.attr_string = no.attr_string * v.value_f;
+  no.attr_string = no.attr_string * v.times_two(v.value_f);
 }

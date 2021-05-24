@@ -188,21 +188,21 @@ lexer = lex.lex()
     [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Booleans
     [4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Objects
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Ints
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Floats
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Booleans
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS - 1]                                                         ->          Local Temp Objects
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Ints
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Floats
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Strings
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Booleans
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Objects
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS - 1]                                      ->          Object Ints
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS,                                          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOLS - 1]                                  ->          Object Floats
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                                       4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]                                  ->          Object Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                                      4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]                                  ->          Object Boooleans
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS,                                                          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS - 1]                                        ->          Object Ints
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS,                                        4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Floats
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                                     4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Strings
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                                    4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Boooleans
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS,                                      4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + MAX_OBJ_TMP_SYMBOLS - 1]            ->          Object Temp Ints
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + MAX_OBJ_TMP_SYMBOLS,                4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 2 * MAX_OBJ_TMP_SYMBOLS - 1]        ->          Object Temp Floats
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 2 * MAX_OBJ_TMP_SYMBOLS,            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 3 * MAX_OBJ_TMP_SYMBOLS - 1]        ->          Object Temp Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 3 * MAX_OBJ_TMP_SYMBOLS,            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 4 * MAX_OBJ_TMP_SYMBOLS - 1]        ->          Object Temp Booleans
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS,                                    4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + MAX_OBJ_TMP_SYMBOLS - 1]              ->          Object Temp Ints
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + MAX_OBJ_TMP_SYMBOLS,              4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 2 * MAX_OBJ_TMP_SYMBOLS - 1]          ->          Object Temp Floats
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 2 * MAX_OBJ_TMP_SYMBOLS,          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 3 * MAX_OBJ_TMP_SYMBOLS - 1]          ->          Object Temp Strings
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 3 * MAX_OBJ_TMP_SYMBOLS,          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 4 * MAX_OBJ_TMP_SYMBOLS - 1]          ->          Object Temp Booleans
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -412,14 +412,15 @@ def p_readable_list_p(p):
 def p_seen_readable(p):
     ''' seen_readable  : empty '''
     id_scope = SCOPES_STACK[-1]
+    id_attr = False
     id = OPERAND_STACK.pop()
     if type(id) == list:
-        id, id_scope = id
+        id, id_scope, id_attr = id
     TYPE_STACK.pop()
     if FUNC_DIR.is_sym_ptr(id, SCOPES_STACK[-1]):
-        push_to_quads(Quad("READ", -1, 1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope), id_scope)))
+        push_to_quads(Quad("READ", -1, 1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
     else:
-        push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope), id_scope)))
+        push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -604,14 +605,15 @@ def p_pop_not(p):
     ''' pop_not : empty '''
     op = OPERATOR_STACK.pop()
     right_operand_scope = SCOPES_STACK[-1]
+    right_operand_attr = False
     right_operand = OPERAND_STACK.pop()
     if type(right_operand) == list:
-        right_operand, right_operand_scope = right_operand
+        right_operand, right_operand_scope, right_operand_attr = right_operand
     right_type = TYPE_STACK.pop()
     res_type = SemanticCube[op][right_type]
     if res_type != "err":
         res = FUNC_DIR.next_avail(res_type, SCOPES_STACK[-1])
-        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_operand_scope), FUNC_DIR.get_symbol_mem_index(res, SCOPES_STACK[-1])))
+        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_operand_scope, right_operand_attr), FUNC_DIR.get_symbol_mem_index(res, SCOPES_STACK[-1])))
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
@@ -626,14 +628,15 @@ def p_pop_unary_minus(p):
     OPERATOR_STACK.pop() # Pop Fake Wall
     op = OPERATOR_STACK.pop()
     right_operand_scope = SCOPES_STACK[-1]
+    right_operand_attr = False
     right_operand = OPERAND_STACK.pop()
     if type(right_operand) == list:
-        right_operand, right_operand_scope = right_operand
+        right_operand, right_operand_scope, right_operand_attr = right_operand
     right_type = TYPE_STACK.pop()
     res_type = SemanticCube[op][right_type]
     if res_type != "err":
         res = FUNC_DIR.next_avail(res_type, SCOPES_STACK[-1])
-        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_operand_scope), FUNC_DIR.get_symbol_mem_index(res, SCOPES_STACK[-1])))
+        push_to_quads(Quad(op, -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_operand_scope, right_operand_attr), FUNC_DIR.get_symbol_mem_index(res, SCOPES_STACK[-1])))
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
@@ -668,6 +671,7 @@ def p_seen_var_as_factor(p):
 
 def parse_var(id, mode):
     is_arr = False
+
     if type(id) == list:
         if id[0] == "ARRAY":
             is_arr = True
@@ -675,10 +679,11 @@ def parse_var(id, mode):
         else:
             id = id[1]
 
+    is_class_attr = len(CLASS_INSTANCE_STACK)
+
     if is_arr:
         # It is an array!
 
-        is_class_attr = len(CLASS_INSTANCE_STACK)
         array_id, array_scope = id[0]
         FUNC_DIR.symbol_lookup(array_id, array_scope, is_class_attr)
         dims = FUNC_DIR.get_symbol_dimensions(array_id, array_scope, is_class_attr)
@@ -740,13 +745,13 @@ def parse_var(id, mode):
         # It is a regular variable!
         if not len(DOT_OP_STACK) or DOT_OP_STACK[-1] == "|ARG_WALL|":
             # Regular Variable
-            var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], len(CLASS_INSTANCE_STACK))
+            var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], is_class_attr)
             if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]):
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
-            OPERAND_STACK.append([var, SCOPES_STACK[-1]])
-            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, SCOPES_STACK[-1], len(CLASS_INSTANCE_STACK)))
+            OPERAND_STACK.append([var, SCOPES_STACK[-1], is_class_attr])
+            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, SCOPES_STACK[-1], is_class_attr))
 
         else:
             var = FUNC_DIR.symbol_lookup(id, DOT_OP_STACK[-1], True)
@@ -755,7 +760,7 @@ def parse_var(id, mode):
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
-            OPERAND_STACK.append([var, DOT_OP_STACK[-1]])
+            OPERAND_STACK.append([var, DOT_OP_STACK[-1], is_class_attr])
             TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True))
 
     if len(DOT_OP_STACK):
@@ -861,6 +866,7 @@ def p_seen_dot_operator(p):
     if class_type == None:
         raise Exception("Type Error: symbol " + p[-2] + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new'?)")
     DOT_OP_STACK.append(class_type)
+    CLASS_INSTANCE_STACK.append(p[-2])
 
 def p_seen_this_dot_operator(p):
     ''' seen_this_dot_operator : empty '''
@@ -1018,9 +1024,10 @@ def p_arg_list_p(p):
 def p_seen_arg(p):
     ''' seen_arg : empty '''
     arg_scope = SCOPES_STACK[-1]
+    is_attr = False
     arg = OPERAND_STACK.pop()
     if type(arg) == list:
-        arg, arg_scope = arg
+        arg, arg_scope, is_attr = arg
     arg_type = TYPE_STACK.pop()
 
     if not len(DOT_OP_STACK):
@@ -1032,7 +1039,7 @@ def p_seen_arg(p):
             scope_in_use = DOT_OP_STACK[-1]
 
     k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[-1][0], arg_type, scope_in_use)
-    push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg, arg_scope), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[-1][0], k, scope_in_use)))
+    push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg, arg_scope, is_attr), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[-1][0], k, scope_in_use)))
     FUNC_CALL_STACK[-1][1] = k
 
 def p_func_return(p):
@@ -1042,12 +1049,13 @@ def p_func_return(p):
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
     retn_scope = SCOPES_STACK[-1]
+    is_attr = False
     if type(rtn_id) == list:
-        rtn_id, retn_scope = rtn_id
+        rtn_id, retn_scope, is_attr = rtn_id
 
     rtn_obj_name = FUNC_DIR.get_return_obj_name()
 
-    push_to_quads(Quad("=", get_ptr_value([rtn_id, retn_scope], None), FUNC_DIR.get_symbol_mem_index(rtn_id, retn_scope), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, "GLOBAL")))
+    push_to_quads(Quad("=", get_ptr_value([rtn_id, retn_scope], None), FUNC_DIR.get_symbol_mem_index(rtn_id, retn_scope, is_attr), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, "GLOBAL")))
     push_to_quads(Quad("ENDFNC", -1, -1, -1))
 
     FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1, SCOPES_STACK[-1])
@@ -1087,11 +1095,12 @@ def p_printable_p(p):
 def p_seen_printable(p):
     ''' seen_printable  : empty '''
     printable_scope = SCOPES_STACK[-1]
+    printable_is_attr = False
     printable = OPERAND_STACK.pop()
     if type(printable) == list:
-        printable, printable_scope = printable
+        printable, printable_scope, printable_is_attr = printable
     printable_type = TYPE_STACK.pop()
-    push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope)))
+    push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope, printable_is_attr)))
 
 def p_func_decision(p):
     ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''
@@ -1248,20 +1257,21 @@ def generateExpressionQuad():
 
     right_scope = left_scope= SCOPES_STACK[-1]
     right_operand = OPERAND_STACK.pop()
+    right_attr = False
     if type(right_operand) == list:
-        right_operand, right_scope  = right_operand
+        right_operand, right_scope, right_attr  = right_operand
     right_type = TYPE_STACK.pop()
     left_operand = OPERAND_STACK.pop()
+    left_attr = False
     if type(left_operand) == list:
-        left_operand, left_scope = left_operand
+        left_operand, left_scope, left_attr = left_operand
     left_type = TYPE_STACK.pop()
     operator = OPERATOR_STACK.pop()
     result_type = SemanticCube[left_type][operator][right_type]
 
-
     if result_type != "err":
         result = FUNC_DIR.next_avail(result_type, SCOPES_STACK[-1])
-        push_to_quads(Quad(operator, FUNC_DIR.get_symbol_mem_index(left_operand, left_scope), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope), FUNC_DIR.get_symbol_mem_index(result, SCOPES_STACK[-1])))
+        push_to_quads(Quad(operator, FUNC_DIR.get_symbol_mem_index(left_operand, left_scope, left_attr), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(result, SCOPES_STACK[-1])))
         OPERAND_STACK.append(result)
         TYPE_STACK.append(result_type)
     else:
@@ -1270,12 +1280,14 @@ def generateExpressionQuad():
 def assign_to_var(push_back_operand = False, push_back_type = False):
     op = OPERATOR_STACK.pop()
     right_scope = res_scope = SCOPES_STACK[-1]
+    right_attr = False
     right_operand =  OPERAND_STACK.pop()
     if type(right_operand) == list:
-        right_operand, right_scope  = right_operand
+        right_operand, right_scope, right_attr  = right_operand
     res = OPERAND_STACK.pop()
+    res_attr = False
     if type(res) == list:
-        res, res_scope = res
+        res, res_scope, res_attr = res
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
 
@@ -1284,10 +1296,8 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
 
     if SemanticCube[res_type][op][right_type] == "err":
         raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
-
     else:
-
-        push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope), FUNC_DIR.get_symbol_mem_index(res, res_scope)))
+        push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
         if push_back_operand:
             OPERAND_STACK.append(res)
         if push_back_type:
@@ -1297,10 +1307,11 @@ def decision_statement():
     expr_type = TYPE_STACK.pop()
     if SemanticCube[expr_type]["=="]["boolean"]:
         res_scope = SCOPES_STACK[-1]
+        res_attr = False
         res = OPERAND_STACK.pop()
         if type(res) == list:
-            res, res_scope = res
-        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, res_scope), "PND"))
+            res, res_scope, res_attr = res
+        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), "PND"))
         JUMP_STACK.append(QUAD_POINTER - 1)
     else:
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")

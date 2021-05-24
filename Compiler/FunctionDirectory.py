@@ -265,7 +265,7 @@ class FunctionDirectory(object):
             raise Exception("Argument mismatch: Call to " + func_id + " received " + str(k + 1) + " or more parameters, expects " + str(len(types_list)))
 
         if arg_type != types_list[k]:
-            raise Exception("Type mismatch: Call to " + func_id + " received " + arg_type + " argument, expects " + types_list[k])
+            raise Exception("Type mismatch: Call to " + scope + "." + func_id + " received " + arg_type + " argument, expects " + types_list[k])
 
         self.goto_next_param(func_id, scope)
         return k + 1
