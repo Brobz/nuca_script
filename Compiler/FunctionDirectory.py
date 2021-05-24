@@ -111,15 +111,26 @@ class FunctionDirectory(object):
                         return self.FUNCS[self.program_name].is_sym_arr(sym_id)
                 return is_arr
 
-    def get_symbol_dimensions(self, sym_id, scope):
-        if self.current_scope == None:
-            return self.FUNCS[self.program_name].get_dimensions(sym_id)
-        else:
-            dimensions = self.FUNCS[scope][self.current_scope][2].get_dimensions(sym_id)
-            if dimensions == -1:
+    def get_symbol_dimensions(self, sym_id, scope, is_class_attr = False):
+        if scope == "GLOBAL":
+            if self.current_scope == None:
                 return self.FUNCS[self.program_name].get_dimensions(sym_id)
-            return dimensions
-
+            else:
+                dimensions = self.FUNCS[scope][self.current_scope][2].get_dimensions(sym_id)
+                if dimensions == -1:
+                    return self.FUNCS[self.program_name].get_dimensions(sym_id)
+                return dimensions
+        else:
+            if self.current_scope == None or is_class_attr:
+                dimensions = self.FUNCS[scope]["SYMBOLS"].get_dimensions(sym_id)
+                if dimensions == -1 and not is_class_attr:
+                    return self.FUNCS[self.program_name].get_dimensions(sym_id)
+                return dimensions
+            else:
+                dimensions = self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_dimensions(sym_id)
+                if dimensions == -1:
+                    return self.FUNCS[self.program_name].get_dimensions(sym_id)
+                return dimensionss
 
     def get_param_mem_index(self, func_id, k, scope):
         if scope == "GLOBAL":
@@ -134,7 +145,7 @@ class FunctionDirectory(object):
     def declare_constant(self, cnst_id, cnst_type):
         self.declare_symbol(cnst_id, cnst_type, "GLOBAL", is_cnst = True)
 
-    def get_symbol_mem_index(self, sym_id, scope):
+    def get_symbol_mem_index(self, sym_id, scope, is_class_attr = False):
         if self.current_scope == None and scope == "GLOBAL":
             return self.FUNCS[self.program_name].get_mem_index(sym_id)
         else:
@@ -144,12 +155,13 @@ class FunctionDirectory(object):
                     mem_index = self.FUNCS[scope][self.current_scope][2].get_mem_index(sym_id)
             else:
                 mem_index = -1
-                if self.current_scope != None:
+                if self.current_scope != None and not is_class_attr:
                     mem_index = self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_mem_index(sym_id)
-                if mem_index == -1:
+                if mem_index == -1 and is_class_attr:
                     mem_index = self.FUNCS[scope]["SYMBOLS"].get_mem_index(sym_id)
-            if mem_index == -1:
+            if mem_index == -1 and not is_class_attr:
                 return self.FUNCS[self.program_name].get_mem_index(sym_id)
+
             return mem_index
 
     def next_avail(self, type, scope, is_ptr = False):
@@ -259,7 +271,6 @@ class FunctionDirectory(object):
         return k + 1
 
     def set_param_index(self, func_id, index, scope):
-        print("setting", func_id, "param index to", index, "in", scope)
         if scope == "GLOBAL":
             if func_id in self.FUNCS[scope]:
                 self.FUNCS[scope][func_id][4] = index
@@ -273,7 +284,6 @@ class FunctionDirectory(object):
 
 
     def goto_next_param(self, func_id, scope):
-        print("going to next param in", func_id,  "in", scope)
         if scope == "GLOBAL":
             if func_id in self.FUNCS[scope]:
                 if not len(self.FUNCS[scope][func_id][1].SYMBOLS): # NO PARAM FUNC
@@ -452,7 +462,7 @@ class FunctionDirectory(object):
                     try:
                         return self.FUNCS[scope]["FUNCS"][self.current_scope][2].type_lookup(sym_id)
                     except:
-                        return self.FUNCS[scope]["SYMBOLS"].type_lookup(sym_id)
+                        pass
                 else:
                     return self.FUNCS[scope]["SYMBOLS"].type_lookup(sym_id)
             except:

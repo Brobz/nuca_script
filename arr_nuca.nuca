@@ -8,6 +8,26 @@ int_arr[100], int_matrix[3][3], int_cube[3][3][3] : int;
 
 idx : int;
 
+class ArrayClass{
+  ATTR{
+    int_arr[100] : float;
+  }
+  int get_10()
+  VARS{}
+  {
+    return 10;
+  }
+  void print_array(i : int)
+  VARS{
+    j : int;
+  }
+  {
+    for(j = 0; j < i; j = j + 1){
+      println(j, int_arr[this.int_arr[j] > this.get_10()] * "HI");
+    }
+  }
+}
+
 int print_array(i : int)
 VARS{
   j : int;
@@ -26,7 +46,12 @@ VARS{}
   return i * 2;
 }
 
+obj : object;
+
 main (){
+  obj = new ArrayClass();
+  obj.int_arr[5] = 93;
+  obj.print_array(7);
   idx = 2;
   println(idx);
   int_arr[idx] = 2;

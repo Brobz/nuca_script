@@ -211,14 +211,19 @@ lexer = lex.lex()
 
 // TODO : Add Object quad generation
 
-        1a. Work on generating correct ids for parse_var for Array variables
-        1b. Work on creating mem signature for each class type, and writing it into the VM (Compiler)
-        1c. Work on implementing missing cases into read/write_from_memory (VM)
-        1d. Review VM index/mem_sign translation (removed Object Objects and Object Temp Objects)
+        //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
+
+        1a. Work on creating mem signature for each class type, and writing it into the VM (Compiler)
+        1b. Work on implementing missing cases into read/write_from_memory (VM)
+        1c. Review VM index/mem_sign translation (removed Object Objects and Object Temp Objects)
+
         2. Place OBJ_INST, OBJ_READ, OBJ_WRITE quads properly (Compiler)
+
         3. Process obj_quads (VM)
+
         4. Work on accepting calls to class functions on grammar (Compiler)
 
+        //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
 
         -> Store class function quads just like any other function
         -> Create FuncDir scope and memory signature for each object type
@@ -662,15 +667,22 @@ def p_seen_var_as_factor(p):
 
 
 def parse_var(id, mode):
+    is_arr = False
     if type(id) == list:
-        id = id[1]
+        if id[0] == "ARRAY":
+            is_arr = True
+            id = id[1:]
+        else:
+            id = id[1]
 
-    if "+" in id:
+    if is_arr:
         # It is an array!
 
-        array_id = id[:id.index("+")]
-        dims = FUNC_DIR.get_symbol_dimensions(id[:id.index("+")], SCOPES_STACK[-1])
-        access_values = id[id.index("+") + 1:].split(",")[:-1]
+        is_class_attr = len(CLASS_INSTANCE_STACK)
+        array_id, array_scope = id[0]
+        FUNC_DIR.symbol_lookup(array_id, array_scope, is_class_attr)
+        dims = FUNC_DIR.get_symbol_dimensions(array_id, array_scope, is_class_attr)
+        access_values = id[1]
 
         if len(access_values) != len(dims):
             # Accessing array incompletely (would need to return an array obj)
@@ -679,36 +691,40 @@ def parse_var(id, mode):
         final_access_value = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
 
         for i, d in enumerate(access_values):
+            if type(d) != list:
+                d = [d, SCOPES_STACK[-1]]
             try:
-                d = int(d) # d might be an ID, or it might be a a CTE_I
+                d[0] = int(d[0]) # d might be an ID, or it might be a a CTE_I
             except:
                 pass
 
             # Check if access value is in bounds
-            push_to_quads(Quad("ARR_BNDS", -1, FUNC_DIR.get_symbol_mem_index(d, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(dims[i], SCOPES_STACK[-1])))
+            push_to_quads(Quad("ARR_BNDS", -1, FUNC_DIR.get_symbol_mem_index(d[0], d[1]), FUNC_DIR.get_symbol_mem_index(dims[i], SCOPES_STACK[-1])))
 
             if i == len(access_values) - 1:
                 # We are reading the last dimension of the access values
                 if len(access_values) == 1:
                     # This is a linear vector; simply access whatever index we just read
-                    push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(d, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
+                    push_to_quads(Quad("=", -1, FUNC_DIR.get_symbol_mem_index(d[0], d[1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
                 else:
                     # This is a matrix; add the dimension we read to the final access_value
-                    push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(d, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
+                    push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(d[0], d[1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
 
             else:
                 access_increment = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
-                push_to_quads(Quad("=", -1,  FUNC_DIR.get_symbol_mem_index(d, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1])))
+                push_to_quads(Quad("=", -1,  FUNC_DIR.get_symbol_mem_index(d[0], d[1]), FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1])))
                 for j, size in enumerate(dims):
                     if i < j:
                         push_to_quads(Quad("*", FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(int(size), SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1])))
 
                 push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
 
-        array_type = FUNC_DIR.symbol_type_lookup(array_id, SCOPES_STACK[-1])
+        array_type = FUNC_DIR.symbol_type_lookup(array_id, array_scope, is_class_attr)
+
         ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1], is_ptr = True)
+
         # Check array value at index
-        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
+        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id, array_scope),  FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
 
         if not mode: # We are assigning to this array, need a pointer
             OPERAND_STACK.append(FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]))
@@ -803,8 +819,13 @@ def p_var(p):
     else:
 
         if p[1] == "this_kwd":
-            p[0] = FUNC_DIR.symbol_lookup(p[2], SCOPES_STACK[-1], True)
-            CLASS_INSTANCE_STACK.append("THIS")
+            if type(p[2]) != list:
+                p[0] = FUNC_DIR.symbol_lookup(p[2], SCOPES_STACK[-1], True)
+                CLASS_INSTANCE_STACK.append("THIS")
+            else:
+                FUNC_DIR.symbol_lookup(p[2][1][0], p[2][1][1], True)
+                p[0] = p[2]
+                CLASS_INSTANCE_STACK.append("THIS")
             return
         else:
             FUNC_DIR.symbol_lookup(p[1], SCOPES_STACK[-1])
@@ -815,8 +836,8 @@ def p_var(p):
         if type(p[2]) != list:
             accessed_attr = FUNC_DIR.symbol_lookup(p[2], DOT_OP_STACK[-1], len(DOT_OP_STACK) > 0)
         else:
-            FUNC_DIR.symbol_lookup(p[2][0], DOT_OP_STACK[-2], len(DOT_OP_STACK) > 0)
-            accessed_attr = FUNC_DIR.symbol_lookup(p[2][1], DOT_OP_STACK[-1], len(DOT_OP_STACK) > 0)
+            p[0] = p[2]
+            return
 
         p[0] = [class_obj, accessed_attr]
 
@@ -847,13 +868,18 @@ def p_seen_this_dot_operator(p):
 
 def p_array(p):
     ''' ARRAY : ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P '''
-    p[0] = ""
+    p[0] = ["ARRAY"]
     dims = ARRAY_DIMENSION_STACK.pop()
     for dim in dims:
             if dim == p[1]:
-                p[0] += p[1] + "+"
+                arr_scope = SCOPES_STACK[-1]
+                if len(DOT_OP_STACK) and DOT_OP_STACK[-1] != "|ARG_WALL|":
+                    arr_scope = DOT_OP_STACK[-1]
+
+                p[0].append([p[1], arr_scope])
+                p[0].append([])
             else:
-                p[0] += str(dim) + ","
+                p[0][2].append(dim)
 
 def p_array_p(p):
     ''' ARRAY_P :       OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P
@@ -871,17 +897,20 @@ def p_seen_array_id(p):
 def p_seen_open_bracket(p):
     ''' seen_open_bracket : empty '''
     OPERATOR_STACK.append("|ARRAY_ACCESS_WALL|") # Stack Fake Wall
+    DOT_OP_STACK.append("|ARG_WALL|") # Stack Fake Wall
 
 def p_seen_array_access(p):
     ''' seen_array_access : empty '''
     access = OPERAND_STACK.pop()
     access_type = TYPE_STACK.pop()
-    if access_type not in ["int", "bool"]:
+    if access_type not in ["int", "boolean"]:
         raise Exception("TypeError: Cannot use " + access_type + " as access index for " + ARRAY_DIMENSION_STACK[-1][0])
 
     ARRAY_DIMENSION_STACK[-1].append(access)
 
     OPERATOR_STACK.pop() # Pop Fake Wall
+    if len(DOT_OP_STACK):
+        DOT_OP_STACK.pop() # Pop Fake Wall
 
 def p_array_definition(p):
     ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
@@ -1355,7 +1384,7 @@ def main(argv):
         print(">> Parsing " + input_file_path + "...")
         parser.parse(s)
 
-
+        '''
         for k in FUNC_DIR.FUNCS.keys():
             print("------------------------------------------------------------")
             print(k)
@@ -1373,7 +1402,7 @@ def main(argv):
                                 print(FUNC_DIR.FUNCS[k][key][func][0], FUNC_DIR.FUNCS[k][key][func][2].SYMBOLS)
         print("------------------------------------------------------------")
 
-        '''
+
         print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
         '''
 
