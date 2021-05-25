@@ -1,24 +1,36 @@
 #include <vector>
 #include <string>
 
+#ifndef Memory_H_
+#define Memory_H_
+
+#include "MemoryContext.h"
+
 using namespace std;
+
+class MemoryContext;
 
 class Memory{
   public:
 
+    int signature;
+    Memory* return_memory;
     vector<int> ints;
     vector<float> floats;
     vector<string> strings;
     vector<bool> booleans;
+    vector<Memory> objects;
 
     Memory(){};
 
-    Memory(vector<int> size){
+    Memory(vector<int> size, int sign = -1){
+      signature = sign;
       for (int i = 0; i < size.size(); i++){
         if (!i) ints.resize(size[i]);
         else if (i == 1) floats.resize(size[i]);
         else if (i == 2) strings.resize(size[i]);
         else if (i == 3) booleans.resize(size[i]);
+        else if (i == 4) objects.resize(size[i]);
       }
     };
 
@@ -45,3 +57,5 @@ class Memory{
       cout << endl;
     }
 };
+
+#endif /*Memory_H_*/

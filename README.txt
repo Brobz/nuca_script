@@ -39,6 +39,11 @@ Por el momento, solo se implemento la ejecucion de los operadores GOTO y =.
 |-- Avance #6.b (16/05/2021) --|
 
 Se implementaron la ejecucion en maquina virtual de expresiones aritmeticas, condicionales y ciclos en su totalidad, ademas de estatutos sencillos como lecturas (read) y escrituras (print y println).
+
+|-- Avance #7 --|
+
+Se implementaron la generacion de cuadruplos y ejecucion en maquina virtual para arreglos y para objetos (excluyendo arreglos como atributos de objetos)
+
 Para probar:
             python nuca_script.py simplest_nuca.nuca -o simplest_nuca (compila)
             simplest_nuca.exe (corre el programa compilado)

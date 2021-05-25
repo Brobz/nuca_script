@@ -8,14 +8,36 @@ int_arr[100], int_matrix[3][3], int_cube[3][3][3] : int;
 
 idx : int;
 
-void print_array(i : int)
+class ArrayClass{
+  ATTR{
+    int_arr[100] : float;
+  }
+  int get_10()
+  VARS{}
+  {
+    return 10;
+  }
+  void print_array(i : int)
+  VARS{
+    j : int;
+  }
+  {
+    for(j = 0; j < i; j = j + 1){
+      println(j, int_arr[this.int_arr[j] > this.get_10()] * "HI");
+    }
+  }
+}
+
+int print_array(i : int)
 VARS{
-  arr[100], j : int;
+  j : int;
 }
 {
   for(j = 0; j < i; j = j + 1){
-    println(j, arr[j]);
+    println(j, int_arr[j]);
   }
+
+  return int_arr[96];
 }
 
 int times_two(i : int)
@@ -24,7 +46,12 @@ VARS{}
   return i * 2;
 }
 
+obj : object;
+
 main (){
+  //obj = new ArrayClass();
+  obj.int_arr[5] = 93;
+  obj.print_array(7);//
   idx = 2;
   println(idx);
   int_arr[idx] = 2;
@@ -33,6 +60,7 @@ main (){
   int_matrix[0][2] = times_two(-int_arr[idx] * 10);
   int_matrix[0][0] = 25 + 3;
   println(int_matrix[0][0], int_matrix[0][2], int_matrix[2][0], int_matrix[1][1], int_matrix[2][0], int_matrix[2][2]);
+  int_matrix[0][2] = times_two(-int_arr[idx] * 157);
   int_arr[95] = int_matrix[0][0];
   int_arr[10] = 0;
   int_arr[20] = 1;
@@ -47,6 +75,6 @@ main (){
   println("------------------");
   print(">>  Elements to read (max 100):\n-- ");
   read(int_arr[96]);
-  print_array(int_arr[96]);
+  println("you read:", print_array(int_arr[96]), "elements");
 
 }

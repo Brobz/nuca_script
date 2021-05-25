@@ -29,14 +29,23 @@ VARS {
   return n;
 }
 
+int slow_fib(n :int)
+VARS{}
+{
+  if(n < 2){
+    return n;
+  }
 
-int fac(n : int)
+  return slow_fib(n - 1) + slow_fib(n - 2);
+}
+
+int factorial(n : int)
 VARS {}
 {
   if(n < 2){
     return 1;
   }
-  return n * fac(n - 1);
+  return n * factorial(n - 1);
 }
 
 
@@ -45,8 +54,13 @@ VARS{
   var_1, var_2, var_3 : int;
 }
 {
-  infinite();
+  infinite("useless");
+  return; // never gonna happen! //
 }
+
+// Array //
+
+int_arr[100] : int;
 
 main (){
   println("-'hola' = ", -"hola", 3 * -15 + 5 + (-5), -25.5, abs(-1), abs(0), abs(1));
@@ -57,10 +71,14 @@ main (){
 
   recursive_print(g, a, a);
 
-  for(a = 0; a <= 12; a = a + 1){
-    println(a + "! = " + fac(a));
+  int_arr[10] = 12;
+  int_arr[93] = 1;
+
+  for(a = 0; a <= int_arr[10]; a = a + int_arr[93]){
+    println(a + "! = " + factorial(a));
   }
 
+  // infinite("hi"); //
 
   println("Global a:", a);
 
@@ -71,4 +89,7 @@ main (){
   println("And this will skip two lines!", "\n");
   println("Nice : )");
 
+  print(">> Enter yet another integer:\n-- ");
+  read(a);
+  println(">> slow_fib(" + a + ") = " + slow_fib(a));
 }
