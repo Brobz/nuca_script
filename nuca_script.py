@@ -1302,17 +1302,17 @@ def p_seen_for_end_exp(p):
 
     expr_end_type = TYPE_STACK.pop()
 
-    if expr_end_type != "boolean":
-        raise Exception("Type mismatch: 'for' end expression type is not boolean")
-    else:
-        res_scope = SCOPES_STACK[-1]
-        res = OPERAND_STACK.pop()
-        if type(res) == list:
-            res, res_scope = res
+    if SemanticCube[expr_end_type]["=="]["boolean"] == "err":
+        raise Exception("Type mismatch: non-boolean end expression in 'for' statement")
 
-        JUMP_STACK.append(QUAD_POINTER)
-        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, res_scope), "PND"))
-        JUMP_STACK.append(QUAD_POINTER)
+    res_scope = SCOPES_STACK[-1]
+    res = OPERAND_STACK.pop()
+    if type(res) == list:
+        res, res_scope = res
+
+    JUMP_STACK.append(QUAD_POINTER)
+    push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, res_scope), "PND"))
+    JUMP_STACK.append(QUAD_POINTER)
 
 def p_type(p):
     ''' TYPE :      TYPE_I
@@ -1412,16 +1412,18 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
 
 def decision_statement():
     expr_type = TYPE_STACK.pop()
-    if SemanticCube[expr_type]["=="]["boolean"] != "err":
-        res_scope = SCOPES_STACK[-1]
-        res_attr = False
-        res = OPERAND_STACK.pop()
-        if type(res) == list:
-            res, res_scope, res_attr = res
-        push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), "PND"))
-        JUMP_STACK.append(QUAD_POINTER - 1)
-    else:
+
+    if SemanticCube[expr_type]["=="]["boolean"] == "err":
         raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
+
+    res_scope = SCOPES_STACK[-1]
+    res_attr = False
+    res = OPERAND_STACK.pop()
+    if type(res) == list:
+        res, res_scope, res_attr = res
+    push_to_quads(Quad("GOTOF", -1, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), "PND"))
+    JUMP_STACK.append(QUAD_POINTER - 1)
+
 
 def fill_vm_file(file_path, marker_str, start_str, end_str, info):
     line_indices = []
