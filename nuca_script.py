@@ -199,29 +199,16 @@ lexer = lex.lex()
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                                     4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Strings
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                                    4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Boooleans
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS,                                    4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + MAX_OBJ_TMP_SYMBOLS - 1]              ->          Object Temp Ints
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + MAX_OBJ_TMP_SYMBOLS,              4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 2 * MAX_OBJ_TMP_SYMBOLS - 1]          ->          Object Temp Floats
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 2 * MAX_OBJ_TMP_SYMBOLS,          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 3 * MAX_OBJ_TMP_SYMBOLS - 1]          ->          Object Temp Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 3 * MAX_OBJ_TMP_SYMBOLS,          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS + 4 * MAX_OBJ_TMP_SYMBOLS - 1]          ->          Object Temp Booleans
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SPRINT //
 
-// TODO : Add Object quad generation
+// TODO : Add Object Quad Execution
 
         //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
 
-        1a. Work on creating mem signature for each class type, and writing it into the VM (Compiler)
-        1b. Work on implementing missing cases into read/write_from_memory (VM)
-        1c. Review VM index/mem_sign translation (removed Object Objects and Object Temp Objects)
-
-        2. Place OBJ_INST, OBJ_READ, OBJ_WRITE quads properly (Compiler)
-
-        3. Process obj_quads (VM)
-
-        4. Work on accepting calls to class functions on grammar (Compiler)
+        1. Properly parse pointers in OBJ_WRITE (and possibly OBJ_READ)
 
         //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
 
@@ -245,13 +232,11 @@ lexer = lex.lex()
 
         // OBJ_WRITE //
         Writes value_dir into obj_var_dir in obj_dir's memory
-        | OBJ_READ | value_dir (local_mem) | obj_dir (local_mem) | obj_var_dir (obj_mem) |
+        | OBJ_WRITE | obj_dir (local_mem) | value_dir (local_mem) | obj_var_dir (obj_mem) |
 
         // OBJ_GOSUB //
         Sets THIS_MEM to point to obj_dir, LOCAL_MEM to point to the top of the mem stack, and LOCAL_MEM retn addr to IP + 1; then sets IP to start_addr
         | OBJ_GOSUB | -1 | obj_dir (local_mem) | start_addr (local_mem) |
-
-        (also, on ENDFNC, maybe need to have THIS_MEM point to null)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -290,6 +275,7 @@ ARRAY_DIMENSION_STACK = []
 SCOPES_STACK = ["GLOBAL"]
 CLASS_INSTANCE_STACK = []
 DOT_OP_STACK = []
+OBJECT_ACCESS_STACK = []
 QUAD_POINTER = 1
 QUADS = [Quad("GOTO", -1, -1, "PND")]
 
@@ -416,11 +402,25 @@ def p_seen_readable(p):
     id = OPERAND_STACK.pop()
     if type(id) == list:
         id, id_scope, id_attr = id
-    TYPE_STACK.pop()
-    if FUNC_DIR.is_sym_ptr(id, SCOPES_STACK[-1]):
-        push_to_quads(Quad("READ", -1, 1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
-    else:
-        push_to_quads(Quad("READ", -1, -1, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
+    id_type = TYPE_STACK.pop()
+
+    if id_type in ["void", "object"]:
+        if id != None:
+            raise Exception("Type Error: Cannot read into symbol " + id + " of type " + id_type)
+        else:
+            raise Exception("Type Error: Cannot read into " + printable_type)
+
+    is_ptr = int(FUNC_DIR.is_sym_ptr(id, id_scope))
+    if not is_ptr:
+        is_ptr = -1
+
+    parent_obj_dir = -1
+    if len(OBJECT_ACCESS_STACK):
+        parent_obj_id = OBJECT_ACCESS_STACK.pop()
+        if parent_obj_id != "this_kwd":
+            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+
+    push_to_quads(Quad("READ", parent_obj_dir, is_ptr, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -442,7 +442,7 @@ def p_func_def(p):
     ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
     if not FUNC_DIR.valid_return_check(QUAD_POINTER - 1, SCOPES_STACK[-1]):
         FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])
-        push_to_quads(Quad("ENDFNC", -1, -1, -1))
+        push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
 
     FUNC_DIR.change_current_scope(None)
     FUNC_DIR.AVAIL.reset_counter()
@@ -679,7 +679,7 @@ def parse_var(id, mode):
         else:
             id = id[1]
 
-    is_class_attr = len(CLASS_INSTANCE_STACK)
+    is_class_attr = (len(CLASS_INSTANCE_STACK) > 0) and CLASS_INSTANCE_STACK[-1] != "|ARG_WALL|"
 
     if is_arr:
         # It is an array!
@@ -729,21 +729,22 @@ def parse_var(id, mode):
         ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1], is_ptr = True)
 
         # Check array value at index
-        push_to_quads(Quad("ACCESS", FUNC_DIR.get_symbol_mem_index(array_id, array_scope),  FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
+
+        push_to_quads(Quad("ARR_ACCESS", FUNC_DIR.get_symbol_mem_index(array_id, array_scope, is_class_attr),  FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
 
         if not mode: # We are assigning to this array, need a pointer
-            OPERAND_STACK.append(FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]))
+            OPERAND_STACK.append([FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
             TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]))
 
         else: # We are just using the value at this index, no need for a pointer; Can resolve into a tmp
             value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1])
             push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
-            OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]))
+            OPERAND_STACK.append([FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
             TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index, SCOPES_STACK[-1]))
 
     else:
-        # It is a regular variable!
-        if not len(DOT_OP_STACK) or DOT_OP_STACK[-1] == "|ARG_WALL|":
+        # It is a regular (simple) variable!
+        if not is_class_attr:
             # Regular Variable
             var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], is_class_attr)
             if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]):
@@ -760,8 +761,26 @@ def parse_var(id, mode):
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
-            OPERAND_STACK.append([var, DOT_OP_STACK[-1], is_class_attr])
-            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True))
+            if not mode: # We are assigning to this object's attribute, need a pointer
+
+                # OG ACTION (before 'if mode' was added here)
+                OPERAND_STACK.append([var, DOT_OP_STACK[-1], is_class_attr])
+                TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True))
+
+            else: # We are just using the value from this object's attribute, no need for a pointer; Can resolve into a tmp
+
+                attr_type = FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True)
+                value_at_attr = FUNC_DIR.next_avail(attr_type, SCOPES_STACK[-1])
+
+                parent_object = OBJECT_ACCESS_STACK.pop()
+
+                if parent_object == "this_kwd":
+                    push_to_quads(Quad("OBJ_READ", -1, FUNC_DIR.get_symbol_mem_index(var, DOT_OP_STACK[-1], is_class_attr), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
+                else:
+                    push_to_quads(Quad("OBJ_READ", FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(var, DOT_OP_STACK[-1], is_class_attr), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
+
+                OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_attr, SCOPES_STACK[-1]))
+                TYPE_STACK.append(attr_type)
 
     if len(DOT_OP_STACK):
         DOT_OP_STACK.pop()
@@ -802,6 +821,10 @@ def p_class_reference(p):
         p[0] = p[1]
     else:
         p[0] = p[2]
+
+    obj_id = p[0]
+
+    OBJECT_ACCESS_STACK.append(obj_id)
 
 def p_seen_this_kwd(p):
     ''' seen_this_kwd : empty '''
@@ -852,6 +875,7 @@ def p_class_instance(p):
     ''' CLASS_INSTANCE : NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS '''
     class_instance = FUNC_DIR.next_avail("object", SCOPES_STACK[-1])
     FUNC_DIR.set_symbol_object_type(class_instance, p[2], SCOPES_STACK[-1])
+    push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(p[2]), FUNC_DIR.get_symbol_mem_index  (class_instance, SCOPES_STACK[-1])))
     OPERAND_STACK.append(class_instance)
     TYPE_STACK.append("object")
 
@@ -894,8 +918,16 @@ def p_array_p(p):
 def p_seen_array_id(p):
     ''' seen_array_id : empty '''
     id = p[-1]
-    FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1])
-    if not FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]):
+
+    scope_in_use = SCOPES_STACK[-1]
+    is_attr = False
+
+    if len(DOT_OP_STACK) and DOT_OP_STACK[-1] != "|ARG_WALL|":
+        scope_in_use = DOT_OP_STACK[-1]
+        is_attr = True
+
+    FUNC_DIR.symbol_lookup(id, scope_in_use, is_attr)
+    if not FUNC_DIR.is_sym_arr(id, scope_in_use):
         raise Exception(">> Name Error: Cannot access non-array symbol " + id + " with [] operator")
     ARRAY_DIMENSION_STACK.append([id])
 
@@ -904,6 +936,8 @@ def p_seen_open_bracket(p):
     ''' seen_open_bracket : empty '''
     OPERATOR_STACK.append("|ARRAY_ACCESS_WALL|") # Stack Fake Wall
     DOT_OP_STACK.append("|ARG_WALL|") # Stack Fake Wall
+    CLASS_INSTANCE_STACK.append("|ARG_WALL|") # Stack Fake Wall
+    OBJECT_ACCESS_STACK.append("|ARG_WALL|") # Stack Fake Wall
 
 def p_seen_array_access(p):
     ''' seen_array_access : empty '''
@@ -915,8 +949,15 @@ def p_seen_array_access(p):
     ARRAY_DIMENSION_STACK[-1].append(access)
 
     OPERATOR_STACK.pop() # Pop Fake Wall
+
     if len(DOT_OP_STACK):
         DOT_OP_STACK.pop() # Pop Fake Wall
+
+    if len(CLASS_INSTANCE_STACK):
+        CLASS_INSTANCE_STACK.pop() # Pop Fake Wall
+
+    if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
+        OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
 def p_array_definition(p):
     ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
@@ -973,7 +1014,14 @@ def p_func_call(p):
 
     FUNC_DIR.args_ok(p[0], scope_in_use)
 
-    push_to_quads(Quad("GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1], scope_in_use)))
+    if scope_in_use == "GLOBAL":
+        push_to_quads(Quad("GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1], scope_in_use)))
+    else:
+        parent_object = OBJECT_ACCESS_STACK.pop()
+        if parent_object == "this_kwd":
+            push_to_quads(Quad("OBJ_GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1], scope_in_use)))
+        else:
+            push_to_quads(Quad("OBJ_GOSUB", -1, FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_start_addr(p[1], scope_in_use)))
 
     FUNC_CALL_STACK.pop()
     if len(FUNC_CALL_STACK):
@@ -981,24 +1029,31 @@ def p_func_call(p):
 
     return_type = FUNC_DIR.func_type_lookup(p[1], scope_in_use)
 
-
     temp = FUNC_DIR.next_avail(return_type, SCOPES_STACK[-1])
     OPERAND_STACK.append(temp)
     TYPE_STACK.append(return_type)
 
     if return_type != "void":
-        rtn_obj_name = FUNC_DIR.get_return_obj_name(p[1])
-        push_to_quads(Quad("=", get_ptr_value(None, [temp, SCOPES_STACK[-1]]), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(temp, SCOPES_STACK[-1])))
+        rtn_obj_name = FUNC_DIR.get_return_obj_name(p[1], scope_in_use)
+        push_to_quads(Quad("=", get_ptr_value(None, [temp, SCOPES_STACK[-1]]), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, "GLOBAL"), FUNC_DIR.get_symbol_mem_index(temp, SCOPES_STACK[-1])))
 
     if len(DOT_OP_STACK):
         DOT_OP_STACK.pop()    # POP ARGUMENT FAKE WALL
+
+    if len(CLASS_INSTANCE_STACK):
+        CLASS_INSTANCE_STACK.pop() # Pop Fake Wall
+
+    if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
+        OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
     OPERATOR_STACK.append("|ARG_WALL|") # ARGUMENT 'FAKE WALL'
     if not len(DOT_OP_STACK) or (len(DOT_OP_STACK) and DOT_OP_STACK[-1] == "|ARG_WALL|"):
         DOT_OP_STACK.append("GLOBAL")
-    DOT_OP_STACK.append("|ARG_WALL|")
+    DOT_OP_STACK.append("|ARG_WALL|") # Stack Fake Wall
+    CLASS_INSTANCE_STACK.append("|ARG_WALL|") # Stack Fake Wall
+    OBJECT_ACCESS_STACK.append("|ARG_WALL|") # Stack Fake Wall
     func_type = FUNC_DIR.func_type_lookup(p[-1], DOT_OP_STACK[-2])
     push_to_quads(Quad("ERA", -1, -1, FUNC_DIR.get_start_addr(p[-1], DOT_OP_STACK[-2])))
     FUNC_DIR.set_param_index(p[-1], 0, DOT_OP_STACK[-2])
@@ -1014,6 +1069,12 @@ def p_arg_list(p):
 
     if len(DOT_OP_STACK) and DOT_OP_STACK[-1] == "|ARG_WALL|":
         DOT_OP_STACK.pop()    # POP ARGUMENT FAKE WALL
+
+    if len(CLASS_INSTANCE_STACK) and CLASS_INSTANCE_STACK[-1] == "|ARG_WALL|":
+        CLASS_INSTANCE_STACK.pop() # Pop Fake Wall
+
+    if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
+        OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
 def p_arg_list_p(p):
     ''' ARG_LIST_P : COMMA VAR seen_var_as_factor seen_arg ARG_LIST_P
@@ -1039,6 +1100,7 @@ def p_seen_arg(p):
             scope_in_use = DOT_OP_STACK[-1]
 
     k = FUNC_DIR.verify_arg_type(FUNC_CALL_STACK[-1][0], arg_type, scope_in_use)
+
     push_to_quads(Quad("PARAM", -1, FUNC_DIR.get_symbol_mem_index(arg, arg_scope, is_attr), FUNC_DIR.get_param_mem_index(FUNC_CALL_STACK[-1][0], k, scope_in_use)))
     FUNC_CALL_STACK[-1][1] = k
 
@@ -1048,22 +1110,26 @@ def p_func_return(p):
 
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
-    retn_scope = SCOPES_STACK[-1]
-    is_attr = False
-    if type(rtn_id) == list:
-        rtn_id, retn_scope, is_attr = rtn_id
 
-    rtn_obj_name = FUNC_DIR.get_return_obj_name()
+    FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER + 1, SCOPES_STACK[-1])
 
-    push_to_quads(Quad("=", get_ptr_value([rtn_id, retn_scope], None), FUNC_DIR.get_symbol_mem_index(rtn_id, retn_scope, is_attr), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, "GLOBAL")))
-    push_to_quads(Quad("ENDFNC", -1, -1, -1))
+    if rtn_type != "void":
+        retn_scope = SCOPES_STACK[-1]
+        is_attr = False
+        if type(rtn_id) == list:
+            rtn_id, retn_scope, is_attr = rtn_id
 
-    FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER - 1, SCOPES_STACK[-1])
+        rtn_obj_name = FUNC_DIR.get_return_obj_name(scope = SCOPES_STACK[-1])
+
+        push_to_quads(Quad("=", get_ptr_value([rtn_id, retn_scope], None), FUNC_DIR.get_symbol_mem_index(rtn_id, retn_scope, is_attr), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, "GLOBAL")))
+
+    push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
+
 
 def p_void_func_return(p):
     ''' FUNC_RETURN : RETURN_KWD SEMI_COLON '''
     FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])
-    push_to_quads(Quad("ENDFNC", -1, -1, -1))
+    push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
 
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
@@ -1100,6 +1166,13 @@ def p_seen_printable(p):
     if type(printable) == list:
         printable, printable_scope, printable_is_attr = printable
     printable_type = TYPE_STACK.pop()
+
+    if printable_type in ["void", "object"]:
+        if printable != None:
+            raise Exception("Type Error: Cannot print symbol " + printable + " of type " + printable_type)
+        else:
+            raise Exception("Type Error: Cannot print " + printable_type)
+
     push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope, printable_is_attr)))
 
 def p_func_decision(p):
@@ -1291,13 +1364,24 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
 
+    print(right_operand, res, res_attr)
     if res_type == "object":
         FUNC_DIR.set_symbol_object_type(res, FUNC_DIR.get_object_symbol_type(right_operand, SCOPES_STACK[-1]), SCOPES_STACK[-1])
 
     if SemanticCube[res_type][op][right_type] == "err":
         raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
     else:
-        push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+        if not res_attr:
+            # Assigning to regular variable
+            push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+        else:
+            # Assigning to class variable
+            parent_object = OBJECT_ACCESS_STACK.pop()
+            if parent_object == "this_kwd":
+                push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
+            else:
+                push_to_quads(Quad("OBJ_WRITE", FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
+
         if push_back_operand:
             OPERAND_STACK.append(res)
         if push_back_type:
@@ -1325,24 +1409,32 @@ def fill_vm_file(file_path, marker_str, start_str, end_str, info):
             if c == marker_str:
                 line_indices.append(i)
 
+    info_size = len(info)
+    if not info_size:
+        info_size = 1
+
     # IF THERE ARE MORE/LESS LINES THAN LAST TIME...
-    quad_size_diff = len(info) - (line_indices[1] - line_indices[0]) + 2
+    quad_size_diff = info_size - (line_indices[1] - line_indices[0]) + 2
 
     for i in range(quad_size_diff):
         contents.insert(line_indices[1], "\n") # More info! Add more lines
 
     for i in range(-quad_size_diff):
-        contents.pop(line_indices[0] + len(info)) # Less info! Get rid of useless lines
+        contents.pop(line_indices[0] + info_size) # Less info! Get rid of useless lines
 
     insert_start_index =  line_indices[0] + 2
-    insert_end_index = insert_start_index + len(info)
+    insert_end_index = insert_start_index + info_size
 
     contents[line_indices[0] + 1] = start_str
 
-    for i in range(insert_start_index, insert_end_index):
-        contents[i] = info[i - insert_start_index]
+    if len(info):
+        for i in range(insert_start_index, insert_end_index):
+            contents[i] = info[i - insert_start_index]
 
-    contents[insert_end_index] = end_str + marker_str
+    if "};" not in contents[insert_end_index - 1]:
+        contents[insert_end_index] = end_str + marker_str
+    else:
+        contents[insert_end_index] = marker_str
 
     with open(VM_FILE_PATH, "w") as f:
         contents = "".join(contents)
@@ -1356,9 +1448,19 @@ VM_QUAD_MARKER_STR = "// QUADS //\n"
 VM_QUAD_START_STR = "const vector<vector<int>> QUADS = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
 
-VM_MEMORY_MARKER_STR = "// MEMORY //\n"
-VM_MEMORY_START_STR = "const map<int, vector<vector<int>>> MEMORY_CONTEXT_SIGN = {\n"
-VM_MEMORY_END_STR = "\t" * 10 + "};\n"
+
+
+VM_MEMORY_CONSTRAINTS_MARKER_STR = "// MEMORY_CONSTRAINTS //\n"
+VM_MEMORY_CONSTRAINTS_START_STR = ""
+VM_MEMORY_CONSTRAINTS_END_STR = ""
+
+VM_FUNCTION_MEMORY_MARKER_STR = "// FUNCTION_MEMORY //\n"
+VM_FUNCTION_MEMORY_START_STR = "const map<int, vector<vector<int>>> FUNCTION_MEMORY_CONTEXT_SIGN = {\n"
+VM_FUNCTION_MEMORY_END_STR = "\t" * 10 + "};\n"
+
+VM_OBJECT_MEMORY_MARKER_STR = "// OBJECT_MEMORY //\n"
+VM_OBJECT_MEMORY_START_STR = "const map<int, vector<int>> OBJECT_MEMORY_CONTEXT_SIGN = {\n"
+VM_OBJECT_MEMORY_END_STR = "\t" * 10 + "};\n"
 
 VM_CONSTANTS_MARKER_STR = "// CONSTANTS //\n"
 VM_CONSTANTS_START_STR = "const map<int, string> CONSTANTS = {\n"
@@ -1417,34 +1519,38 @@ def main(argv):
         print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
         '''
 
-    vm_quads = []
-    for i in range(len(QUADS)):
-        vm_quads.append("\t" * 10 + QUADS[i].get_cpp_string() + "\n")
+    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", MAX_OBJ_TMP_SYMBOLS = " + str(MAX_OBJ_TMP_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
 
-    fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
+    fill_vm_file(VM_FILE_PATH, VM_MEMORY_CONSTRAINTS_MARKER_STR, mem_constraints_str, VM_MEMORY_CONSTRAINTS_END_STR, [])
 
-    vm_memory = []
+    vm_func_memory = []
     for context in FUNC_DIR.FUNCS.keys():
         if context == FUNC_DIR.program_name:
             global_mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_main_start_addr()) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].var_memory_signature.values())]) + "}"
             global_temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].temp_memory_signature.values())]) + "}"
             global_const_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context].const_memory_signature.values())]) + "}}},\n"
-            vm_memory.insert(0, global_mem_sign + ", " + global_temp_sign + ", " + global_const_sign)
+            vm_func_memory.insert(0, global_mem_sign + ", " + global_temp_sign + ", " + global_const_sign)
         else:
             if context == "GLOBAL":
                 for func in FUNC_DIR.FUNCS[context].keys():
                     mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func, context)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
                     temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
-                    vm_memory.append(mem_sign + ", " + temp_sign)
+                    vm_func_memory.append(mem_sign + ", " + temp_sign)
             else:
                 for func in FUNC_DIR.FUNCS[context]["FUNCS"].keys():
                     mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func, context)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func][2].var_memory_signature.values())]) + "}"
                     temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func][2].temp_memory_signature.values())]) + "}}},\n"
-                    vm_memory.append(mem_sign + ", " + temp_sign)
+                    vm_func_memory.append(mem_sign + ", " + temp_sign)
 
-    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", MAX_OBJ_TMP_SYMBOLS = " + str(MAX_OBJ_TMP_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";\n\n"
+    fill_vm_file(VM_FILE_PATH, VM_FUNCTION_MEMORY_MARKER_STR, VM_FUNCTION_MEMORY_START_STR, VM_FUNCTION_MEMORY_END_STR, vm_func_memory)
 
-    fill_vm_file(VM_FILE_PATH, VM_MEMORY_MARKER_STR, mem_constraints_str + VM_MEMORY_START_STR, VM_MEMORY_END_STR, vm_memory)
+    vm_obj_memory = []
+    for i, context in enumerate(FUNC_DIR.FUNCS.keys()):
+        if context not in [FUNC_DIR.program_name, "GLOBAL"]:
+            mem_sign = "\t" * 10 +  '{' + str(i) + ', {' + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["SYMBOLS"].var_memory_signature.values())]) + "}},\n"
+            vm_obj_memory.append(mem_sign)
+
+    fill_vm_file(VM_FILE_PATH, VM_OBJECT_MEMORY_MARKER_STR, VM_OBJECT_MEMORY_START_STR, VM_OBJECT_MEMORY_END_STR, vm_obj_memory)
 
     vm_constants = []
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
@@ -1457,6 +1563,13 @@ def main(argv):
             vm_constants.append(cnst_string)
 
     fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)
+
+
+    vm_quads = []
+    for i in range(len(QUADS)):
+        vm_quads.append("\t" * 10 + QUADS[i].get_cpp_string() + "\n")
+
+    fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
 
     '''
     for i, q in enumerate(QUADS):

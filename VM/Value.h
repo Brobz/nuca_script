@@ -2,6 +2,13 @@
 #include <algorithm>
 #include <iostream>
 
+#ifndef Value_H_
+#define Value_H_
+
+#include "Memory.h"
+
+class Memory;
+
 using namespace std;
 
 class Value{
@@ -13,6 +20,7 @@ class Value{
       float f = 0.0;
       string s = "";
       bool b = false;
+      Memory o;
 
       Value(){
         type = -1;
@@ -38,6 +46,11 @@ class Value{
         b = _b;
       };
 
+      Value(Memory _o){
+        type = 4;
+        o = _o;
+      };
+
       bool has_value(){
         return type >= 0;
       }
@@ -59,6 +72,10 @@ class Value{
           case 3: // BOOLEAN
           {
             return to_string(b);
+          } break;
+          case 4: // OBJECT
+          {
+            return to_string(o.signature);
           } break;
           default:
           {
@@ -664,4 +681,11 @@ class Value{
         b = _b;
         type = 3;
       }
+
+      void set_o(Memory _o){
+        o = _o;
+        type = 4;
+      }
 };
+
+#endif /*Value_H_*/

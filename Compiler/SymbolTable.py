@@ -11,7 +11,7 @@ class SymbolTable(object):
     #                       2 -> LOCAL          3 -> BOOL           0 -> VAR
     #                       3 -> CLASS          4 -> OBJECT         1 -> TMP
 
-    SYMBOL_CLASSES = ["constant", "symbol", "temporal variable"]
+    SYMBOL_CLASSES = ["constant", "symbol", "temporal variable", "class variable"]
     MEMORY_SECTOR_SIGN = [["0", "1", "2", "3"], ["0", "1", "2", "3", "4"], ["0", "1"]]
     MEMORY_SECTOR_SHIFTS = None
 
@@ -36,7 +36,8 @@ class SymbolTable(object):
 
     def set_sym_obj_type(self, sym_id, obj_type):
         if sym_id in self.SYMBOLS:
-            self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2], self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type)
+            self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2],
+                                    self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type)
         else:
             raise Exception("Cannot set object type " + obj_type + " to " + sym_id + " in " + self.scope)
 
@@ -71,7 +72,10 @@ class SymbolTable(object):
             return -1
 
     def build_memory_secor_shift(self, mem_constraints):
-        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * self.var_types, mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2]) * self.var_types, mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2] + mem_constraints[3] + mem_constraints[4]) * self.var_types], [0, mem_constraints[2] * self.var_types]]
+        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * self.var_types,
+                                            mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2]) * self.var_types,
+                                            mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2]) * self.var_types * 2],
+                                            [0, mem_constraints[2] * self.var_types]]
 
     def get_mem_index(self, sym_id):
         if sym_id in self.SYMBOLS:

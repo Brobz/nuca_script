@@ -16,19 +16,23 @@ OPCodes = {
                 "||" :          11,     # IMPLEMENTED
                 "!=" :          12,     # IMPLEMENTED
                 "!" :           13,     # IMPLEMENTED
-                "ACCESS" :      14,     # IMPLEMENTED
+                "ARR_ACCESS" :  14,     # IMPLEMENTED
                 "ARR_BNDS" :    15,     # IMPLEMENTED
-                "ERA" :         16,     # IMPLEMENTED
-                "PARAM" :       17,     # IMPLEMENTED
-                "GOSUB" :       18,     # IMPLEMENTED
-                "READ" :        19,     # IMPLEMENTED
-                "PRNTBFFR" :    20,     # IMPLEMENTED
-                "PRNT" :        21,     # IMPLEMENTED
-                "PRNTLN" :      22,     # IMPLEMENTED
-                "GOTO" :        23,     # IMPLEMENTED
-                "GOTOF" :       24,     # IMPLEMENTED
-                "ENDFNC" :      25,     # IMPLEMENTED
-                "END" :         26,     # IMPLEMENTED
+                "OBJ_INST" :    16,     #
+                "OBJ_READ" :    17,     #
+                "OBJ_WRITE" :   18,     #
+                "ERA" :         19,     # IMPLEMENTED
+                "PARAM" :       20,     # IMPLEMENTED
+                "GOSUB" :       21,     # IMPLEMENTED
+                "OBJ_GOSUB" :   22,     #
+                "READ" :        23,     # IMPLEMENTED
+                "PRNTBFFR" :    24,     # IMPLEMENTED
+                "PRNT" :        25,     # IMPLEMENTED
+                "PRNTLN" :      26,     # IMPLEMENTED
+                "GOTO" :        27,     # IMPLEMENTED
+                "GOTOF" :       28,     # IMPLEMENTED
+                "ENDFNC" :      29,     # IMPLEMENTED
+                "END" :         30,     # IMPLEMENTED
 
 
 }

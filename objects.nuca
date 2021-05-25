@@ -6,6 +6,7 @@ v, no : object;
 int times_two(i : string)
 VARS{}
 {
+  println(i);
   return 2;
 }
 
@@ -19,6 +20,7 @@ class No_Attr {
   int times_two(i : int, k : int)
   VARS{}
   {
+    println("WOOOOOW!");
     return f;
   }
 }
@@ -26,29 +28,41 @@ class No_Attr {
 
 class Value {
   ATTR{
-    value_f, other_int : int;
+    value_f, other_int, int_arr[100] : int;
     i : float;
     value_other : string;
   }
   int times_two(i : int)
   VARS{
     vvv, other_int : int;
-    value_f : string;
     obj : object;
   }
   {
-    println(this.value_f / 10);
+    println("we got here!");
     println("HI" * i);
-    v = new Value();
     obj = new No_Attr();
-    return f * vvv *  obj.times_two(this.times_two(other_int), 15) + this.value_f;
+    other_int = 5;
+    vvv = 1;
+    println(this.value_other, this.value_f);
+    return f * vvv *  obj.times_two(times_two(other_int + " HI!"), 15) + this.value_f;
   }
 }
 
 
 
 main (){
+  f = 2;
   v = new Value();
   no = new No_Attr();
+  println("HI!");
+  no.attr_string = "ok";
+  println(no.attr_string);
+  v.value_other = no.attr_string * 5;
+  println(v.value_other);
+  v.value_f = 10;
+  // v.int_arr[50] = 100; //
+  // println(v.int_arr[50]); //
+  read(v.value_other);
   no.attr_string = no.attr_string * v.times_two(v.value_f);
+  println(no.attr_string);
 }

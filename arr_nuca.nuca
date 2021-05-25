@@ -49,9 +49,9 @@ VARS{}
 obj : object;
 
 main (){
-  obj = new ArrayClass();
+  //obj = new ArrayClass();
   obj.int_arr[5] = 93;
-  obj.print_array(7);
+  obj.print_array(7);//
   idx = 2;
   println(idx);
   int_arr[idx] = 2;

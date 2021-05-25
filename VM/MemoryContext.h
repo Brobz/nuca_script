@@ -13,6 +13,7 @@ class MemoryContext{
 
 
       int return_addr = 0;
+      MemoryContext* return_scope;
       bool active = true;
       vector<string> print_buffer;
       Memory const_mem, local_mem, temp_mem;

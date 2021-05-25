@@ -13,15 +13,18 @@ class MemoryContext;
 class Memory{
   public:
 
+    int signature;
+    Memory* return_memory;
     vector<int> ints;
     vector<float> floats;
     vector<string> strings;
     vector<bool> booleans;
-    vector<MemoryContext> objects;
+    vector<Memory> objects;
 
     Memory(){};
 
-    Memory(vector<int> size){
+    Memory(vector<int> size, int sign = -1){
+      signature = sign;
       for (int i = 0; i < size.size(); i++){
         if (!i) ints.resize(size[i]);
         else if (i == 1) floats.resize(size[i]);

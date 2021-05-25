@@ -16,6 +16,13 @@ class FunctionDirectory(object):
         self.mem_constraints = mem_constraints
 
 
+    def get_class_idx(self, cls):
+        for i, context in enumerate(self.FUNCS.keys()):
+            if context == cls:
+                return i
+
+        raise Exception("Could not get class index for " + cls)
+
     def valid_class_check(self, cls):
         if cls == "GLOBAL" or cls == self.program_name:
             return False
@@ -177,16 +184,18 @@ class FunctionDirectory(object):
                 self.FUNCS[scope]["FUNCS"][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
         return t_id
 
-    def get_return_obj_name(self, func_name =  None):
+    def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):
         if func_name == None:
             if self.current_scope == None:
-                raise Exception("Scope error: cannot get function return object name for " + func_name)
+                raise Exception("Scope error: cannot get function return object name")
             func_name = self.current_scope
 
-        if func_name not in self.FUNCS[self.program_name].SYMBOLS:
-            raise  Exception("Name error: cannot get function return object name for " + func_name  + " in " + scope)
+        rtn_obj_name = scope + "." + func_name
 
-        return func_name
+        if rtn_obj_name not in self.FUNCS[self.program_name].SYMBOLS:
+            raise  Exception("Name error: cannot get function return object name for " + rtn_obj_name)
+
+        return rtn_obj_name
 
     def valid_return_check(self, ptr, scope):
         if self.current_scope == None:
@@ -394,7 +403,7 @@ class FunctionDirectory(object):
             self.program_name = func_id
             self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name)
         elif func_id not in self.FUNCS[scope]:
-            self.declare_symbol(func_id, func_type, scope, is_return_value = True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
+            self.declare_symbol(scope + "." + func_id, func_type, "GLOBAL", is_return_value = True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
             if scope == "GLOBAL":
                 self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
             else:
