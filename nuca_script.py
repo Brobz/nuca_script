@@ -734,7 +734,7 @@ def parse_var(id, mode):
 
         array_type = FUNC_DIR.symbol_type_lookup(array_id, array_scope, is_class_attr)
 
-        ptr_to_array_value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1], is_ptr = True)
+        ptr_to_array_value_at_index = FUNC_DIR.next_avail("int", SCOPES_STACK[-1], is_ptr = True)
 
         # Check array value at index
 

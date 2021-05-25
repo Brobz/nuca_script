@@ -74,6 +74,8 @@ main (){
   println(no.attr_string);
   v.init(10, 5, 5 * - no.attr_string);
   println(v.value_other);
+  v.int_arr[5] = 111;
+  println(v.int_arr[5]);
   print(">> Enter an integer:\n-- ");
   read(v.int_arr[no.times_two(0, 0)]);
   print(">> Enter a string:\n-- ");

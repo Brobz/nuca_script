@@ -10,7 +10,8 @@ idx : int;
 
 class ArrayClass{
   ATTR{
-    int_arr[100] : float;
+    int_arr[100] : int;
+    float_arr[100] : float;
   }
   int get_10()
   VARS{}
@@ -23,7 +24,7 @@ class ArrayClass{
   }
   {
     for(j = 0; j < i; j = j + 1){
-      println(j, int_arr[this.int_arr[j] > this.get_10()] * "HI");
+      println(j, int_arr[this.float_arr[j] > this.get_10()] * "HI");
     }
   }
 }
@@ -49,9 +50,12 @@ VARS{}
 obj : object;
 
 main (){
-  //obj = new ArrayClass();
-  obj.int_arr[5] = 93;
-  obj.print_array(7);//
+  obj = new ArrayClass();
+  obj.int_arr[5] = 6;
+  int_arr[obj.int_arr[5]] = 92;
+  obj.float_arr[5] = 93;
+  println(int_arr[6], obj.float_arr[5]);
+  obj.print_array(7);
   idx = 2;
   println(idx);
   int_arr[idx] = 2;
