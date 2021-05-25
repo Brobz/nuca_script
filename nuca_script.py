@@ -165,78 +165,93 @@ lexer = lex.lex()
 // VIRTUAL MEMORY MODEL //
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
     [0,                                                                                                                    MAX_CONSTANTS - 1]                                                                                                        ->          Constant Ints
     [MAX_CONSTANTS,                                                                                                        2 * MAX_CONSTANTS - 1]                                                                                                    ->          Constant Floats
     [2 * MAX_CONSTANTS,                                                                                                    3 * MAX_CONSTANTS - 1]                                                                                                    ->          Constant Strings
     [3 * MAX_CONSTANTS,                                                                                                    4 * MAX_CONSTANTS - 1]                                                                                                    ->          Constant Booleans
+
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
     [4 * MAX_CONSTANTS,                                                                                                    4 * MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                                                      ->          Global Ints
     [4 * MAX_CONSTANTS + MAX_SYMBOLS,                                                                                      4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS - 1]                                                                                  ->          Global Floats
     [4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS - 1]                                                                                  ->          Global Strings
     [4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS - 1]                                                                                  ->          Global Booleans
     [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS - 1]                                                                                  ->          Global Objects
+
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
     [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                                                ->          Global Temp Ints
     [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + MAX_TMP_SYMBOLS,                                                                4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Floats
     [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Strings
     [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Booleans
     [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Objects
+
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
     [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Ints
     [4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Floats
     [4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Strings
     [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Booleans
     [4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Objects
+
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Ints
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Floats
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Strings
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Booleans
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Objects
+
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS,                                                          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS - 1]                                        ->          Object Ints
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS,                                        4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Floats
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                                     4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Strings
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                                    4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Boooleans
+
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+// OBJECT MANAGEMENT //
+
+    //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
+
+    -> Store class function quads just like any other function
+    -> Create FuncDir scope and memory signature for each object type
+    -> Create a THIS_MEM pointer in VM, which will be used to know which object's memory to use as the "this" referentiator inside class methods
+    -> Uppon creating an object instance, generate a MemoryContext using the signature, and store it in this symbols mem (will need to have a Memory var in Value to store this)
+
+    -> Similarly to arrays, objects quads will dependend on where they are seen:
+        - If an obj is seen on the left side of an assignment, we will use OBJ_WRITE
+        - If an obj is seen on the right side of an assignment (as a factor), we will use OBJ_READ
+        - If an obj calls a function, we will OBJ_GOSUB to that function, setting all of the  "this" to point to its memory context, so that the function can do OBJ_READS on it
+
+    // OBJ_INST //
+    Creates an instace of obj_sign signature and stores it into obj_dir
+    | OBJ_INST | -1 | obj_sign | obj_dir (locl_mem) |
+
+    // OBJ_READ //
+    Reads from obj_var_dir in obj_dir's memory and writes it to result_dir (local_mem)
+    | OBJ_READ | obj_dir (local_mem) | obj_var_dir (obj_mem) | result_dir (local_mem) |
+
+    // OBJ_WRITE //
+    Writes value_dir into obj_var_dir in obj_dir's memory
+    | OBJ_WRITE | obj_dir (local_mem) | value_dir (local_mem) | obj_var_dir (obj_mem) |
+
+    // OBJ_GOSUB //
+    Sets THIS_MEM to point to obj_dir, LOCAL_MEM to point to the top of the mem stack, and LOCAL_MEM retn addr to IP + 1; then sets IP to start_addr
+    | OBJ_GOSUB | -1 | obj_dir (local_mem) | start_addr (local_mem) |
+
+    //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SPRINT //
 
-// TODO : Add Object Quad Execution
-
-        //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
-
-        1. Properly parse pointers in OBJ_WRITE (and possibly OBJ_READ)
-
-        //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
-
-        -> Store class function quads just like any other function
-        -> Create FuncDir scope and memory signature for each object type
-        -> Create a THIS_MEM pointer in VM, which will be used to know which object's memory to use as the "this" referentiator inside class methods
-        -> Uppon creating an object instance, generate a MemoryContext using the signature, and store it in this symbols mem (will need to have a MemoryContext var in Value to store this)
-
-        -> Similarly to arrays, objects quads will dependend on where they are seen:
-            - If an obj is seen on the left side of an assignment, we will use OBJ_WRITE
-            - If an obj is seen on the right side of an assignment (as a factor), we will use OBJ_READ
-            - If an obj calls a function, we will OBJ_GOSUB to that function, setting all of the  "this" to point to its memory context, so that the function can do OBJ_READS on it
-
-        // OBJ_INST //
-        Creates an instace of obj_sign signature and stores it into obj_dir
-        | OBJ_INST | -1 | obj_sign | obj_dir (locl_mem) |
-
-        // OBJ_READ //
-        Reads from obj_var_dir in obj_dir's memory and writes it to result_dir (local_mem)
-        | OBJ_READ | obj_dir (local_mem) | obj_var_dir (obj_mem) | result_dir (local_mem) |
-
-        // OBJ_WRITE //
-        Writes value_dir into obj_var_dir in obj_dir's memory
-        | OBJ_WRITE | obj_dir (local_mem) | value_dir (local_mem) | obj_var_dir (obj_mem) |
-
-        // OBJ_GOSUB //
-        Sets THIS_MEM to point to obj_dir, LOCAL_MEM to point to the top of the mem stack, and LOCAL_MEM retn addr to IP + 1; then sets IP to start_addr
-        | OBJ_GOSUB | -1 | obj_dir (local_mem) | start_addr (local_mem) |
+// TODO : REST!
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -347,14 +362,7 @@ def p_seen_class_id_declaration(p):
 def p_seen_class_attr(p):
     ''' seen_class_attr : empty '''
     if p[-1] != None:
-        for list in p[-1].split("||"):
-            type = list.split(":")[1]
-            for id in list.split(":")[0].split(','):
-                if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
-                    dims = ARRAY_DIMENSION_STACK.pop(0)
-                    FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
-                else:
-                    FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1])
+        parse_vars_declaration(p[-1])
 
 def p_class_attr(p):
     ''' CLASS_ATTR : ATTR_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY '''
@@ -425,14 +433,7 @@ def p_seen_readable(p):
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
     if p[1] != None:
-        for list in p[1].split("||"):
-            type = list.split(":")[1]
-            for id in list.split(":")[0].split(','):
-                if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
-                    dims = ARRAY_DIMENSION_STACK.pop(0)
-                    FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
-                else:
-                    FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1])
+        parse_vars_declaration(p[1])
 
 def p_func_def_star(p):
     ''' FUNC_DEF_STAR : FUNC_DEF FUNC_DEF_STAR
@@ -462,16 +463,24 @@ def p_seen_func_params(p):
 def p_seen_func_vars(p):
     ''' seen_func_vars : empty '''
     if p[-1] != None:
-        for list in p[-1].split("||"):
-            type = list.split(":")[1]
-            for id in list.split(":")[0].split(','):
-                if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
-                    dims = ARRAY_DIMENSION_STACK.pop(0)
-                    FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
-                else:
-                    FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1])
+        parse_vars_declaration(p[-1])
 
     FUNC_DIR.set_start_addr(QUAD_POINTER, SCOPES_STACK[-1])
+
+
+def parse_vars_declaration(var_list):
+    for list in var_list.split("||"):
+        type = list.split(":")[1]
+        for id in list.split(":")[0].split(','):
+            if type == "void":
+                raise Exception("Type Error: Cannot declare 'void' type variables")
+            if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
+                if type == "object":
+                    raise Exception("Type Error: Cannot declare 'object' type arrays")
+                dims = ARRAY_DIMENSION_STACK.pop(0)
+                FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
+            else:
+                FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1])
 
 def p_func_param(p):
     ''' FUNC_PARAM : VAR_DECLARATION FUNC_PARAM_P
@@ -738,9 +747,24 @@ def parse_var(id, mode):
 
         else: # We are just using the value at this index, no need for a pointer; Can resolve into a tmp
             value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1])
-            push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
-            OPERAND_STACK.append([FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
-            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index, SCOPES_STACK[-1]))
+            if not is_class_attr:
+                # Global / local array! Just use a regular =
+                push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
+
+                OPERAND_STACK.append([FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
+                TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index, SCOPES_STACK[-1]))
+
+            else:
+                # Array as an object attribute! Use OBJ_READ
+                parent_obj_dir = -1
+                parent_obj_id = OBJECT_ACCESS_STACK.pop()
+                if parent_obj_id != "this_kwd":
+                    parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+
+                push_to_quads(Quad("OBJ_READ", parent_obj_dir,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1]), get_ptr_value([ptr_to_array_value_at_index, SCOPES_STACK[-1]], [value_at_index, SCOPES_STACK[-1]])))
+
+                OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]))
+                TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index, SCOPES_STACK[-1]))
 
     else:
         # It is a regular (simple) variable!
@@ -1364,7 +1388,6 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
 
-    print(right_operand, res, res_attr)
     if res_type == "object":
         FUNC_DIR.set_symbol_object_type(res, FUNC_DIR.get_object_symbol_type(right_operand, SCOPES_STACK[-1]), SCOPES_STACK[-1])
 

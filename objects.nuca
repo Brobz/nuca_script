@@ -2,7 +2,6 @@ program OBJS;
 
 v, no : object;
 
-
 int times_two(i : string)
 VARS{}
 {
@@ -43,7 +42,7 @@ class Value {
     obj = new No_Attr();
     other_int = 5;
     vvv = 1;
-    println(this.value_other, this.value_f);
+    println(this.value_other, this.value_f, this.int_arr[50]);
     return f * vvv *  obj.times_two(times_two(other_int + " HI!"), 15) + this.value_f;
   }
 }
@@ -60,8 +59,9 @@ main (){
   v.value_other = no.attr_string * 5;
   println(v.value_other);
   v.value_f = 10;
-  // v.int_arr[50] = 100; //
-  // println(v.int_arr[50]); //
+  print(">> Enter an integer:\n-- ");
+  read(v.int_arr[50]);
+  print(">> Enter a string:\n-- ");
   read(v.value_other);
   no.attr_string = no.attr_string * v.times_two(v.value_f);
   println(no.attr_string);
