@@ -855,7 +855,7 @@ def p_seen_this_kwd(p):
     if len(SCOPES_STACK) < 2:
         raise Exception("Syntax Error: this operator used outside of Class scope")
 
-    if len(DOT_OP_STACK) and DOT_OP_STACK[-1] != "|ARG_WALL|":
+    if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] != "|ARG_WALL|":
         raise Exception("Attribute Error: symbol " + p[-2] + " has no attribute 'this'")
 
     p[0] = "this_kwd"
@@ -1412,7 +1412,7 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
 
 def decision_statement():
     expr_type = TYPE_STACK.pop()
-    if SemanticCube[expr_type]["=="]["boolean"]:
+    if SemanticCube[expr_type]["=="]["boolean"] != "err":
         res_scope = SCOPES_STACK[-1]
         res_attr = False
         res = OPERAND_STACK.pop()

@@ -19,7 +19,6 @@ class No_Attr {
   int times_two(i : int, k : int)
   VARS{}
   {
-    println("WOOOOOW!");
     return f;
   }
 }
@@ -31,6 +30,21 @@ class Value {
     i : float;
     value_other : string;
   }
+
+  string get_lol(prnt : string)
+  VARS{}
+  {
+    println(prnt);
+    return "LOL!";
+  }
+  void init(vf : int, oi : int, vo : string)
+  VARS{}
+  {
+    this.value_f = vf;
+    this.other_int = oi;
+    this.value_other = vo;
+  }
+
   int times_two(i : int)
   VARS{
     vvv, other_int : int;
@@ -42,25 +56,26 @@ class Value {
     obj = new No_Attr();
     other_int = 5;
     vvv = 1;
-    println(this.value_other, this.value_f, this.int_arr[50]);
-    return f * vvv *  obj.times_two(times_two(other_int + " HI!"), 15) + this.value_f;
+    if(this.get_lol("this will print before the values!") == "LOL!"){
+      println(this.value_other, this.value_f, this.int_arr[50]);
+    }
+    return f / 50 * vvv *  obj.times_two(times_two(other_int + " " + this.get_lol("this will print before the LOL!")), 15) + this.value_f;
   }
 }
 
 
 
 main (){
-  f = 2;
+  f = 50;
   v = new Value();
   no = new No_Attr();
   println("HI!");
   no.attr_string = "ok";
   println(no.attr_string);
-  v.value_other = no.attr_string * 5;
+  v.init(10, 5, no.attr_string * 5);
   println(v.value_other);
-  v.value_f = 10;
   print(">> Enter an integer:\n-- ");
-  read(v.int_arr[50]);
+  read(v.int_arr[no.times_two(0, 0)]);
   print(">> Enter a string:\n-- ");
   read(v.value_other);
   no.attr_string = no.attr_string * v.times_two(v.value_f);
