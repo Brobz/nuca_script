@@ -70,9 +70,9 @@ main (){
   v = new Value();
   no = new No_Attr();
   println("HI!");
-  no.attr_string = "ok";
+  no.attr_string = "okidoki";
   println(no.attr_string);
-  v.init(10, 5, no.attr_string * 5);
+  v.init(10, 5, 5 * - no.attr_string);
   println(v.value_other);
   print(">> Enter an integer:\n-- ");
   read(v.int_arr[no.times_two(0, 0)]);

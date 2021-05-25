@@ -277,10 +277,9 @@ MAX_CONSTANTS = 3000            # (per type)
 MAX_SYMBOLS = 5000              # (per type)
 MAX_TMP_SYMBOLS = 5000          # (per type)
 MAX_OBJ_SYMBOLS = 5000          # (per type)
-MAX_OBJ_TMP_SYMBOLS = 5000      # (per type)
 MEMORY_STACK_LIMIT = 100000
 
-FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS, MAX_OBJ_SYMBOLS, MAX_OBJ_TMP_SYMBOLS])
+FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS, MAX_OBJ_SYMBOLS])
 OPERATOR_STACK = []
 OPERAND_STACK = []
 TYPE_STACK = []
@@ -1544,7 +1543,7 @@ def main(argv):
         print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
         '''
 
-    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", MAX_OBJ_TMP_SYMBOLS = " + str(MAX_OBJ_TMP_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
+    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
 
     fill_vm_file(VM_FILE_PATH, VM_MEMORY_CONSTRAINTS_MARKER_STR, mem_constraints_str, VM_MEMORY_CONSTRAINTS_END_STR, [])
 
