@@ -1,6 +1,6 @@
 program OBJS;
 
-v, no : object;
+v, no, no_2 : object;
 
 int times_two(i : string)
 VARS{}
@@ -66,12 +66,14 @@ class Value {
 
 
 main (){
-  f = 50;
+  f = 25;
   v = new Value();
   no = new No_Attr();
+  no_2 = new No_Attr();
+  no_2.attr_string = "something DIFFERENT";
   println("HI!");
   no.attr_string = "okidoki";
-  println(no.attr_string);
+  println("no.attr_string: " + no.attr_string, "no_2.attr_string: " + no_2.attr_string);
   v.init(10, 5, 5 * - no.attr_string);
   println(v.value_other);
   v.int_arr[5] = 111;
