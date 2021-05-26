@@ -89,6 +89,10 @@ main (){
   println(v.int_arr[5]);
   print(">> Enter an integer:\n-- ");
   read(v.int_arr[no.times_two(0, 0)]);
+  if(v.int_arr[no.times_two(0, 0)] == 9393){
+    println(">> Ah, the secret value! Terminating...");
+    return;
+  }
   println(v.int_arr[no.times_two(0, 0)]);
   print(">> Enter a string:\n-- ");
   read(v.value_other);

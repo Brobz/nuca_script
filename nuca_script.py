@@ -285,10 +285,8 @@ lexer = lex.lex()
 
 # Now to parsing!
 
-MAX_CONSTANTS = 3000            # (per type)
-MAX_SYMBOLS = 5000              # (per type)
-MAX_TMP_SYMBOLS = 5000          # (per type)
-MAX_OBJ_SYMBOLS = 5000          # (per type)
+MAX_CONSTANTS = 3000                                        # (per type)
+MAX_SYMBOLS = MAX_TMP_SYMBOLS = MAX_OBJ_SYMBOLS = 5000      # (per type)
 MEMORY_STACK_LIMIT = 100000
 
 FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS, MAX_OBJ_SYMBOLS])
@@ -457,7 +455,7 @@ def p_func_def_star(p):
                       | empty '''
 
 def p_func_def(p):
-    ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
+    ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
     if not FUNC_DIR.valid_return_check(QUAD_POINTER - 1, SCOPES_STACK[-1]):
         FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])
         push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
@@ -525,16 +523,6 @@ def p_vars(p):
     ''' VARS : VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY '''
     p[0] = p[3]
 
-def p_func_statement_star(p):
-    ''' FUNC_STATEMENT_STAR :      ASSIGN SEMI_COLON FUNC_STATEMENT_STAR
-                                |  FUNC_CALL SEMI_COLON FUNC_STATEMENT_STAR
-                                |  READ SEMI_COLON FUNC_STATEMENT_STAR
-                                |  PRINT SEMI_COLON FUNC_STATEMENT_STAR
-                                |  PRINTLN SEMI_COLON FUNC_STATEMENT_STAR
-                                |  FUNC_FLOW_CONTROL FUNC_STATEMENT_STAR
-                                |  FUNC_RETURN FUNC_STATEMENT_STAR
-                                |  empty '''
-
 def p_statement_star(p):
     ''' STATEMENT_STAR :  STATEMENT STATEMENT_STAR
                        | empty '''
@@ -545,15 +533,12 @@ def p_statement(p):
                   | READ SEMI_COLON
                   | PRINT SEMI_COLON
                   | PRINTLN SEMI_COLON
-                  | FLOW_CONTROL '''
+                  | FLOW_CONTROL
+                  | FUNC_RETURN  '''
 
 def p_flow_control(p):
     ''' FLOW_CONTROL :      DECISION
                         |   REPETITION '''
-
-def p_func_flow_control(p):
-    ''' FUNC_FLOW_CONTROL :     FUNC_DECISION
-                            |   FUNC_REPETITION '''
 
 def p_for_incr_statement(p):
     ''' FOR_INCR_STATEMENT :    ASSIGN
@@ -1143,6 +1128,10 @@ def p_func_return(p):
     ''' FUNC_RETURN :   RETURN_KWD EXPRESSION SEMI_COLON
                       | RETURN_KWD FUNC_CALL SEMI_COLON '''
 
+    if FUNC_DIR.current_scope == None:
+        # Return statement outside of function
+        raise Exception('Context Error: non-void return statement outside of function or method (maybe use "return;"?)')
+
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
 
@@ -1163,8 +1152,12 @@ def p_func_return(p):
 
 def p_void_func_return(p):
     ''' FUNC_RETURN : RETURN_KWD SEMI_COLON '''
-    FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])
-    push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
+    if FUNC_DIR.current_scope == None:
+        # Return statement outside of function (inside main), but it returns no value... may as well end the program here!
+        push_to_quads(Quad("END", -1, -1, -1))
+    else:
+        FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])
+        push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
 
 def p_read(p):
     ''' READ : READ_KWD OPEN_PARENTHESIS READABLE_LIST CLOSE_PARENTHESIS '''
@@ -1210,13 +1203,6 @@ def p_seen_printable(p):
 
     push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope, printable_is_attr)))
 
-def p_func_decision(p):
-    ''' FUNC_DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY FUNC_DECISION_P '''
-    seen_decision()
-
-def p_func_decision_p(p):
-    ''' FUNC_DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY
-                            | empty '''
 
 def p_decision(p):
     ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
@@ -1241,17 +1227,6 @@ def p_seen_else_kwd(p):
     JUMP_STACK.append(QUAD_POINTER - 1)
     fill_quad(dir, QUAD_POINTER)
 
-def p_func_repetition(p):
-    ''' FUNC_REPETITION :     FUNC_CONDITIONAL_REP
-                            | FUNC_UNCONDITIONAL_REP '''
-
-def p_func_conditional_rep(p):
-    ''' FUNC_CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
-    seen_conditional_rep()
-
-def p_func_unconditional_rep(p):
-    ''' FUNC_UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS VAR seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY FUNC_STATEMENT_STAR CLOSE_CURLY '''
-    seen_unconditional_rep()
 
 def p_repetition(p):
     ''' REPETITION : CONDITIONAL_REP
