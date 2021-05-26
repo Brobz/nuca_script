@@ -45,18 +45,18 @@ class FunctionDirectory(object):
             else:
                 raise Exception("???")
 
-    def get_object_symbol_type(self, sym_id, scope):
+    def get_symbol_object_type(self, sym_id, scope):
         if scope == "GLOBAL" or (sym_id not in self.FUNCS[scope]["FUNCS"][self.current_scope][2].SYMBOLS and sym_id not in self.FUNCS[scope]["SYMBOLS"].SYMBOLS):
             if self.current_scope != None and scope == "GLOBAL":
-                return self.FUNCS[scope][self.current_scope][2].get_object_symbol_type(sym_id)
+                return self.FUNCS[scope][self.current_scope][2].get_symbol_object_type(sym_id)
             else:
-                return self.FUNCS[self.program_name].get_object_symbol_type(sym_id)
+                return self.FUNCS[self.program_name].get_symbol_object_type(sym_id)
         else:
             if self.current_scope != None:
                 try:
-                    return self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_object_symbol_type(sym_id)
+                    return self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_symbol_object_type(sym_id)
                 except:
-                    return self.FUNCS[scope]["SYMBOLS"].get_object_symbol_type(sym_id)
+                    return self.FUNCS[scope]["SYMBOLS"].get_symbol_object_type(sym_id)
             else:
                 raise Exception("???")
 

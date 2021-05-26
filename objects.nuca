@@ -51,15 +51,18 @@ class Value {
     obj : object;
   }
   {
+    no_2 = new Value(); // If no_2 was the one calling this class method, this would throw! //
+    this.i = 2.45;
+    this.init(-5, 5, "changed to this!");
     println("we got here!");
     println("HI" * i);
     obj = new No_Attr();
     other_int = 5;
     vvv = 1;
     if(this.get_lol("this will print before the values!") == "LOL!"){
-      println(this.value_other, this.value_f, this.int_arr[50]);
+      println(this.value_other, this.value_f, this.int_arr[f]);
     }
-    return f / 50 * vvv *  obj.times_two(times_two(other_int + " " + this.get_lol("this will print before the LOL!")), 15) + this.value_f;
+    return f / 25 * vvv *  obj.times_two(times_two(other_int + " " + this.get_lol("this will print before the LOL!")), 15) + this.value_f;
   }
 }
 
@@ -68,6 +71,12 @@ class Value {
 main (){
   f = 25;
   v = new Value();
+  v.value_f = 10;
+  println(v.value_f);
+  println("here");
+  v = new Value();
+  println("and there");
+  println(v.value_f);
   no = new No_Attr();
   no_2 = new No_Attr();
   no_2.attr_string = "something DIFFERENT";

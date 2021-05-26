@@ -18,12 +18,12 @@ const int MAX_CONSTANTS = 3000, MAX_SYMBOLS = 5000, MAX_TMP_SYMBOLS = 5000, MAX_
 
 // FUNCTION_MEMORY //
 const map<int, vector<vector<int>>> FUNCTION_MEMORY_CONTEXT_SIGN = {
-										{62, {{5,0,1,0,3}, {10,0,11,0,3}, {10,0,13,0,0}}},
+										{69, {{5,0,1,0,3}, {12,0,11,0,4}, {9,1,16,0,0}}},
 										{1, {{0,0,1,0,0}, {0,0,0,0,0}}},
 										{5, {{2,0,0,0,0}, {0,0,0,0,0}}},
 										{7, {{0,0,1,0,0}, {0,0,0,0,0}}},
 										{11, {{2,0,1,0,0}, {0,0,0,0,0}}},
-										{15, {{3,0,0,0,1}, {11,0,6,1,1}}},
+										{15, {{3,0,0,0,1}, {12,0,6,1,2}}},
 										};
 // FUNCTION_MEMORY //
 
@@ -40,32 +40,35 @@ const map<int, string> CONSTANTS = {
 										{0, "2"},
 										{1, "100"},
 										{6000, "LOL!"},
-										{6001, "we got here!"},
-										{6002, "HI"},
+										{3000, "2.45"},
 										{2, "5"},
+										{6001, "changed to this!"},
+										{6002, "we got here!"},
+										{6003, "HI"},
 										{3, "1"},
-										{6003, "this will print before the values!"},
-										{4, "50"},
-										{6004, " "},
-										{6005, "this will print before the LOL!"},
+										{6004, "this will print before the values!"},
+										{4, "25"},
+										{6005, " "},
+										{6006, "this will print before the LOL!"},
 										{5, "15"},
-										{6, "25"},
-										{6006, "something DIFFERENT"},
-										{6007, "HI!"},
-										{6008, "okidoki"},
-										{6009, "no.attr_string: "},
-										{6010, "no_2.attr_string: "},
-										{7, "10"},
-										{8, "111"},
-										{6011, ">> Enter an integer:\n-- "},
-										{9, "0"},
-										{6012, ">> Enter a string:\n-- "},
+										{6, "10"},
+										{6007, "here"},
+										{6008, "and there"},
+										{6009, "something DIFFERENT"},
+										{6010, "HI!"},
+										{6011, "okidoki"},
+										{6012, "no.attr_string: "},
+										{6013, "no_2.attr_string: "},
+										{7, "111"},
+										{6014, ">> Enter an integer:\n-- "},
+										{8, "0"},
+										{6015, ">> Enter a string:\n-- "},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{27, -1, -1, 62},
+										{27, -1, -1, 69},
 										{24, -1, -1, 75000},
 										{26, -1, -1, -1},
 										{0, 0, 0, 15000},
@@ -80,73 +83,89 @@ const vector<vector<int>> QUADS = {
 										{18, -1, 65001, 115001, 0},
 										{18, -1, 75000, 125000, 0},
 										{29, -1, -1, 1},
-										{24, -1, -1, 6001},
+										{16, -1, 3, 35002},
+										{18, -1, 3000, 120000, 0},
+										{19, -1, -1, 11},
+										{2, -1, 2, 90000},
+										{20, -1, 90000, 65000},
+										{20, -1, 2, 65001},
+										{20, -1, 6001, 75000},
+										{22, -1, -1, 11},
+										{24, -1, -1, 6002},
 										{26, -1, -1, -1},
-										{3, 6002, 65000, 100000},
+										{3, 6003, 65000, 100000},
 										{24, -1, -1, 100000},
 										{26, -1, -1, -1},
-										{16, -1, 2, 110000},
-										{0, 0, 110000, 85000},
+										{16, -1, 2, 85000},
 										{0, 0, 2, 65002},
 										{0, 0, 3, 65001},
 										{19, -1, -1, 7},
-										{20, -1, 6003, 75000},
+										{20, -1, 6004, 75000},
 										{22, -1, -1, 7},
 										{0, 0, 25000, 100001},
 										{5, 100001, 6000, 105000},
-										{28, -1, 105000, 40},
+										{28, -1, 105000, 47},
 										{17, -1, 125000, 100002},
 										{24, -1, -1, 100002},
-										{17, -1, 115000, 90000},
-										{24, -1, -1, 90000},
-										{15, -1, 4, 1},
-										{0, -1, 4, 90001},
-										{14, 115002, 90001, 90002},
-										{17, -1, 90002, 90003, 1},
-										{24, -1, -1, 90003},
+										{17, -1, 115000, 90001},
+										{24, -1, -1, 90001},
+										{15, -1, 15001, 1},
+										{0, -1, 15001, 90002},
+										{14, 115002, 90002, 90003},
+										{17, -1, 90003, 90004, 1},
+										{24, -1, -1, 90004},
 										{26, -1, -1, -1},
-										{4, 15001, 4, 90004},
-										{3, 90004, 65001, 90005},
+										{4, 15001, 4, 90005},
+										{3, 90005, 65001, 90006},
 										{19, -1, -1, 5},
 										{19, -1, -1, 1},
-										{1, 65002, 6004, 100003},
+										{1, 65002, 6005, 100003},
 										{19, -1, -1, 7},
-										{20, -1, 6005, 75000},
+										{20, -1, 6006, 75000},
 										{22, -1, -1, 7},
 										{0, 0, 25000, 100004},
 										{1, 100003, 100004, 100005},
 										{20, -1, 100005, 75000},
 										{21, -1, -1, 1},
-										{0, 0, 15000, 90006},
-										{20, -1, 90006, 65000},
+										{0, 0, 15000, 90007},
+										{20, -1, 90007, 65000},
 										{20, -1, 5, 65001},
 										{22, -1, 85000, 5},
-										{0, 0, 15003, 90007},
-										{3, 90005, 90007, 90008},
-										{17, -1, 115000, 90009},
-										{1, 90008, 90009, 90010},
-										{0, 0, 90010, 15004},
+										{0, 0, 15003, 90008},
+										{3, 90006, 90008, 90009},
+										{17, -1, 115000, 90010},
+										{1, 90009, 90010, 90011},
+										{0, 0, 90011, 15004},
 										{29, -1, -1, 1},
-										{0, 0, 6, 15001},
-										{16, -1, 3, 60000},
-										{0, 0, 60000, 35000},
-										{16, -1, 2, 60001},
-										{0, 0, 60001, 35001},
-										{16, -1, 2, 60002},
-										{0, 0, 60002, 35002},
-										{18, 35002, 6006, 125000, 0},
+										{0, 0, 4, 15001},
+										{16, -1, 3, 35000},
+										{18, 35000, 6, 115000, 0},
+										{17, 35000, 115000, 40000},
+										{24, -1, -1, 40000},
+										{26, -1, -1, -1},
 										{24, -1, -1, 6007},
 										{26, -1, -1, -1},
-										{18, 35001, 6008, 125000, 0},
+										{16, -1, 3, 35000},
+										{24, -1, -1, 6008},
+										{26, -1, -1, -1},
+										{17, 35000, 115000, 40001},
+										{24, -1, -1, 40001},
+										{26, -1, -1, -1},
+										{16, -1, 2, 35001},
+										{16, -1, 2, 35002},
+										{18, 35002, 6009, 125000, 0},
+										{24, -1, -1, 6010},
+										{26, -1, -1, -1},
+										{18, 35001, 6011, 125000, 0},
 										{17, 35001, 125000, 50000},
-										{1, 6009, 50000, 50001},
+										{1, 6012, 50000, 50001},
 										{24, -1, -1, 50001},
 										{17, 35002, 125000, 50002},
-										{1, 6010, 50002, 50003},
+										{1, 6013, 50002, 50003},
 										{24, -1, -1, 50003},
 										{26, -1, -1, -1},
 										{19, -1, -1, 11},
-										{20, -1, 7, 65000},
+										{20, -1, 6, 65000},
 										{20, -1, 2, 65001},
 										{17, 35001, 125000, 50004},
 										{2, -1, 50004, 50005},
@@ -157,36 +176,36 @@ const vector<vector<int>> QUADS = {
 										{24, -1, -1, 50007},
 										{26, -1, -1, -1},
 										{15, -1, 2, 1},
-										{0, -1, 2, 40000},
-										{14, 115002, 40000, 40001},
-										{18, 35000, 8, 40001, 2},
-										{15, -1, 2, 1},
 										{0, -1, 2, 40002},
 										{14, 115002, 40002, 40003},
-										{17, 35000, 40003, 40004, 1},
-										{24, -1, -1, 40004},
+										{18, 35000, 7, 40003, 2},
+										{15, -1, 2, 1},
+										{0, -1, 2, 40004},
+										{14, 115002, 40004, 40005},
+										{17, 35000, 40005, 40006, 1},
+										{24, -1, -1, 40006},
 										{26, -1, -1, -1},
-										{24, -1, -1, 6011},
+										{24, -1, -1, 6014},
 										{25, -1, -1, -1},
 										{19, -1, -1, 5},
-										{20, -1, 9, 65000},
-										{20, -1, 9, 65001},
+										{20, -1, 8, 65000},
+										{20, -1, 8, 65001},
 										{22, -1, 35001, 5},
-										{0, 0, 15003, 40005},
-										{15, -1, 40005, 1},
-										{0, -1, 40005, 40006},
-										{14, 115002, 40006, 40007},
-										{23, 35000, 1, 40007},
-										{24, -1, -1, 6012},
+										{0, 0, 15003, 40007},
+										{15, -1, 40007, 1},
+										{0, -1, 40007, 40008},
+										{14, 115002, 40008, 40009},
+										{23, 35000, 1, 40009},
+										{24, -1, -1, 6015},
 										{25, -1, -1, -1},
 										{23, 35000, -1, 125000},
 										{17, 35001, 125000, 50008},
 										{19, -1, -1, 15},
-										{17, 35000, 115000, 40008},
-										{20, -1, 40008, 65000},
+										{17, 35000, 115000, 40010},
+										{20, -1, 40010, 65000},
 										{22, -1, 35000, 15},
-										{0, 0, 15004, 40009},
-										{3, 50008, 40009, 50009},
+										{0, 0, 15004, 40011},
+										{3, 50008, 40011, 50009},
 										{18, 35001, 50009, 125000, 0},
 										{17, 35001, 125000, 50010},
 										{24, -1, -1, 50010},
@@ -200,6 +219,7 @@ int PROGRAM_START; // Quad index of the start of main()
 bool RUNNING = false;
 int IP; // Instruction Pointer
 int THIS_OPERATOR_COUNTER; // To count how many this. accesses have happened
+int Memory::MEM_ID = 0; // Start the memory id counter at 0;
 MemoryContext GLOBAL_MEM;
 MemoryContext* LOCAL_MEM;
 Memory* THIS_MEM;
@@ -221,7 +241,7 @@ int s_stoi(string s){
 	try{
 		return stoi(s);
 	}catch(...){
-			cout << ">> Error: Cannot resolve stoi(" << s << ")" << endl;
+			cout << ">> Fatal Error: Cannot resolve stoi(" << s << ")" << endl;
 			exit(EXIT_FAILURE);
 		}
 }
@@ -231,7 +251,7 @@ float s_stof(string s){
 	try{
 		return stof(s);
 	}catch(...){
-			cout << ">> Error: Cannot resolve stof(" << s << ")" << endl;
+			cout << ">> Fatal Error: Cannot resolve stof(" << s << ")" << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -244,7 +264,7 @@ bool s_stob(string s){
 			if (STOB_MAP.count(s)){
 				return STOB_MAP.at(s);
 			}else{
-				cout << ">> Error: Cannot resolve stob(" << s << ")" << endl;
+				cout << ">> Fatal Error: Cannot resolve stob(" << s << ")" << endl;
 				exit(EXIT_FAILURE);
 			}
 	}
@@ -272,7 +292,7 @@ string mem_index_to_mem_sign(int index){
 	}
 
   // ERROR! Nothing was written
-  cout << ">> Error: could not locate "  << index << " in memory" << endl;
+  cout << ">> Fatal Error: could not locate "  << index << " in memory" << endl;
   exit(EXIT_FAILURE);
 }
 
@@ -339,7 +359,7 @@ Memory* get_object_memory(int index){
 			break;
 		default:
 		{
-			cout << ">> Error: could not get memory for object at " << index << endl;
+			cout << ">> Fatal Error: could not get memory for object at " << index << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -349,7 +369,7 @@ Value read_from_memory(int index){
   string mem_sign = mem_index_to_mem_sign(index);
   if(mem_sign[0] == '2'){
     if (!LOCAL_MEM->active){
-      cout << ">> Error: No local context to read "  << index << " from memory" << endl;
+      cout << ">> Fatal Error: No local context to read "  << index << " from memory" << endl;
       exit(EXIT_FAILURE); // ERROR! No context to read local variable from
     }
   }
@@ -487,7 +507,7 @@ Value read_from_memory(int index){
     default:
     {
       // ERROR! Nothing was read
-      cout << ">> Error: could not read "  << index << " from memory" << endl;
+      cout << ">> Fatal Error: could not read "  << index << " from memory" << endl;
       exit(EXIT_FAILURE);
     }
   }
@@ -525,7 +545,7 @@ Value read_from_memory(Memory* this_mem, int index){
 		default:
     {
       // ERROR! Nothing was read
-      cout << ">> Error: could not read from " << index << endl;
+      cout << ">> Fatal Error: could not read from " << index << endl;
       exit(EXIT_FAILURE);
     }
 	}
@@ -538,7 +558,7 @@ void write_to_memory(int index, string value){
 
 	if(mem_sign[0] == '2'){
     if (!LOCAL_MEM->active){
-      cout << ">> Error: No local context to write "  << value << " to " << index << endl;
+      cout << ">> Fatal Error: No local context to write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE); // ERROR! No context to write local variable to
     }
   }
@@ -670,7 +690,7 @@ void write_to_memory(int index, string value){
     default:
     {
       // ERROR! Nothing was written
-      cout << ">> Error: could not write "  << value << " to " << index << endl;
+      cout << ">> Fatal Error: could not write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE);
     }
   }
@@ -705,7 +725,7 @@ void write_to_memory(Memory* this_mem, int index, string value){
 		default:
     {
       // ERROR! Nothing was written
-      cout << ">> Error: could not write "  << value << " to " << index << endl;
+      cout << ">> Fatal Error: could not write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE);
     }
 	}
@@ -715,7 +735,7 @@ void write_to_param(int index, string value){
 	string mem_sign = mem_index_to_mem_sign(index);
   if(mem_sign[0] == '2'){
     if (!MEMORY_STACK.size()){
-      cout << ">> Error: No local context to write "  << value << " to " << index << endl;
+      cout << ">> Fatal Error: No local context to write "  << value << " to " << index << endl;
       exit(EXIT_FAILURE); // ERROR! No context to write local variable to
     }
   }
@@ -747,7 +767,7 @@ void write_to_param(int index, string value){
 		default:
 			{
 				// ERROR! Nothing was written
-	      cout << ">> Error: could not write "  << value << " to param at " << index << endl;
+	      cout << ">> Fatal Error: could not write "  << value << " to param at " << index << endl;
 	      exit(EXIT_FAILURE);
 			}
 			break;
@@ -946,7 +966,7 @@ void run(){
 
 					if (arr_access_value.i < 0 || arr_access_value.i >= arr_dim_size.i){
 						// If this point is reached, an array index out of bounds error has ocurred
-						cout << ">> Error: array index out of bounds!" << endl;
+						cout << ">> Fatal Error: array index out of bounds!" << endl;
 						exit(EXIT_FAILURE);
 					}
 
@@ -959,6 +979,13 @@ void run(){
         {
 					int object_sign  = QUADS[IP][2];
 					int obj_dir = QUADS[IP][3];
+
+					// Here we check to see if the object we are instatiating is not currently referenced bu the "this." operator
+					// This prevents weird behaviour, e.g. changing an object's type in the middle of its own type's function execution
+					if (THIS_MEM->id != -1 && get_object_memory(obj_dir)->id == THIS_MEM->id){
+							cout << ">> Fatal Error: Cannot re-instantiate object variable within it's own scope" << endl;
+							exit(EXIT_FAILURE);
+					}
 
 					write_to_memory(obj_dir, to_string(object_sign));
 
@@ -1031,7 +1058,7 @@ void run(){
 					int func_start_addr = QUADS[IP][3];
 					if (MEMORY_STACK.size() > MEMORY_STACK_LIMIT){
 						// Too many functions on the stack!
-						cout << ">> Error: Memory Stack Limit of " << MEMORY_STACK_LIMIT << " reached (infinite recursion?) Terminating..." << endl;
+						cout << ">> Fatal Error: Memory Stack Limit of " << MEMORY_STACK_LIMIT << " reached (infinite recursion?) Terminating..." << endl;
 						exit(EXIT_FAILURE);
 					}
 
@@ -1188,7 +1215,7 @@ void run(){
 
       default:
         {
-        cout << ">> Error: Unknown Op: " << op << endl;
+        cout << ">> Fatal Error: Unknown Op: " << op << endl;
         exit(EXIT_FAILURE);
         }
     }

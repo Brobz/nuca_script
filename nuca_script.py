@@ -155,11 +155,6 @@ lexer = lex.lex()
         -> post-compile quad optimization ?
         -> tmp management optimization? (in Avail)
 
-    PROJECT SCOPE:
-        -> focus project into text-based file I/O
-        -> have builtin methods like open() and write() coded into grammar
-        -> have them take arrays of strings in/out of files
-
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // VIRTUAL MEMORY MODEL //
@@ -251,7 +246,24 @@ lexer = lex.lex()
 
 // SPRINT //
 
-// TODO : REST!
+// TODO : PROJECT SCOPE
+
+    -> focus project into text-based file I/O
+    -> have builtin methods like open() and write() coded into grammar
+    -> have them take arrays of strings in/out of files
+
+    Preliminary Syntax:
+
+    word_array[1000], line_array[100] : string;
+
+    open(word_array, "file.txt", " "); // Stores each word [separated by spaces] on the passed array index, throws error on overflow
+    open(line_array, "file.txt", "\n"); // Stores each line [separated by \n] on the passed array index, throws error on overflow
+
+    write(word_array, "file.txt", " ") // Writes each word_array entry to the file, separated by empty spaces
+    write(line_array, "file.txt", "\n") // Writes each line_array entry to the file, separated by "\n"
+
+    write_at("HI!", "file.txt", 10) // Writes "HI!" at the 10th line of the file (if there are not 10 lines, makes new lines untill there are 10 lines)
+
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -772,7 +784,7 @@ def parse_var(id, mode):
             var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], is_class_attr)
             if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]):
                 # Trying to access an array symbol without [] !
-                raise Exception("Name Error: symol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
+                raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
             OPERAND_STACK.append([var, SCOPES_STACK[-1], is_class_attr])
             TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, SCOPES_STACK[-1], is_class_attr))
@@ -782,7 +794,7 @@ def parse_var(id, mode):
             # Class Variable
             if FUNC_DIR.is_sym_arr(id, DOT_OP_STACK[-1]):
                 # Trying to access an array symbol without [] !
-                raise Exception("Name Error: symol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
+                raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
             if not mode: # We are assigning to this object's attribute, need a pointer
 
@@ -898,7 +910,7 @@ def p_class_instance(p):
     ''' CLASS_INSTANCE : NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS '''
     class_instance = FUNC_DIR.next_avail("object", SCOPES_STACK[-1])
     FUNC_DIR.set_symbol_object_type(class_instance, p[2], SCOPES_STACK[-1])
-    push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(p[2]), FUNC_DIR.get_symbol_mem_index  (class_instance, SCOPES_STACK[-1])))
+    #push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(p[2]), FUNC_DIR.get_symbol_mem_index  (class_instance, SCOPES_STACK[-1])))
     OPERAND_STACK.append(class_instance)
     TYPE_STACK.append("object")
 
@@ -909,7 +921,7 @@ def p_seen_class_id_instance(p):
 def p_seen_dot_operator(p):
     ''' seen_dot_operator : empty '''
     FUNC_DIR.symbol_lookup(p[-2], SCOPES_STACK[-1])
-    class_type = FUNC_DIR.get_object_symbol_type(p[-2], SCOPES_STACK[-1])
+    class_type = FUNC_DIR.get_symbol_object_type(p[-2], SCOPES_STACK[-1])
     if class_type == None:
         raise Exception("Type Error: symbol " + p[-2] + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new'?)")
     DOT_OP_STACK.append(class_type)
@@ -1387,17 +1399,26 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
 
+
+    class_idx = -1
     if res_type == "object":
-        FUNC_DIR.set_symbol_object_type(res, FUNC_DIR.get_object_symbol_type(right_operand, SCOPES_STACK[-1]), SCOPES_STACK[-1])
+        # We are assigning to an object, which means we are instantiating it!
+        clas_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
+        class_idx = FUNC_DIR.get_class_idx(clas_type) # From that, find out what the class index is
+        FUNC_DIR.set_symbol_object_type(res, clas_type, SCOPES_STACK[-1]) # Set this object's type
 
     if SemanticCube[res_type][op][right_type] == "err":
         raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
     else:
         if not res_attr:
-            # Assigning to regular variable
-            push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+            if class_idx == -1:
+                # Assigning to regular variable; Use = OP
+                push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+            else:
+                # Assigning to Object variable; Use OBJ_INST OP
+                push_to_quads(Quad("OBJ_INST", -1, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
         else:
-            # Assigning to class variable
+            # Assigning to class variable; Use OBJ_WRITE
             parent_object = OBJECT_ACCESS_STACK.pop()
             if parent_object == "this_kwd":
                 push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))

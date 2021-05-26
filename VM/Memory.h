@@ -13,7 +13,9 @@ class MemoryContext;
 class Memory{
   public:
 
-    int signature;
+    static int MEM_ID;
+
+    int id, signature;
     Memory* return_memory;
     vector<int> ints;
     vector<float> floats;
@@ -21,10 +23,12 @@ class Memory{
     vector<bool> booleans;
     vector<Memory> objects;
 
-    Memory(){};
+    Memory(){
+      id = -1;
+      signature = -1;
+    };
 
     Memory(vector<int> size, int sign = -1){
-      signature = sign;
       for (int i = 0; i < size.size(); i++){
         if (!i) ints.resize(size[i]);
         else if (i == 1) floats.resize(size[i]);
@@ -32,6 +36,9 @@ class Memory{
         else if (i == 3) booleans.resize(size[i]);
         else if (i == 4) objects.resize(size[i]);
       }
+      signature = sign;
+      id = Memory::MEM_ID;
+      Memory::MEM_ID++;
     };
 
     void printout(){
@@ -55,6 +62,7 @@ class Memory{
         cout << booleans[i] << " | ";
       }
       cout << endl;
+      cout << "MEMORY ID " << id << endl;
     }
 };
 

@@ -41,7 +41,7 @@ class SymbolTable(object):
         else:
             raise Exception("Cannot set object type " + obj_type + " to " + sym_id + " in " + self.scope)
 
-    def get_object_symbol_type(self, sym_id):
+    def get_symbol_object_type(self, sym_id):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][7]
 
