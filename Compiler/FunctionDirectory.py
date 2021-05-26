@@ -33,9 +33,12 @@ class FunctionDirectory(object):
     def set_symbol_object_type(self, sym_id, obj_type, scope):
         if scope == "GLOBAL" or (sym_id not in self.FUNCS[scope]["FUNCS"][self.current_scope][2].SYMBOLS and sym_id not in self.FUNCS[scope]["SYMBOLS"].SYMBOLS):
             if self.current_scope != None and scope == "GLOBAL":
-                self.FUNCS[scope][self.current_scope][2].set_sym_obj_type(sym_id, obj_type)
-            else:
-                self.FUNCS[self.program_name].set_sym_obj_type(sym_id, obj_type)
+                try:
+                    self.FUNCS[scope][self.current_scope][2].set_sym_obj_type(sym_id, obj_type)
+                    return
+                except:
+                    pass
+            self.FUNCS[self.program_name].set_sym_obj_type(sym_id, obj_type)
         else:
             if self.current_scope != None:
                 try:
@@ -48,9 +51,11 @@ class FunctionDirectory(object):
     def get_symbol_object_type(self, sym_id, scope):
         if scope == "GLOBAL" or (sym_id not in self.FUNCS[scope]["FUNCS"][self.current_scope][2].SYMBOLS and sym_id not in self.FUNCS[scope]["SYMBOLS"].SYMBOLS):
             if self.current_scope != None and scope == "GLOBAL":
-                return self.FUNCS[scope][self.current_scope][2].get_symbol_object_type(sym_id)
-            else:
-                return self.FUNCS[self.program_name].get_symbol_object_type(sym_id)
+                try:
+                    return self.FUNCS[scope][self.current_scope][2].get_symbol_object_type(sym_id)
+                except:
+                    pass
+            return self.FUNCS[self.program_name].get_symbol_object_type(sym_id)
         else:
             if self.current_scope != None:
                 try:
@@ -111,7 +116,9 @@ class FunctionDirectory(object):
                     return self.FUNCS[self.program_name].is_sym_arr(sym_id)
                 return is_arr
             else:
-                is_arr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_arr(sym_id)
+                is_arr = -1
+                if self.current_scope in self.FUNCS[scope]["FUNCS"]:
+                    is_arr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_arr(sym_id)
                 if is_arr == -1:
                     is_arr = self.FUNCS[scope]["SYMBOLS"].is_sym_arr(sym_id)
                     if is_arr == -1:

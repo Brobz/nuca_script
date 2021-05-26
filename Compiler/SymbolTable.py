@@ -45,7 +45,7 @@ class SymbolTable(object):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][7]
 
-        raise Exception("Cannot get objet symbol type for " + sym_id + " in " + self.scope)
+        raise Exception("Cannot get objet type for symbol " + sym_id + " in " + self.scope)
 
     def is_sym_arr(self, sym_id):
         if sym_id in self.SYMBOLS:
@@ -72,9 +72,9 @@ class SymbolTable(object):
             return -1
 
     def build_memory_secor_shift(self, mem_constraints):
-        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * self.var_types,
-                                            mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2]) * self.var_types,
-                                            mem_constraints[0] * self.var_types + (mem_constraints[1] + mem_constraints[2]) * self.var_types * 2],
+        SymbolTable.MEMORY_SECTOR_SHIFTS = [[0, mem_constraints[0] * (self.var_types - 1),
+                                            mem_constraints[0] * (self.var_types - 1) + (mem_constraints[1] + mem_constraints[2]) * self.var_types,
+                                            mem_constraints[0] * (self.var_types - 1) + (mem_constraints[1] + mem_constraints[2]) * self.var_types * 2],
                                             [0, mem_constraints[2] * self.var_types]]
 
     def get_mem_index(self, sym_id):
@@ -146,7 +146,6 @@ class SymbolTable(object):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
             self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None)
-
             if is_cnst:
                 self.update_const_mem_sign(sym_type, dimensions)
             elif not is_temp:
@@ -165,8 +164,11 @@ class SymbolTable(object):
     def calculate_mem_index(self, mem_sec_sign):
         # Here we define where in memory to place this based on the memory sector signature
         mem_index = 0
+
         is_cnst = (mem_sec_sign[0] == "0")
+        is_obj = (mem_sec_sign[0] == "3")
         is_tmp = (mem_sec_sign[2] == "1")
+
         for i, char in enumerate(mem_sec_sign):
             shift_index = SymbolTable.MEMORY_SECTOR_SIGN[i].index(char)
             if i != 1:
@@ -177,6 +179,8 @@ class SymbolTable(object):
                 shift = self.mem_constraints[0] * shift_index
             elif is_tmp:
                 shift = self.mem_constraints[2] * shift_index
+            elif is_obj:
+                shift = self.mem_constraints[3] * shift_index
             else:
                 shift = self.mem_constraints[1] * shift_index
 

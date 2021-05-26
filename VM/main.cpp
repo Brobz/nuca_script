@@ -18,12 +18,12 @@ const int MAX_CONSTANTS = 3000, MAX_SYMBOLS = 5000, MAX_TMP_SYMBOLS = 5000, MAX_
 
 // FUNCTION_MEMORY //
 const map<int, vector<vector<int>>> FUNCTION_MEMORY_CONTEXT_SIGN = {
-										{69, {{5,0,1,0,3}, {12,0,11,0,4}, {9,1,16,0,0}}},
+										{73, {{5,0,1,0,3}, {16,0,11,0,4}, {9,1,15,0,0}}},
 										{1, {{0,0,1,0,0}, {0,0,0,0,0}}},
 										{5, {{2,0,0,0,0}, {0,0,0,0,0}}},
 										{7, {{0,0,1,0,0}, {0,0,0,0,0}}},
 										{11, {{2,0,1,0,0}, {0,0,0,0,0}}},
-										{15, {{3,0,0,0,1}, {12,0,6,1,2}}},
+										{15, {{3,0,0,0,1}, {12,0,7,1,2}}},
 										};
 // FUNCTION_MEMORY //
 
@@ -42,175 +42,199 @@ const map<int, string> CONSTANTS = {
 										{6000, "LOL!"},
 										{3000, "2.45"},
 										{2, "5"},
-										{6001, "changed to this!"},
-										{6002, "we got here!"},
-										{6003, "HI"},
+										{6001, "we got here!"},
+										{6002, "HI"},
 										{3, "1"},
-										{6004, "this will print before the values!"},
+										{6003, "this will print before the values!"},
 										{4, "25"},
-										{6005, " "},
-										{6006, "this will print before the LOL!"},
+										{6004, " "},
+										{6005, "this will print before the LOL!"},
 										{5, "15"},
 										{6, "10"},
-										{6007, "here"},
-										{6008, "and there"},
-										{6009, "something DIFFERENT"},
-										{6010, "HI!"},
-										{6011, "okidoki"},
-										{6012, "no.attr_string: "},
-										{6013, "no_2.attr_string: "},
+										{6006, "here"},
+										{6007, "and there"},
+										{6008, "something DIFFERENT"},
+										{6009, "HI!"},
+										{6010, "okidoki"},
+										{6011, "no.attr_string: "},
+										{6012, "no_2.attr_string: "},
 										{7, "111"},
-										{6014, ">> Enter an integer:\n-- "},
+										{6013, ">> Enter an integer:\n-- "},
 										{8, "0"},
-										{6015, ">> Enter a string:\n-- "},
+										{6014, ">> Enter a string:\n-- "},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{27, -1, -1, 69},
-										{24, -1, -1, 75000},
+										{28, -1, -1, 73},
+										{25, -1, -1, 72000},
+										{27, -1, -1, -1},
+										{0, 0, 0, 12000},
+										{30, -1, -1, 0},
+										{0, 0, 12001, 12003},
+										{30, -1, -1, 1},
+										{25, -1, -1, 72000},
+										{27, -1, -1, -1},
+										{0, 0, 6000, 22000},
+										{30, -1, -1, 1},
+										{19, -1, 62000, 112000, 0},
+										{19, -1, 62001, 112001, 0},
+										{19, -1, 72000, 122000, 0},
+										{30, -1, -1, 1},
+										{17, -1, 3, 32002},
+										{19, -1, 3000, 117000, 0},
+										{20, -1, -1, 11},
+										{2, -1, 2, 87000},
+										{21, -1, 87000, 62000},
+										{21, -1, 2, 62001},
+										{18, -1, 122000, 97000},
+										{21, -1, 97000, 72000},
+										{23, -1, -1, 11},
+										{25, -1, -1, 6001},
+										{27, -1, -1, -1},
+										{3, 6002, 62000, 97001},
+										{25, -1, -1, 97001},
+										{27, -1, -1, -1},
+										{17, -1, 2, 82000},
+										{0, 0, 2, 62002},
+										{0, 0, 3, 62001},
+										{20, -1, -1, 7},
+										{21, -1, 6003, 72000},
+										{23, -1, -1, 7},
+										{0, 0, 22000, 97002},
+										{5, 97002, 6000, 102000},
+										{29, -1, 102000, 51},
+										{18, -1, 122000, 97003},
+										{25, -1, -1, 97003},
+										{18, -1, 112000, 87001},
+										{25, -1, -1, 87001},
+										{16, -1, 0, 87002},
+										{15, -1, 12001, 100},
+										{0, -1, 12001, 87002},
+										{16, -1, 0, 87003},
+										{14, 112002, 87002, 87003},
+										{16, -1, 0, 87004},
+										{18, -1, 87003, 87004, 1},
+										{25, -1, -1, 87004},
+										{27, -1, -1, -1},
+										{4, 12001, 4, 87005},
+										{3, 87005, 62001, 87006},
+										{20, -1, -1, 5},
+										{20, -1, -1, 1},
+										{1, 62002, 6004, 97004},
+										{20, -1, -1, 7},
+										{21, -1, 6005, 72000},
+										{23, -1, -1, 7},
+										{0, 0, 22000, 97005},
+										{1, 97004, 97005, 97006},
+										{21, -1, 97006, 72000},
+										{22, -1, -1, 1},
+										{0, 0, 12000, 87007},
+										{21, -1, 87007, 62000},
+										{21, -1, 5, 62001},
+										{23, -1, 82000, 5},
+										{0, 0, 12003, 87008},
+										{3, 87006, 87008, 87009},
+										{18, -1, 112000, 87010},
+										{1, 87009, 87010, 87011},
+										{0, 0, 87011, 12004},
+										{30, -1, -1, 1},
+										{0, 0, 4, 12001},
+										{17, -1, 3, 32000},
+										{19, 32000, 6, 112000, 0},
+										{18, 32000, 112000, 37000},
+										{25, -1, -1, 37000},
+										{27, -1, -1, -1},
+										{25, -1, -1, 6006},
+										{27, -1, -1, -1},
+										{17, -1, 3, 32000},
+										{25, -1, -1, 6007},
+										{27, -1, -1, -1},
+										{18, 32000, 112000, 37001},
+										{25, -1, -1, 37001},
+										{27, -1, -1, -1},
+										{17, -1, 2, 32001},
+										{17, -1, 2, 32002},
+										{19, 32002, 6008, 122000, 0},
+										{25, -1, -1, 6009},
+										{27, -1, -1, -1},
+										{19, 32001, 6010, 122000, 0},
+										{18, 32001, 122000, 47000},
+										{1, 6011, 47000, 47001},
+										{25, -1, -1, 47001},
+										{18, 32002, 122000, 47002},
+										{1, 6012, 47002, 47003},
+										{25, -1, -1, 47003},
+										{27, -1, -1, -1},
+										{20, -1, -1, 11},
+										{21, -1, 6, 62000},
+										{21, -1, 2, 62001},
+										{18, 32001, 122000, 47004},
+										{2, -1, 47004, 47005},
+										{3, 2, 47005, 47006},
+										{21, -1, 47006, 72000},
+										{23, -1, 32000, 11},
+										{18, 32000, 122000, 47007},
+										{25, -1, -1, 47007},
+										{27, -1, -1, -1},
+										{16, -1, 0, 37002},
+										{15, -1, 2, 100},
+										{0, -1, 2, 37002},
+										{16, -1, 0, 37003},
+										{14, 112002, 37002, 37003},
+										{19, 32000, 7, 37003, 2},
+										{16, -1, 0, 37004},
+										{15, -1, 2, 100},
+										{0, -1, 2, 37004},
+										{16, -1, 0, 37005},
+										{14, 112002, 37004, 37005},
+										{16, -1, 0, 37006},
+										{18, 32000, 37005, 37006, 1},
+										{25, -1, -1, 37006},
+										{27, -1, -1, -1},
+										{25, -1, -1, 6013},
 										{26, -1, -1, -1},
-										{0, 0, 0, 15000},
-										{29, -1, -1, 0},
-										{0, 0, 15001, 15003},
-										{29, -1, -1, 1},
-										{24, -1, -1, 75000},
+										{20, -1, -1, 5},
+										{21, -1, 8, 62000},
+										{21, -1, 8, 62001},
+										{23, -1, 32001, 5},
+										{0, 0, 12003, 37007},
+										{16, -1, 0, 37008},
+										{15, -1, 37007, 100},
+										{0, -1, 37007, 37008},
+										{16, -1, 0, 37009},
+										{14, 112002, 37008, 37009},
+										{24, 32000, 1, 37009},
+										{20, -1, -1, 5},
+										{21, -1, 8, 62000},
+										{21, -1, 8, 62001},
+										{23, -1, 32001, 5},
+										{0, 0, 12003, 37010},
+										{16, -1, 0, 37011},
+										{15, -1, 37010, 100},
+										{0, -1, 37010, 37011},
+										{16, -1, 0, 37012},
+										{14, 112002, 37011, 37012},
+										{16, -1, 0, 37013},
+										{18, 32000, 37012, 37013, 1},
+										{25, -1, -1, 37013},
+										{27, -1, -1, -1},
+										{25, -1, -1, 6014},
 										{26, -1, -1, -1},
-										{0, 0, 6000, 25000},
-										{29, -1, -1, 1},
-										{18, -1, 65000, 115000, 0},
-										{18, -1, 65001, 115001, 0},
-										{18, -1, 75000, 125000, 0},
-										{29, -1, -1, 1},
-										{16, -1, 3, 35002},
-										{18, -1, 3000, 120000, 0},
-										{19, -1, -1, 11},
-										{2, -1, 2, 90000},
-										{20, -1, 90000, 65000},
-										{20, -1, 2, 65001},
-										{20, -1, 6001, 75000},
-										{22, -1, -1, 11},
-										{24, -1, -1, 6002},
-										{26, -1, -1, -1},
-										{3, 6003, 65000, 100000},
-										{24, -1, -1, 100000},
-										{26, -1, -1, -1},
-										{16, -1, 2, 85000},
-										{0, 0, 2, 65002},
-										{0, 0, 3, 65001},
-										{19, -1, -1, 7},
-										{20, -1, 6004, 75000},
-										{22, -1, -1, 7},
-										{0, 0, 25000, 100001},
-										{5, 100001, 6000, 105000},
-										{28, -1, 105000, 47},
-										{17, -1, 125000, 100002},
-										{24, -1, -1, 100002},
-										{17, -1, 115000, 90001},
-										{24, -1, -1, 90001},
-										{15, -1, 15001, 1},
-										{0, -1, 15001, 90002},
-										{14, 115002, 90002, 90003},
-										{17, -1, 90003, 90004, 1},
-										{24, -1, -1, 90004},
-										{26, -1, -1, -1},
-										{4, 15001, 4, 90005},
-										{3, 90005, 65001, 90006},
-										{19, -1, -1, 5},
-										{19, -1, -1, 1},
-										{1, 65002, 6005, 100003},
-										{19, -1, -1, 7},
-										{20, -1, 6006, 75000},
-										{22, -1, -1, 7},
-										{0, 0, 25000, 100004},
-										{1, 100003, 100004, 100005},
-										{20, -1, 100005, 75000},
-										{21, -1, -1, 1},
-										{0, 0, 15000, 90007},
-										{20, -1, 90007, 65000},
-										{20, -1, 5, 65001},
-										{22, -1, 85000, 5},
-										{0, 0, 15003, 90008},
-										{3, 90006, 90008, 90009},
-										{17, -1, 115000, 90010},
-										{1, 90009, 90010, 90011},
-										{0, 0, 90011, 15004},
-										{29, -1, -1, 1},
-										{0, 0, 4, 15001},
-										{16, -1, 3, 35000},
-										{18, 35000, 6, 115000, 0},
-										{17, 35000, 115000, 40000},
-										{24, -1, -1, 40000},
-										{26, -1, -1, -1},
-										{24, -1, -1, 6007},
-										{26, -1, -1, -1},
-										{16, -1, 3, 35000},
-										{24, -1, -1, 6008},
-										{26, -1, -1, -1},
-										{17, 35000, 115000, 40001},
-										{24, -1, -1, 40001},
-										{26, -1, -1, -1},
-										{16, -1, 2, 35001},
-										{16, -1, 2, 35002},
-										{18, 35002, 6009, 125000, 0},
-										{24, -1, -1, 6010},
-										{26, -1, -1, -1},
-										{18, 35001, 6011, 125000, 0},
-										{17, 35001, 125000, 50000},
-										{1, 6012, 50000, 50001},
-										{24, -1, -1, 50001},
-										{17, 35002, 125000, 50002},
-										{1, 6013, 50002, 50003},
-										{24, -1, -1, 50003},
-										{26, -1, -1, -1},
-										{19, -1, -1, 11},
-										{20, -1, 6, 65000},
-										{20, -1, 2, 65001},
-										{17, 35001, 125000, 50004},
-										{2, -1, 50004, 50005},
-										{3, 2, 50005, 50006},
-										{20, -1, 50006, 75000},
-										{22, -1, 35000, 11},
-										{17, 35000, 125000, 50007},
-										{24, -1, -1, 50007},
-										{26, -1, -1, -1},
-										{15, -1, 2, 1},
-										{0, -1, 2, 40002},
-										{14, 115002, 40002, 40003},
-										{18, 35000, 7, 40003, 2},
-										{15, -1, 2, 1},
-										{0, -1, 2, 40004},
-										{14, 115002, 40004, 40005},
-										{17, 35000, 40005, 40006, 1},
-										{24, -1, -1, 40006},
-										{26, -1, -1, -1},
-										{24, -1, -1, 6014},
-										{25, -1, -1, -1},
-										{19, -1, -1, 5},
-										{20, -1, 8, 65000},
-										{20, -1, 8, 65001},
-										{22, -1, 35001, 5},
-										{0, 0, 15003, 40007},
-										{15, -1, 40007, 1},
-										{0, -1, 40007, 40008},
-										{14, 115002, 40008, 40009},
-										{23, 35000, 1, 40009},
-										{24, -1, -1, 6015},
-										{25, -1, -1, -1},
-										{23, 35000, -1, 125000},
-										{17, 35001, 125000, 50008},
-										{19, -1, -1, 15},
-										{17, 35000, 115000, 40010},
-										{20, -1, 40010, 65000},
-										{22, -1, 35000, 15},
-										{0, 0, 15004, 40011},
-										{3, 50008, 40011, 50009},
-										{18, 35001, 50009, 125000, 0},
-										{17, 35001, 125000, 50010},
-										{24, -1, -1, 50010},
-										{26, -1, -1, -1},
-										{30, -1, -1, -1},
+										{24, 32000, -1, 122000},
+										{18, 32001, 122000, 47008},
+										{20, -1, -1, 15},
+										{18, 32000, 112000, 37014},
+										{21, -1, 37014, 62000},
+										{23, -1, 32000, 15},
+										{0, 0, 12004, 37015},
+										{3, 47008, 37015, 47009},
+										{19, 32001, 47009, 122000, 0},
+										{18, 32001, 122000, 47010},
+										{25, -1, -1, 47010},
+										{27, -1, -1, -1},
+										{31, -1, -1, -1},
 										};
 // QUADS //
 
@@ -271,22 +295,22 @@ bool s_stob(string s){
 }
 
 string mem_index_to_mem_sign(int index){
-  if (index < MAX_CONSTANTS * VAR_TYPES){ // CONSTANTS
+  if (index < MAX_CONSTANTS * (VAR_TYPES - 1)){ // CONSTANTS
 		string mem_sign = "0" + to_string(index / MAX_CONSTANTS) + "0";
 		return mem_sign;
   }
-  else if (index < MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES){ // GLOBALS
-		string mem_sign = "1" + to_string(((index - MAX_CONSTANTS * VAR_TYPES) / MAX_SYMBOLS) % VAR_TYPES);
-		mem_sign += ((index - MAX_CONSTANTS * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES) ? "1" : "0";
+  else if (index < MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES){ // GLOBALS
+		string mem_sign = "1" + to_string(((index - MAX_CONSTANTS * (VAR_TYPES - 1)) / MAX_SYMBOLS) % VAR_TYPES);
+		mem_sign += ((index - MAX_CONSTANTS * (VAR_TYPES - 1)) >= MAX_SYMBOLS * VAR_TYPES) ? "1" : "0";
 		return mem_sign;
   }
-  else if (index < MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2){ // LOCALS
-		string mem_sign = "2" + to_string(((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES)) / MAX_SYMBOLS) % VAR_TYPES);
-		mem_sign += ((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES)) ? "1" : "0";
+  else if (index < MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2){ // LOCALS
+		string mem_sign = "2" + to_string(((index - (MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES)) / MAX_SYMBOLS) % VAR_TYPES);
+		mem_sign += ((index - (MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES) >= MAX_SYMBOLS * VAR_TYPES)) ? "1" : "0";
 		return mem_sign;
   }
 	else{ // CLAS ATTRIBUTES
-		string mem_sign = "3" + to_string(((index - (MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2)) / MAX_OBJ_SYMBOLS) % (VAR_TYPES - 1));
+		string mem_sign = "3" + to_string(((index - (MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2)) / MAX_OBJ_SYMBOLS) % (VAR_TYPES - 1));
 		mem_sign += "0"; // There are no temporal class attributes
 		return mem_sign;
 	}
@@ -303,15 +327,15 @@ int mem_sign_to_index_displacement(string mem_sign){
 	switch (mem_class) {
 		case 1: // GLOBAL
 		{
-			index_displacement += MAX_CONSTANTS * VAR_TYPES;
+			index_displacement += MAX_CONSTANTS * (VAR_TYPES - 1);
 		} break;
 		case 2: // LOCAL
 		{
-			index_displacement += MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES;
+			index_displacement += MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES;
 		} break;
 		case 3: // OBJECT
 		{
-			index_displacement += MAX_CONSTANTS * VAR_TYPES + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2;
+			index_displacement += MAX_CONSTANTS * (VAR_TYPES - 1) + (MAX_SYMBOLS + MAX_TMP_SYMBOLS) * VAR_TYPES * 2;
 		} break;
 	}
 
@@ -322,7 +346,6 @@ int mem_sign_to_index_displacement(string mem_sign){
 	int temp_displacement = 0;
 
 	if (is_temp) temp_displacement = MAX_SYMBOLS * VAR_TYPES;
-
 
 	index_displacement += temp_displacement;
 
@@ -378,7 +401,6 @@ Value read_from_memory(int index){
   Value v;
 	int int_mem_sign = stoi(mem_sign);
 	int index_displacement = mem_sign_to_index_displacement(mem_sign);
-
   switch (int_mem_sign) {
     case 0:
       {
@@ -962,9 +984,9 @@ void run(){
 			case 15:			// ARR_BNDS
         {
 					Value arr_access_value = read_from_memory(QUADS[IP][2]);
-					Value arr_dim_size = read_from_memory(QUADS[IP][3]);
+					int arr_dim_size = QUADS[IP][3];
 
-					if (arr_access_value.i < 0 || arr_access_value.i >= arr_dim_size.i){
+					if (arr_access_value.i < 0 || arr_access_value.i >= arr_dim_size){
 						// If this point is reached, an array index out of bounds error has ocurred
 						cout << ">> Fatal Error: array index out of bounds!" << endl;
 						exit(EXIT_FAILURE);
@@ -975,7 +997,19 @@ void run(){
         }
         break;
 
-			case 16:			// OBJ_INST
+			case 16:			// TMP_RESET
+        {
+
+					int reset_value = QUADS[IP][2];
+					int tmp_address = QUADS[IP][3];
+
+					write_to_memory(tmp_address, to_string(reset_value));
+
+					IP++;
+        }
+        break;
+
+			case 17:			// OBJ_INST
         {
 					int object_sign  = QUADS[IP][2];
 					int obj_dir = QUADS[IP][3];
@@ -993,7 +1027,7 @@ void run(){
         }
         break;
 
-			case 17:			// OBJ_READ
+			case 18:			// OBJ_READ
         {
 
 					Memory* this_mem;
@@ -1023,7 +1057,7 @@ void run(){
         }
         break;
 
-			case 18:			// OBJ_WRITE
+			case 19:			// OBJ_WRITE
         {
 
 				 	Memory* this_mem;
@@ -1053,7 +1087,7 @@ void run(){
         }
         break;
 
-			case 19:		// ERA
+			case 20:		// ERA
 				{
 					int func_start_addr = QUADS[IP][3];
 					if (MEMORY_STACK.size() > MEMORY_STACK_LIMIT){
@@ -1070,7 +1104,7 @@ void run(){
 				}
 				break;
 
-			case 20:		// PARAM
+			case 21:		// PARAM
 				{
 
 					Value param_value;
@@ -1086,7 +1120,7 @@ void run(){
 				}
 				break;
 
-			case 21:		// GOSUB
+			case 22:		// GOSUB
 				{
 					int func_start_addr = QUADS[IP][3];
 					LOCAL_MEM = &(MEMORY_STACK.top());
@@ -1096,7 +1130,7 @@ void run(){
 				}
 				break;
 
-			case 22:		// OBJ_GOSUB
+			case 23:		// OBJ_GOSUB
 				{
 
 					int object_dir = QUADS[IP][2];
@@ -1122,7 +1156,7 @@ void run(){
 				}
 				break;
 
-			case 23:		// READ
+			case 24:		// READ
 				{
 
 					int result_dir;
@@ -1142,7 +1176,7 @@ void run(){
 				}
 				break;
 
-			case 24:			// PRNTBFFR
+			case 25:			// PRNTBFFR
 				{
 					Value printable = read_from_memory(QUADS[IP][3]);
 					if (LOCAL_MEM->active) LOCAL_MEM->add_to_print_buffer(printable.to_str());
@@ -1151,7 +1185,7 @@ void run(){
 				}
 				break;
 
-      case 25:			// PRNT
+      case 26:			// PRNT
         {
           string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
           cout << printable;
@@ -1159,7 +1193,7 @@ void run(){
         }
         break;
 
-			case 26:			// PRNTLN
+			case 27:			// PRNTLN
         {
 					string printable = (LOCAL_MEM->active) ? LOCAL_MEM->flush_print_buffer() : GLOBAL_MEM.flush_print_buffer();
 					cout << printable << endl;
@@ -1167,14 +1201,14 @@ void run(){
         }
         break;
 
-      case 27:			// GOTO
+      case 28:			// GOTO
         {
           int to_addr = QUADS[IP][3];
           IP = to_addr;
         }
         break;
 
-			case 28:			// GOTOF
+			case 29:			// GOTOF
 				{
 					int to_addr = QUADS[IP][3];
 					Value condition = read_from_memory(QUADS[IP][2]);
@@ -1185,7 +1219,7 @@ void run(){
 				}
 				break;
 
-			case 29:			// ENDFNC
+			case 30:			// ENDFNC
 				{
 
 					int was_class_func = QUADS[IP][3];
@@ -1207,7 +1241,7 @@ void run(){
 				}
 				break;
 
-      case 30:			// END
+      case 31:			// END
         {
           RUNNING = false;
         }

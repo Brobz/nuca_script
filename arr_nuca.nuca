@@ -2,11 +2,47 @@ program ARRAYS;
 
 // Arays //
 
-int_arr[100], int_matrix[3][3], int_cube[3][3][3] : int;
+int_arr[100], int_matrix[3][3], int_cube[3][3][3], int_cube_2[3][3][3] : int;
 
 // Vars //
 
 idx : int;
+tlc : object;
+
+class TheLonelyCube {
+
+  ATTR{
+    resulting_cube[3][3][3] : int;
+  }
+
+}
+
+void multiply_cubes()
+VARS{
+    i, j, k,  : int;
+    str : string;
+}{
+    tlc = new TheLonelyCube();
+    int_cube[0][0][0] = 1;
+    int_cube_2[0][0][0] = 1;
+    int_cube[0][0][1] = 2;
+    int_cube_2[0][0][1] = 2;
+    tlc.resulting_cube[0][0][0] = int_cube[0][0][0] * int_cube_2[0][0][1];
+    println(tlc.resulting_cube[0][0][0], int_cube[0][1][2], int_cube[1][1][2], int_cube_2[0][1][2], int_cube_2[1][1][2]);
+    for(i = 0; i < 3; i = i + 1){
+      for(j = 0; j < 3; j = j + 1){
+        for(k = 0; k < 3; k = k + 1){
+          println(i, j, k);
+          println(int_cube[i][j][k], " * ", int_cube_2[i][j][k]);
+          tlc.resulting_cube[i][j][k] = int_cube[i][j][k] * int_cube_2[i][j][k];
+          println(tlc.resulting_cube[i][j][k]);
+        }
+      }
+    }
+    println("results that matter: ", tlc.resulting_cube[0][1][2], tlc.resulting_cube[1][1][2]);
+}
+
+
 
 class ArrayClass{
   ATTR{
@@ -50,6 +86,11 @@ VARS{}
 obj : object;
 
 main (){
+  int_cube[0][1][2] = 3;
+  int_cube[1][1][2] = 32;
+  int_cube_2[0][1][2] = 31;
+  int_cube_2[1][1][2] = 3;
+  multiply_cubes();
   obj = new ArrayClass();
   obj.int_arr[5] = 6;
   int_arr[obj.int_arr[5]] = 92;

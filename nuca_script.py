@@ -299,9 +299,9 @@ JUMP_STACK = []
 FUNC_CALL_STACK = []
 ARRAY_DIMENSION_STACK = []
 SCOPES_STACK = ["GLOBAL"]
-CLASS_INSTANCE_STACK = []
 DOT_OP_STACK = []
 OBJECT_ACCESS_STACK = []
+CLASS_INSTANCE_STACK = []
 QUAD_POINTER = 1
 QUADS = [Quad("GOTO", -1, -1, "PND")]
 
@@ -401,7 +401,12 @@ def p_symbol_list(p):
 def p_symbol_list_p(p):
     ''' SYMBOL_LIST_P : COMMA ID SYMBOL_LIST_P
                     |   COMMA ARRAY_DEFINITION SYMBOL_LIST_P
+                    |   COMMA
                     | empty '''
+    if len(p) <= 2:
+        p[0] = None
+        return
+
     if p[1] == ',':
         p[0] = ',' + p[2]
         if p[3] != None:
@@ -434,10 +439,11 @@ def p_seen_readable(p):
         is_ptr = -1
 
     parent_obj_dir = -1
-    if len(OBJECT_ACCESS_STACK):
-        parent_obj_id = OBJECT_ACCESS_STACK.pop()
+    if len(CLASS_INSTANCE_STACK):
+        parent_obj_id = CLASS_INSTANCE_STACK.pop()
         if parent_obj_id != "this_kwd":
             parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+
 
     push_to_quads(Quad("READ", parent_obj_dir, is_ptr, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
 
@@ -699,11 +705,10 @@ def parse_var(id, mode):
         else:
             id = id[1]
 
-    is_class_attr = (len(CLASS_INSTANCE_STACK) > 0) and CLASS_INSTANCE_STACK[-1] != "|ARG_WALL|"
+    is_class_attr = (len(OBJECT_ACCESS_STACK) > 0) and OBJECT_ACCESS_STACK[-1] != "|ARG_WALL|"
 
     if is_arr:
         # It is an array!
-
         array_id, array_scope = id[0]
         FUNC_DIR.symbol_lookup(array_id, array_scope, is_class_attr)
         dims = FUNC_DIR.get_symbol_dimensions(array_id, array_scope, is_class_attr)
@@ -714,6 +719,8 @@ def parse_var(id, mode):
             raise Exception("Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
 
         final_access_value = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
+        # Here, we need to reset the values of all the temps used in the array index calculation, in case there is a loop going on, since it will use the same temporals over and over again, causing an eventual overflow
+        push_to_quads(Quad("TMP_RESET", -1,  0, FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
 
         for i, d in enumerate(access_values):
             if type(d) != list:
@@ -724,7 +731,7 @@ def parse_var(id, mode):
                 pass
 
             # Check if access value is in bounds
-            push_to_quads(Quad("ARR_BNDS", -1, FUNC_DIR.get_symbol_mem_index(d[0], d[1]), FUNC_DIR.get_symbol_mem_index(dims[i], SCOPES_STACK[-1])))
+            push_to_quads(Quad("ARR_BNDS", -1, FUNC_DIR.get_symbol_mem_index(d[0], d[1]), dims[i]))
 
             if i == len(access_values) - 1:
                 # We are reading the last dimension of the access values
@@ -737,6 +744,8 @@ def parse_var(id, mode):
 
             else:
                 access_increment = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
+                # Defining a new temp; As above, need to set it to 0 in the case of a loop where its value could overflow
+                push_to_quads(Quad("TMP_RESET", -1,  0, FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1])))
                 push_to_quads(Quad("=", -1,  FUNC_DIR.get_symbol_mem_index(d[0], d[1]), FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1])))
                 for j, size in enumerate(dims):
                     if i < j:
@@ -744,20 +753,29 @@ def parse_var(id, mode):
 
                 push_to_quads(Quad("+", FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]),  FUNC_DIR.get_symbol_mem_index(access_increment, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1])))
 
+
         array_type = FUNC_DIR.symbol_type_lookup(array_id, array_scope, is_class_attr)
 
         ptr_to_array_value_at_index = FUNC_DIR.next_avail("int", SCOPES_STACK[-1], is_ptr = True)
+        # Defining a new temp; As above, need to set it to 0 in the case of a loop where its value could overflow
+        push_to_quads(Quad("TMP_RESET", -1,  0, FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
 
         # Check array value at index
 
         push_to_quads(Quad("ARR_ACCESS", FUNC_DIR.get_symbol_mem_index(array_id, array_scope, is_class_attr),  FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
 
         if not mode: # We are assigning to this array, need a pointer
+            if is_class_attr:
+                # Array as class attribute; Pass the parent object to class instance stack
+                CLASS_INSTANCE_STACK.append(OBJECT_ACCESS_STACK.pop())
+
             OPERAND_STACK.append([FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
-            TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]))
+            TYPE_STACK.append("int")
 
         else: # We are just using the value at this index, no need for a pointer; Can resolve into a tmp
             value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1])
+            # Defining a new temp; As above, so below. 93, 93 / 93
+            push_to_quads(Quad("TMP_RESET", -1,  0, FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
             if not is_class_attr:
                 # Global / local array! Just use a regular =
                 push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
@@ -798,7 +816,9 @@ def parse_var(id, mode):
 
             if not mode: # We are assigning to this object's attribute, need a pointer
 
-                # OG ACTION (before 'if mode' was added here)
+                # Pass the parent object to class instance stack
+                CLASS_INSTANCE_STACK.append(OBJECT_ACCESS_STACK.pop())
+
                 OPERAND_STACK.append([var, DOT_OP_STACK[-1], is_class_attr])
                 TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True))
 
@@ -820,8 +840,6 @@ def parse_var(id, mode):
     if len(DOT_OP_STACK):
         DOT_OP_STACK.pop()
 
-    if len(CLASS_INSTANCE_STACK):
-        CLASS_INSTANCE_STACK.pop()
 
 def p_seen_cte_i(p):
     ''' seen_cte_i :  '''
@@ -884,11 +902,9 @@ def p_var(p):
         if p[1] == "this_kwd":
             if type(p[2]) != list:
                 p[0] = FUNC_DIR.symbol_lookup(p[2], SCOPES_STACK[-1], True)
-                CLASS_INSTANCE_STACK.append("THIS")
             else:
                 FUNC_DIR.symbol_lookup(p[2][1][0], p[2][1][1], True)
                 p[0] = p[2]
-                CLASS_INSTANCE_STACK.append("THIS")
             return
         else:
             FUNC_DIR.symbol_lookup(p[1], SCOPES_STACK[-1])
@@ -910,7 +926,6 @@ def p_class_instance(p):
     ''' CLASS_INSTANCE : NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS '''
     class_instance = FUNC_DIR.next_avail("object", SCOPES_STACK[-1])
     FUNC_DIR.set_symbol_object_type(class_instance, p[2], SCOPES_STACK[-1])
-    #push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(p[2]), FUNC_DIR.get_symbol_mem_index  (class_instance, SCOPES_STACK[-1])))
     OPERAND_STACK.append(class_instance)
     TYPE_STACK.append("object")
 
@@ -925,7 +940,6 @@ def p_seen_dot_operator(p):
     if class_type == None:
         raise Exception("Type Error: symbol " + p[-2] + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new'?)")
     DOT_OP_STACK.append(class_type)
-    CLASS_INSTANCE_STACK.append(p[-2])
 
 def p_seen_this_dot_operator(p):
     ''' seen_this_dot_operator : empty '''
@@ -940,7 +954,6 @@ def p_array(p):
                 arr_scope = SCOPES_STACK[-1]
                 if len(DOT_OP_STACK) and DOT_OP_STACK[-1] != "|ARG_WALL|":
                     arr_scope = DOT_OP_STACK[-1]
-
                 p[0].append([p[1], arr_scope])
                 p[0].append([])
             else:
@@ -971,7 +984,6 @@ def p_seen_open_bracket(p):
     ''' seen_open_bracket : empty '''
     OPERATOR_STACK.append("|ARRAY_ACCESS_WALL|") # Stack Fake Wall
     DOT_OP_STACK.append("|ARG_WALL|") # Stack Fake Wall
-    CLASS_INSTANCE_STACK.append("|ARG_WALL|") # Stack Fake Wall
     OBJECT_ACCESS_STACK.append("|ARG_WALL|") # Stack Fake Wall
 
 def p_seen_array_access(p):
@@ -985,11 +997,8 @@ def p_seen_array_access(p):
 
     OPERATOR_STACK.pop() # Pop Fake Wall
 
-    if len(DOT_OP_STACK):
+    if len(DOT_OP_STACK) and DOT_OP_STACK[-1] == "|ARG_WALL|":
         DOT_OP_STACK.pop() # Pop Fake Wall
-
-    if len(CLASS_INSTANCE_STACK):
-        CLASS_INSTANCE_STACK.pop() # Pop Fake Wall
 
     if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
         OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
@@ -1072,14 +1081,9 @@ def p_func_call(p):
         rtn_obj_name = FUNC_DIR.get_return_obj_name(p[1], scope_in_use)
         push_to_quads(Quad("=", get_ptr_value(None, [temp, SCOPES_STACK[-1]]), FUNC_DIR.get_symbol_mem_index(rtn_obj_name, "GLOBAL"), FUNC_DIR.get_symbol_mem_index(temp, SCOPES_STACK[-1])))
 
-    if len(DOT_OP_STACK):
+
+    if len(DOT_OP_STACK): #and DOT_OP_STACK[-1] == "|ARG_WALL|":
         DOT_OP_STACK.pop()    # POP ARGUMENT FAKE WALL
-
-    if len(CLASS_INSTANCE_STACK):
-        CLASS_INSTANCE_STACK.pop() # Pop Fake Wall
-
-    if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
-        OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
 def p_seen_func_call_id(p):
     ''' seen_func_call_id : empty '''
@@ -1087,7 +1091,6 @@ def p_seen_func_call_id(p):
     if not len(DOT_OP_STACK) or (len(DOT_OP_STACK) and DOT_OP_STACK[-1] == "|ARG_WALL|"):
         DOT_OP_STACK.append("GLOBAL")
     DOT_OP_STACK.append("|ARG_WALL|") # Stack Fake Wall
-    CLASS_INSTANCE_STACK.append("|ARG_WALL|") # Stack Fake Wall
     OBJECT_ACCESS_STACK.append("|ARG_WALL|") # Stack Fake Wall
     func_type = FUNC_DIR.func_type_lookup(p[-1], DOT_OP_STACK[-2])
     push_to_quads(Quad("ERA", -1, -1, FUNC_DIR.get_start_addr(p[-1], DOT_OP_STACK[-2])))
@@ -1104,9 +1107,6 @@ def p_arg_list(p):
 
     if len(DOT_OP_STACK) and DOT_OP_STACK[-1] == "|ARG_WALL|":
         DOT_OP_STACK.pop()    # POP ARGUMENT FAKE WALL
-
-    if len(CLASS_INSTANCE_STACK) and CLASS_INSTANCE_STACK[-1] == "|ARG_WALL|":
-        CLASS_INSTANCE_STACK.pop() # Pop Fake Wall
 
     if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
         OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
@@ -1419,7 +1419,7 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
                 push_to_quads(Quad("OBJ_INST", -1, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
         else:
             # Assigning to class variable; Use OBJ_WRITE
-            parent_object = OBJECT_ACCESS_STACK.pop()
+            parent_object = CLASS_INSTANCE_STACK.pop()
             if parent_object == "this_kwd":
                 push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
             else:
