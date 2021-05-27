@@ -2,28 +2,29 @@ program FILE_IO;
 
 class C{
   ATTR{
-      string file_path, lines[1000];
-      int numbers[50];
+      file_path, lines[1000] : string;
+      numbers[50] : int;
   }
-  string get_spaces(int n)
+  string get_spaces(n : int)
   VARS{}
   {
     return " " * n;
   }
-  string get_newlines(int n)
+  string get_newlines(n : int)
   VARS{}
   {
     return "\n" * n;
   }
-  string get_tabs(int n)
+  string get_tabs(n : int)
   VARS{}
   {
     return "\t" * n;
   }
 }
 
-object c_obj;
-int i;
+c_obj : object;
+i : int;
+
 
 main(){
   c_obj = new C();

@@ -14,6 +14,7 @@ from Compiler.Quad import *
 
 tokens = [
 'SEMI_COLON',
+'COLON',
 'COMMA',
 'DOT',
 'OPEN_CURLY',
@@ -72,6 +73,7 @@ reserved = {
 tokens += list(reserved.values())
 
 t_SEMI_COLON                =   r';'
+t_COLON                     =   r':'
 t_COMMA                     =   r','
 t_DOT                       =   r'\.'
 t_OPEN_CURLY                =   r'\{'
@@ -285,7 +287,6 @@ lexer = lex.lex()
     i : int;
 
 
-
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BACKLOG //
@@ -407,19 +408,19 @@ def p_var_list_star(p):
             p[0] += "||" + p[2]
 
 def p_var_list(p):
-    ''' VAR_LIST : TYPE SYMBOL_LIST SEMI_COLON '''
-    p[0] = p[2] + ":" + p[1]
+    ''' VAR_LIST : SYMBOL_LIST COLON TYPE SEMI_COLON '''
+    p[0] = p[1] + ":" + p[3]
 
 def p_symbol_list(p):
     ''' SYMBOL_LIST : ID SYMBOL_LIST_P
-                    | ARRAY_DECLARATION SYMBOL_LIST_P  '''
+                    | ARRAY_DEFINITION SYMBOL_LIST_P  '''
     p[0] = p[1]
     if p[2] != None:
         p[0] += p[2]
 
 def p_symbol_list_p(p):
     ''' SYMBOL_LIST_P : COMMA ID SYMBOL_LIST_P
-                    |   COMMA ARRAY_DECLARATION SYMBOL_LIST_P
+                    |   COMMA ARRAY_DEFINITION SYMBOL_LIST_P
                     |   COMMA
                     | empty '''
     if len(p) <= 2:
@@ -519,7 +520,7 @@ def parse_vars_declaration(var_list):
                 FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1])
 
 def p_func_param(p):
-    ''' FUNC_PARAM : VAR_DECLARATION FUNC_PARAM_P
+    ''' FUNC_PARAM : ARG_DECLARATION FUNC_PARAM_P
                    | empty '''
 
     if len(p) > 2:
@@ -528,7 +529,7 @@ def p_func_param(p):
             p[0] += p[2]
 
 def p_func_param_p(p):
-    ''' FUNC_PARAM_P : COMMA VAR_DECLARATION FUNC_PARAM_P
+    ''' FUNC_PARAM_P : COMMA ARG_DECLARATION FUNC_PARAM_P
                      | empty '''
 
     if len(p) > 2:
@@ -536,9 +537,9 @@ def p_func_param_p(p):
         if p[3] != None:
             p[0] += p[3]
 
-def p_var_declaration(p):
-    ''' VAR_DECLARATION : TYPE ID'''
-    p[0] = p[2] + ":" + p[1]
+def p_arg_declaration(p):
+    ''' ARG_DECLARATION : ID COLON TYPE '''
+    p[0] = p[1] + ":" + p[3]
 
 def p_vars(p):
     ''' VARS : VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY '''
@@ -1125,12 +1126,12 @@ def p_seen_array_access(p):
     if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
         OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
-def p_array_declaration(p):
-    ''' ARRAY_DECLARATION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DECLARATION_P'''
+def p_array_definition(p):
+    ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
     p[0] = p[1]
 
-def p_array_declaration_p(p):
-    ''' ARRAY_DECLARATION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DECLARATION_P
+def p_array_definition_p(p):
+    ''' ARRAY_DEFINITION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P
                     |   empty'''
 
 
