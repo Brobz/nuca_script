@@ -218,14 +218,7 @@ class SymbolTable(object):
             raise Exception("Unseen symbol " + in_table_id + " in " + self.scope)
 
     def type_lookup(self, sym_id):
-        in_table_id = sym_id
-
-        if "+" in sym_id:
-            # It is an array!
-            _plus_index = sym_id.index("+")
-            in_table_id = sym_id[:_plus_index]
-
-        if in_table_id in self.SYMBOLS:
-            return self.SYMBOLS[in_table_id][0]
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][0]
         else:
-            raise Exception("Unseen symbol " + in_table_id + " in " + self.scope)
+            raise Exception("Unseen symbol " + sym_id + " in " + self.scope)

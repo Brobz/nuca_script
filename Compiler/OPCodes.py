@@ -28,10 +28,11 @@ OPCodes = {
                 "PRNTBFFR" :        25,
                 "PRNT" :            26,
                 "PRNTLN" :          27,
-                "GOTO" :            28,
-                "GOTOF" :           29,
-                "ENDFNC" :          30,
-                "END" :             31,
+                "F_OPEN" :          28,
+                "GOTO" :            29,
+                "GOTOF" :           30,
+                "ENDFNC" :          31,
+                "END" :             32,
 
 
 }

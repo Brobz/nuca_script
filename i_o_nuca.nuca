@@ -1,0 +1,30 @@
+program FILE_IO;
+
+file_path, words[1000] : string;
+
+class C{
+  ATTR{
+      file_path, words[1000] : string;
+  }
+  string get_space()
+  VARS{}
+  {
+    return " ";
+  }
+}
+
+string get_space()
+VARS{}
+{
+  return " ";
+}
+
+c_obj : object;
+
+main(){
+  c_obj = new C();
+  print(">> Enter file path:\n-- ");
+  read(c_obj.file_path);
+  open(c_obj.words, c_obj.file_path,  c_obj.get_space());
+  println(">> Terminating program");
+}

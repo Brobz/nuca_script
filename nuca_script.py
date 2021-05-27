@@ -54,6 +54,7 @@ reserved = {
     'println' : 'PRINTLN_KWD',
     'print' : 'PRINT_KWD',
     'read' : 'READ_KWD',
+    'open' : 'OPEN_KWD',
     'return' : 'RETURN_KWD',
     'while' : 'WHILE_KWD',
     'for' : 'FOR_KWD',
@@ -263,6 +264,12 @@ lexer = lex.lex()
     write(line_array, "file.txt", "\n") // Writes each line_array entry to the file, separated by "\n"
 
     write_at("HI!", "file.txt", 10) // Writes "HI!" at the 10th line of the file (if there are not 10 lines, makes new lines untill there are 10 lines)
+
+    Preliminary QUADS:
+
+    // F_OPEN //
+    Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_dir inside of parent_obj (parent_obj is -1 if null)
+    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dir (parent_obj's mem) |
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -533,8 +540,64 @@ def p_statement(p):
                   | READ SEMI_COLON
                   | PRINT SEMI_COLON
                   | PRINTLN SEMI_COLON
+                  | OPEN SEMI_COLON
                   | FLOW_CONTROL
                   | FUNC_RETURN  '''
+
+
+def p_open(p):
+    ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_open seen_open_buffer COMMA EXPRESSION seen_open_file_path COMMA EXPRESSION seen_open_separator CLOSE_PARENTHESIS '''
+    buffer_var = p[5]
+    file_path = p[8]
+    separator = p[11]
+
+    parent_obj_dir = -1
+    if len(CLASS_INSTANCE_STACK):
+        parent_obj = CLASS_INSTANCE_STACK.pop()
+        if parent_obj != "this_kwd":
+            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1])
+
+    push_to_quads(Quad("F_OPEN", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer_var[0], buffer_var[1], buffer_var[2])))
+
+
+def p_seen_open_buffer(p):
+    ''' seen_open_buffer : empty '''
+    buffer_var_scope =  SCOPES_STACK[-1]
+    buffer_var_attr = False
+    buffer_var = OPERAND_STACK.pop()
+    if type(buffer_var) == list:
+        buffer_var, buffer_var_scope, buffer_var_attr = buffer_var
+
+    if not FUNC_DIR.is_sym_arr(buffer_var, buffer_var_scope):
+        raise Exception("Type Error: Cannot open file into a non-array variable")
+
+    p[0] = [buffer_var, buffer_var_scope, buffer_var_attr]
+
+def p_seen_open_file_path(p):
+    '''  seen_open_file_path : empty '''
+    file_path_scope =  SCOPES_STACK[-1]
+    file_path_attr = False
+    file_path = OPERAND_STACK.pop()
+    if type(file_path) == list:
+        file_path, file_path_scope, file_path_attr = file_path
+
+    if FUNC_DIR.symbol_type_lookup(file_path, file_path_scope, file_path_attr) != "string":
+        raise Exception('Type Error: file path argument for "open" method must be a string')
+
+    p[0] = [file_path, file_path_scope, file_path_attr]
+
+def p_seen_open_separator(p):
+    ''' seen_open_separator : empty '''
+    separator_scope =  SCOPES_STACK[-1]
+    separator_attr = False
+    separator = OPERAND_STACK.pop()
+    if type(separator) == list:
+        separator, separator_scope, separator_attr = separator
+
+    if FUNC_DIR.symbol_type_lookup(separator, separator_scope, separator_attr) != "string":
+        raise Exception('Type Error: separator argument for "open" method must be a string')
+
+    p[0] = [separator, separator_scope, separator_attr]
 
 def p_flow_control(p):
     ''' FLOW_CONTROL :      DECISION
@@ -679,8 +742,12 @@ def p_seen_var_as_factor(p):
     ''' seen_var_as_factor : empty '''
     parse_var(p[-1], 1)
 
+def p_seen_var_in_open(p):
+    ''' seen_var_in_open : empty '''
+    parse_var(p[-1], 0, 1)
 
-def parse_var(id, mode):
+
+def parse_var(id, is_factor, is_io = 0):
     is_arr = False
 
     if type(id) == list:
@@ -749,13 +816,13 @@ def parse_var(id, mode):
 
         push_to_quads(Quad("ARR_ACCESS", FUNC_DIR.get_symbol_mem_index(array_id, array_scope, is_class_attr),  FUNC_DIR.get_symbol_mem_index(final_access_value, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
 
-        if not mode: # We are assigning to this array, need a pointer
+        if not is_factor: # We are assigning to this array, need a pointer
             if is_class_attr:
                 # Array as class attribute; Pass the parent object to class instance stack
                 CLASS_INSTANCE_STACK.append(OBJECT_ACCESS_STACK.pop())
 
             OPERAND_STACK.append([FUNC_DIR.symbol_lookup(ptr_to_array_value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
-            TYPE_STACK.append("int")
+            TYPE_STACK.append(array_type)
 
         else: # We are just using the value at this index, no need for a pointer; Can resolve into a tmp
             value_at_index = FUNC_DIR.next_avail(array_type, SCOPES_STACK[-1])
@@ -785,7 +852,7 @@ def parse_var(id, mode):
         if not is_class_attr:
             # Regular Variable
             var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], is_class_attr)
-            if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]):
+            if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]) and not is_io:
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
@@ -795,11 +862,11 @@ def parse_var(id, mode):
         else:
             var = FUNC_DIR.symbol_lookup(id, DOT_OP_STACK[-1], True)
             # Class Variable
-            if FUNC_DIR.is_sym_arr(id, DOT_OP_STACK[-1]):
+            if FUNC_DIR.is_sym_arr(id, DOT_OP_STACK[-1]) and not is_io:
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
-            if not mode: # We are assigning to this object's attribute, need a pointer
+            if not is_factor: # We are assigning to this object's attribute, need a pointer
 
                 # Pass the parent object to class instance stack
                 CLASS_INSTANCE_STACK.append(OBJECT_ACCESS_STACK.pop())
@@ -1003,7 +1070,9 @@ def p_seen_array_def_id(p):
 
 def p_seen_array_def_dim(p):
     ''' seen_array_def_dim : empty '''
-    dim = p[-2]
+    dim = OPERAND_STACK.pop()
+    if dim <= 0:
+        raise Exception("Value Error: array dimension must be a non-zero positive integer")
     ARRAY_DIMENSION_STACK[-1].append(dim)
 
 def p_term(p):
@@ -1360,7 +1429,7 @@ def generateExpressionQuad():
     else:
         raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
 
-def assign_to_var(push_back_operand = False, push_back_type = False):
+def assign_to_var(push_back_operand = False):
     op = OPERATOR_STACK.pop()
     right_scope = res_scope = SCOPES_STACK[-1]
     right_attr = False
@@ -1374,7 +1443,6 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
 
-
     class_idx = -1
     if res_type == "object":
         # We are assigning to an object, which means we are instantiating it!
@@ -1387,10 +1455,10 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
     else:
         if not res_attr:
             if class_idx == -1:
-                # Assigning to regular variable; Use = OP
+                # Assigning to regular variable; Use =
                 push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
             else:
-                # Assigning to Object variable; Use OBJ_INST OP
+                # Assigning to Object variable; Use OBJ_INST
                 push_to_quads(Quad("OBJ_INST", -1, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
         else:
             # Assigning to class variable; Use OBJ_WRITE
@@ -1402,8 +1470,6 @@ def assign_to_var(push_back_operand = False, push_back_type = False):
 
         if push_back_operand:
             OPERAND_STACK.append(res)
-        if push_back_type:
-            TYPE_STACK.append(res_type)
 
 def decision_statement():
     expr_type = TYPE_STACK.pop()
