@@ -9,6 +9,7 @@ using namespace std;
 
 class FileIO{
     public:
+
       static vector<string> parse_file(string file_path, string separator, int buffer_size){
         vector<string> entries;
         entries.resize(buffer_size);
@@ -57,13 +58,26 @@ class FileIO{
         return entries;
       }
 
-
-    static void overflow_check(int index, int size, string file_path){
-      if (index + 1 > size){
-        cout << ">> Fatal Error: buffer overflow while reading from " << file_path << endl;
-        exit(EXIT_FAILURE);
+      static void write_to_file(vector<string> buffer, string file_path, string separator){
+        ofstream output_file(file_path);
+        if (output_file.is_open()){
+          for (const auto &data : buffer){
+            output_file << data << separator;
+          }
+        }else{
+          cout << ">> Fatal Error: could not open " << file_path << endl;
+          exit(EXIT_FAILURE);
+        }
       }
-    }
+
+    private:
+
+      static void overflow_check(int index, int size, string file_path){
+        if (index + 1 > size){
+          cout << ">> Fatal Error: buffer overflow while reading from " << file_path << endl;
+          exit(EXIT_FAILURE);
+        }
+      }
 
 
 };

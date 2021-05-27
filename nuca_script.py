@@ -55,6 +55,7 @@ reserved = {
     'print' : 'PRINT_KWD',
     'read' : 'READ_KWD',
     'open' : 'OPEN_KWD',
+    'write' : 'WRITE_KWD',
     'return' : 'RETURN_KWD',
     'while' : 'WHILE_KWD',
     'for' : 'FOR_KWD',
@@ -250,8 +251,8 @@ lexer = lex.lex()
 // TODO : PROJECT SCOPE
 
     -> focus project into text-based file I/O
-    -> have builtin methods like open() and write() coded into grammar
-    -> have them take arrays of strings in/out of files
+        -> work on stoi / stof conversions for NucaScript
+        -> work on write_at
 
     Preliminary Syntax:
 
@@ -269,7 +270,18 @@ lexer = lex.lex()
 
     // F_OPEN //
     Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_dir inside of parent_obj (parent_obj is -1 if null, 0 if this.)Throws error if the number of entries exceeds buffer_dim
-    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int/) | buffer_dir (parent_obj's mem) |
+    If it reahes EOF and the buffer still has available space, it inserts a "END_OF_STREAM" entry at the end, so that the user can know the file data is over.
+    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int) | buffer_dir (parent_obj's mem) |
+
+    // F_WRITE //
+    Opens the file at file_path, and writes the contents of buffer_dir using the separator into it (parent_obj is -1 if null, 0 if this.)
+    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int) | buffer_dir (parent_obj's mem) |
+
+    Other things that would be EXTREMELY useful:
+
+    -> string to number conversion (stoi, stof)
+
+
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -541,12 +553,13 @@ def p_statement(p):
                   | PRINT SEMI_COLON
                   | PRINTLN SEMI_COLON
                   | OPEN SEMI_COLON
+                  | WRITE SEMI_COLON
                   | FLOW_CONTROL
                   | FUNC_RETURN  '''
 
 
 def p_open(p):
-    ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_open seen_open_buffer COMMA EXPRESSION seen_open_file_path COMMA EXPRESSION seen_open_separator CLOSE_PARENTHESIS '''
+    ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_io seen_open_buffer COMMA EXPRESSION seen_file_path COMMA EXPRESSION seen_separator CLOSE_PARENTHESIS '''
     buffer = p[5]
     buffer_dimension = buffer[3]
     file_path = p[8]
@@ -585,8 +598,47 @@ def p_seen_open_buffer(p):
 
     p[0] = [buffer, buffer_scope, buffer_attr, buffer_dimension[0]]
 
-def p_seen_open_file_path(p):
-    '''  seen_open_file_path : empty '''
+
+def p_write(p):
+    ''' WRITE : WRITE_KWD OPEN_PARENTHESIS VAR seen_var_in_io seen_write_buffer COMMA EXPRESSION seen_file_path COMMA EXPRESSION seen_separator CLOSE_PARENTHESIS '''
+    buffer = p[5]
+    buffer_dimension = buffer[3]
+    file_path = p[8]
+    separator = p[11]
+
+    parent_obj_dir = -1 # This means, just use the current context!
+    if len(CLASS_INSTANCE_STACK):
+        parent_obj = CLASS_INSTANCE_STACK.pop()
+        if parent_obj != "this_kwd":
+            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
+        else:
+            parent_obj_dir = 0 # This means, use this. reference !
+
+    push_to_quads(Quad("F_WRITE", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer[0], buffer[1], buffer[2]), buffer_dimension))
+
+
+def p_seen_write_buffer(p):
+    ''' seen_write_buffer : empty '''
+    buffer_scope =  SCOPES_STACK[-1]
+    buffer_attr = False
+    buffer = OPERAND_STACK.pop()
+    buffer_type = TYPE_STACK.pop()
+
+    if type(buffer) == list:
+        buffer, buffer_scope, buffer_attr = buffer
+
+    if not FUNC_DIR.is_sym_arr(buffer, buffer_scope):
+        raise Exception("Type Error: cannot write into file from a non-array variable")
+
+    buffer_dimension = FUNC_DIR.get_symbol_dimensions(buffer, buffer_scope, buffer_attr)
+
+    if len(buffer_dimension) > 1:
+        raise Exception("Type Error: cannot write into file from a non-linear array")
+
+    p[0] = [buffer, buffer_scope, buffer_attr, buffer_dimension[0]]
+
+def p_seen_file_path(p):
+    '''  seen_file_path : empty '''
     file_path_scope =  SCOPES_STACK[-1]
     file_path_attr = False
     file_path = OPERAND_STACK.pop()
@@ -596,12 +648,12 @@ def p_seen_open_file_path(p):
         file_path, file_path_scope, file_path_attr = file_path
 
     if file_path_type != "string":
-        raise Exception('Type Error: file path argument for "open" method must be a string')
+        raise Exception('Type Error: file path argument of file I/O must be a string')
 
     p[0] = [file_path, file_path_scope, file_path_attr]
 
-def p_seen_open_separator(p):
-    ''' seen_open_separator : empty '''
+def p_seen_separator(p):
+    ''' seen_separator : empty '''
     separator_scope =  SCOPES_STACK[-1]
     separator_attr = False
     separator = OPERAND_STACK.pop()
@@ -611,9 +663,10 @@ def p_seen_open_separator(p):
         separator, separator_scope, separator_attr = separator
 
     if separator_type != "string":
-        raise Exception('Type Error: separator argument for "open" method must be a string')
+        raise Exception('Type Error: separator argument of file I/O methods must be a string')
 
     p[0] = [separator, separator_scope, separator_attr]
+
 
 def p_flow_control(p):
     ''' FLOW_CONTROL :      DECISION
@@ -758,10 +811,9 @@ def p_seen_var_as_factor(p):
     ''' seen_var_as_factor : empty '''
     parse_var(p[-1], 1)
 
-def p_seen_var_in_open(p):
-    ''' seen_var_in_open : empty '''
+def p_seen_var_in_io(p):
+    ''' seen_var_in_io : empty '''
     parse_var(p[-1], 0, 1)
-
 
 def parse_var(id, is_factor, is_io = 0):
     is_arr = False

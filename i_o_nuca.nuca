@@ -2,24 +2,24 @@ program FILE_IO;
 
 class C{
   ATTR{
-      file_path, words[1000] : string;
+      file_path, lines[1000] : string;
+      numbers[50] : int;
   }
-  string get_space()
+  string get_spaces(n : int)
   VARS{}
   {
-    return " ";
+    return " " * n;
   }
-  string get_newline()
+  string get_newlines(n : int)
   VARS{}
   {
-    return "\n";
+    return "\n" * n;
   }
-}
-
-string get_space()
-VARS{}
-{
-  return " ";
+  string get_tabs(n : int)
+  VARS{}
+  {
+    return "\t" * n;
+  }
 }
 
 c_obj : object;
@@ -32,10 +32,12 @@ main(){
 
   read(c_obj.file_path);
   println(">> Parsing file...");
-  open(c_obj.words, c_obj.file_path,  c_obj.get_newline());
+  open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));
 
-  for(i = 0; (i < 999) && (c_obj.words[i] != "END_OF_STREAM"); i = i + 1){
-    println("Entry " + i + ": " + c_obj.words[i]);
+  for(i = 0; (i < 999) && (c_obj.lines[i] != "END_OF_STREAM"); i = i + 1){
+    println("Entry " + i + ": " + c_obj.lines[i]);
   }
+
+  write(c_obj.numbers, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) //" + c_obj.get_newlines(1));
 
 }

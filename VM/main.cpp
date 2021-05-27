@@ -19,58 +19,67 @@ const int MAX_CONSTANTS = 3000, MAX_SYMBOLS = 5000, MAX_TMP_SYMBOLS = 5000, MAX_
 
 // FUNCTION_MEMORY //
 const map<int, vector<vector<int>>> FUNCTION_MEMORY_CONTEXT_SIGN = {
-										{7, {{1,0,3,0,1}, {5,0,7,3,1}, {4,0,7,0,0}}},
-										{5, {{0,0,0,0,0}, {0,0,0,0,0}}},
-										{1, {{0,0,0,0,0}, {0,0,0,0,0}}},
-										{3, {{0,0,0,0,0}, {0,0,0,0,0}}},
+										{10, {{1,0,3,0,1}, {5,0,11,3,1}, {6,0,10,0,0}}},
+										{1, {{1,0,0,0,0}, {0,0,1,0,0}}},
+										{4, {{1,0,0,0,0}, {0,0,1,0,0}}},
+										{7, {{1,0,0,0,0}, {0,0,1,0,0}}},
 										};
 // FUNCTION_MEMORY //
 
 
 // OBJECT_MEMORY //
 const map<int, vector<int>> OBJECT_MEMORY_CONTEXT_SIGN = {
-										{2, {0,0,1001,0,0}},
+										{2, {50,0,1001,0,0}},
 										};
 // OBJECT_MEMORY //
 
 // CONSTANTS //
 const map<int, string> CONSTANTS = {
 										{0, "1000"},
+										{1, "50"},
 										{6000, " "},
 										{6001, "\n"},
-										{6002, ">> Enter file path:\n-- "},
-										{6003, ">> Parsing file..."},
-										{1, "0"},
-										{2, "999"},
-										{6004, "END_OF_STREAM"},
-										{3, "1"},
-										{6005, "Entry "},
-										{6006, ": "},
+										{6002, "\t"},
+										{6003, ">> Enter file path:\n-- "},
+										{6004, ">> Parsing file..."},
+										{2, "1"},
+										{3, "0"},
+										{4, "999"},
+										{6005, "END_OF_STREAM"},
+										{6006, "Entry "},
+										{6007, ": "},
+										{6008, "file.txt"},
+										{5, "10"},
+										{6009, " // An extra funny comment to confirm this works : ) //"},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{29, -1, -1, 7},
-										{0, 0, 6000, 22000},
-										{31, -1, -1, 1},
-										{0, 0, 6001, 22001},
-										{31, -1, -1, 1},
-										{0, 0, 6000, 22002},
-										{31, -1, -1, 0},
+										{30, -1, -1, 10},
+										{3, 6000, 62000, 97000},
+										{0, 0, 97000, 22000},
+										{32, -1, -1, 1},
+										{3, 6001, 62000, 97000},
+										{0, 0, 97000, 22001},
+										{32, -1, -1, 1},
+										{3, 6002, 62000, 97000},
+										{0, 0, 97000, 22002},
+										{32, -1, -1, 1},
 										{17, -1, 2, 32000},
-										{25, -1, -1, 6002},
+										{25, -1, -1, 6003},
 										{26, -1, -1, -1},
 										{24, 32000, -1, 122000},
-										{25, -1, -1, 6003},
+										{25, -1, -1, 6004},
 										{27, -1, -1, -1},
 										{18, 32000, 122000, 47000},
-										{20, -1, -1, 3},
-										{23, -1, 32000, 3},
+										{20, -1, -1, 4},
+										{21, -1, 2, 62000},
+										{23, -1, 32000, 4},
 										{0, 0, 22001, 47001},
 										{28, 32000, 47000, 47001, 122001, 1000},
-										{0, 0, 1, 12000},
-										{7, 12000, 2, 52000},
+										{0, 0, 3, 12000},
+										{7, 12000, 4, 52000},
 										{16, -1, 0, 37000},
 										{15, -1, 12000, 1000},
 										{0, -1, 12000, 37000},
@@ -78,11 +87,11 @@ const vector<vector<int>> QUADS = {
 										{14, 122001, 37000, 37001},
 										{16, -1, 0, 47002},
 										{18, 32000, 37001, 47002, 1},
-										{12, 47002, 6004, 52001},
+										{12, 47002, 6005, 52001},
 										{10, 52000, 52001, 52002},
-										{30, -1, 52002, 45},
-										{1, 6005, 12000, 47003},
-										{1, 47003, 6006, 47004},
+										{31, -1, 52002, 49},
+										{1, 6006, 12000, 47003},
+										{1, 47003, 6007, 47004},
 										{16, -1, 0, 37003},
 										{15, -1, 12000, 1000},
 										{0, -1, 12000, 37003},
@@ -93,10 +102,21 @@ const vector<vector<int>> QUADS = {
 										{1, 47004, 47005, 47006},
 										{25, -1, -1, 47006},
 										{27, -1, -1, -1},
-										{1, 12000, 3, 37002},
+										{1, 12000, 2, 37002},
 										{0, 0, 37002, 12000},
-										{29, -1, -1, 19},
-										{32, -1, -1, -1},
+										{30, -1, -1, 23},
+										{20, -1, -1, 7},
+										{21, -1, 5, 62000},
+										{23, -1, 32000, 7},
+										{0, 0, 22002, 47007},
+										{1, 47007, 6009, 47008},
+										{20, -1, -1, 4},
+										{21, -1, 2, 62000},
+										{23, -1, 32000, 4},
+										{0, 0, 22001, 47009},
+										{1, 47008, 47009, 47010},
+										{29, 32000, 6008, 47010, 112000, 50},
+										{33, -1, -1, -1},
 										};
 // QUADS //
 
@@ -1089,14 +1109,44 @@ void run(){
         }
         break;
 
-      case 29:			// GOTO
+			case 29:			// F_WRITE
+        {
+					Memory* this_mem;
+					int parent_obj_dir = QUADS[IP][1];
+					int buffer_dir = QUADS[IP][4];
+					int buffer_size = QUADS[IP][5];
+
+					string file_path = read_from_memory(QUADS[IP][2]).s;
+					string separator = read_from_memory(QUADS[IP][3]).s;
+
+					if (parent_obj_dir > 0) this_mem = get_object_memory(parent_obj_dir);
+					else if (parent_obj_dir == 0) this_mem = THIS_MEM;
+					else this_mem = new Memory();
+
+					vector<string> buffer;
+					string next_entry;
+
+					for(int i = 0; i < buffer_size; i++){
+						if (this_mem->id != -1) next_entry = read_from_memory(this_mem, buffer_dir + i).to_str();
+						else next_entry = read_from_memory(buffer_dir + i).to_str();
+						if (next_entry == "END_OF_STREAM") break;
+						buffer.push_back(next_entry);
+					}
+
+					FileIO::write_to_file(buffer, file_path, separator);
+
+					IP++;
+        }
+        break;
+
+      case 30:			// GOTO
         {
           int to_addr = QUADS[IP][3];
           IP = to_addr;
         }
         break;
 
-			case 30:			// GOTOF
+			case 31:			// GOTOF
 				{
 					int to_addr = QUADS[IP][3];
 					Value condition = read_from_memory(QUADS[IP][2]);
@@ -1107,7 +1157,7 @@ void run(){
 				}
 				break;
 
-			case 31:			// ENDFNC
+			case 32:			// ENDFNC
 				{
 
 					int was_class_func = QUADS[IP][3];
@@ -1129,7 +1179,7 @@ void run(){
 				}
 				break;
 
-      case 32:			// END
+      case 33:			// END
         {
           RUNNING = false;
         }
