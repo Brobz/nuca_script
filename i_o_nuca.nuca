@@ -1,7 +1,5 @@
 program FILE_IO;
 
-file_path, words[1000] : string;
-
 class C{
   ATTR{
       file_path, words[1000] : string;
@@ -10,6 +8,11 @@ class C{
   VARS{}
   {
     return " ";
+  }
+  string get_newline()
+  VARS{}
+  {
+    return "\n";
   }
 }
 
@@ -20,11 +23,19 @@ VARS{}
 }
 
 c_obj : object;
+i : int;
 
 main(){
   c_obj = new C();
+
   print(">> Enter file path:\n-- ");
+
   read(c_obj.file_path);
-  open(c_obj.words, c_obj.file_path,  c_obj.get_space());
-  println(">> Terminating program");
+  println(">> Parsing file...");
+  open(c_obj.words, c_obj.file_path,  c_obj.get_newline());
+
+  for(i = 0; (i < 999) && (c_obj.words[i] != "END_OF_STREAM"); i = i + 1){
+    println("Entry " + i + ": " + c_obj.words[i]);
+  }
+
 }

@@ -22,6 +22,7 @@ tokens = [
 'OPEN_BRACKET',
 'CLOSE_BRACKET',
 'EQUALS',
+'NOT_EQUALS',
 'NOT',
 'DOUBLE_EQUALS',
 'AND',
@@ -36,7 +37,6 @@ tokens = [
 'BIGGER_EQ',
 'SMALLER',
 'SMALLER_EQ',
-'DIFFERENT',
 'CTE_I',
 'CTE_F',
 'CTE_S',
@@ -81,6 +81,7 @@ t_OPEN_BRACKET              =   r'\['
 t_CLOSE_BRACKET             =   r'\]'
 t_OPEN_PARENTHESIS          =   r'\('
 t_CLOSE_PARENTHESIS         =   r'\)'
+t_NOT_EQUALS                =   r'!='
 t_DOUBLE_EQUALS             =   r'=='
 t_EQUALS                    =   r'='
 t_NOT                       =   r'!'
@@ -94,7 +95,6 @@ t_BIGGER_EQ                 =   r'\>='
 t_BIGGER                    =   r'\>'
 t_SMALLER_EQ                =   r'\<='
 t_SMALLER                   =   r'\<'
-t_DIFFERENT                 =   r'\<\>'
 
 t_ignore  = ' \t'
 
@@ -265,11 +265,11 @@ lexer = lex.lex()
 
     write_at("HI!", "file.txt", 10) // Writes "HI!" at the 10th line of the file (if there are not 10 lines, makes new lines untill there are 10 lines)
 
-    Preliminary QUADS:
+    Preliminary QUADS (more like HEXES):
 
     // F_OPEN //
-    Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_dir inside of parent_obj (parent_obj is -1 if null)
-    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dir (parent_obj's mem) |
+    Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_dir inside of parent_obj (parent_obj is -1 if null, 0 if this.)Throws error if the number of entries exceeds buffer_dim
+    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int/) | buffer_dir (parent_obj's mem) |
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -547,41 +547,55 @@ def p_statement(p):
 
 def p_open(p):
     ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_open seen_open_buffer COMMA EXPRESSION seen_open_file_path COMMA EXPRESSION seen_open_separator CLOSE_PARENTHESIS '''
-    buffer_var = p[5]
+    buffer = p[5]
+    buffer_dimension = buffer[3]
     file_path = p[8]
     separator = p[11]
 
-    parent_obj_dir = -1
+    parent_obj_dir = -1 # This means, just use the current context!
     if len(CLASS_INSTANCE_STACK):
         parent_obj = CLASS_INSTANCE_STACK.pop()
         if parent_obj != "this_kwd":
-            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1])
+            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
+        else:
+            parent_obj_dir = 0 # This means, use this. reference !
 
-    push_to_quads(Quad("F_OPEN", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer_var[0], buffer_var[1], buffer_var[2])))
-
+    push_to_quads(Quad("F_OPEN", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer[0], buffer[1], buffer[2]), buffer_dimension))
 
 def p_seen_open_buffer(p):
     ''' seen_open_buffer : empty '''
-    buffer_var_scope =  SCOPES_STACK[-1]
-    buffer_var_attr = False
-    buffer_var = OPERAND_STACK.pop()
-    if type(buffer_var) == list:
-        buffer_var, buffer_var_scope, buffer_var_attr = buffer_var
+    buffer_scope =  SCOPES_STACK[-1]
+    buffer_attr = False
+    buffer = OPERAND_STACK.pop()
+    buffer_type = TYPE_STACK.pop()
 
-    if not FUNC_DIR.is_sym_arr(buffer_var, buffer_var_scope):
-        raise Exception("Type Error: Cannot open file into a non-array variable")
+    if type(buffer) == list:
+        buffer, buffer_scope, buffer_attr = buffer
 
-    p[0] = [buffer_var, buffer_var_scope, buffer_var_attr]
+    if not FUNC_DIR.is_sym_arr(buffer, buffer_scope):
+        raise Exception("Type Error: cannot open file into a non-array variable")
+
+    if buffer_type != "string":
+        raise Exception("Type Error: cannot open file into a non-string array")
+
+    buffer_dimension = FUNC_DIR.get_symbol_dimensions(buffer, buffer_scope, buffer_attr)
+
+    if len(buffer_dimension) > 1:
+        raise Exception("Type Error: Cannot open file into non-linear array")
+
+    p[0] = [buffer, buffer_scope, buffer_attr, buffer_dimension[0]]
 
 def p_seen_open_file_path(p):
     '''  seen_open_file_path : empty '''
     file_path_scope =  SCOPES_STACK[-1]
     file_path_attr = False
     file_path = OPERAND_STACK.pop()
+    file_path_type = TYPE_STACK.pop()
+
     if type(file_path) == list:
         file_path, file_path_scope, file_path_attr = file_path
 
-    if FUNC_DIR.symbol_type_lookup(file_path, file_path_scope, file_path_attr) != "string":
+    if file_path_type != "string":
         raise Exception('Type Error: file path argument for "open" method must be a string')
 
     p[0] = [file_path, file_path_scope, file_path_attr]
@@ -591,10 +605,12 @@ def p_seen_open_separator(p):
     separator_scope =  SCOPES_STACK[-1]
     separator_attr = False
     separator = OPERAND_STACK.pop()
+    separator_type = TYPE_STACK.pop()
+
     if type(separator) == list:
         separator, separator_scope, separator_attr = separator
 
-    if FUNC_DIR.symbol_type_lookup(separator, separator_scope, separator_attr) != "string":
+    if separator_type != "string":
         raise Exception('Type Error: separator argument for "open" method must be a string')
 
     p[0] = [separator, separator_scope, separator_attr]
@@ -659,7 +675,7 @@ def p_comp(p):
              | SMALLER
              | SMALLER_EQ
              | DOUBLE_EQUALS
-             | DIFFERENT
+             | NOT_EQUALS
              | AND
              | OR '''
 

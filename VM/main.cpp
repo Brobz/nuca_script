@@ -9,6 +9,7 @@
 
 #include "MemoryContext.h"
 #include "Value.h"
+#include "FileIO.h"
 
 using namespace std;
 
@@ -18,9 +19,10 @@ const int MAX_CONSTANTS = 3000, MAX_SYMBOLS = 5000, MAX_TMP_SYMBOLS = 5000, MAX_
 
 // FUNCTION_MEMORY //
 const map<int, vector<vector<int>>> FUNCTION_MEMORY_CONTEXT_SIGN = {
-										{5, {{0,0,1003,0,1}, {0,0,2,0,1}, {1,0,3,0,0}}},
-										{3, {{0,0,0,0,0}, {0,0,0,0,0}}},
+										{7, {{1,0,3,0,1}, {5,0,7,3,1}, {4,0,7,0,0}}},
+										{5, {{0,0,0,0,0}, {0,0,0,0,0}}},
 										{1, {{0,0,0,0,0}, {0,0,0,0,0}}},
+										{3, {{0,0,0,0,0}, {0,0,0,0,0}}},
 										};
 // FUNCTION_MEMORY //
 
@@ -35,29 +37,65 @@ const map<int, vector<int>> OBJECT_MEMORY_CONTEXT_SIGN = {
 const map<int, string> CONSTANTS = {
 										{0, "1000"},
 										{6000, " "},
-										{6001, ">> Enter file path:\n-- "},
-										{6002, ">> Terminating program"},
+										{6001, "\n"},
+										{6002, ">> Enter file path:\n-- "},
+										{6003, ">> Parsing file..."},
+										{1, "0"},
+										{2, "999"},
+										{6004, "END_OF_STREAM"},
+										{3, "1"},
+										{6005, "Entry "},
+										{6006, ": "},
 										};
 // CONSTANTS //
 
 // QUADS //
 const vector<vector<int>> QUADS = {
-										{29, -1, -1, 5},
-										{0, 0, 6000, 23001},
+										{29, -1, -1, 7},
+										{0, 0, 6000, 22000},
 										{31, -1, -1, 1},
-										{0, 0, 6000, 23002},
+										{0, 0, 6001, 22001},
+										{31, -1, -1, 1},
+										{0, 0, 6000, 22002},
 										{31, -1, -1, 0},
 										{17, -1, 2, 32000},
-										{25, -1, -1, 6001},
+										{25, -1, -1, 6002},
 										{26, -1, -1, -1},
 										{24, 32000, -1, 122000},
-										{18, 32000, 122000, 47000},
-										{20, -1, -1, 1},
-										{23, -1, 32000, 1},
-										{0, 0, 23001, 47001},
-										{28, 32000, 47000, 47001, 122001},
-										{25, -1, -1, 6002},
+										{25, -1, -1, 6003},
 										{27, -1, -1, -1},
+										{18, 32000, 122000, 47000},
+										{20, -1, -1, 3},
+										{23, -1, 32000, 3},
+										{0, 0, 22001, 47001},
+										{28, 32000, 47000, 47001, 122001, 1000},
+										{0, 0, 1, 12000},
+										{7, 12000, 2, 52000},
+										{16, -1, 0, 37000},
+										{15, -1, 12000, 1000},
+										{0, -1, 12000, 37000},
+										{16, -1, 0, 37001},
+										{14, 122001, 37000, 37001},
+										{16, -1, 0, 47002},
+										{18, 32000, 37001, 47002, 1},
+										{12, 47002, 6004, 52001},
+										{10, 52000, 52001, 52002},
+										{30, -1, 52002, 45},
+										{1, 6005, 12000, 47003},
+										{1, 47003, 6006, 47004},
+										{16, -1, 0, 37003},
+										{15, -1, 12000, 1000},
+										{0, -1, 12000, 37003},
+										{16, -1, 0, 37004},
+										{14, 122001, 37003, 37004},
+										{16, -1, 0, 47005},
+										{18, 32000, 37004, 47005, 1},
+										{1, 47004, 47005, 47006},
+										{25, -1, -1, 47006},
+										{27, -1, -1, -1},
+										{1, 12000, 3, 37002},
+										{0, 0, 37002, 12000},
+										{29, -1, -1, 19},
 										{32, -1, -1, -1},
 										};
 // QUADS //
@@ -1030,16 +1068,22 @@ void run(){
 					Memory* this_mem;
 					int parent_obj_dir = QUADS[IP][1];
 					int buffer_dir = QUADS[IP][4];
+					int buffer_size = QUADS[IP][5];
 
 					string file_path = read_from_memory(QUADS[IP][2]).s;
 					string separator = read_from_memory(QUADS[IP][3]).s;
 
-					if (parent_obj_dir != -1) this_mem = get_object_memory(parent_obj_dir);
-					else this_mem = THIS_MEM;
+					if (parent_obj_dir > 0) this_mem = get_object_memory(parent_obj_dir);
+					else if (parent_obj_dir == 0) this_mem = THIS_MEM;
+					else this_mem = new Memory();
 
+					vector<string> file_data = FileIO::parse_file(file_path, separator, buffer_size);
 
-					cout << "F_OPEN -> filepath: " << file_path << ", separator: " << separator << ", buffer_dir: " << buffer_dir  << endl;
-					cout << "Not yet implemented!" << endl;
+					for(int i = 0; i < file_data.size(); i++){
+						if (this_mem->id != -1) write_to_memory(this_mem, buffer_dir + i, file_data[i]);
+						else write_to_memory(buffer_dir + i, file_data[i]);
+						if (file_data[i] == "END_OF_STREAM") break;
+					}
 
 					IP++;
         }

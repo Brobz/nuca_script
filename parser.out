@@ -82,7 +82,7 @@ Rule 76    COMP -> BIGGER_EQ
 Rule 77    COMP -> SMALLER
 Rule 78    COMP -> SMALLER_EQ
 Rule 79    COMP -> DOUBLE_EQUALS
-Rule 80    COMP -> DIFFERENT
+Rule 80    COMP -> NOT_EQUALS
 Rule 81    COMP -> AND
 Rule 82    COMP -> OR
 Rule 83    FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis
@@ -196,7 +196,6 @@ COMMA                : 19 20 21 24 36 50 50 139 140 141 153
 CTE_F                : 103
 CTE_I                : 104 121 122
 CTE_S                : 102
-DIFFERENT            : 80
 DOT                  : 105 106
 DOUBLE_EQUALS        : 79
 ELSE_KWD             : 157
@@ -209,6 +208,7 @@ MAIN_KWD             : 1
 MINUS                : 64 68 85
 NEW_KWD              : 111
 NOT                  : 65 84
+NOT_EQUALS           : 80
 OPEN_BRACKET         : 115 116 121 122
 OPEN_CURLY           : 1 10 13 30 39 156 157 163 166
 OPEN_KWD             : 50
@@ -1661,7 +1661,7 @@ state 83
     SMALLER         reduce using rule 108 (VAR -> ID .)
     SMALLER_EQ      reduce using rule 108 (VAR -> ID .)
     DOUBLE_EQUALS   reduce using rule 108 (VAR -> ID .)
-    DIFFERENT       reduce using rule 108 (VAR -> ID .)
+    NOT_EQUALS      reduce using rule 108 (VAR -> ID .)
     AND             reduce using rule 108 (VAR -> ID .)
     OR              reduce using rule 108 (VAR -> ID .)
     SEMI_COLON      reduce using rule 108 (VAR -> ID .)
@@ -2004,7 +2004,7 @@ state 104
     SMALLER         reduce using rule 109 (VAR -> ARRAY .)
     SMALLER_EQ      reduce using rule 109 (VAR -> ARRAY .)
     DOUBLE_EQUALS   reduce using rule 109 (VAR -> ARRAY .)
-    DIFFERENT       reduce using rule 109 (VAR -> ARRAY .)
+    NOT_EQUALS      reduce using rule 109 (VAR -> ARRAY .)
     AND             reduce using rule 109 (VAR -> ARRAY .)
     OR              reduce using rule 109 (VAR -> ARRAY .)
     SEMI_COLON      reduce using rule 109 (VAR -> ARRAY .)
@@ -2338,7 +2338,7 @@ state 134
     SMALLER         reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
     SMALLER_EQ      reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
     DOUBLE_EQUALS   reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
-    DIFFERENT       reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
+    NOT_EQUALS      reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
     AND             reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
     OR              reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
     CLOSE_PARENTHESIS reduce using rule 133 (FUNC_CALL -> CLASS_REFERENCE FUNC_CALL .)
@@ -2360,7 +2360,7 @@ state 135
     SMALLER         reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
     SMALLER_EQ      reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
     DOUBLE_EQUALS   reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
-    DIFFERENT       reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
+    NOT_EQUALS      reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
     AND             reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
     OR              reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
     SEMI_COLON      reduce using rule 110 (VAR -> CLASS_REFERENCE VAR .)
@@ -2473,7 +2473,7 @@ state 144
     SMALLER         reduce using rule 86 (FACTOR -> FUNC_CALL .)
     SMALLER_EQ      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     DOUBLE_EQUALS   reduce using rule 86 (FACTOR -> FUNC_CALL .)
-    DIFFERENT       reduce using rule 86 (FACTOR -> FUNC_CALL .)
+    NOT_EQUALS      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     AND             reduce using rule 86 (FACTOR -> FUNC_CALL .)
     OR              reduce using rule 86 (FACTOR -> FUNC_CALL .)
 
@@ -2489,7 +2489,7 @@ state 145
     (77) COMP -> . SMALLER
     (78) COMP -> . SMALLER_EQ
     (79) COMP -> . DOUBLE_EQUALS
-    (80) COMP -> . DIFFERENT
+    (80) COMP -> . NOT_EQUALS
     (81) COMP -> . AND
     (82) COMP -> . OR
 
@@ -2502,7 +2502,7 @@ state 145
     SMALLER         shift and go to state 188
     SMALLER_EQ      shift and go to state 189
     DOUBLE_EQUALS   shift and go to state 190
-    DIFFERENT       shift and go to state 191
+    NOT_EQUALS      shift and go to state 191
     AND             shift and go to state 192
     OR              shift and go to state 193
 
@@ -2528,7 +2528,7 @@ state 146
     SMALLER         reduce using rule 108 (VAR -> ID .)
     SMALLER_EQ      reduce using rule 108 (VAR -> ID .)
     DOUBLE_EQUALS   reduce using rule 108 (VAR -> ID .)
-    DIFFERENT       reduce using rule 108 (VAR -> ID .)
+    NOT_EQUALS      reduce using rule 108 (VAR -> ID .)
     AND             reduce using rule 108 (VAR -> ID .)
     OR              reduce using rule 108 (VAR -> ID .)
     SEMI_COLON      reduce using rule 108 (VAR -> ID .)
@@ -2570,7 +2570,7 @@ state 148
     SMALLER         reduce using rule 66 (seen_term -> .)
     SMALLER_EQ      reduce using rule 66 (seen_term -> .)
     DOUBLE_EQUALS   reduce using rule 66 (seen_term -> .)
-    DIFFERENT       reduce using rule 66 (seen_term -> .)
+    NOT_EQUALS      reduce using rule 66 (seen_term -> .)
     AND             reduce using rule 66 (seen_term -> .)
     OR              reduce using rule 66 (seen_term -> .)
     SEMI_COLON      reduce using rule 66 (seen_term -> .)
@@ -2635,7 +2635,7 @@ state 151
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -2659,7 +2659,7 @@ state 152
     SMALLER         reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
     SMALLER_EQ      reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
     DOUBLE_EQUALS   reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
-    DIFFERENT       reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
+    NOT_EQUALS      reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
     AND             reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
     OR              reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
     SEMI_COLON      reduce using rule 87 (FACTOR -> CLASS_INSTANCE .)
@@ -2683,7 +2683,7 @@ state 153
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -2707,7 +2707,7 @@ state 154
     SMALLER         reduce using rule 89 (FACTOR -> CNST .)
     SMALLER_EQ      reduce using rule 89 (FACTOR -> CNST .)
     DOUBLE_EQUALS   reduce using rule 89 (FACTOR -> CNST .)
-    DIFFERENT       reduce using rule 89 (FACTOR -> CNST .)
+    NOT_EQUALS      reduce using rule 89 (FACTOR -> CNST .)
     AND             reduce using rule 89 (FACTOR -> CNST .)
     OR              reduce using rule 89 (FACTOR -> CNST .)
     SEMI_COLON      reduce using rule 89 (FACTOR -> CNST .)
@@ -2737,7 +2737,7 @@ state 156
     SMALLER         reduce using rule 101 (seen_cte_s -> .)
     SMALLER_EQ      reduce using rule 101 (seen_cte_s -> .)
     DOUBLE_EQUALS   reduce using rule 101 (seen_cte_s -> .)
-    DIFFERENT       reduce using rule 101 (seen_cte_s -> .)
+    NOT_EQUALS      reduce using rule 101 (seen_cte_s -> .)
     AND             reduce using rule 101 (seen_cte_s -> .)
     OR              reduce using rule 101 (seen_cte_s -> .)
     SEMI_COLON      reduce using rule 101 (seen_cte_s -> .)
@@ -2761,7 +2761,7 @@ state 157
     SMALLER         reduce using rule 100 (seen_cte_f -> .)
     SMALLER_EQ      reduce using rule 100 (seen_cte_f -> .)
     DOUBLE_EQUALS   reduce using rule 100 (seen_cte_f -> .)
-    DIFFERENT       reduce using rule 100 (seen_cte_f -> .)
+    NOT_EQUALS      reduce using rule 100 (seen_cte_f -> .)
     AND             reduce using rule 100 (seen_cte_f -> .)
     OR              reduce using rule 100 (seen_cte_f -> .)
     SEMI_COLON      reduce using rule 100 (seen_cte_f -> .)
@@ -2785,7 +2785,7 @@ state 158
     SMALLER         reduce using rule 99 (seen_cte_i -> .)
     SMALLER_EQ      reduce using rule 99 (seen_cte_i -> .)
     DOUBLE_EQUALS   reduce using rule 99 (seen_cte_i -> .)
-    DIFFERENT       reduce using rule 99 (seen_cte_i -> .)
+    NOT_EQUALS      reduce using rule 99 (seen_cte_i -> .)
     AND             reduce using rule 99 (seen_cte_i -> .)
     OR              reduce using rule 99 (seen_cte_i -> .)
     SEMI_COLON      reduce using rule 99 (seen_cte_i -> .)
@@ -3362,17 +3362,17 @@ state 190
 
 state 191
 
-    (80) COMP -> DIFFERENT .
+    (80) COMP -> NOT_EQUALS .
 
-    MINUS           reduce using rule 80 (COMP -> DIFFERENT .)
-    NOT             reduce using rule 80 (COMP -> DIFFERENT .)
-    OPEN_PARENTHESIS reduce using rule 80 (COMP -> DIFFERENT .)
-    ID              reduce using rule 80 (COMP -> DIFFERENT .)
-    NEW_KWD         reduce using rule 80 (COMP -> DIFFERENT .)
-    CTE_S           reduce using rule 80 (COMP -> DIFFERENT .)
-    CTE_F           reduce using rule 80 (COMP -> DIFFERENT .)
-    CTE_I           reduce using rule 80 (COMP -> DIFFERENT .)
-    THIS_KWD        reduce using rule 80 (COMP -> DIFFERENT .)
+    MINUS           reduce using rule 80 (COMP -> NOT_EQUALS .)
+    NOT             reduce using rule 80 (COMP -> NOT_EQUALS .)
+    OPEN_PARENTHESIS reduce using rule 80 (COMP -> NOT_EQUALS .)
+    ID              reduce using rule 80 (COMP -> NOT_EQUALS .)
+    NEW_KWD         reduce using rule 80 (COMP -> NOT_EQUALS .)
+    CTE_S           reduce using rule 80 (COMP -> NOT_EQUALS .)
+    CTE_F           reduce using rule 80 (COMP -> NOT_EQUALS .)
+    CTE_I           reduce using rule 80 (COMP -> NOT_EQUALS .)
+    THIS_KWD        reduce using rule 80 (COMP -> NOT_EQUALS .)
 
 
 state 192
@@ -3485,7 +3485,7 @@ state 196
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -3639,7 +3639,7 @@ state 201
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -3663,7 +3663,7 @@ state 202
     SMALLER         reduce using rule 130 (seen_factor -> empty .)
     SMALLER_EQ      reduce using rule 130 (seen_factor -> empty .)
     DOUBLE_EQUALS   reduce using rule 130 (seen_factor -> empty .)
-    DIFFERENT       reduce using rule 130 (seen_factor -> empty .)
+    NOT_EQUALS      reduce using rule 130 (seen_factor -> empty .)
     AND             reduce using rule 130 (seen_factor -> empty .)
     OR              reduce using rule 130 (seen_factor -> empty .)
     SEMI_COLON      reduce using rule 130 (seen_factor -> empty .)
@@ -3685,7 +3685,7 @@ state 203
     SMALLER         reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     SMALLER_EQ      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     DOUBLE_EQUALS   reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
-    DIFFERENT       reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
+    NOT_EQUALS      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     AND             reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     OR              reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     SEMI_COLON      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
@@ -3707,7 +3707,7 @@ state 204
     SMALLER         reduce using rule 97 (seen_var_as_factor -> empty .)
     SMALLER_EQ      reduce using rule 97 (seen_var_as_factor -> empty .)
     DOUBLE_EQUALS   reduce using rule 97 (seen_var_as_factor -> empty .)
-    DIFFERENT       reduce using rule 97 (seen_var_as_factor -> empty .)
+    NOT_EQUALS      reduce using rule 97 (seen_var_as_factor -> empty .)
     AND             reduce using rule 97 (seen_var_as_factor -> empty .)
     OR              reduce using rule 97 (seen_var_as_factor -> empty .)
     SEMI_COLON      reduce using rule 97 (seen_var_as_factor -> empty .)
@@ -3740,7 +3740,7 @@ state 206
     SMALLER         reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
     SMALLER_EQ      reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
     DOUBLE_EQUALS   reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
-    DIFFERENT       reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
+    NOT_EQUALS      reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
     AND             reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
     OR              reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
     SEMI_COLON      reduce using rule 102 (CNST -> CTE_S seen_cte_s .)
@@ -3762,7 +3762,7 @@ state 207
     SMALLER         reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
     SMALLER_EQ      reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
     DOUBLE_EQUALS   reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
-    DIFFERENT       reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
+    NOT_EQUALS      reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
     AND             reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
     OR              reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
     SEMI_COLON      reduce using rule 103 (CNST -> CTE_F seen_cte_f .)
@@ -3784,7 +3784,7 @@ state 208
     SMALLER         reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
     SMALLER_EQ      reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
     DOUBLE_EQUALS   reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
-    DIFFERENT       reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
+    NOT_EQUALS      reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
     AND             reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
     OR              reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
     SEMI_COLON      reduce using rule 104 (CNST -> CTE_I seen_cte_i .)
@@ -3825,7 +3825,7 @@ state 211
     SMALLER         reduce using rule 86 (FACTOR -> FUNC_CALL .)
     SMALLER_EQ      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     DOUBLE_EQUALS   reduce using rule 86 (FACTOR -> FUNC_CALL .)
-    DIFFERENT       reduce using rule 86 (FACTOR -> FUNC_CALL .)
+    NOT_EQUALS      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     AND             reduce using rule 86 (FACTOR -> FUNC_CALL .)
     OR              reduce using rule 86 (FACTOR -> FUNC_CALL .)
     CLOSE_PARENTHESIS reduce using rule 86 (FACTOR -> FUNC_CALL .)
@@ -3961,7 +3961,7 @@ state 218
     SMALLER         reduce using rule 108 (VAR -> ID .)
     SMALLER_EQ      reduce using rule 108 (VAR -> ID .)
     DOUBLE_EQUALS   reduce using rule 108 (VAR -> ID .)
-    DIFFERENT       reduce using rule 108 (VAR -> ID .)
+    NOT_EQUALS      reduce using rule 108 (VAR -> ID .)
     AND             reduce using rule 108 (VAR -> ID .)
     OR              reduce using rule 108 (VAR -> ID .)
     DOT             shift and go to state 121
@@ -3997,7 +3997,7 @@ state 220
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
 
@@ -4034,7 +4034,7 @@ state 222
     SMALLER         reduce using rule 86 (FACTOR -> FUNC_CALL .)
     SMALLER_EQ      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     DOUBLE_EQUALS   reduce using rule 86 (FACTOR -> FUNC_CALL .)
-    DIFFERENT       reduce using rule 86 (FACTOR -> FUNC_CALL .)
+    NOT_EQUALS      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     AND             reduce using rule 86 (FACTOR -> FUNC_CALL .)
     OR              reduce using rule 86 (FACTOR -> FUNC_CALL .)
     COMMA           reduce using rule 86 (FACTOR -> FUNC_CALL .)
@@ -4356,7 +4356,7 @@ state 240
     SMALLER         reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
     SMALLER_EQ      reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
     DOUBLE_EQUALS   reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
-    DIFFERENT       reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
+    NOT_EQUALS      reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
     AND             reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
     OR              reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
     SEMI_COLON      reduce using rule 63 (EXP -> TERM seen_term EXP_P .)
@@ -4408,7 +4408,7 @@ state 243
     SMALLER         reduce using rule 69 (EXP_P -> empty .)
     SMALLER_EQ      reduce using rule 69 (EXP_P -> empty .)
     DOUBLE_EQUALS   reduce using rule 69 (EXP_P -> empty .)
-    DIFFERENT       reduce using rule 69 (EXP_P -> empty .)
+    NOT_EQUALS      reduce using rule 69 (EXP_P -> empty .)
     AND             reduce using rule 69 (EXP_P -> empty .)
     OR              reduce using rule 69 (EXP_P -> empty .)
     SEMI_COLON      reduce using rule 69 (EXP_P -> empty .)
@@ -4428,7 +4428,7 @@ state 244
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -4456,7 +4456,7 @@ state 245
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -4479,7 +4479,7 @@ state 246
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -4507,7 +4507,7 @@ state 247
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -4530,7 +4530,7 @@ state 248
     SMALLER         reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
     SMALLER_EQ      reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
     DOUBLE_EQUALS   reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
-    DIFFERENT       reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
+    NOT_EQUALS      reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
     AND             reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
     OR              reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
     SEMI_COLON      reduce using rule 126 (TERM -> FACTOR seen_factor TERM_P .)
@@ -4588,7 +4588,7 @@ state 251
     SMALLER         reduce using rule 129 (TERM_P -> empty .)
     SMALLER_EQ      reduce using rule 129 (TERM_P -> empty .)
     DOUBLE_EQUALS   reduce using rule 129 (TERM_P -> empty .)
-    DIFFERENT       reduce using rule 129 (TERM_P -> empty .)
+    NOT_EQUALS      reduce using rule 129 (TERM_P -> empty .)
     AND             reduce using rule 129 (TERM_P -> empty .)
     OR              reduce using rule 129 (TERM_P -> empty .)
     SEMI_COLON      reduce using rule 129 (TERM_P -> empty .)
@@ -4756,7 +4756,7 @@ state 263
     SMALLER         reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
     SMALLER_EQ      reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
     DOUBLE_EQUALS   reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
-    DIFFERENT       reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
+    NOT_EQUALS      reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
     AND             reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
     OR              reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
     CLOSE_PARENTHESIS reduce using rule 132 (FUNC_CALL -> ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS .)
@@ -4782,7 +4782,7 @@ state 264
     SMALLER         reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     SMALLER_EQ      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     DOUBLE_EQUALS   reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
-    DIFFERENT       reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
+    NOT_EQUALS      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     AND             reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     OR              reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     COMMA           reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
@@ -4952,7 +4952,7 @@ state 279
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -5058,7 +5058,7 @@ state 282
     SMALLER         reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
     SMALLER_EQ      reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
     DOUBLE_EQUALS   reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
-    DIFFERENT       reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
+    NOT_EQUALS      reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
     AND             reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
     OR              reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
     SEMI_COLON      reduce using rule 64 (EXP -> MINUS seen_unary_minus EXP pop_unary_minus .)
@@ -5076,7 +5076,7 @@ state 283
     SMALLER         reduce using rule 92 (pop_unary_minus -> empty .)
     SMALLER_EQ      reduce using rule 92 (pop_unary_minus -> empty .)
     DOUBLE_EQUALS   reduce using rule 92 (pop_unary_minus -> empty .)
-    DIFFERENT       reduce using rule 92 (pop_unary_minus -> empty .)
+    NOT_EQUALS      reduce using rule 92 (pop_unary_minus -> empty .)
     AND             reduce using rule 92 (pop_unary_minus -> empty .)
     OR              reduce using rule 92 (pop_unary_minus -> empty .)
     SEMI_COLON      reduce using rule 92 (pop_unary_minus -> empty .)
@@ -5102,7 +5102,7 @@ state 284
     SMALLER         reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
     SMALLER_EQ      reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
     DOUBLE_EQUALS   reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
-    DIFFERENT       reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
+    NOT_EQUALS      reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
     AND             reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
     OR              reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
     SEMI_COLON      reduce using rule 85 (FACTOR -> MINUS seen_unary_minus FACTOR pop_unary_minus .)
@@ -5125,7 +5125,7 @@ state 285
   ! reduce/reduce conflict for SMALLER resolved using rule 92 (pop_unary_minus -> empty .)
   ! reduce/reduce conflict for SMALLER_EQ resolved using rule 92 (pop_unary_minus -> empty .)
   ! reduce/reduce conflict for DOUBLE_EQUALS resolved using rule 92 (pop_unary_minus -> empty .)
-  ! reduce/reduce conflict for DIFFERENT resolved using rule 92 (pop_unary_minus -> empty .)
+  ! reduce/reduce conflict for NOT_EQUALS resolved using rule 92 (pop_unary_minus -> empty .)
   ! reduce/reduce conflict for AND resolved using rule 92 (pop_unary_minus -> empty .)
   ! reduce/reduce conflict for OR resolved using rule 92 (pop_unary_minus -> empty .)
   ! reduce/reduce conflict for SEMI_COLON resolved using rule 92 (pop_unary_minus -> empty .)
@@ -5141,7 +5141,7 @@ state 285
     SMALLER         reduce using rule 92 (pop_unary_minus -> empty .)
     SMALLER_EQ      reduce using rule 92 (pop_unary_minus -> empty .)
     DOUBLE_EQUALS   reduce using rule 92 (pop_unary_minus -> empty .)
-    DIFFERENT       reduce using rule 92 (pop_unary_minus -> empty .)
+    NOT_EQUALS      reduce using rule 92 (pop_unary_minus -> empty .)
     AND             reduce using rule 92 (pop_unary_minus -> empty .)
     OR              reduce using rule 92 (pop_unary_minus -> empty .)
     SEMI_COLON      reduce using rule 92 (pop_unary_minus -> empty .)
@@ -5158,7 +5158,7 @@ state 285
   ! SMALLER         [ reduce using rule 130 (seen_factor -> empty .) ]
   ! SMALLER_EQ      [ reduce using rule 130 (seen_factor -> empty .) ]
   ! DOUBLE_EQUALS   [ reduce using rule 130 (seen_factor -> empty .) ]
-  ! DIFFERENT       [ reduce using rule 130 (seen_factor -> empty .) ]
+  ! NOT_EQUALS      [ reduce using rule 130 (seen_factor -> empty .) ]
   ! AND             [ reduce using rule 130 (seen_factor -> empty .) ]
   ! OR              [ reduce using rule 130 (seen_factor -> empty .) ]
   ! SEMI_COLON      [ reduce using rule 130 (seen_factor -> empty .) ]
@@ -5176,7 +5176,7 @@ state 286
     SMALLER         reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
     SMALLER_EQ      reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
     DOUBLE_EQUALS   reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
-    DIFFERENT       reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
+    NOT_EQUALS      reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
     AND             reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
     OR              reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
     SEMI_COLON      reduce using rule 65 (EXP -> NOT seen_not EXP pop_not .)
@@ -5194,7 +5194,7 @@ state 287
     SMALLER         reduce using rule 90 (pop_not -> empty .)
     SMALLER_EQ      reduce using rule 90 (pop_not -> empty .)
     DOUBLE_EQUALS   reduce using rule 90 (pop_not -> empty .)
-    DIFFERENT       reduce using rule 90 (pop_not -> empty .)
+    NOT_EQUALS      reduce using rule 90 (pop_not -> empty .)
     AND             reduce using rule 90 (pop_not -> empty .)
     OR              reduce using rule 90 (pop_not -> empty .)
     SEMI_COLON      reduce using rule 90 (pop_not -> empty .)
@@ -5220,7 +5220,7 @@ state 288
     SMALLER         reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
     SMALLER_EQ      reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
     DOUBLE_EQUALS   reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
-    DIFFERENT       reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
+    NOT_EQUALS      reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
     AND             reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
     OR              reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
     SEMI_COLON      reduce using rule 84 (FACTOR -> NOT seen_not FACTOR pop_not .)
@@ -5243,7 +5243,7 @@ state 289
   ! reduce/reduce conflict for SMALLER resolved using rule 90 (pop_not -> empty .)
   ! reduce/reduce conflict for SMALLER_EQ resolved using rule 90 (pop_not -> empty .)
   ! reduce/reduce conflict for DOUBLE_EQUALS resolved using rule 90 (pop_not -> empty .)
-  ! reduce/reduce conflict for DIFFERENT resolved using rule 90 (pop_not -> empty .)
+  ! reduce/reduce conflict for NOT_EQUALS resolved using rule 90 (pop_not -> empty .)
   ! reduce/reduce conflict for AND resolved using rule 90 (pop_not -> empty .)
   ! reduce/reduce conflict for OR resolved using rule 90 (pop_not -> empty .)
   ! reduce/reduce conflict for SEMI_COLON resolved using rule 90 (pop_not -> empty .)
@@ -5259,7 +5259,7 @@ state 289
     SMALLER         reduce using rule 90 (pop_not -> empty .)
     SMALLER_EQ      reduce using rule 90 (pop_not -> empty .)
     DOUBLE_EQUALS   reduce using rule 90 (pop_not -> empty .)
-    DIFFERENT       reduce using rule 90 (pop_not -> empty .)
+    NOT_EQUALS      reduce using rule 90 (pop_not -> empty .)
     AND             reduce using rule 90 (pop_not -> empty .)
     OR              reduce using rule 90 (pop_not -> empty .)
     SEMI_COLON      reduce using rule 90 (pop_not -> empty .)
@@ -5276,7 +5276,7 @@ state 289
   ! SMALLER         [ reduce using rule 130 (seen_factor -> empty .) ]
   ! SMALLER_EQ      [ reduce using rule 130 (seen_factor -> empty .) ]
   ! DOUBLE_EQUALS   [ reduce using rule 130 (seen_factor -> empty .) ]
-  ! DIFFERENT       [ reduce using rule 130 (seen_factor -> empty .) ]
+  ! NOT_EQUALS      [ reduce using rule 130 (seen_factor -> empty .) ]
   ! AND             [ reduce using rule 130 (seen_factor -> empty .) ]
   ! OR              [ reduce using rule 130 (seen_factor -> empty .) ]
   ! SEMI_COLON      [ reduce using rule 130 (seen_factor -> empty .) ]
@@ -5772,7 +5772,7 @@ state 317
     SMALLER         reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
     SMALLER_EQ      reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
     DOUBLE_EQUALS   reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
-    DIFFERENT       reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
+    NOT_EQUALS      reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
     AND             reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
     OR              reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
     SEMI_COLON      reduce using rule 83 (FACTOR -> OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis .)
@@ -5794,7 +5794,7 @@ state 318
     SMALLER         reduce using rule 95 (seen_close_parenthesis -> empty .)
     SMALLER_EQ      reduce using rule 95 (seen_close_parenthesis -> empty .)
     DOUBLE_EQUALS   reduce using rule 95 (seen_close_parenthesis -> empty .)
-    DIFFERENT       reduce using rule 95 (seen_close_parenthesis -> empty .)
+    NOT_EQUALS      reduce using rule 95 (seen_close_parenthesis -> empty .)
     AND             reduce using rule 95 (seen_close_parenthesis -> empty .)
     OR              reduce using rule 95 (seen_close_parenthesis -> empty .)
     SEMI_COLON      reduce using rule 95 (seen_close_parenthesis -> empty .)
@@ -5815,7 +5815,7 @@ state 319
     SMALLER         reduce using rule 66 (seen_term -> .)
     SMALLER_EQ      reduce using rule 66 (seen_term -> .)
     DOUBLE_EQUALS   reduce using rule 66 (seen_term -> .)
-    DIFFERENT       reduce using rule 66 (seen_term -> .)
+    NOT_EQUALS      reduce using rule 66 (seen_term -> .)
     AND             reduce using rule 66 (seen_term -> .)
     OR              reduce using rule 66 (seen_term -> .)
     SEMI_COLON      reduce using rule 66 (seen_term -> .)
@@ -5875,7 +5875,7 @@ state 322
     SMALLER         reduce using rule 66 (seen_term -> .)
     SMALLER_EQ      reduce using rule 66 (seen_term -> .)
     DOUBLE_EQUALS   reduce using rule 66 (seen_term -> .)
-    DIFFERENT       reduce using rule 66 (seen_term -> .)
+    NOT_EQUALS      reduce using rule 66 (seen_term -> .)
     AND             reduce using rule 66 (seen_term -> .)
     OR              reduce using rule 66 (seen_term -> .)
     SEMI_COLON      reduce using rule 66 (seen_term -> .)
@@ -5900,7 +5900,7 @@ state 323
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -5926,7 +5926,7 @@ state 324
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -5950,7 +5950,7 @@ state 325
     SMALLER         reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
     SMALLER_EQ      reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
     DOUBLE_EQUALS   reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
-    DIFFERENT       reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
+    NOT_EQUALS      reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
     AND             reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
     OR              reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
     SEMI_COLON      reduce using rule 111 (CLASS_INSTANCE -> NEW_KWD ID seen_class_id_instance OPEN_PARENTHESIS CLOSE_PARENTHESIS .)
@@ -6102,7 +6102,7 @@ state 333
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
 
@@ -6139,7 +6139,7 @@ state 335
     SMALLER         reduce using rule 86 (FACTOR -> FUNC_CALL .)
     SMALLER_EQ      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     DOUBLE_EQUALS   reduce using rule 86 (FACTOR -> FUNC_CALL .)
-    DIFFERENT       reduce using rule 86 (FACTOR -> FUNC_CALL .)
+    NOT_EQUALS      reduce using rule 86 (FACTOR -> FUNC_CALL .)
     AND             reduce using rule 86 (FACTOR -> FUNC_CALL .)
     OR              reduce using rule 86 (FACTOR -> FUNC_CALL .)
     COMMA           reduce using rule 86 (FACTOR -> FUNC_CALL .)
@@ -6169,7 +6169,7 @@ state 336
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6230,7 +6230,7 @@ state 340
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6338,7 +6338,7 @@ state 343
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6366,7 +6366,7 @@ state 344
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6394,7 +6394,7 @@ state 345
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6513,7 +6513,7 @@ state 350
     SMALLER         reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     SMALLER_EQ      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     DOUBLE_EQUALS   reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
-    DIFFERENT       reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
+    NOT_EQUALS      reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     AND             reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     OR              reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
     COMMA           reduce using rule 88 (FACTOR -> VAR seen_var_as_factor .)
@@ -6588,7 +6588,7 @@ state 354
     SMALLER         reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     SMALLER_EQ      reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     DOUBLE_EQUALS   reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
-    DIFFERENT       reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
+    NOT_EQUALS      reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     AND             reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     OR              reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     SEMI_COLON      reduce using rule 115 (ARRAY -> ID seen_array_id OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
@@ -6611,7 +6611,7 @@ state 355
     SMALLER         reduce using rule 117 (ARRAY_P -> empty .)
     SMALLER_EQ      reduce using rule 117 (ARRAY_P -> empty .)
     DOUBLE_EQUALS   reduce using rule 117 (ARRAY_P -> empty .)
-    DIFFERENT       reduce using rule 117 (ARRAY_P -> empty .)
+    NOT_EQUALS      reduce using rule 117 (ARRAY_P -> empty .)
     AND             reduce using rule 117 (ARRAY_P -> empty .)
     OR              reduce using rule 117 (ARRAY_P -> empty .)
     SEMI_COLON      reduce using rule 117 (ARRAY_P -> empty .)
@@ -6668,7 +6668,7 @@ state 360
     SMALLER         reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
     SMALLER_EQ      reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
     DOUBLE_EQUALS   reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
-    DIFFERENT       reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
+    NOT_EQUALS      reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
     AND             reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
     OR              reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
     SEMI_COLON      reduce using rule 67 (EXP_P -> PLUS seen_term_op TERM seen_term EXP_P .)
@@ -6692,7 +6692,7 @@ state 361
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6718,7 +6718,7 @@ state 362
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -6738,7 +6738,7 @@ state 363
     SMALLER         reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
     SMALLER_EQ      reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
     DOUBLE_EQUALS   reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
-    DIFFERENT       reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
+    NOT_EQUALS      reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
     AND             reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
     OR              reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
     SEMI_COLON      reduce using rule 68 (EXP_P -> MINUS seen_term_op TERM seen_term EXP_P .)
@@ -6758,7 +6758,7 @@ state 364
     SMALLER         reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
     SMALLER_EQ      reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
     DOUBLE_EQUALS   reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
-    DIFFERENT       reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
+    NOT_EQUALS      reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
     AND             reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
     OR              reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
     SEMI_COLON      reduce using rule 127 (TERM_P -> STAR seen_factor_op FACTOR seen_factor TERM_P .)
@@ -6778,7 +6778,7 @@ state 365
     SMALLER         reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
     SMALLER_EQ      reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
     DOUBLE_EQUALS   reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
-    DIFFERENT       reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
+    NOT_EQUALS      reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
     AND             reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
     OR              reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
     SEMI_COLON      reduce using rule 128 (TERM_P -> FWD_SLASH seen_factor_op FACTOR seen_factor TERM_P .)
@@ -7298,7 +7298,7 @@ state 394
     SMALLER         reduce using rule 177 (empty -> .)
     SMALLER_EQ      reduce using rule 177 (empty -> .)
     DOUBLE_EQUALS   reduce using rule 177 (empty -> .)
-    DIFFERENT       reduce using rule 177 (empty -> .)
+    NOT_EQUALS      reduce using rule 177 (empty -> .)
     AND             reduce using rule 177 (empty -> .)
     OR              reduce using rule 177 (empty -> .)
     SEMI_COLON      reduce using rule 177 (empty -> .)
@@ -7383,7 +7383,7 @@ state 403
     SMALLER         reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     SMALLER_EQ      reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     DOUBLE_EQUALS   reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
-    DIFFERENT       reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
+    NOT_EQUALS      reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     AND             reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     OR              reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
     SEMI_COLON      reduce using rule 116 (ARRAY_P -> OPEN_BRACKET seen_open_bracket EXPRESSION seen_array_access CLOSE_BRACKET ARRAY_P .)
