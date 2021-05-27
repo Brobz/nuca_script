@@ -1,0 +1,35 @@
+program TYPE_CONVERSION;
+
+// Vars //
+
+i, j, k : int;
+tc : object;
+
+// Class //
+
+class TypesClass{
+  ATTR{
+      s[30] : string;
+      i[10]: int;
+      f[10] : float;
+      b[10] : boolean;
+
+  }
+}
+
+// Main Method //
+
+main (){
+  tc = new TypesClass();
+  for(i = 0; i < 10; i = i + 1){
+    tc.i[i] = stoi(i + "");
+    tc.s[i] = i + "";
+    tc.f[i] = stof(i * 1.0 + "");
+    tc.s[i * 2] = tc.f[i] + "";
+    tc.b[i] = stob((i > 5) + "");
+    tc.s[i * 3] = tc.b[i] + "";
+    println("int : " + tc.s[i]);
+    println("float :" + tc.s[i * 2]);
+    println("bolean: " + tc.s[i * 3]);
+  }
+}

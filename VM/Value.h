@@ -122,9 +122,17 @@ class Value{
           {
             temp.set_s(s + to_string(v.f));
           } break;
-          case 22: // STRING + STRING + STRING
+          case 22: // STRING + STRING = STRING
           {
             temp.set_s(s + v.s);
+          } break;
+          case 23: // STRING + BOOLEAN = STRING
+          {
+            temp.set_s(s + to_string(v.b));
+          } break;
+          case 32: // BOOLEAN + STRING = STRING
+          {
+            temp.set_s(to_string(b) + v.s);
           } break;
           default:
           {

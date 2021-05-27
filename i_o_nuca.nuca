@@ -2,7 +2,7 @@ program FILE_IO;
 
 class C{
   ATTR{
-      file_path, lines[1000] : string;
+      file_path, lines[1500] : string;
       numbers[50] : int;
   }
   string get_spaces(n : int)

@@ -53,6 +53,9 @@ reserved = {
     'this'  :   'THIS_KWD',
     'println' : 'PRINTLN_KWD',
     'print' : 'PRINT_KWD',
+    'stoi' : 'STOI_KWD',
+    'stof' : 'STOF_KWD',
+    'stob' : 'STOB_KWD',
     'read' : 'READ_KWD',
     'open' : 'OPEN_KWD',
     'write' : 'WRITE_KWD',
@@ -251,7 +254,6 @@ lexer = lex.lex()
 // TODO : PROJECT SCOPE
 
     -> focus project into text-based file I/O
-        -> work on stoi / stof conversions for NucaScript
         -> work on write_at
 
     Syntax:
@@ -276,15 +278,6 @@ lexer = lex.lex()
     // F_WRITE //
     Opens the file at file_path, and writes the contents of buffer_dir using the separator into it (parent_obj is -1 if null, 0 if this.)
     | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int) | buffer_dir (parent_obj's mem) |
-
-    Other things that would be EXTREMELY useful:
-
-    -> string to number conversion (stoi, stof)
-
-    Syntax:
-
-    s : string;
-    i : int;
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -413,14 +406,14 @@ def p_var_list(p):
 
 def p_symbol_list(p):
     ''' SYMBOL_LIST : ID SYMBOL_LIST_P
-                    | ARRAY_DEFINITION SYMBOL_LIST_P  '''
+                    | ARRAY_DECLARATION SYMBOL_LIST_P  '''
     p[0] = p[1]
     if p[2] != None:
         p[0] += p[2]
 
 def p_symbol_list_p(p):
     ''' SYMBOL_LIST_P : COMMA ID SYMBOL_LIST_P
-                    |   COMMA ARRAY_DEFINITION SYMBOL_LIST_P
+                    |   COMMA ARRAY_DECLARATION SYMBOL_LIST_P
                     |   COMMA
                     | empty '''
     if len(p) <= 2:
@@ -459,7 +452,7 @@ def p_seen_readable(p):
         is_ptr = -1
 
     parent_obj_dir = -1
-    if len(CLASS_INSTANCE_STACK):
+    if id_attr and len(CLASS_INSTANCE_STACK):
         parent_obj_id = CLASS_INSTANCE_STACK.pop()
         if parent_obj_id != "this_kwd":
             parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
@@ -569,7 +562,7 @@ def p_open(p):
     separator = p[11]
 
     parent_obj_dir = -1 # This means, just use the current context!
-    if len(CLASS_INSTANCE_STACK):
+    if buffer[2] and len(CLASS_INSTANCE_STACK):
         parent_obj = CLASS_INSTANCE_STACK.pop()
         if parent_obj != "this_kwd":
             parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
@@ -610,7 +603,7 @@ def p_write(p):
     separator = p[11]
 
     parent_obj_dir = -1 # This means, just use the current context!
-    if len(CLASS_INSTANCE_STACK):
+    if buffer[2] and len(CLASS_INSTANCE_STACK):
         parent_obj = CLASS_INSTANCE_STACK.pop()
         if parent_obj != "this_kwd":
             parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
@@ -741,10 +734,57 @@ def p_factor(p):
     ''' FACTOR :  OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis
                 | NOT seen_not FACTOR pop_not
                 | MINUS seen_unary_minus FACTOR pop_unary_minus
+                | STOI_KWD seen_stoi_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
+                | STOF_KWD seen_stof_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
+                | STOB_KWD seen_stob_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
                 | FUNC_CALL
                 | CLASS_INSTANCE
                 | VAR seen_var_as_factor
                 | CNST '''
+
+def p_seen_stox_factor(p):
+    ''' seen_stox_factor : empty '''
+    stoi_arg_scope =  SCOPES_STACK[-1]
+    stoi_arg_attr = False
+    stoi_arg = OPERAND_STACK.pop()
+    stoi_arg_type = TYPE_STACK.pop()
+
+    x = p[-6]
+
+    if type(stoi_arg) == list:
+        stoi_arg, stoi_arg_scope, stoi_arg_attr = stoi_arg
+
+    if stoi_arg_type != "string":
+        raise Exception('Type Error: "string to ' + x + '" argument must be a string')
+
+    parent_obj_dir = -1 # This means, just use the current context!
+    if stoi_arg_attr and len(CLASS_INSTANCE_STACK):
+        parent_obj = CLASS_INSTANCE_STACK.pop()
+        if parent_obj != "this_kwd":
+            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
+        else:
+            parent_obj_dir = 0 # This means, use this. reference !
+
+
+
+    new_type_temp = FUNC_DIR.next_avail(x, SCOPES_STACK[-1])
+
+    push_to_quads(Quad("STOX", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(stoi_arg, stoi_arg_scope, stoi_arg_attr), FUNC_DIR.get_symbol_mem_index(new_type_temp, SCOPES_STACK[-1], False)))
+
+    OPERAND_STACK.append([new_type_temp, SCOPES_STACK[-1], False])
+    TYPE_STACK.append(x)
+
+def p_seen_stoi_kwd(p):
+    ''' seen_stoi_kwd : empty '''
+    p[0] = "int"
+
+def p_seen_stof_kwd(p):
+    ''' seen_stof_kwd : empty '''
+    p[0] = "float"
+
+def p_seen_stob_kwd(p):
+    ''' seen_stob_kwd : empty '''
+    p[0] = "boolean"
 
 
 def p_pop_not(p):
@@ -1126,12 +1166,12 @@ def p_seen_array_access(p):
     if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
         OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
-def p_array_definition(p):
-    ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
+def p_array_declaration(p):
+    ''' ARRAY_DECLARATION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DECLARATION_P'''
     p[0] = p[1]
 
-def p_array_definition_p(p):
-    ''' ARRAY_DEFINITION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P
+def p_array_declaration_p(p):
+    ''' ARRAY_DECLARATION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DECLARATION_P
                     |   empty'''
 
 
