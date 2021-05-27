@@ -14,7 +14,6 @@ from Compiler.Quad import *
 
 tokens = [
 'SEMI_COLON',
-'COLON',
 'COMMA',
 'DOT',
 'OPEN_CURLY',
@@ -73,7 +72,6 @@ reserved = {
 tokens += list(reserved.values())
 
 t_SEMI_COLON                =   r';'
-t_COLON                     =   r':'
 t_COMMA                     =   r','
 t_DOT                       =   r'\.'
 t_OPEN_CURLY                =   r'\{'
@@ -254,7 +252,7 @@ lexer = lex.lex()
         -> work on stoi / stof conversions for NucaScript
         -> work on write_at
 
-    Preliminary Syntax:
+    Syntax:
 
     word_array[1000], line_array[100] : string;
 
@@ -281,6 +279,10 @@ lexer = lex.lex()
 
     -> string to number conversion (stoi, stof)
 
+    Syntax:
+
+    s : string;
+    i : int;
 
 
 
@@ -334,8 +336,8 @@ def fill_quad(dir, fill):
 
     q = QUADS[dir]
 
-    if q.result == "PND":
-        q.result = fill
+    if q.arg_3 == "PND":
+        q.arg_3 = fill
     else:
         raise Exception("Quad Error: trying to fill complete quad")
 
@@ -343,10 +345,10 @@ def swap_quads(q1, q2):
     if q2 > len(QUADS) - 1:
         QUADS.append(QUADS.pop(q1))
         for q in QUADS:
-            if q.operator in [OPCodes["GOTO"], OPCodes["GOTOF"]] and q.result != "PND": # If this QUAD is either a GOTO or a GOTOF...
-                if q.result > q1: # And was pointing to a quad placed after (bigger index) the one we popped...
+            if q.operator in [OPCodes["GOTO"], OPCodes["GOTOF"]] and q.arg_3 != "PND": # If this QUAD is either a GOTO or a GOTOF...
+                if q.arg_3 > q1: # And was pointing to a quad placed after (bigger index) the one we popped...
                     # Jump dir has been changed since we popped a quad that came before the one we were jumping to
-                    q.result -= 1 # Adjust the value
+                    q.arg_3 -= 1 # Adjust the value
     else:
         temp = QUADS[q2]
         QUADS[q2] = QUADS[q1]
@@ -405,19 +407,19 @@ def p_var_list_star(p):
             p[0] += "||" + p[2]
 
 def p_var_list(p):
-    ''' VAR_LIST : SYMBOL_LIST COLON TYPE SEMI_COLON '''
-    p[0] = p[1] + ":" + p[3]
+    ''' VAR_LIST : TYPE SYMBOL_LIST SEMI_COLON '''
+    p[0] = p[2] + ":" + p[1]
 
 def p_symbol_list(p):
     ''' SYMBOL_LIST : ID SYMBOL_LIST_P
-                    | ARRAY_DEFINITION SYMBOL_LIST_P  '''
+                    | ARRAY_DECLARATION SYMBOL_LIST_P  '''
     p[0] = p[1]
     if p[2] != None:
         p[0] += p[2]
 
 def p_symbol_list_p(p):
     ''' SYMBOL_LIST_P : COMMA ID SYMBOL_LIST_P
-                    |   COMMA ARRAY_DEFINITION SYMBOL_LIST_P
+                    |   COMMA ARRAY_DECLARATION SYMBOL_LIST_P
                     |   COMMA
                     | empty '''
     if len(p) <= 2:
@@ -535,8 +537,8 @@ def p_func_param_p(p):
             p[0] += p[3]
 
 def p_var_declaration(p):
-    ''' VAR_DECLARATION : ID COLON TYPE '''
-    p[0] = p[1] + ":" + p[3]
+    ''' VAR_DECLARATION : TYPE ID'''
+    p[0] = p[2] + ":" + p[1]
 
 def p_vars(p):
     ''' VARS : VARS_KWD OPEN_CURLY VAR_LIST_STAR CLOSE_CURLY '''
@@ -1123,12 +1125,12 @@ def p_seen_array_access(p):
     if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] == "|ARG_WALL|":
         OBJECT_ACCESS_STACK.pop() # Pop Fake Wall
 
-def p_array_definition(p):
-    ''' ARRAY_DEFINITION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P'''
+def p_array_declaration(p):
+    ''' ARRAY_DECLARATION : ID seen_array_def_id OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DECLARATION_P'''
     p[0] = p[1]
 
-def p_array_definition_p(p):
-    ''' ARRAY_DEFINITION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DEFINITION_P
+def p_array_declaration_p(p):
+    ''' ARRAY_DECLARATION_P :       OPEN_BRACKET CTE_I seen_cte_i seen_array_def_dim CLOSE_BRACKET ARRAY_DECLARATION_P
                     |   empty'''
 
 

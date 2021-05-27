@@ -42,6 +42,8 @@ class Memory{
     };
 
     void printout(){
+      cout << "MEMORY ID " << id << endl;
+
       cout << "INTS: ";
       for (int i = 0; i < ints.size(); i++){
         cout << ints[i] << " | ";
@@ -61,8 +63,6 @@ class Memory{
       for (int i = 0; i < booleans.size(); i++){
         cout << booleans[i] << " | ";
       }
-      cout << endl;
-      cout << "MEMORY ID " << id << endl;
     }
 };
 
