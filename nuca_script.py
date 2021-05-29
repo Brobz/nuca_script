@@ -22,6 +22,10 @@ tokens = [
 'OPEN_BRACKET',
 'CLOSE_BRACKET',
 'EQUALS',
+'PLUS_EQUALS',
+'MINUS_EQUALS',
+'TIMES_EQUALS',
+'OVER_EQUALS',
 'NOT_EQUALS',
 'NOT',
 'DOUBLE_EQUALS',
@@ -85,6 +89,10 @@ t_OPEN_BRACKET              =   r'\['
 t_CLOSE_BRACKET             =   r'\]'
 t_OPEN_PARENTHESIS          =   r'\('
 t_CLOSE_PARENTHESIS         =   r'\)'
+t_PLUS_EQUALS               =   r'\+='
+t_MINUS_EQUALS              =   r'-='
+t_TIMES_EQUALS              =   r'\*='
+t_OVER_EQUALS               =   r'/='
 t_NOT_EQUALS                =   r'!='
 t_DOUBLE_EQUALS             =   r'=='
 t_EQUALS                    =   r'='
@@ -143,7 +151,6 @@ lexer = lex.lex()
 // IDEAS //
 
     VM:
-        -> check if poping from memory stack actually frees up memory
         -> change types internally to long and double instead of int and float (EVERYWHERE)                //||\\ IMPORTANT //||\\
 
     ARRAYS:
@@ -155,7 +162,6 @@ lexer = lex.lex()
         -> builtin methods? (wait, exit, etc..)
 
     OTHER:
-        -> allow max memory customization (also max call stack) via command line inpus (argv)
         -> atom syntactic highliter ?
         -> post-compile quad optimization ?
         -> tmp management optimization? (in Avail)
@@ -249,12 +255,7 @@ lexer = lex.lex()
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// SPRINT //
-
-// TODO : PROJECT SCOPE
-
-    -> focus project into text-based file I/O
-        -> work on write_at
+ // File I/O //
 
     Syntax:
 
@@ -266,9 +267,7 @@ lexer = lex.lex()
     write(word_array, "file.txt", " ") // Writes each word_array entry to the file, separated by empty spaces
     write(line_array, "file.txt", "\n") // Writes each line_array entry to the file, separated by "\n"
 
-    write_at("HI!", "file.txt", 10) // Writes "HI!" at the 10th line of the file (if there are not 10 lines, makes new lines untill there are 10 lines)
-
-    Preliminary QUADS (more like HEXES):
+    QUADS (more like HEXES):
 
     // F_OPEN //
     Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_dir inside of parent_obj (parent_obj is -1 if null, 0 if this.)Throws error if the number of entries exceeds buffer_dim
@@ -277,22 +276,24 @@ lexer = lex.lex()
 
     // F_WRITE //
     Opens the file at file_path, and writes the contents of buffer_dir using the separator into it (parent_obj is -1 if null, 0 if this.)
+    If one of the buffer entries has "END_OF_STREAM", entries that come after it will not be written to the file.
     | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int) | buffer_dir (parent_obj's mem) |
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// SPRINT //
+
+// TODO : Add +=,-=, *= and /= operators as possible ASSIGN statements in grammar and SemanticCube
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BACKLOG //
 
-// TODO : Add +=,-=, *= and /= operators as possible ASSIGN statements in grammar and SemanticCube
-
 // TODO : Refactor files and methods
-
-// TODO : Fix shift/reduce && reduce/reduce conflict warnings
 
 // TODO : Make list of includes/dependencies and add them to the project
 
-// TODO: Update Formal grammar and flow diagrams.
+// TODO: Update Formal grammar and flow diagrams. Work on Documentation!
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -676,7 +677,11 @@ def p_for_incr_statement(p):
                               | PRINTLN '''
 
 def p_assign(p):
-    ''' ASSIGN : VAR seen_var_in_assign EQUALS seen_equals EXPRESSION '''
+    ''' ASSIGN :        VAR seen_var_in_assign EQUALS seen_equals EXPRESSION
+                    |   VAR seen_var_in_assign PLUS_EQUALS seen_plus_equals EXPRESSION
+                    |   VAR seen_var_in_assign MINUS_EQUALS seen_minus_equals EXPRESSION
+                    |   VAR seen_var_in_assign TIMES_EQUALS seen_times_equals EXPRESSION
+                    |   VAR seen_var_in_assign OVER_EQUALS seen_over_equals EXPRESSION '''
 
     DOT_OP_STACK.clear()
 
@@ -686,6 +691,84 @@ def p_seen_equals(p):
     ''' seen_equals  : empty '''
     DOT_OP_STACK.clear()
     OPERATOR_STACK.append('=')
+
+def p_seen_plus_equals(p):
+    ''' seen_plus_equals  : empty '''
+    DOT_OP_STACK.clear()
+    OPERATOR_STACK.append('=')
+
+    OPERATOR_STACK.append('+')
+    parse_compound_asignment()
+
+
+def p_seen_minus_equals(p):
+    ''' seen_minus_equals  : empty '''
+    DOT_OP_STACK.clear()
+    OPERATOR_STACK.append('=')
+
+    OPERATOR_STACK.append('-')
+    parse_compound_asignment()
+
+def p_seen_times_equals(p):
+    ''' seen_times_equals  : empty '''
+    DOT_OP_STACK.clear()
+    OPERATOR_STACK.append('=')
+
+    OPERATOR_STACK.append('*')
+    parse_compound_asignment()
+
+def p_seen_over_equals(p):
+    ''' seen_over_equals  : empty '''
+    DOT_OP_STACK.clear()
+    OPERATOR_STACK.append('=')
+
+    OPERATOR_STACK.append('/')
+    parse_compound_asignment()
+
+
+def parse_compound_asignment():
+    if FUNC_DIR.is_sym_ptr(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]):
+        # Since this is an array, need to figure out the pointer from the left side of the compound assignment into a factor on the left side
+        value_at_index = FUNC_DIR.next_avail(TYPE_STACK[-1], SCOPES_STACK[-1])
+        if not OPERAND_STACK[-1][2]:
+            # Global / local array! Just use a regular =
+            push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
+
+            OPERAND_STACK.append([FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
+
+        else:
+            # Array as an object attribute! Use OBJ_READ
+            parent_obj_dir = -1
+            parent_obj_id = CLASS_INSTANCE_STACK[-1]
+            if parent_obj_id != "this_kwd":
+                parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+
+            push_to_quads(Quad("OBJ_READ", parent_obj_dir,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1]), get_ptr_value([OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]], [value_at_index, SCOPES_STACK[-1]])))
+
+            OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]))
+
+    elif OPERAND_STACK[-1][2]:
+        # Just a class varible, need to use OBJ_READ to turn it into the actual value for the left side of the compound assignment
+        value_at_attr = FUNC_DIR.next_avail(TYPE_STACK[-1], SCOPES_STACK[-1])
+
+        parent_object = CLASS_INSTANCE_STACK[-1]
+
+        if parent_object == "this_kwd":
+            push_to_quads(Quad("OBJ_READ", -1, FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1], OPERAND_STACK[-1][2]), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
+        else:
+            push_to_quads(Quad("OBJ_READ", FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1], OPERAND_STACK[-1][2]), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
+
+        OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_attr, SCOPES_STACK[-1]))
+
+
+    else:
+        OPERAND_STACK.append(OPERAND_STACK[-1])
+
+
+    TYPE_STACK.append(TYPE_STACK[-1])
+
+    if len(CLASS_INSTANCE_STACK):
+        CLASS_INSTANCE_STACK.append(CLASS_INSTANCE_STACK[-1])
 
 def p_exp(p):
     ''' EXP :   TERM seen_term EXP_P
@@ -744,21 +827,21 @@ def p_factor(p):
 
 def p_seen_stox_factor(p):
     ''' seen_stox_factor : empty '''
-    stoi_arg_scope =  SCOPES_STACK[-1]
-    stoi_arg_attr = False
-    stoi_arg = OPERAND_STACK.pop()
-    stoi_arg_type = TYPE_STACK.pop()
+    stox_arg_scope =  SCOPES_STACK[-1]
+    stox_arg_attr = False
+    stox_arg = OPERAND_STACK.pop()
+    stox_arg_type = TYPE_STACK.pop()
 
     x = p[-6]
 
-    if type(stoi_arg) == list:
-        stoi_arg, stoi_arg_scope, stoi_arg_attr = stoi_arg
+    if type(stox_arg) == list:
+        stox_arg, stox_arg_scope, stox_arg_attr = stox_arg
 
-    if stoi_arg_type != "string":
+    if stox_arg_type != "string":
         raise Exception('Type Error: "string to ' + x + '" argument must be a string')
 
     parent_obj_dir = -1 # This means, just use the current context!
-    if stoi_arg_attr and len(CLASS_INSTANCE_STACK):
+    if stox_arg_attr and len(CLASS_INSTANCE_STACK):
         parent_obj = CLASS_INSTANCE_STACK.pop()
         if parent_obj != "this_kwd":
             parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
@@ -769,7 +852,7 @@ def p_seen_stox_factor(p):
 
     new_type_temp = FUNC_DIR.next_avail(x, SCOPES_STACK[-1])
 
-    push_to_quads(Quad("STOX", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(stoi_arg, stoi_arg_scope, stoi_arg_attr), FUNC_DIR.get_symbol_mem_index(new_type_temp, SCOPES_STACK[-1], False)))
+    push_to_quads(Quad("STOX", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(stox_arg, stox_arg_scope, stox_arg_attr), FUNC_DIR.get_symbol_mem_index(new_type_temp, SCOPES_STACK[-1], False)))
 
     OPERAND_STACK.append([new_type_temp, SCOPES_STACK[-1], False])
     TYPE_STACK.append(x)
@@ -1502,7 +1585,7 @@ def p_error(p):
 
 
 def get_ptr_value(left, right):
-    ptr_value = 0
+    ptr_value = -1
 
     if left != None:
         if FUNC_DIR.is_sym_ptr(left[0], left[1]):
@@ -1567,7 +1650,7 @@ def assign_to_var(push_back_operand = False):
         if not res_attr:
             if class_idx == -1:
                 # Assigning to regular variable; Use =
-                push_to_quads(Quad(op, get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+                push_to_quads(Quad("=", get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
             else:
                 # Assigning to Object variable; Use OBJ_INST
                 push_to_quads(Quad("OBJ_INST", -1, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
@@ -1645,8 +1728,6 @@ VM_QUAD_MARKER_STR = "// QUADS //\n"
 VM_QUAD_START_STR = "const vector<vector<int>> QUADS = {\n"
 VM_QUAD_END_STR = "\t" * 10 + "};\n"
 
-
-
 VM_MEMORY_CONSTRAINTS_MARKER_STR = "// MEMORY_CONSTRAINTS //\n"
 VM_MEMORY_CONSTRAINTS_START_STR = ""
 VM_MEMORY_CONSTRAINTS_END_STR = ""
@@ -1693,28 +1774,6 @@ def main(argv):
             s += l[:-1]
         print(">> Parsing " + input_file_path + "...")
         parser.parse(s)
-
-        '''
-        for k in FUNC_DIR.FUNCS.keys():
-            print("------------------------------------------------------------")
-            print(k)
-            if k == FUNC_DIR.program_name:
-                print(FUNC_DIR.FUNCS[k].SYMBOLS)
-            else:
-                for key in FUNC_DIR.FUNCS[k].keys():
-                    try:
-                        print(FUNC_DIR.FUNCS[k][key][0], key, FUNC_DIR.FUNCS[k][key][2].SYMBOLS)
-                    except:
-                        if key == "SYMBOLS":
-                            print(FUNC_DIR.FUNCS[k][key].SYMBOLS)
-                        elif key == "FUNCS":
-                            for func in FUNC_DIR.FUNCS[k][key]:
-                                print(FUNC_DIR.FUNCS[k][key][func][0], FUNC_DIR.FUNCS[k][key][func][2].SYMBOLS)
-        print("------------------------------------------------------------")
-
-
-        print(">> STACKS:", OPERAND_STACK, TYPE_STACK, OPERATOR_STACK, JUMP_STACK, FUNC_CALL_STACK)
-        '''
 
     mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
 
@@ -1767,11 +1826,6 @@ def main(argv):
         vm_quads.append("\t" * 10 + QUADS[i].get_cpp_string() + "\n")
 
     fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
-
-    '''
-    for i, q in enumerate(QUADS):
-        print(i, ":", q.get_string())
-    '''
 
     if output_file_path == None:
         output_file_path = FUNC_DIR.program_name + ".exe"

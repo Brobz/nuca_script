@@ -3,7 +3,7 @@ program FILE_IO;
 class C{
   ATTR{
       file_path, lines[1500] : string;
-      numbers[50] : int;
+      numbers[50], n : int;
   }
   string get_spaces(n : int)
   VARS{}
@@ -29,13 +29,26 @@ i : int;
 main(){
   c_obj = new C();
 
+  c_obj.numbers[10] = 20;
+  c_obj.n += c_obj.numbers[10];
+
+  i += 5 * 3;
+  println(i);
+  i -= c_obj.numbers[10];
+  println(i);
+
+  c_obj.numbers[5] += c_obj.numbers[10];
+  c_obj.n /= c_obj.numbers[10];
+
+  println(c_obj.numbers[5], c_obj.n);
+
   print(">> Enter file path:\n-- ");
 
   read(c_obj.file_path);
   println(">> Parsing file...");
   open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));
 
-  for(i = 0; (i < 999) && (c_obj.lines[i] != "END_OF_STREAM"); i = i + 1){
+  for(i = 0; (i < 999) && (c_obj.lines[i] != "END_OF_STREAM"); i += 1){
     println("Entry " + i + ": " + c_obj.lines[i]);
   }
 

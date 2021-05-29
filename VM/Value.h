@@ -79,7 +79,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Unknown type " << type << endl;
+            cout << ">> Fatal Error: Unknown type " << type << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -136,7 +136,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot sum case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot sum case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -165,7 +165,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot subtract case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot subtract case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -254,7 +254,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot multiply case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot multiply case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -283,7 +283,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot divide case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot divide case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -320,7 +320,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot == case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot == case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -353,7 +353,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot > case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot > case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -386,7 +386,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot < case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot < case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -419,7 +419,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot >= case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot >= case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -452,7 +452,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot <= case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot <= case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -529,7 +529,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot && case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot && case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -606,7 +606,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot && case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot || case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -634,7 +634,7 @@ class Value{
 
           default:
           {
-            cout << ">> Error: Cannot unary - case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot unary - case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
@@ -663,7 +663,7 @@ class Value{
           } break;
           default:
           {
-            cout << ">> Error: Cannot ! case " <<  operation_case << endl;
+            cout << ">> Fatal Error: Cannot ! case " <<  operation_case << endl;
             exit(EXIT_FAILURE);
           }
         }
