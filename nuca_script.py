@@ -283,13 +283,15 @@ lexer = lex.lex()
 
 // SPRINT //
 
-// TODO : Add +=,-=, *= and /= operators as possible ASSIGN statements in grammar and SemanticCube
+// TODO : Refactor files and methods
+
+        -> maybe separate gramamr rules for different "sections" into different files?
+        -> there are several sections where the same code is reused with dfferent variable names (parse_var's code, especially the parent_obj_dir thing), make methods for these segments!
+        -> maybe clean up FunctionDirectory's lookup methods logic a bit?
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BACKLOG //
-
-// TODO : Refactor files and methods
 
 // TODO : Make list of includes/dependencies and add them to the project
 
@@ -695,38 +697,28 @@ def p_seen_equals(p):
 def p_seen_plus_equals(p):
     ''' seen_plus_equals  : empty '''
     DOT_OP_STACK.clear()
-    OPERATOR_STACK.append('=')
-
-    OPERATOR_STACK.append('+')
-    parse_compound_asignment()
+    parse_compound_asignment('+')
 
 
 def p_seen_minus_equals(p):
     ''' seen_minus_equals  : empty '''
     DOT_OP_STACK.clear()
-    OPERATOR_STACK.append('=')
-
-    OPERATOR_STACK.append('-')
-    parse_compound_asignment()
+    parse_compound_asignment('-')
 
 def p_seen_times_equals(p):
     ''' seen_times_equals  : empty '''
     DOT_OP_STACK.clear()
-    OPERATOR_STACK.append('=')
-
-    OPERATOR_STACK.append('*')
-    parse_compound_asignment()
+    parse_compound_asignment('*')
 
 def p_seen_over_equals(p):
     ''' seen_over_equals  : empty '''
     DOT_OP_STACK.clear()
+    parse_compound_asignment('/')
+
+
+def parse_compound_asignment(op):
     OPERATOR_STACK.append('=')
-
-    OPERATOR_STACK.append('/')
-    parse_compound_asignment()
-
-
-def parse_compound_asignment():
+    OPERATOR_STACK.append(op)
     if FUNC_DIR.is_sym_ptr(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]):
         # Since this is an array, need to figure out the pointer from the left side of the compound assignment into a factor on the left side
         value_at_index = FUNC_DIR.next_avail(TYPE_STACK[-1], SCOPES_STACK[-1])
@@ -734,7 +726,7 @@ def parse_compound_asignment():
             # Global / local array! Just use a regular =
             push_to_quads(Quad("=", 1,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1])))
 
-            OPERAND_STACK.append([FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], is_class_attr])
+            OPERAND_STACK.append([FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]), SCOPES_STACK[-1], OPERAND_STACK[-1][2]])
 
         else:
             # Array as an object attribute! Use OBJ_READ

@@ -23,15 +23,19 @@ class C{
 }
 
 c_obj : object;
-i : int;
+i, arr[50] : int;
 
 
 main(){
   c_obj = new C();
 
-  c_obj.numbers[10] = 20;
-  c_obj.n += c_obj.numbers[10];
 
+  c_obj.numbers[10] = 20;
+  c_obj.n -= c_obj.numbers[10];
+  arr[49] -= c_obj.n;
+  c_obj.numbers[45] += arr[49];
+  c_obj.numbers[45] *= arr[49];
+  println(arr[49], c_obj.numbers[45]);
   i += 5 * 3;
   println(i);
   i -= c_obj.numbers[10];
