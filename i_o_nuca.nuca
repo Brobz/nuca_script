@@ -1,5 +1,7 @@
 program FILE_IO;
 
+c_obj, cc_obj : object;
+
 class C{
   ATTR{
       file_path, lines[1500] : string;
@@ -8,8 +10,15 @@ class C{
   int do_something(s : string)
   VARS{}
   {
+      cc_obj = new C();
       s += "lol!";
-      this.n += stoi(s);
+      println("n:", this.n);
+      this.n *= 2;
+      cc_obj.numbers[10] += this.numbers[10] * 3;
+      this.numbers[44] -= -33;
+      cc_obj.numbers[10] += this.numbers[22 * 2];
+      println(cc_obj.numbers[10]);
+      this.n += stoi(s) + this.n + this.numbers[10];
       return stoi("05") + this.numbers[10] + this.n;
   }
   string get_spaces(n : int)
@@ -29,12 +38,12 @@ class C{
   }
 }
 
-c_obj : object;
 i, arr[50] : int;
 str : string;
 
 main(){
   c_obj = new C();
+  cc_obj = new C();
   str += "HI!";
   str *= 3;
   println(str);
@@ -55,7 +64,7 @@ main(){
 
   println(c_obj.numbers[5], c_obj.n);
 
-  println(c_obj.do_something("101"));
+  println(c_obj.do_something("100"));
 
   print(">> Enter file path:\n-- ");
 
@@ -67,6 +76,6 @@ main(){
     println("Entry " + i + ": " + c_obj.lines[i]);
   }
 
-  write(c_obj.lines, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) //" + c_obj.get_newlines(1));
+  write(c_obj.lines, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) " + cc_obj.numbers[10] + " //" + c_obj.get_newlines(1));
 
 }

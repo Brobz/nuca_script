@@ -1214,7 +1214,7 @@ def p_seen_array_id(p):
 
     FUNC_DIR.symbol_lookup(id, scope_in_use, is_attr)
     if not FUNC_DIR.is_sym_arr(id, scope_in_use):
-        raise Exception(">> Name Error: Cannot access non-array symbol " + id + " with [] operator")
+        raise Exception("Name Error: Cannot access non-array symbol " + id + " with [] operator")
     ARRAY_DIMENSION_STACK.append([id])
 
 
@@ -1648,7 +1648,15 @@ def assign_to_var(push_back_operand = False):
                 push_to_quads(Quad("OBJ_INST", -1, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
         else:
             # Assigning to class variable; Use OBJ_WRITE
+
+            if FUNC_DIR.is_sym_ptr(res, res_scope):
+                res_attr = False # This is for the special case of writing to an object's array variable;
+                                 # Since res will contain a temporal with its value set to the obj arr var memory index,
+                                 # As classes do not contain temporals, we now need to use res_attr as False so that get_symbol_mem_index
+                                 # can find it within the current local scope
+
             parent_object = CLASS_INSTANCE_STACK.pop()
+
             if parent_object == "this_kwd":
                 push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
             else:
