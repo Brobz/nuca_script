@@ -1,50 +1,52 @@
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-20										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-20										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
-0										 // An extra funny comment to confirm this works : ) //
+program FILE_IO;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+class C{										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  ATTR{										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+      file_path, lines[1500] : string;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+      numbers[50], n : int;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  }										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  string get_spaces(n : int)										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  VARS{}										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  {										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+    return " " * n;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  }										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  string get_newlines(n : int)										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  VARS{}										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  {										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+    return "\n" * n;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  }										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  string get_tabs(n : int)										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  VARS{}										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  {										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+    return "\t" * n;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  }										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+}										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+c_obj : object;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+i, arr[50] : int;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+str : string;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+main(){										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj = new C();										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  str += "HI!";										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  str *= 3;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  println(str);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj.numbers[10] = 20;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj.n -= c_obj.numbers[10];										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  arr[49] -= c_obj.n;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj.numbers[45] += arr[49];										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj.numbers[45] *= arr[49];										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  println(arr[49], c_obj.numbers[45]);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  i += 5 * 3;										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  println(i);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  i -= c_obj.numbers[10];										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  println(i);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj.numbers[5] += c_obj.numbers[10];										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  c_obj.n /= c_obj.numbers[10];										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  println(c_obj.numbers[5], c_obj.n);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  print(">> Enter file path:\n-- ");										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  read(c_obj.file_path);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  println(">> Parsing file...");										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i += 1){										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+    println("Entry " + i + ": " + c_obj.lines[i]);										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  }										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+  write(c_obj.lines, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) //" + c_obj.get_newlines(1));										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //
+}										 // An extra funny comment to confirm this works : ) //										 // An extra funny comment to confirm this works : ) //

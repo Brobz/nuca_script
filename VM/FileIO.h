@@ -11,6 +11,10 @@ class FileIO{
     public:
 
       static vector<string> parse_file(string file_path, string separator, int buffer_size){
+        if (!separator.length()){
+          cout << ">> Fatal Error: cannot parse " << file_path << " using an empty string separator" << endl;
+          exit(EXIT_FAILURE);
+        }
         vector<string> entries;
         entries.resize(buffer_size);
         int separator_index;

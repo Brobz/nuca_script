@@ -5,6 +5,13 @@ class C{
       file_path, lines[1500] : string;
       numbers[50], n : int;
   }
+  int do_something(s : string)
+  VARS{}
+  {
+      s += "lol!";
+      this.n += stoi(s);
+      return stoi("05") + this.numbers[10] + this.n;
+  }
   string get_spaces(n : int)
   VARS{}
   {
@@ -24,11 +31,13 @@ class C{
 
 c_obj : object;
 i, arr[50] : int;
-
+str : string;
 
 main(){
   c_obj = new C();
-
+  str += "HI!";
+  str *= 3;
+  println(str);
 
   c_obj.numbers[10] = 20;
   c_obj.n -= c_obj.numbers[10];
@@ -46,16 +55,18 @@ main(){
 
   println(c_obj.numbers[5], c_obj.n);
 
+  println(c_obj.do_something("101"));
+
   print(">> Enter file path:\n-- ");
 
   read(c_obj.file_path);
   println(">> Parsing file...");
   open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));
 
-  for(i = 0; (i < 999) && (c_obj.lines[i] != "END_OF_STREAM"); i += 1){
+  for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i += 1){
     println("Entry " + i + ": " + c_obj.lines[i]);
   }
 
-  write(c_obj.numbers, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) //" + c_obj.get_newlines(1));
+  write(c_obj.lines, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) //" + c_obj.get_newlines(1));
 
 }
