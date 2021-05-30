@@ -9,6 +9,8 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
   VARS{}										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
       cc_obj = new C();										 // An extra funny comment to confirm this works : ) 93 //
+      this.n++;										 // An extra funny comment to confirm this works : ) 93 //
+      this.n--;										 // An extra funny comment to confirm this works : ) 93 //
       s += "lol!";										 // An extra funny comment to confirm this works : ) 93 //
       println("n:", this.n);										 // An extra funny comment to confirm this works : ) 93 //
       this.n *= 2;										 // An extra funny comment to confirm this works : ) 93 //
@@ -55,13 +57,15 @@ main(){										 // An extra funny comment to confirm this works : ) 93 //
   println(i);										 // An extra funny comment to confirm this works : ) 93 //
   c_obj.numbers[5] += c_obj.numbers[10];										 // An extra funny comment to confirm this works : ) 93 //
   c_obj.n /= c_obj.numbers[10];										 // An extra funny comment to confirm this works : ) 93 //
+  c_obj.numbers[5]++;										 // An extra funny comment to confirm this works : ) 93 //
+  println(arr[3], arr[2]);										 // An extra funny comment to confirm this works : ) 93 //
   println(c_obj.numbers[5], c_obj.n);										 // An extra funny comment to confirm this works : ) 93 //
   println(c_obj.do_something("100"));										 // An extra funny comment to confirm this works : ) 93 //
   print(">> Enter file path:\n-- ");										 // An extra funny comment to confirm this works : ) 93 //
   read(c_obj.file_path);										 // An extra funny comment to confirm this works : ) 93 //
   println(">> Parsing file...");										 // An extra funny comment to confirm this works : ) 93 //
   open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));										 // An extra funny comment to confirm this works : ) 93 //
-  for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i += 1){										 // An extra funny comment to confirm this works : ) 93 //
+  for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i++){										 // An extra funny comment to confirm this works : ) 93 //
     println("Entry " + i + ": " + c_obj.lines[i]);										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
   write(c_obj.lines, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) " + cc_obj.numbers[10] + " //" + c_obj.get_newlines(1));										 // An extra funny comment to confirm this works : ) 93 //

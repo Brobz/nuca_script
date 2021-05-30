@@ -22,6 +22,8 @@ tokens = [
 'OPEN_BRACKET',
 'CLOSE_BRACKET',
 'EQUALS',
+'PLUS_PLUS',
+'MINUS_MINUS',
 'PLUS_EQUALS',
 'MINUS_EQUALS',
 'TIMES_EQUALS',
@@ -89,6 +91,8 @@ t_OPEN_BRACKET              =   r'\['
 t_CLOSE_BRACKET             =   r'\]'
 t_OPEN_PARENTHESIS          =   r'\('
 t_CLOSE_PARENTHESIS         =   r'\)'
+t_PLUS_PLUS                 =   r'\+\+'
+t_MINUS_MINUS               =   r'--'
 t_PLUS_EQUALS               =   r'\+='
 t_MINUS_EQUALS              =   r'-='
 t_TIMES_EQUALS              =   r'\*='
@@ -108,7 +112,6 @@ t_BIGGER                    =   r'\>'
 t_SMALLER_EQ                =   r'\<='
 t_SMALLER                   =   r'\<'
 
-t_ignore  = ' \t'
 
 def t_ID(t):
      r'[A-Za-z]([A-Za-z]|[0-9]|_)*'
@@ -136,6 +139,8 @@ def t_COMMENT(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+
+t_ignore  = ' \t'
 
 # Error handling rule
 def t_error(t):
@@ -683,7 +688,9 @@ def p_assign(p):
                     |   VAR seen_var_in_assign PLUS_EQUALS seen_plus_equals EXPRESSION
                     |   VAR seen_var_in_assign MINUS_EQUALS seen_minus_equals EXPRESSION
                     |   VAR seen_var_in_assign TIMES_EQUALS seen_times_equals EXPRESSION
-                    |   VAR seen_var_in_assign OVER_EQUALS seen_over_equals EXPRESSION '''
+                    |   VAR seen_var_in_assign OVER_EQUALS seen_over_equals EXPRESSION
+                    |   VAR seen_var_in_assign PLUS_PLUS seen_plus_plus
+                    |   VAR seen_var_in_assign MINUS_MINUS seen_minus_minus '''
 
     DOT_OP_STACK.clear()
 
@@ -715,10 +722,21 @@ def p_seen_over_equals(p):
     DOT_OP_STACK.clear()
     parse_compound_asignment('/')
 
+def p_seen_plus_plus(p):
+    ''' seen_plus_plus  : empty '''
+    DOT_OP_STACK.clear()
+    parse_compound_asignment('++')
+
+
+def p_seen_minus_minus(p):
+    ''' seen_minus_minus  : empty '''
+    DOT_OP_STACK.clear()
+    parse_compound_asignment('--')
+
 
 def parse_compound_asignment(op):
     OPERATOR_STACK.append('=')
-    OPERATOR_STACK.append(op)
+
     if FUNC_DIR.is_sym_ptr(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]):
         # Since this is an array, need to figure out the pointer from the left side of the compound assignment into a factor on the left side
         value_at_index = FUNC_DIR.next_avail(TYPE_STACK[-1], SCOPES_STACK[-1])
@@ -756,8 +774,22 @@ def parse_compound_asignment(op):
     else:
         OPERAND_STACK.append(OPERAND_STACK[-1])
 
-
     TYPE_STACK.append(TYPE_STACK[-1])
+
+    if op in ['++', '--']:
+        if TYPE_STACK[-1] not in ["int", "float"]:
+            raise Exception("Type Error: cannot use " + op + " operator with " + TYPE_STACK[-1] + " type variable")
+
+        OPERATOR_STACK.append(op[0])
+        unit_temp = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
+        push_to_quads(Quad("TMP_RESET", -1, 1, FUNC_DIR.get_symbol_mem_index(unit_temp, SCOPES_STACK[-1])))
+        OPERAND_STACK.append(unit_temp)
+        TYPE_STACK.append("int")
+
+        generate_expression_quad()
+
+    else:
+        OPERATOR_STACK.append(op)
 
     if len(CLASS_INSTANCE_STACK):
         CLASS_INSTANCE_STACK.append(CLASS_INSTANCE_STACK[-1])
@@ -770,7 +802,7 @@ def p_exp(p):
 def p_seen_term(p):
     ''' seen_term :  '''
     if len(OPERATOR_STACK) and  (OPERATOR_STACK[-1] == '+' or OPERATOR_STACK[-1] == '-'):
-        generateExpressionQuad()
+        generate_expression_quad()
 
 def p_exp_p(p):
     ''' EXP_P : PLUS seen_term_op TERM seen_term EXP_P
@@ -787,7 +819,7 @@ def p_expression(p):
 
 def p_seen_comp(p):
     ''' seen_comp : empty '''
-    generateExpressionQuad()
+    generate_expression_quad()
 
 def p_seen_comp_op(p):
     ''' seen_comp_op : empty '''
@@ -1272,7 +1304,7 @@ def p_term_p(p):
 def p_seen_factor(p):
     ''' seen_factor :  empty '''
     if len(OPERATOR_STACK) and (OPERATOR_STACK[-1] == '*' or OPERATOR_STACK[-1] == '/'):
-        generateExpressionQuad()
+        generate_expression_quad()
 
 def p_seen_factor_op(p):
     ''' seen_factor_op :  empty '''
@@ -1571,8 +1603,8 @@ def p_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    print("Syntax error in input!")
-    print(p)
+    print(">> Syntax error in input!")
+    print(">> Unexpected token:", p)
     exit()
 
 
@@ -1591,7 +1623,7 @@ def get_ptr_value(left, right):
 
     return ptr_value
 
-def generateExpressionQuad():
+def generate_expression_quad():
 
     right_scope = left_scope= SCOPES_STACK[-1]
     right_operand = OPERAND_STACK.pop()

@@ -11,6 +11,8 @@ class C{
   VARS{}
   {
       cc_obj = new C();
+      this.n++;
+      this.n--;
       s += "lol!";
       println("n:", this.n);
       this.n *= 2;
@@ -62,6 +64,9 @@ main(){
   c_obj.numbers[5] += c_obj.numbers[10];
   c_obj.n /= c_obj.numbers[10];
 
+  c_obj.numbers[5]++;
+
+  println(arr[3], arr[2]);
   println(c_obj.numbers[5], c_obj.n);
 
   println(c_obj.do_something("100"));
@@ -72,7 +77,7 @@ main(){
   println(">> Parsing file...");
   open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));
 
-  for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i += 1){
+  for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i++){
     println("Entry " + i + ": " + c_obj.lines[i]);
   }
 
