@@ -1,5 +1,3 @@
-**
-
 # NucaScript
 
 A strongly-typed, string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
@@ -9,6 +7,7 @@ Developed in about 10 weeks as the final project of the Compiler Design class at
 ## Dependencies
 
 python 3.7.4 (+)
+
 g++11 (+)
 
 ## **Basic Program Structure:**
