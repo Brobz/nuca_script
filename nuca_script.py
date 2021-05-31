@@ -591,24 +591,42 @@ def p_statement(p):
 
 
 
-def p_using(p):
-    ''' USING : USING_KWD ID AS_KWD ID '''
-    obj_id = p[2]
-    class_type = p[4]
+def p_id_list(p):
+    ''' ID_LIST :   ID ID_LIST_P'''
+    p[0] = p[1]
+    if p[2] != None:
+        p[0]  += p[2]
 
-    FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1], False)
-    if FUNC_DIR.symbol_type_lookup(obj_id, SCOPES_STACK[-1], False) != "object":
-        raise Exception("Type Error: 'using' keyword can only be used with 'object' type variables")
+
+def p_id_list_p(p):
+    ''' ID_LIST_P :         COMMA ID ID_LIST_P
+                        |   COMMA
+                        |   empty '''
+
+    if len(p) > 2:
+        p[0] = "," + p[2]
+        if p[3] != None:
+            p[0] += p[3]
+
+def p_using(p):
+    ''' USING : USING_KWD ID_LIST AS_KWD ID '''
+    obj_ids = p[2].split(',')
+    class_type = p[4]
 
     FUNC_DIR.valid_class_check(class_type)
 
-    obj_prev_class = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
-    if obj_prev_class != None and obj_prev_class != class_type:
-        raise Exception("Class Error: cannot set " + obj_id + " object type to " + class_type + " while it is explicitly instantiated as " + obj_prev_class)
+    for obj_id in obj_ids:
+        FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1], False)
+        if FUNC_DIR.symbol_type_lookup(obj_id, SCOPES_STACK[-1], False) != "object":
+            raise Exception("Type Error: 'using' keyword can only be used with 'object' type variables")
 
-    FUNC_DIR.set_symbol_object_type(obj_id, class_type, SCOPES_STACK[-1])
+        obj_prev_class = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
+        if obj_prev_class != None and obj_prev_class != class_type:
+            raise Exception("Class Error: cannot set " + obj_id + " object type to " + class_type + " while it is explicitly instantiated as " + obj_prev_class)
 
-    push_to_quads(Quad("USNG_AS", -1, FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
+        FUNC_DIR.set_symbol_object_type(obj_id, class_type, SCOPES_STACK[-1])
+
+        push_to_quads(Quad("USNG_AS", -1, FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
 
 def p_open(p):
     ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_io seen_open_buffer COMMA EXPRESSION seen_file_path COMMA EXPRESSION seen_separator CLOSE_PARENTHESIS '''

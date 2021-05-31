@@ -23,8 +23,7 @@ class C{
   int do_something(s : string)
   VARS{}
   {
-      using cc_obj as C;
-      /*/ using other_obj as C; /*/
+      using c_obj, cc_obj as C;
       println("cc_obj.n = " + cc_obj.n);
       this.n++;
       this.n--;

@@ -16,7 +16,6 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
   VARS{}										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
       usin										 // An extra funny comment to confirm this works : ) 93 //
-      /*/ 										 // An extra funny comment to confirm this works : ) 93 //
       prin										 // An extra funny comment to confirm this works : ) 93 //
       this										 // An extra funny comment to confirm this works : ) 93 //
       this										 // An extra funny comment to confirm this works : ) 93 //
