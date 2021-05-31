@@ -18,9 +18,15 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
     return										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
   int do_s										 // An extra funny comment to confirm this works : ) 93 //
-  VARS{}										 // An extra funny comment to confirm this works : ) 93 //
+  VARS{										 // An extra funny comment to confirm this works : ) 93 //
+    ooo[3]										 // An extra funny comment to confirm this works : ) 93 //
+  }										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
       usin										 // An extra funny comment to confirm this works : ) 93 //
+      ooo[										 // An extra funny comment to confirm this works : ) 93 //
+      ooo[										 // An extra funny comment to confirm this works : ) 93 //
+      ooo[										 // An extra funny comment to confirm this works : ) 93 //
+      prin										 // An extra funny comment to confirm this works : ) 93 //
       prin										 // An extra funny comment to confirm this works : ) 93 //
       objs										 // An extra funny comment to confirm this works : ) 93 //
       prin										 // An extra funny comment to confirm this works : ) 93 //
@@ -59,6 +65,10 @@ main(){										 // An extra funny comment to confirm this works : ) 93 //
   using ob										 // An extra funny comment to confirm this works : ) 93 //
   objs[0].										 // An extra funny comment to confirm this works : ) 93 //
   objs[0].										 // An extra funny comment to confirm this works : ) 93 //
+  objs[1] 										 // An extra funny comment to confirm this works : ) 93 //
+  println(										 // An extra funny comment to confirm this works : ) 93 //
+  println(										 // An extra funny comment to confirm this works : ) 93 //
+  println(										 // An extra funny comment to confirm this works : ) 93 //
   for(i = 										 // An extra funny comment to confirm this works : ) 93 //
     objs[i										 // An extra funny comment to confirm this works : ) 93 //
     printl										 // An extra funny comment to confirm this works : ) 93 //

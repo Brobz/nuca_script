@@ -307,17 +307,11 @@ lexer = lex.lex()
 
 // SPRINT //
 
-// TODO : Make list of includes/dependencies and add them to the project
-
 // TODO : Refactor files and methods
 
         -> maybe separate gramamr rules for different "sections" into different files?
         -> there are several sections where the same code is reused with dfferent variable names (parse_var's code, especially the parent_obj_dir thing), make methods for these segments!
         -> maybe clean up FunctionDirectory's lookup methods logic a bit?
-
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// BACKLOG //
 
 // TODO: Update Formal grammar and flow diagrams. Work on Documentation!
 
@@ -1836,6 +1830,9 @@ def assign_to_var(push_back_operand = False):
     right_type  = TYPE_STACK.pop()
     res_type = TYPE_STACK.pop()
 
+    if SemanticCube[res_type][op][right_type] == "err":
+        raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
+
     class_idx = -1
     if res_type == "object":
         # We are assigning to an object, which means we are instantiating it!
@@ -1851,39 +1848,42 @@ def assign_to_var(push_back_operand = False):
         else:
             FUNC_DIR.set_symbol_object_type(res, class_type, SCOPES_STACK[-1]) # Set this object's type
 
-    if SemanticCube[res_type][op][right_type] == "err":
-        raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
-    else:
-        if not res_attr:
-            if class_idx == -1:
-                # Assigning to regular variable; Use =
-                push_to_quads(Quad("=", get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
-            else:
-                # Assigning to Object variable; Use OBJ_INST
-                push_to_quads(Quad("OBJ_INST", -1, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+
+    if not res_attr:
+        if class_idx == -1:
+            # Assigning to regular variable; Use =
+            push_to_quads(Quad("=", get_ptr_value([right_operand, right_scope], [res, res_scope]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
         else:
-            # Assigning to class variable; Use OBJ_WRITE
+            # Assigning to Object variable; Use OBJ_INST
 
+            res_is_ptr = -1
             if FUNC_DIR.is_sym_ptr(res, res_scope):
-                res_attr = False # This is for the special case of writing to an object's array variable;
-                                 # Since res will contain a temporal with its value set to the obj arr var memory index,
-                                 # As classes do not contain temporals, we now need to use res_attr as False so that get_symbol_mem_index
-                                 # can find it within the current local scope
+                res_is_ptr = 1
 
-            parent_obj = CLASS_INSTANCE_STACK.pop()
-            parent_obj_scope = SCOPES_STACK[-1]
-            parent_obj_is_ptr = -1
-            if type(parent_obj) == list:
-                parent_obj, parent_obj_scope = parent_obj[0], parent_obj[1]
-                parent_obj_is_ptr = 1
+            push_to_quads(Quad("OBJ_INST", res_is_ptr, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
+    else:
+        # Assigning to class variable; Use OBJ_WRITE
 
-            if parent_obj == "this_kwd":
-                push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
-            else:
-                push_to_quads(Quad("OBJ_WRITE", FUNC_DIR.get_symbol_mem_index(parent_obj, parent_obj_scope), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope]), parent_obj_is_ptr))
+        if FUNC_DIR.is_sym_ptr(res, res_scope):
+            res_attr = False # This is for the special case of writing to an object's array variable;
+                             # Since res will contain a temporal with its value set to the obj arr var memory index,
+                             # As classes do not contain temporals, we now need to use res_attr as False so that get_symbol_mem_index
+                             # can find it within the current local scope
 
-        if push_back_operand:
-            OPERAND_STACK.append(res)
+        parent_obj = CLASS_INSTANCE_STACK.pop()
+        parent_obj_scope = SCOPES_STACK[-1]
+        parent_obj_is_ptr = -1
+        if type(parent_obj) == list:
+            parent_obj, parent_obj_scope = parent_obj[0], parent_obj[1]
+            parent_obj_is_ptr = 1
+
+        if parent_obj == "this_kwd":
+            push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
+        else:
+            push_to_quads(Quad("OBJ_WRITE", FUNC_DIR.get_symbol_mem_index(parent_obj, parent_obj_scope), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope]), parent_obj_is_ptr))
+
+    if push_back_operand:
+        OPERAND_STACK.append(res)
 
 def decision_statement():
     expr_type = TYPE_STACK.pop()

@@ -26,9 +26,17 @@ class C{
     return "\t" * n;
   }
   int do_something(s : string)
-  VARS{}
+  VARS{
+    ooo[3] : object;
+  }
   {
-      using c_obj, cc_obj, objs as C;
+      using c_obj, cc_obj, objs, ooo as C;
+
+      ooo[0] = new C();
+      ooo[0].n = 101;
+      ooo[1].n += ooo[0].n + 5;
+      println(ooo[0].n, ooo[1].n);
+
       println("cc_obj.n = " + cc_obj.n);
       objs[1].n *= objs[0].n * objs[2].n;
       println("objs[1].n = " + objs[1].n);
@@ -69,6 +77,10 @@ main(){
   using objs as C;
   objs[0].n = 10;
   objs[0].n++;
+  objs[1] = new C();
+  println("--------");
+  println(objs[0].n);
+  println("--------");
   for(i = 1; i < 10; i++){
     objs[i].n += 10 + objs[i - 1].n;
     println(objs[i].n);
@@ -113,7 +125,7 @@ main(){
 
   c_obj.numbers[5]++;
 
-  println(arr[3], arr[2]);
+  println(arr[3] + 93, arr[2] + 93);
   println(c_obj.numbers[5], c_obj.n);
 
   println(c_obj.do_something("100"));

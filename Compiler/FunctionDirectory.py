@@ -23,7 +23,10 @@ class FunctionDirectory(object):
             try:
                 return self.FUNCS[self.current_scope][2].get_array_symbol_element_size(sym_id)
             except:
-                return self.FUNCS[self.program_name].get_array_symbol_element_size(sym_id)
+                try:
+                    return self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_array_symbol_element_size(sym_id)
+                except:
+                    return self.FUNCS[self.program_name].get_array_symbol_element_size(sym_id)
 
     def get_arr_pointed(self, ptr_id, ptr_scope):
         if ptr_scope == "GLOBAL":
@@ -32,7 +35,10 @@ class FunctionDirectory(object):
             try:
                 return self.FUNCS[self.current_scope][2].get_arr_pointed(ptr_id)
             except:
-                return self.FUNCS[self.program_name].get_arr_pointed(ptr_id)
+                try:
+                    return self.FUNCS[ptr_scope]["FUNCS"][self.current_scope][2].get_arr_pointed(ptr_id)
+                except:
+                    return self.FUNCS[self.program_name].get_arr_pointed(ptr_id)
 
     def get_class_idx(self, cls):
         for i, context in enumerate(self.FUNCS.keys()):
@@ -162,7 +168,7 @@ class FunctionDirectory(object):
                 dimensions = self.FUNCS[scope]["FUNCS"][self.current_scope][2].get_dimensions(sym_id)
                 if dimensions == -1:
                     return self.FUNCS[self.program_name].get_dimensions(sym_id)
-                return dimensionss
+                return dimensions
 
     def get_param_mem_index(self, func_id, k, scope):
         if scope == "GLOBAL":
