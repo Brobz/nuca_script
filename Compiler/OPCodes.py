@@ -29,12 +29,13 @@ OPCodes = {
                 "PRNT" :            26,
                 "PRNTLN" :          27,
                 "STOX"  :           28,
-                "F_OPEN" :          29,
-                "F_WRITE" :         30,
-                "GOTO" :            31,
-                "GOTOF" :           32,
-                "ENDFNC" :          33,
-                "END" :             34,
+                "SUBSTR" :          29,
+                "F_OPEN" :          30,
+                "F_WRITE" :         31,
+                "GOTO" :            32,
+                "GOTOF" :           33,
+                "ENDFNC" :          34,
+                "END" :             35,
 
 
 }

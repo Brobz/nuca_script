@@ -1,10 +1,10 @@
 program ARRAYS;
 
-// Arays //
+/*/ Arays /*/
 
 int_arr[100], int_matrix[3][3], int_cube[3][3][3], int_cube_2[3][3][3] : int;
 
-// Vars //
+/*/ Vars /*/
 
 idx : int;
 tlc : object;

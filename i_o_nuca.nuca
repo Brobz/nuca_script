@@ -4,7 +4,7 @@ program FILE_IO;
 
 // TODO:
 
-/*/
+/*//*/
 
 
 /*/
@@ -75,7 +75,8 @@ main(){
   cc_obj = new C();
   str += "HI!";
   str *= 3;
-  println(str);
+  c_obj.file_path = "hilo";
+  println(c_obj.file_path, substr(c_obj.file_path, c_obj.n, 3));
 
   c_obj.numbers[10] = 20;
   c_obj.n -= c_obj.numbers[10];
@@ -107,6 +108,7 @@ main(){
 
   for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i++){
     println("Entry " + i + ": " + c_obj.lines[i]);
+    c_obj.lines[i] = substr(c_obj.lines[i], 0, 10);
   }
 
   write(c_obj.lines, "file.txt", c_obj.get_tabs(10) + " // An extra funny comment to confirm this works : ) " + cc_obj.numbers[10] + " //" + c_obj.get_newlines(1));

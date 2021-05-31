@@ -64,6 +64,7 @@ reserved = {
     'stoi' : 'STOI_KWD',
     'stof' : 'STOF_KWD',
     'stob' : 'STOB_KWD',
+    'substr' : 'SUBSTR_KWD',
     'read' : 'READ_KWD',
     'open' : 'OPEN_KWD',
     'write' : 'WRITE_KWD',
@@ -295,6 +296,14 @@ lexer = lex.lex()
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SPRINT //
+
+
+// TODO : Allow arrays of object type
+
+        -> change grammar
+        -> have set_symbol_object_type set it for the whole array (they must be homogenous anyways, so no 2 objects of different type without affecting the parsing scope of the whole array)
+        -> hace get_symbol_object_type just get it from the array
+        -> this can be done by checking for is_sym_ptr on the circumstances where these two methods are called
 
 // TODO : Refactor files and methods
 
@@ -799,9 +808,6 @@ def parse_compound_asignment(op):
     else:
         OPERATOR_STACK.append(op)
 
-    if len(CLASS_INSTANCE_STACK):
-        CLASS_INSTANCE_STACK.append(CLASS_INSTANCE_STACK[-1])
-
 def p_exp(p):
     ''' EXP :   TERM seen_term EXP_P
               | MINUS seen_unary_minus EXP pop_unary_minus '''
@@ -851,10 +857,81 @@ def p_factor(p):
                 | STOI_KWD seen_stoi_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
                 | STOF_KWD seen_stof_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
                 | STOB_KWD seen_stob_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
+                | SUBSTR_KWD OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION seen_substr_str COMMA EXPRESSION seen_substr_idx COMMA EXPRESSION seen_substr_size CLOSE_PARENTHESIS seen_close_parenthesis seen_substr
                 | FUNC_CALL
                 | CLASS_INSTANCE
                 | VAR seen_var_as_factor
                 | CONSTANT '''
+
+def p_seen_substr_str(p):
+    ''' seen_substr_str : empty '''
+    substr_arg_scope =  SCOPES_STACK[-1]
+    substr_arg_attr = False
+    substr_arg = OPERAND_STACK.pop()
+    substr_arg_type = TYPE_STACK.pop()
+
+    if type(substr_arg) == list:
+        substr_arg, substr_arg_scope, substr_arg_attr = substr_arg
+
+    if substr_arg_type != "string":
+        raise Exception('Type Error: "substr" argument must be a string')
+
+    parent_obj_dir = -1 # This means, just use the current context!
+    if substr_arg_attr and len(CLASS_INSTANCE_STACK):
+        parent_obj = CLASS_INSTANCE_STACK.pop()
+        if parent_obj != "this_kwd":
+            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
+        else:
+            parent_obj_dir = 0 # This means, use this. reference !
+
+    p[0] = [parent_obj_dir, substr_arg, substr_arg_scope, substr_arg_attr]
+
+def p_seen_substr_idx(p):
+    ''' seen_substr_idx : empty '''
+    substr_idx_scope =  SCOPES_STACK[-1]
+    substr_idx_attr = False
+    substr_idx = OPERAND_STACK.pop()
+    substr_idx_type = TYPE_STACK.pop()
+
+    if type(substr_idx) == list:
+        substr_idx, substr_idx_scope, substr_idx_attr = substr_idx
+
+    if substr_idx_type not in ["int", "boolean"]:
+        raise Exception('Type Error: starting index argument in "substr" must be an int')
+
+    p[0] = [substr_idx, substr_idx_scope, substr_idx_attr]
+
+def p_seen_substr_size(p):
+    ''' seen_substr_size : empty '''
+    susbtr_size_scope =  SCOPES_STACK[-1]
+    susbtr_size_attr = False
+    susbtr_size = OPERAND_STACK.pop()
+    susbtr_size_type = TYPE_STACK.pop()
+
+    if type(susbtr_size) == list:
+        susbtr_size, susbtr_size_scope, susbtr_size_attr = susbtr_size
+
+    if susbtr_size_type not in ["int", "boolean"]:
+        raise Exception('Type Error: starting index argument in "substr" must be an int')
+
+    p[0] = [susbtr_size, susbtr_size_scope, susbtr_size_attr]
+
+def p_seen_substr(p):
+    ''' seen_substr : empty '''
+    substr_arg_scope =  p[-9][2]
+    substr_arg_attr = p[-9][3]
+    substr_arg = p[-9][1]
+    parent_obj_dir = p[-9][0]
+    substr_idx = p[-6]
+    substr_size = p[-3]
+
+    new_str_temp = FUNC_DIR.next_avail("string", SCOPES_STACK[-1])
+
+    push_to_quads(Quad("SUBSTR", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(substr_arg, substr_arg_scope, substr_arg_attr), FUNC_DIR.get_symbol_mem_index(substr_idx[0], substr_idx[1], substr_idx[2]), FUNC_DIR.get_symbol_mem_index(substr_size[0], substr_size[1], substr_size[2]), FUNC_DIR.get_symbol_mem_index(new_str_temp, SCOPES_STACK[-1], False)))
+
+    OPERAND_STACK.append([new_str_temp, SCOPES_STACK[-1], False])
+    TYPE_STACK.append("string")
+
 
 def p_seen_stox_factor(p):
     ''' seen_stox_factor : empty '''
@@ -1312,6 +1389,7 @@ def p_seen_array_def_id(p):
 def p_seen_array_def_dim(p):
     ''' seen_array_def_dim : empty '''
     dim = OPERAND_STACK.pop()
+    TYPE_STACK.pop() # pop dim type (will always be int)
     if dim <= 0:
         raise Exception("Value Error: array dimension must be a non-zero positive integer")
     ARRAY_DIMENSION_STACK[-1].append(dim)
