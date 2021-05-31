@@ -12,6 +12,11 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
       file										 // An extra funny comment to confirm this works : ) 93 //
       numb										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
+  string g										 // An extra funny comment to confirm this works : ) 93 //
+  VARS{}										 // An extra funny comment to confirm this works : ) 93 //
+  {										 // An extra funny comment to confirm this works : ) 93 //
+    return										 // An extra funny comment to confirm this works : ) 93 //
+  }										 // An extra funny comment to confirm this works : ) 93 //
   int do_s										 // An extra funny comment to confirm this works : ) 93 //
   VARS{}										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
@@ -35,11 +40,6 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
   VARS{}										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
     this.n										 // An extra funny comment to confirm this works : ) 93 //
-    return										 // An extra funny comment to confirm this works : ) 93 //
-  }										 // An extra funny comment to confirm this works : ) 93 //
-  string g										 // An extra funny comment to confirm this works : ) 93 //
-  VARS{}										 // An extra funny comment to confirm this works : ) 93 //
-  {										 // An extra funny comment to confirm this works : ) 93 //
     return										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
   string g										 // An extra funny comment to confirm this works : ) 93 //

@@ -20,6 +20,11 @@ class C{
       file_path, lines[1500] : string;
       numbers[50], n : int;
   }
+  string get_tabs(n : int)
+  VARS{}
+  {
+    return "\t" * n;
+  }
   int do_something(s : string)
   VARS{}
   {
@@ -30,7 +35,7 @@ class C{
       this.n++;
       this.n--;
       s += "lol!";
-      println("n:", this.n);
+      println("n:", this.n, objs[5].get_tabs(2), "hehehe");
       this.n *= 2;
       cc_obj.numbers[10] += this.numbers[10] * 3;
       this.numbers[44] -= -33;
@@ -49,11 +54,6 @@ class C{
   VARS{}
   {
     return "\n" * n;
-  }
-  string get_tabs(n : int)
-  VARS{}
-  {
-    return "\t" * n;
   }
   void open_file()
   VARS{}
