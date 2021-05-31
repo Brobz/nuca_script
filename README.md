@@ -34,11 +34,15 @@ g++11 (+)
         n : int; /*/ All class attributes are public! /*/
       }
 
-      int get_n(){
+      int get_n()
+      VARS{}
+      {
         return this.n;      /*/ All class attributes must be access via the 'this.' operator /*/
       }
 
-      void set_n(n : int){
+      void set_n(n : int)
+      VARS{}
+      {
         this.n = n;         /*/ That allows this kind of stuff /*/
       }
 
