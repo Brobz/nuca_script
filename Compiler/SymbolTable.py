@@ -23,8 +23,7 @@ class SymbolTable(object):
         self.param_indices = []
         self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0}
         self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 }
-        self.const_memory_signature = {"int" : 2, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 }  # FOR GLOBAL SCOPE ONLY
-                                                                                                            # Int count starts at 2; First two values are reserved for False and True (0 and 1)
+        self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 }
         self.mem_constraints = mem_constraints
         self.var_types = var_types
         self.program_name = program_name
@@ -33,8 +32,8 @@ class SymbolTable(object):
             self.build_memory_secor_shift(self.mem_constraints)
 
         if set_truth:
-            self.SYMBOLS[SymbolTable.TRUTH[0]] = ("boolean", 0, False, True, False, None, False, None)
-            self.SYMBOLS[SymbolTable.TRUTH[1]] = ("boolean", 1, False, True, False, None, False, None)
+            self.declare_symbol(SymbolTable.TRUTH[0], "boolean", "030", False, False, True, False, False, None, False)
+            self.declare_symbol(SymbolTable.TRUTH[1], "boolean", "030", False, False, True, False, False, None, False)
 
     def reset_object_symbol_types(self):
         for sym_id in self.SYMBOLS:

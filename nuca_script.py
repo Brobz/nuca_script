@@ -1868,11 +1868,11 @@ def main(argv):
 
     vm_constants = []
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
-        if id in SymbolTable.TRUTH:
-            continue
         var = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
         if var[3]:
-            if isinstance(id, str): # String Constant
+            if id in SymbolTable.TRUTH:
+                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(SymbolTable.TRUTH.index(id)) + '"},\n'
+            elif isinstance(id, str): # String Constant
                 constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + id[1:-1] + '"},\n'
             else:
                 constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'

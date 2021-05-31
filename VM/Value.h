@@ -55,7 +55,7 @@ class Value{
         return type >= 0;
       }
 
-      string to_str(){
+      string to_str(bool is_printable = false){
         switch(type){
           case 0: // INT
           {
@@ -71,7 +71,8 @@ class Value{
           } break;
           case 3: // BOOLEAN
           {
-            return to_string(b);
+            if (is_printable) return b ? "True" : "False";
+            else return to_string(b);
           } break;
           case 4: // OBJECT
           {
