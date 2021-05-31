@@ -4,6 +4,9 @@ program FI										 // An extra funny comment to confirm this works : ) 93 //
 /*//*/										 // An extra funny comment to confirm this works : ) 93 //
 /*/										 // An extra funny comment to confirm this works : ) 93 //
 c_obj, cc_										 // An extra funny comment to confirm this works : ) 93 //
+class D{										 // An extra funny comment to confirm this works : ) 93 //
+  ATTR{}										 // An extra funny comment to confirm this works : ) 93 //
+}										 // An extra funny comment to confirm this works : ) 93 //
 class C{										 // An extra funny comment to confirm this works : ) 93 //
   ATTR{										 // An extra funny comment to confirm this works : ) 93 //
       file										 // An extra funny comment to confirm this works : ) 93 //
@@ -12,7 +15,9 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
   int do_s										 // An extra funny comment to confirm this works : ) 93 //
   VARS{}										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
-      cc_o										 // An extra funny comment to confirm this works : ) 93 //
+      usin										 // An extra funny comment to confirm this works : ) 93 //
+      /*/ 										 // An extra funny comment to confirm this works : ) 93 //
+      prin										 // An extra funny comment to confirm this works : ) 93 //
       this										 // An extra funny comment to confirm this works : ) 93 //
       this										 // An extra funny comment to confirm this works : ) 93 //
       s +=										 // An extra funny comment to confirm this works : ) 93 //
@@ -62,6 +67,7 @@ main(){										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
   c_obj = 										 // An extra funny comment to confirm this works : ) 93 //
   cc_obj =										 // An extra funny comment to confirm this works : ) 93 //
+  cc_obj.n										 // An extra funny comment to confirm this works : ) 93 //
   str += "										 // An extra funny comment to confirm this works : ) 93 //
   str *= 3										 // An extra funny comment to confirm this works : ) 93 //
   c_obj.fi										 // An extra funny comment to confirm this works : ) 93 //

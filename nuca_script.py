@@ -52,33 +52,35 @@ tokens = [
 ]
 
 reserved = {
-    'program' : 'PROGRAM_KWD',
-    'ATTR' : 'ATTR_KWD',
-    'VARS' : 'VARS_KWD',
-    'main' : 'MAIN_KWD',
-    'class' : 'CLASS_KWD',
-    'new'   : 'NEW_KWD',
-    'this'  :   'THIS_KWD',
-    'println' : 'PRINTLN_KWD',
-    'print' : 'PRINT_KWD',
-    'stoi' : 'STOI_KWD',
-    'stof' : 'STOF_KWD',
-    'stob' : 'STOB_KWD',
-    'substr' : 'SUBSTR_KWD',
-    'read' : 'READ_KWD',
-    'open' : 'OPEN_KWD',
-    'write' : 'WRITE_KWD',
-    'return' : 'RETURN_KWD',
-    'while' : 'WHILE_KWD',
-    'for' : 'FOR_KWD',
-    'if' : 'IF_KWD',
-    'else' : 'ELSE_KWD',
-    'int' : 'TYPE_I',
-    'float' : 'TYPE_F',
-    'string' : 'TYPE_S',
-    'boolean' : 'TYPE_B',
-    'object' : 'TYPE_O',
-    'void' : 'TYPE_V',
+    'program'   :   'PROGRAM_KWD',
+    'ATTR'      :   'ATTR_KWD',
+    'VARS'      :   'VARS_KWD',
+    'class'     :   'CLASS_KWD',
+    'main'      :   'MAIN_KWD',
+    'new'       :   'NEW_KWD',
+    'this'      :   'THIS_KWD',
+    'using'     :   'USING_KWD',
+    'as'        :   'AS_KWD',
+    'println'   :   'PRINTLN_KWD',
+    'print'     :   'PRINT_KWD',
+    'stoi'      :   'STOI_KWD',
+    'stof'      :   'STOF_KWD',
+    'stob'      :   'STOB_KWD',
+    'substr'    :   'SUBSTR_KWD',
+    'read'      :   'READ_KWD',
+    'open'      :   'OPEN_KWD',
+    'write'     :   'WRITE_KWD',
+    'return'    :   'RETURN_KWD',
+    'while'     :   'WHILE_KWD',
+    'for'       :   'FOR_KWD',
+    'if'        :   'IF_KWD',
+    'else'      :   'ELSE_KWD',
+    'int'       :   'TYPE_I',
+    'float'     :   'TYPE_F',
+    'string'    :   'TYPE_S',
+    'boolean'   :   'TYPE_B',
+    'object'    :   'TYPE_O',
+    'void'      :   'TYPE_V',
 }
 
 
@@ -165,7 +167,7 @@ lexer = lex.lex()
 '''
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// IDEAS //
+// IDEAS FOR FUTURE IMPROVEMENT //
 
     ARRAYS:
         -> optimize array access process by either reusing temps or having specific global temps for the process
@@ -304,6 +306,14 @@ lexer = lex.lex()
         -> have set_symbol_object_type set it for the whole array (they must be homogenous anyways, so no 2 objects of different type without affecting the parsing scope of the whole array)
         -> hace get_symbol_object_type just get it from the array
         -> this can be done by checking for is_sym_ptr on the circumstances where these two methods are called
+
+// TODO : Add USNG_AS op
+
+        -> allows the user to declare the class of an object type variable within a scope without having to re-instantiate it, losing its previous state
+        -> will throw proper runtime error if used with either an uninstantiated object variable or an object variable instatiated to a different class type; in both of these cases, the only option is instatiation (or re-instantiation)
+        -> will work a bit differently for arrays of objects:
+            -> if there is at least one object instantiated as some other class type, will throw error
+            -> if there is no object instantiated, or if all of the instantiated objects are of the correct type, it will succeed, instantiating all non instantiated objects to the using as type
 
 // TODO : Refactor files and methods
 
@@ -575,9 +585,30 @@ def p_statement(p):
                   | PRINTLN SEMI_COLON
                   | OPEN SEMI_COLON
                   | WRITE SEMI_COLON
+                  | USING SEMI_COLON
                   | FLOW_CONTROL
                   | FUNC_RETURN  '''
 
+
+
+def p_using(p):
+    ''' USING : USING_KWD ID AS_KWD ID '''
+    obj_id = p[2]
+    class_type = p[4]
+
+    FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1], False)
+    if FUNC_DIR.symbol_type_lookup(obj_id, SCOPES_STACK[-1], False) != "object":
+        raise Exception("Type Error: 'using' keyword can only be used with 'object' type variables")
+
+    FUNC_DIR.valid_class_check(class_type)
+
+    obj_prev_class = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
+    if obj_prev_class != None and obj_prev_class != class_type:
+        raise Exception("Class Error: cannot set " + obj_id + " object type to " + class_type + " while it is explicitly instantiated as " + obj_prev_class)
+
+    FUNC_DIR.set_symbol_object_type(obj_id, class_type, SCOPES_STACK[-1])
+
+    push_to_quads(Quad("USNG_AS", -1, FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
 
 def p_open(p):
     ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_io seen_open_buffer COMMA EXPRESSION seen_file_path COMMA EXPRESSION seen_separator CLOSE_PARENTHESIS '''
