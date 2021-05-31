@@ -58,6 +58,7 @@ str : stri										 // An extra funny comment to confirm this works : ) 93 //
 main(){										 // An extra funny comment to confirm this works : ) 93 //
   using ob										 // An extra funny comment to confirm this works : ) 93 //
   objs[0].										 // An extra funny comment to confirm this works : ) 93 //
+  objs[0].										 // An extra funny comment to confirm this works : ) 93 //
   for(i = 										 // An extra funny comment to confirm this works : ) 93 //
     objs[i										 // An extra funny comment to confirm this works : ) 93 //
     printl										 // An extra funny comment to confirm this works : ) 93 //

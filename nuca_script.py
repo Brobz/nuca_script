@@ -307,6 +307,8 @@ lexer = lex.lex()
 
 // SPRINT //
 
+// TODO : Make list of includes/dependencies and add them to the project
+
 // TODO : Refactor files and methods
 
         -> maybe separate gramamr rules for different "sections" into different files?
@@ -316,8 +318,6 @@ lexer = lex.lex()
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BACKLOG //
-
-// TODO : Make list of includes/dependencies and add them to the project
 
 // TODO: Update Formal grammar and flow diagrams. Work on Documentation!
 
