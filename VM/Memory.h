@@ -17,8 +17,8 @@ class Memory{
 
     int id, signature;
     Memory* return_memory;
-    vector<int> ints;
-    vector<float> floats;
+    vector<long long> ints;
+    vector<long double> floats;
     vector<string> strings;
     vector<bool> booleans;
     vector<Memory> objects;

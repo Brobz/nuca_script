@@ -40,6 +40,11 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
   {										 // An extra funny comment to confirm this works : ) 93 //
     return "\t" * n;										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
+  void open_file()										 // An extra funny comment to confirm this works : ) 93 //
+  VARS{}										 // An extra funny comment to confirm this works : ) 93 //
+  {										 // An extra funny comment to confirm this works : ) 93 //
+    open(this.lines, this.file_path,  this.get_newlines(1));										 // An extra funny comment to confirm this works : ) 93 //
+  }										 // An extra funny comment to confirm this works : ) 93 //
 }										 // An extra funny comment to confirm this works : ) 93 //
 i, arr[50] : int;										 // An extra funny comment to confirm this works : ) 93 //
 str : string;										 // An extra funny comment to confirm this works : ) 93 //
@@ -49,11 +54,11 @@ main(){										 // An extra funny comment to confirm this works : ) 93 //
   if(FALSE){										 // An extra funny comment to confirm this works : ) 93 //
     println(false);										 // An extra funny comment to confirm this works : ) 93 //
   }else if(True){										 // An extra funny comment to confirm this works : ) 93 //
-    println(TRUE);										 // An extra funny comment to confirm this works : ) 93 //
+    println(2.33 == 2.33);										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
   if(False){										 // An extra funny comment to confirm this works : ) 93 //
   }else{										 // An extra funny comment to confirm this works : ) 93 //
-    println(false);										 // An extra funny comment to confirm this works : ) 93 //
+    println("lol" == "lolo");										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
   c_obj = new C();										 // An extra funny comment to confirm this works : ) 93 //
   cc_obj = new C();										 // An extra funny comment to confirm this works : ) 93 //
@@ -79,7 +84,7 @@ main(){										 // An extra funny comment to confirm this works : ) 93 //
   print(">> Enter file path:\n-- ");										 // An extra funny comment to confirm this works : ) 93 //
   read(c_obj.file_path);										 // An extra funny comment to confirm this works : ) 93 //
   println(">> Parsing file...");										 // An extra funny comment to confirm this works : ) 93 //
-  open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));										 // An extra funny comment to confirm this works : ) 93 //
+  c_obj.open_file();										 // An extra funny comment to confirm this works : ) 93 //
   for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i++){										 // An extra funny comment to confirm this works : ) 93 //
     println("Entry " + i + ": " + c_obj.lines[i]);										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //

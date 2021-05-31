@@ -47,6 +47,11 @@ class C{
   {
     return "\t" * n;
   }
+  void open_file()
+  VARS{}
+  {
+    open(this.lines, this.file_path,  this.get_newlines(1));
+  }
 }
 
 i, arr[50] : int;
@@ -58,12 +63,12 @@ main(){
   if(FALSE){
     println(false);
   }else if(True){
-    println(TRUE);
+    println(2.33 == 2.33);
   }
 
   if(False){
   }else{
-    println(false);
+    println("lol" == "lolo");
   }
 
   c_obj = new C();
@@ -97,7 +102,8 @@ main(){
 
   read(c_obj.file_path);
   println(">> Parsing file...");
-  open(c_obj.lines, c_obj.file_path,  c_obj.get_newlines(1));
+
+  c_obj.open_file();
 
   for(i = 0; (i < 1499) && (c_obj.lines[i] != "END_OF_STREAM"); i++){
     println("Entry " + i + ": " + c_obj.lines[i]);

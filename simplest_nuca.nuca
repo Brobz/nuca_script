@@ -1,6 +1,6 @@
 program SIMPLEST;
 
-// Simple Variables //
+/*/ Simple Variables /*/
 
 a, b, c : int;
 d, e, f : float;
@@ -55,10 +55,10 @@ VARS{
 }
 {
   infinite("useless");
-  return; // never gonna happen! //
+  return; /*/ never gonna happen! /*/
 }
 
-// Array //
+/*/ Array /*/
 
 int_arr[100] : int;
 
@@ -74,11 +74,11 @@ main (){
   int_arr[10] = 12;
   int_arr[93] = 1;
 
-  for(a = 0; a <= int_arr[10]; a = a + int_arr[93]){
+  for(a = 0; a <= int_arr[10] + 5; a = a + int_arr[93]){
     println(a + "! = " + factorial(a));
   }
 
-  // infinite("hi"); //
+  /*/ infinite("hi"); /*/
 
   println("Global a:", a);
 

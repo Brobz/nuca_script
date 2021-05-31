@@ -144,7 +144,7 @@ def t_CTE_S(t):
      return t
 
 def t_COMMENT(t):
-    r'/\*/(.)*/\*/'
+    r'/\*/((?!/\*/).)*/\*/'
 
 # Define a rule so we can track line numbers
 def t_newline(t):
@@ -165,9 +165,6 @@ lexer = lex.lex()
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // IDEAS //
-
-    VM:
-        -> change types internally to long and double instead of int and float (EVERYWHERE)                //||\\ IMPORTANT //||\\
 
     ARRAYS:
         -> optimize array access process by either reusing temps or having specific global temps for the process
@@ -319,8 +316,8 @@ lexer = lex.lex()
 
 # Now to parsing!
 
-MAX_CONSTANTS = 3000                                        # (per type)
-MAX_SYMBOLS = MAX_TMP_SYMBOLS = MAX_OBJ_SYMBOLS = 5000      # (per type)
+MAX_CONSTANTS = 10000                                        # (per type)
+MAX_SYMBOLS = MAX_TMP_SYMBOLS = MAX_OBJ_SYMBOLS = 30000      # (per type)
 MEMORY_STACK_LIMIT = 100000
 
 FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS, MAX_OBJ_SYMBOLS])
@@ -1230,10 +1227,11 @@ def p_seen_class_id_instance(p):
 
 def p_seen_dot_operator(p):
     ''' seen_dot_operator : empty '''
-    FUNC_DIR.symbol_lookup(p[-2], SCOPES_STACK[-1])
-    class_type = FUNC_DIR.get_symbol_object_type(p[-2], SCOPES_STACK[-1])
+    obj_id = p[-2]
+    FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1])
+    class_type = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
     if class_type == None:
-        raise Exception("Type Error: symbol " + p[-2] + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new'?)")
+        raise Exception("Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new'?)")
     DOT_OP_STACK.append(class_type)
 
 def p_seen_this_dot_operator(p):
@@ -1508,10 +1506,7 @@ def p_seen_printable(p):
     printable_type = TYPE_STACK.pop()
 
     if printable_type in ["void", "object"]:
-        if printable != None:
-            raise Exception("Type Error: Cannot print symbol " + printable + " of type " + printable_type)
-        else:
-            raise Exception("Type Error: Cannot print " + printable_type)
+            raise Exception("Type Error: Cannot print '" + printable_type + "' type")
 
     push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope, printable_is_attr)))
 
@@ -1634,7 +1629,7 @@ def p_error(p):
     exit()
 
 
-def get_ptr_value(left, right):
+def get_ptr_value(left = None, right = None):
     ptr_value = -1
 
     if left != None:
@@ -1690,9 +1685,9 @@ def assign_to_var(push_back_operand = False):
     class_idx = -1
     if res_type == "object":
         # We are assigning to an object, which means we are instantiating it!
-        clas_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
-        class_idx = FUNC_DIR.get_class_idx(clas_type) # From that, find out what the class index is
-        FUNC_DIR.set_symbol_object_type(res, clas_type, SCOPES_STACK[-1]) # Set this object's type
+        class_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
+        class_idx = FUNC_DIR.get_class_idx(class_type) # From that, find out what the class index is
+        FUNC_DIR.set_symbol_object_type(res, class_type, SCOPES_STACK[-1]) # Set this object's type
 
     if SemanticCube[res_type][op][right_type] == "err":
         raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)

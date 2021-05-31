@@ -16,8 +16,8 @@ class Value{
 
       int type;
 
-      int i = 0;
-      float f = 0.0;
+      long long i = 0;
+      long double f = 0.0;
       string s = "";
       bool b = false;
       Memory o;
@@ -26,12 +26,12 @@ class Value{
         type = -1;
       };
 
-      Value(int _i){
+      Value(long long _i){
         type = 0;
         i = _i;
       };
 
-      Value(float _f){
+      Value(long double _f){
         type = 1;
         f = _f;
       };
@@ -203,7 +203,7 @@ class Value{
           } break;
           case 3: // INT * BOOLEAN
           {
-            temp.set_i(i * (int) v.b);
+            temp.set_i(i * (long long) v.b);
           } break;
           case 10: // FLOAT * INT
           {
@@ -215,7 +215,7 @@ class Value{
           } break;
           case 13: // FLOAT * BOOLEAN
           {
-            temp.set_f(f * (int) v.b);
+            temp.set_f(f * (long long) v.b);
           } break;
           case 20: // STRING * INT
           {
@@ -241,11 +241,11 @@ class Value{
           } break;
           case 30: // BOOLEAN * INT
           {
-            temp.set_f((int) b * v.i);
+            temp.set_f((long long) b * v.i);
           } break;
           case 31: // BOOLEAN * FLOAT
           {
-            temp.set_f((int) b * v.f);
+            temp.set_f((long long) b * v.f);
           } break;
           case 32: // BOOLEAN * STRING
           {
@@ -695,12 +695,12 @@ class Value{
         return temp;
       }
 
-      void set_i(int _i){
+      void set_i(long long _i){
         i = _i;
         type = 0;
       }
 
-      void set_f(float _f){
+      void set_f(long double _f){
         f = _f;
         type = 1;
       }
