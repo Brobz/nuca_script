@@ -16,6 +16,24 @@ class FunctionDirectory(object):
         self.mem_constraints = mem_constraints
 
 
+    def get_array_element_size(self, sym_id, scope):
+        if scope == "GLOBAL":
+            return self.FUNCS[self.program_name].get_array_symbol_element_size(sym_id)
+        else:
+            try:
+                return self.FUNCS[self.current_scope][2].get_array_symbol_element_size(sym_id)
+            except:
+                return self.FUNCS[self.program_name].get_array_symbol_element_size(sym_id)
+
+    def get_arr_pointed(self, ptr_id, ptr_scope):
+        if ptr_scope == "GLOBAL":
+            return self.FUNCS[self.program_name].get_arr_pointed(ptr_id)
+        else:
+            try:
+                return self.FUNCS[self.current_scope][2].get_arr_pointed(ptr_id)
+            except:
+                return self.FUNCS[self.program_name].get_arr_pointed(ptr_id)
+
     def get_class_idx(self, cls):
         for i, context in enumerate(self.FUNCS.keys()):
             if context == cls:
@@ -178,17 +196,17 @@ class FunctionDirectory(object):
 
             return mem_index
 
-    def next_avail(self, type, scope, is_ptr = False):
+    def next_avail(self, type, scope, is_ptr = False, arr_pointed = None):
         if type == "void": # Nope?
             return
         t_id = self.AVAIL.next()
         if self.current_scope == None:
-            self.FUNCS[self.program_name].next_avail(t_id, type, "1" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
+            self.FUNCS[self.program_name].next_avail(t_id, type, "1" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr, arr_pointed)
         else:
             if scope == "GLOBAL":
-                self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
+                self.FUNCS[scope][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr, arr_pointed)
             else:
-                self.FUNCS[scope]["FUNCS"][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr)
+                self.FUNCS[scope]["FUNCS"][self.current_scope][2].next_avail(t_id, type, "2" + str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(type)) + "1", is_ptr, arr_pointed)
         return t_id
 
     def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):

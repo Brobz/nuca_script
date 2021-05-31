@@ -9,7 +9,7 @@ program FILE_IO;
 
 /*/
 
-c_obj, cc_obj, other_obj : object;
+c_obj, cc_obj, other_obj, objs[10] : object;
 
 class D{
   ATTR{}
@@ -23,8 +23,10 @@ class C{
   int do_something(s : string)
   VARS{}
   {
-      using c_obj, cc_obj as C;
+      using c_obj, cc_obj, objs as C;
       println("cc_obj.n = " + cc_obj.n);
+      objs[1].n *= objs[0].n * objs[2].n;
+      println("objs[1].n = " + objs[1].n);
       this.n++;
       this.n--;
       s += "lol!";
@@ -40,6 +42,7 @@ class C{
   string get_spaces(n : int)
   VARS{}
   {
+    this.n = n;
     return " " * n;
   }
   string get_newlines(n : int)
@@ -63,6 +66,15 @@ i, arr[50] : int;
 str : string;
 
 main(){
+  using objs as C;
+  objs[0].n = 10;
+  for(i = 1; i < 10; i++){
+    objs[i].n += 10 + objs[i - 1].n;
+    println(objs[i].n);
+  }
+  println("here we go");
+  println(objs[0].n, objs[5].n, objs[5].get_spaces(5) + "ok");
+  println(objs[5].n);
   i = !false || False || TRUE;
   println(i);
   if(FALSE){

@@ -267,6 +267,14 @@ lexer = lex.lex()
     Sets THIS_MEM to point to obj_dir, LOCAL_MEM to point to the top of the mem stack, and LOCAL_MEM retn addr to IP + 1; then sets IP to start_addr
     | OBJ_GOSUB | -1 | obj_dir (local_mem) | start_addr (local_mem) |
 
+    // USNG_AS //
+    -> allows the user to declare the class of an object type variable within a scope without having to re-instantiate it, losing its previous state
+    -> will throw proper runtime error if used with either an uninstantiated object variable or an object variable instatiated to a different class type; in both of these cases, the only option is instatiation (or re-instantiation)
+    -> will work a bit differently for arrays of objects:
+        -> if there is at least one object instantiated as some other class type, will throw error
+        -> if there is no object instantiated, or if all of the instantiated objects are of the correct type, it will succeed, instantiating all non instantiated objects to the using as type
+    | USNG_AS | arr_size (local_mem) | class_sign (int) | object_dir (local_mem) |
+
     //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -298,22 +306,6 @@ lexer = lex.lex()
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SPRINT //
-
-
-// TODO : Allow arrays of object type
-
-        -> change grammar
-        -> have set_symbol_object_type set it for the whole array (they must be homogenous anyways, so no 2 objects of different type without affecting the parsing scope of the whole array)
-        -> hace get_symbol_object_type just get it from the array
-        -> this can be done by checking for is_sym_ptr on the circumstances where these two methods are called
-
-// TODO : Add USNG_AS op
-
-        -> allows the user to declare the class of an object type variable within a scope without having to re-instantiate it, losing its previous state
-        -> will throw proper runtime error if used with either an uninstantiated object variable or an object variable instatiated to a different class type; in both of these cases, the only option is instatiation (or re-instantiation)
-        -> will work a bit differently for arrays of objects:
-            -> if there is at least one object instantiated as some other class type, will throw error
-            -> if there is no object instantiated, or if all of the instantiated objects are of the correct type, it will succeed, instantiating all non instantiated objects to the using as type
 
 // TODO : Refactor files and methods
 
@@ -540,8 +532,6 @@ def parse_vars_declaration(var_list):
             if type == "void":
                 raise Exception("Type Error: Cannot declare 'void' type variables")
             if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
-                if type == "object":
-                    raise Exception("Type Error: Cannot declare 'object' type arrays")
                 dims = ARRAY_DIMENSION_STACK.pop(0)
                 FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
             else:
@@ -626,7 +616,11 @@ def p_using(p):
 
         FUNC_DIR.set_symbol_object_type(obj_id, class_type, SCOPES_STACK[-1])
 
-        push_to_quads(Quad("USNG_AS", -1, FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
+        is_arr = FUNC_DIR.is_sym_arr(obj_id, SCOPES_STACK[-1])
+        if is_arr:
+            push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(obj_id, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
+        else:
+            push_to_quads(Quad("USNG_AS", -1, FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
 
 def p_open(p):
     ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_io seen_open_buffer COMMA EXPRESSION seen_file_path COMMA EXPRESSION seen_separator CLOSE_PARENTHESIS '''
@@ -828,11 +822,16 @@ def parse_compound_asignment(op):
         value_at_attr = FUNC_DIR.next_avail(TYPE_STACK[-1], SCOPES_STACK[-1])
 
         parent_object = CLASS_INSTANCE_STACK[-1]
+        parent_object_scope = SCOPES_STACK[-1]
+        parent_obj_is_ptr = -1
+        if type(parent_object) == list: # Parent object is inside of an object array!
+            parent_object, parent_object_scope = parent_object[0], parent_object[1]
+            parent_obj_is_ptr = 1
 
         if parent_object == "this_kwd":
             push_to_quads(Quad("OBJ_READ", -1, FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1], OPERAND_STACK[-1][2]), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
         else:
-            push_to_quads(Quad("OBJ_READ", FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1], OPERAND_STACK[-1][2]), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
+            push_to_quads(Quad("OBJ_READ", FUNC_DIR.get_symbol_mem_index(parent_object, parent_object_scope), FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1], OPERAND_STACK[-1][2]), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1]), -1, parent_obj_is_ptr))
 
         OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_attr, SCOPES_STACK[-1]))
 
@@ -1159,7 +1158,7 @@ def parse_var(id, is_factor, is_io = 0):
 
         array_type = FUNC_DIR.symbol_type_lookup(array_id, array_scope, is_class_attr)
 
-        ptr_to_array_value_at_index = FUNC_DIR.next_avail("int", SCOPES_STACK[-1], is_ptr = True)
+        ptr_to_array_value_at_index = FUNC_DIR.next_avail("int", SCOPES_STACK[-1], is_ptr = True, arr_pointed = [array_id, array_scope])
         # Defining a new temp; As above, need to set it to 0 in the case of a loop where its value could overflow
         push_to_quads(Quad("TMP_RESET", -1,  0, FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1])))
 
@@ -1220,7 +1219,13 @@ def parse_var(id, is_factor, is_io = 0):
             if not is_factor: # We are assigning to this object's attribute, need a pointer
 
                 # Pass the parent object to class instance stack
-                CLASS_INSTANCE_STACK.append(OBJECT_ACCESS_STACK.pop())
+                parent_obj = OBJECT_ACCESS_STACK[-1]
+                if type(parent_obj) == list: # Parent object is within an object array!
+                    CLASS_INSTANCE_STACK.append(OPERAND_STACK.pop()) # In this case, the parent obj has already been processed into a temp containing the address of it inside the array
+                    TYPE_STACK.pop() # Remove "object" instance from typestack
+                    OBJECT_ACCESS_STACK.pop() # Free up obj access stack anyway
+                else:
+                    CLASS_INSTANCE_STACK.append(OBJECT_ACCESS_STACK.pop()) # Just a regular parent object variable!
 
                 OPERAND_STACK.append([var, DOT_OP_STACK[-1], is_class_attr])
                 TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True))
@@ -1230,12 +1235,20 @@ def parse_var(id, is_factor, is_io = 0):
                 attr_type = FUNC_DIR.symbol_type_lookup(id, DOT_OP_STACK[-1], True)
                 value_at_attr = FUNC_DIR.next_avail(attr_type, SCOPES_STACK[-1])
 
-                parent_object = OBJECT_ACCESS_STACK.pop()
+                parent_obj = OBJECT_ACCESS_STACK[-1]
+                parent_obj_is_ptr = -1
+                if type(parent_obj) == list: # Parent object is within an object array!
+                    parent_obj = OPERAND_STACK.pop()[0] # In this case, the parent obj has already been processed into a temp containing the address of it inside the array
+                    TYPE_STACK.pop() # Remove "object" instance from typestack
+                    OBJECT_ACCESS_STACK.pop() # Free up obj access stack anyway
+                    parent_obj_is_ptr = 1
+                else:
+                    parent_obj = OBJECT_ACCESS_STACK.pop() # Just a regular parent object variable!
 
-                if parent_object == "this_kwd":
+                if parent_obj == "this_kwd":
                     push_to_quads(Quad("OBJ_READ", -1, FUNC_DIR.get_symbol_mem_index(var, DOT_OP_STACK[-1], is_class_attr), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
                 else:
-                    push_to_quads(Quad("OBJ_READ", FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(var, DOT_OP_STACK[-1], is_class_attr), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1])))
+                    push_to_quads(Quad("OBJ_READ", FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(var, DOT_OP_STACK[-1], is_class_attr), FUNC_DIR.get_symbol_mem_index(value_at_attr, SCOPES_STACK[-1]), -1, parent_obj_is_ptr))
 
                 OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_attr, SCOPES_STACK[-1]))
                 TYPE_STACK.append(attr_type)
@@ -1287,8 +1300,9 @@ def p_cte_b(p):
 
 def p_class_reference(p):
     ''' CLASS_REFERENCE :       ID DOT seen_dot_operator
+                            |   ARRAY seen_var_in_assign DOT seen_dot_operator
                             |   THIS_KWD seen_this_kwd DOT seen_this_dot_operator '''
-    if len(p) == 4:
+    if len(p) == 4 or p[2] == None:
         p[0] = p[1]
     else:
         p[0] = p[2]
@@ -1325,10 +1339,11 @@ def p_var(p):
                 p[0] = p[2]
             return
         else:
-            FUNC_DIR.symbol_lookup(p[1], SCOPES_STACK[-1])
+            if type(p[1]) == list:
+                p[1] = p[1][1][0]
+            class_obj = FUNC_DIR.symbol_lookup(p[1], SCOPES_STACK[-1])
             if FUNC_DIR.symbol_type_lookup(p[1], SCOPES_STACK[-1]) != "object":
                 raise Exception("Syntax Error: cannot use . operator on non-object type " + p[1])
-            class_obj = FUNC_DIR.symbol_lookup(p[1], SCOPES_STACK[-1])
 
         if type(p[2]) != list:
             accessed_attr = FUNC_DIR.symbol_lookup(p[2], DOT_OP_STACK[-1], len(DOT_OP_STACK) > 0)
@@ -1354,10 +1369,16 @@ def p_seen_class_id_instance(p):
 def p_seen_dot_operator(p):
     ''' seen_dot_operator : empty '''
     obj_id = p[-2]
+    if obj_id == None:
+        obj_id = p[-3] # For the special object-type array case
+
+    if type(obj_id) == list:
+        obj_id = obj_id[1][0]
+
     FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1])
     class_type = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
     if class_type == None:
-        raise Exception("Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new'?)")
+        raise Exception("Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new' or assertion with 'using as'?)")
     DOT_OP_STACK.append(class_type)
 
 def p_seen_this_dot_operator(p):
@@ -1483,11 +1504,17 @@ def p_func_call(p):
     if scope_in_use == "GLOBAL":
         push_to_quads(Quad("GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1], scope_in_use)))
     else:
+
         parent_object = OBJECT_ACCESS_STACK.pop()
+        parent_obj_is_ptr = -1
+        if type(parent_object) == list: # The caller of this method is inside an object array!
+            parent_object = OPERAND_STACK.pop()[0]
+            parent_obj_is_ptr = 1
+
         if parent_object == "this_kwd":
-            push_to_quads(Quad("OBJ_GOSUB", -1, -1, FUNC_DIR.get_start_addr(p[1], scope_in_use)))
+            push_to_quads(Quad("OBJ_GOSUB", parent_obj_is_ptr, -1, FUNC_DIR.get_start_addr(p[1], scope_in_use)))
         else:
-            push_to_quads(Quad("OBJ_GOSUB", -1, FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_start_addr(p[1], scope_in_use)))
+            push_to_quads(Quad("OBJ_GOSUB", parent_obj_is_ptr, FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_start_addr(p[1], scope_in_use)))
 
     FUNC_CALL_STACK.pop()
     if len(FUNC_CALL_STACK):
@@ -1814,7 +1841,15 @@ def assign_to_var(push_back_operand = False):
         # We are assigning to an object, which means we are instantiating it!
         class_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
         class_idx = FUNC_DIR.get_class_idx(class_type) # From that, find out what the class index is
-        FUNC_DIR.set_symbol_object_type(res, class_type, SCOPES_STACK[-1]) # Set this object's type
+        if FUNC_DIR.is_sym_ptr(res, res_scope): # If we are instantiating into an array,
+            arr_pointed = FUNC_DIR.get_arr_pointed(res, res_scope) # We need to check if this array has the appropriate (if any) class type, and update it if needed
+            arr_pointed_object_type = FUNC_DIR.get_symbol_object_type(arr_pointed[0], arr_pointed[1])
+            if arr_pointed_object_type == None:
+                    raise Exception("Class Error: cannot instantiate array symbol " + arr_pointed[0] + " as " + class_type + " before asserting it with 'using as' operator")
+            elif arr_pointed_object_type != class_type:
+                raise Exception("Class Error: cannot instantiate array symbol " + arr_pointed[0] + " as " + class_type + " while its members are explicitly instantiated as " + arr_pointed_object_type)
+        else:
+            FUNC_DIR.set_symbol_object_type(res, class_type, SCOPES_STACK[-1]) # Set this object's type
 
     if SemanticCube[res_type][op][right_type] == "err":
         raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
@@ -1835,12 +1870,17 @@ def assign_to_var(push_back_operand = False):
                                  # As classes do not contain temporals, we now need to use res_attr as False so that get_symbol_mem_index
                                  # can find it within the current local scope
 
-            parent_object = CLASS_INSTANCE_STACK.pop()
+            parent_obj = CLASS_INSTANCE_STACK.pop()
+            parent_obj_scope = SCOPES_STACK[-1]
+            parent_obj_is_ptr = -1
+            if type(parent_obj) == list:
+                parent_obj, parent_obj_scope = parent_obj[0], parent_obj[1]
+                parent_obj_is_ptr = 1
 
-            if parent_object == "this_kwd":
+            if parent_obj == "this_kwd":
                 push_to_quads(Quad("OBJ_WRITE", -1, FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
             else:
-                push_to_quads(Quad("OBJ_WRITE", FUNC_DIR.get_symbol_mem_index(parent_object, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope])))
+                push_to_quads(Quad("OBJ_WRITE", FUNC_DIR.get_symbol_mem_index(parent_obj, parent_obj_scope), FUNC_DIR.get_symbol_mem_index(right_operand, right_scope, right_attr), FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr), get_ptr_value([right_operand, right_scope], [res, res_scope]), parent_obj_is_ptr))
 
         if push_back_operand:
             OPERAND_STACK.append(res)

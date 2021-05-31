@@ -35,6 +35,19 @@ class SymbolTable(object):
             self.declare_symbol(SymbolTable.TRUTH[0], "boolean", "030", False, False, True, False, False, None, False)
             self.declare_symbol(SymbolTable.TRUTH[1], "boolean", "030", False, False, True, False, False, None, False)
 
+
+    def get_array_symbol_element_size(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.get_array_element_size(self.SYMBOLS[sym_id][5])
+
+        raise Exception("Cannot get array element size for symbol " + sym_id)
+
+    def get_arr_pointed(self, sym_id):
+        if sym_id in self.SYMBOLS:
+            return self.SYMBOLS[sym_id][8]
+
+        raise Exception("Cannot get array pointed to by " + sym_id)
+
     def reset_object_symbol_types(self):
         for sym_id in self.SYMBOLS:
             self.set_sym_obj_type(sym_id, None)
@@ -42,7 +55,7 @@ class SymbolTable(object):
     def set_sym_obj_type(self, sym_id, obj_type):
         if sym_id in self.SYMBOLS:
             self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2],
-                                    self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type)
+                                    self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type, self.SYMBOLS[sym_id][8])
         else:
             raise Exception("Cannot set object type " + obj_type + " to " + sym_id + " in " + self.scope)
 
@@ -91,8 +104,8 @@ class SymbolTable(object):
             return -1
 
 
-    def next_avail(self, t_id, type, mem_sec_sign, is_ptr):
-        self.declare_symbol(t_id, type, mem_sec_sign, is_temp = True, is_ptr = is_ptr)
+    def next_avail(self, t_id, type, mem_sec_sign, is_ptr, arr_pointed = None):
+        self.declare_symbol(t_id, type, mem_sec_sign, is_temp = True, is_ptr = is_ptr, arr_pointed = arr_pointed)
 
 
     def update_const_mem_sign(self, type, dimensions = None):
@@ -147,10 +160,10 @@ class SymbolTable(object):
 
         return element_size
 
-    def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False, is_array = False, dimensions = None, is_ptr = False):
+    def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False, is_array = False, dimensions = None, is_ptr = False, arr_pointed = None):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
-            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None)
+            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None, arr_pointed) # type, memory index, return value flag, constant flag, array flag, dimensions (in case it is an array), ptr flag, object type (in case it is an object), array pointed to (in case it is a pointer)
             if is_cnst:
                 self.update_const_mem_sign(sym_type, dimensions)
             elif not is_temp:
