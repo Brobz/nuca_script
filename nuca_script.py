@@ -133,7 +133,7 @@ def t_CTE_S(t):
      return t
 
 def t_COMMENT(t):
-    r'//((?!/).)*//'
+    r'/\*/(.)*/\*/'
 
 # Define a rule so we can track line numbers
 def t_newline(t):

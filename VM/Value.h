@@ -267,18 +267,34 @@ class Value{
         switch(operation_case){
           case 0: // INT / INT
           {
+            if (v.i == 0){
+              cout << ">> Fatal Error: division by zero" << endl;
+              exit(EXIT_FAILURE);
+            }
             temp.set_i(i / v.i);
           } break;
           case 1: // INT / FLOAT
           {
+            if (v.f == 0){
+              cout << ">> Fatal Error: division by zero" << endl;
+              exit(EXIT_FAILURE);
+            }
             temp.set_f(i / v.f);
           } break;
           case 10: // FLOAT / INT
           {
+            if (v.i == 0){
+              cout << ">> Fatal Error: division by zero" << endl;
+              exit(EXIT_FAILURE);
+            }
             temp.set_f(f / v.i);
           } break;
           case 11: // FLOAT / FLOAT
           {
+            if (v.f == 0){
+              cout << ">> Fatal Error: division by zero" << endl;
+              exit(EXIT_FAILURE);
+            }
             temp.set_f(f / v.f);
           } break;
           default:
