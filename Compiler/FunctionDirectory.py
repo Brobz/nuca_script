@@ -408,7 +408,7 @@ class FunctionDirectory(object):
             raise Exception("Type Error: cannot declare function of 'object' return type")
         if scope == "PROGRAM":
             self.program_name = func_id
-            self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name)
+            self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name, True) # Last parameter sets truth
         elif func_id not in self.FUNCS[scope]:
             self.declare_symbol(scope + "." + func_id, func_type, "GLOBAL", is_return_value = True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
             if scope == "GLOBAL":

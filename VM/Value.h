@@ -318,6 +318,10 @@ class Value{
           {
             temp.set_b(i == v.f);
           } break;
+          case 3: // INT == BOOLEAN
+          {
+            temp.set_b(i == v.b);
+          } break;
           case 10: // FLOAT == INT
           {
             temp.set_b(f == v.i);
@@ -329,6 +333,10 @@ class Value{
           case 22: // STRING == STRING
           {
             temp.set_b(s == v.s);
+          } break;
+          case 30: // BOOLEAN == INT
+          {
+            temp.set_b(b == v.i);
           } break;
           case 33: // BOOLEAN == BOOLEAN
           {

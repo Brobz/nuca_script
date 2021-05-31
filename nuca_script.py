@@ -46,6 +46,8 @@ tokens = [
 'CTE_I',
 'CTE_F',
 'CTE_S',
+'CTE_TRUE',
+'CTE_FALSE',
 'ID',
 ]
 
@@ -112,6 +114,15 @@ t_BIGGER                    =   r'\>'
 t_SMALLER_EQ                =   r'\<='
 t_SMALLER                   =   r'\<'
 
+def t_CTE_TRUE(t):
+    r'(TRUE)|(True)|(true)'
+    t.value = True
+    return t
+
+def t_CTE_FALSE(t):
+    r'(FALSE)|(False)|(false)'
+    t.value = False
+    return t
 
 def t_ID(t):
      r'[A-Za-z]([A-Za-z]|[0-9]|_)*'
@@ -796,8 +807,7 @@ def parse_compound_asignment(op):
 
 def p_exp(p):
     ''' EXP :   TERM seen_term EXP_P
-              | MINUS seen_unary_minus EXP pop_unary_minus
-              | NOT seen_not EXP pop_not'''
+              | MINUS seen_unary_minus EXP pop_unary_minus '''
 
 def p_seen_term(p):
     ''' seen_term :  '''
@@ -847,7 +857,7 @@ def p_factor(p):
                 | FUNC_CALL
                 | CLASS_INSTANCE
                 | VAR seen_var_as_factor
-                | CNST '''
+                | CONSTANT '''
 
 def p_seen_stox_factor(p):
     ''' seen_stox_factor : empty '''
@@ -1112,30 +1122,45 @@ def parse_var(id, is_factor, is_io = 0):
 
 
 def p_seen_cte_i(p):
-    ''' seen_cte_i :  '''
+    ''' seen_cte_i :  empty '''
     FUNC_DIR.declare_constant(p[-1], "int")
     OPERAND_STACK.append(p[-1])
     TYPE_STACK.append("int")
 
 def p_seen_cte_f(p):
-    ''' seen_cte_f :  '''
+    ''' seen_cte_f :  empty '''
     FUNC_DIR.declare_constant(p[-1], "float")
     OPERAND_STACK.append(p[-1])
     TYPE_STACK.append("float")
 
 def p_seen_cte_s(p):
-    ''' seen_cte_s :  '''
+    ''' seen_cte_s :  empty '''
     FUNC_DIR.declare_constant("'" + p[-1][1:-1] + "'", "string")
     OPERAND_STACK.append("'" + p[-1][1:-1] + "'")
     TYPE_STACK.append("string")
 
-def p_cnst(p):
-    ''' CNST : CTE_S seen_cte_s
-             | CTE_F seen_cte_f
-             | CTE_I seen_cte_i '''
+def p_seen_cte_false(p):
+    ''' seen_cte_false : empty '''
+    OPERAND_STACK.append(SymbolTable.TRUTH[0])
+    TYPE_STACK.append("boolean")
+
+def p_seen_cte_true(p):
+    ''' seen_cte_true : empty '''
+    OPERAND_STACK.append(SymbolTable.TRUTH[1])
+    TYPE_STACK.append("boolean")
+
+
+def p_constant(p):
+    ''' CONSTANT :      CTE_I seen_cte_i
+                    |   CTE_F seen_cte_f
+                    |   CTE_S seen_cte_s
+                    |   CTE_B '''
 
     p[0] = p[1]
 
+def p_cte_b(p):
+    ''' CTE_B :         CTE_TRUE seen_cte_true
+                    |   CTE_FALSE seen_cte_false'''
 
 def p_class_reference(p):
     ''' CLASS_REFERENCE :       ID DOT seen_dot_operator
@@ -1496,8 +1521,9 @@ def p_decision(p):
     seen_decision()
 
 def p_decision_p(p):
-    ''' DECISION_P : ELSE_KWD seen_else_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
-                   | empty '''
+    ''' DECISION_P :            ELSE_KWD seen_else_kwd DECISION
+                        |       ELSE_KWD seen_else_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY
+                        |       empty '''
 
 def seen_decision():
     dir = JUMP_STACK.pop()
@@ -1842,13 +1868,15 @@ def main(argv):
 
     vm_constants = []
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
+        if id in SymbolTable.TRUTH:
+            continue
         var = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
         if var[3]:
             if isinstance(id, str): # String Constant
-                cnst_string = "\t" * 10 + "{" + str(var[1]) + ', "' + id[1:-1] + '"},\n'
+                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + id[1:-1] + '"},\n'
             else:
-                cnst_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
-            vm_constants.append(cnst_string)
+                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
+            vm_constants.append(constant_string)
 
     fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)
 

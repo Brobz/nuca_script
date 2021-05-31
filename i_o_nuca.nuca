@@ -53,6 +53,19 @@ i, arr[50] : int;
 str : string;
 
 main(){
+  i = !false || False || TRUE;
+  println(i);
+  if(FALSE){
+    println(false);
+  }else if(True){
+    println(TRUE);
+  }
+
+  if(False){
+  }else{
+    println(false);
+  }
+
   c_obj = new C();
   cc_obj = new C();
   str += "HI!";

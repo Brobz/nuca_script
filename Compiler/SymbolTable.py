@@ -11,24 +11,30 @@ class SymbolTable(object):
     #                       2 -> LOCAL          3 -> BOOL           0 -> VAR
     #                       3 -> CLASS          4 -> OBJECT         1 -> TMP
 
+    TRUTH = ["0FALSEFalsefalse", "1TRUETruetrue"]
     SYMBOL_CLASSES = ["constant", "symbol", "temporal variable", "class variable"]
     MEMORY_SECTOR_SIGN = [["0", "1", "2", "3"], ["0", "1", "2", "3", "4"], ["0", "1"]]
     MEMORY_SECTOR_SHIFTS = None
 
 
-    def __init__(self, scope, mem_constraints, var_types, program_name):
+    def __init__(self, scope, mem_constraints, var_types, program_name, set_truth = False):
         self.scope = scope
         self.SYMBOLS = {}
         self.param_indices = []
         self.var_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0}
         self.temp_memory_signature = { "int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 }
-        self.const_memory_signature = {"int" : 0, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 } # FOR GLOBAL SCOPE ONLY
+        self.const_memory_signature = {"int" : 2, "float" : 0, "string" : 0, "boolean" : 0, "object" : 0 }  # FOR GLOBAL SCOPE ONLY
+                                                                                                            # Int count starts at 2; First two values are reserved for False and True (0 and 1)
         self.mem_constraints = mem_constraints
         self.var_types = var_types
         self.program_name = program_name
 
         if SymbolTable.MEMORY_SECTOR_SHIFTS == None:
             self.build_memory_secor_shift(self.mem_constraints)
+
+        if set_truth:
+            self.SYMBOLS[SymbolTable.TRUTH[0]] = ("boolean", 0, False, True, False, None, False, None)
+            self.SYMBOLS[SymbolTable.TRUTH[1]] = ("boolean", 1, False, True, False, None, False, None)
 
     def reset_object_symbol_types(self):
         for sym_id in self.SYMBOLS:
