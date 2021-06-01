@@ -4,9 +4,11 @@ from Compiler.SymbolTable import *
 class FunctionDirectory(object):
     """
 
-    Main Compiladtion object, handles basically all of the operations in compilation time.
+    Main Compilation object, handles basically all of the operations in compilation time.
 
     Mainly interfaces between the compiler rule actions and the underlying SymbolTables that contain all of the important data.
+
+    Has several useful methods for both reading and writing symbol information into the managed SymbolTables
 
     """
 
@@ -283,7 +285,6 @@ class FunctionDirectory(object):
 
         raise Exception("Unseen function: " + func_id + " in " + scope)
 
-
     def verify_arg_type(self, func_id, arg_type, scope):
         if scope == "GLOBAL":
             if func_id in self.FUNCS[scope]:
@@ -327,7 +328,6 @@ class FunctionDirectory(object):
                 return
 
         raise Exception("Unseen function: " + func_id + " in " + scope)
-
 
     def goto_next_param(self, func_id, scope):
         if scope == "GLOBAL":
@@ -419,7 +419,6 @@ class FunctionDirectory(object):
 
         self.FUNCS[self.program_name].declare_symbol(sym_id, sym_type, "".join(memory_sector_signature), is_return_value, False, is_cnst, is_param, is_array, dimensions)
 
-
     def declare_param(self, param_id, param_type, scope):
         if self.current_scope == None:
             raise Exception("Scope Error: Cant declare param")
@@ -495,7 +494,6 @@ class FunctionDirectory(object):
 
         return self.FUNCS[self.program_name].symbol_lookup(sym_id)
 
-
     def symbol_type_lookup(self, sym_id, scope, is_class_attr = False):
         if scope == "GLOBAL":
             if self.current_scope != None:
@@ -518,7 +516,6 @@ class FunctionDirectory(object):
                 return self.FUNCS[self.program_name].type_lookup(sym_id)
 
         return self.FUNCS[self.program_name].type_lookup(sym_id)
-
 
     def func_type_lookup(self, func_id, scope):
         if scope == "GLOBAL":

@@ -42,7 +42,6 @@ class SymbolTable(object):
             self.declare_symbol(SymbolTable.TRUTH[0], "boolean", "030", False, False, True, False, False, None, False)
             self.declare_symbol(SymbolTable.TRUTH[1], "boolean", "030", False, False, True, False, False, None, False)
 
-
     def get_array_symbol_element_size(self, sym_id):
         if sym_id in self.SYMBOLS:
             return self.get_array_element_size(self.SYMBOLS[sym_id][5])
@@ -110,10 +109,8 @@ class SymbolTable(object):
                 raise Exception("Cannot get memory index for symbol " + sym_id + " in " + self.scope)
             return -1
 
-
     def next_avail(self, t_id, type, mem_sec_sign, is_ptr, arr_pointed = None):
         self.declare_symbol(t_id, type, mem_sec_sign, is_temp = True, is_ptr = is_ptr, arr_pointed = arr_pointed)
-
 
     def update_const_mem_sign(self, type, dimensions = None):
         is_arr = dimensions != None

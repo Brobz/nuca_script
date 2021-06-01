@@ -1,0 +1,209 @@
+program EXAMPLE_NUCA;
+
+/*/ Example Class /*/
+/*/ Showcases NucaScript /*/
+
+class ExampleNuca{
+  ATTR{
+      int_arr[25] : int;
+      float_matrix_a[5][5], float_matrix_b[5][5], float_matrix_c[5][5] : float;
+      buffer[1000], separator : string;
+  }
+
+  /*/ Recursive Factorial /*/
+  int facrec(n : int)
+  VARS{}
+  {
+    if (n == 1) {
+      return n;
+    }
+    return n * this.facrec(n - 1);
+  }
+
+  /*/ Linear Factorial /*/
+  int faclin(n : int)
+  VARS {
+      i : int;
+  }
+  {
+    i = n;
+    while (i > 1) {
+      n *= (i - 1);
+      i--;
+    }
+    return n;
+  }
+
+  /*/ Recursive (slow!) Fibonacci /*/
+  int fibrec(n : int)
+  VARS{}
+  {
+    if(n <= 1){
+      return n;
+    }
+    return (this.fibrec(n - 1) + this.fibrec(n - 2));
+  }
+
+  /*/ Linear (fast!) Fibonacci /*/
+  int fiblin(n : int)
+  VARS {
+    fn, f1, f2, i : int;
+  }
+  {
+    fn = 1;
+    f1 = 1;
+    f2 = 1;
+    for(i = 2; i < n; i++){
+      fn = f1 + f2;
+      f2 = f1;
+      f1 = fn;
+    }
+    return fn;
+  }
+
+  /*/ Array Methods! /*/
+
+  void print_int_array()
+  VARS{
+    i : int;
+  }
+  {
+    for(i = 0; i < 25; i++){
+      println("int_array[" + i + "] = " + this.int_arr[i]);
+    }
+  }
+
+  void fill_int_array(ascending : boolean)
+  VARS{
+    i : int;
+  }
+  {
+    for(i = 0; i < 25; i++){
+      if (ascending){
+        this.int_arr[i] = i;
+      } else{
+        this.int_arr[24 - i] = i;
+      }
+    }
+  }
+
+  void sort_int_arr(ascending : boolean)
+  VARS{
+    i, j, temp: int;
+  }
+  {
+
+    for(i = 0; i < 25 - 1; i++){
+      for(j = 0; j < 25 - i - 1; j++){
+        if( (ascending && (this.int_arr[j] > this.int_arr[j+1])) || (!ascending && (this.int_arr[j] < this.int_arr[j+1])) ){
+          temp = this.int_arr[j];
+          this.int_arr[j] = this.int_arr[j + 1];
+          this.int_arr[j + 1] = temp;
+        }
+      }
+    }
+
+  }
+
+  void print_float_matrices()
+  VARS {
+    i, j : int;
+  }
+  {
+    println("--- FLOAT MATRIX A ---");
+    for(i = 0; i < 5; i++){
+      for(j = 0; j < 5; j++){
+        println("float_matrix_a[" + i + "][" + j + "] = " + this.float_matrix_a[i][j]);
+      }
+    }
+    println("--- FLOAT MATRIX B ---");
+    for(i = 0; i < 5; i++){
+      for(j = 0; j < 5; j++){
+        println("float_matrix_b[" + i + "][" + j + "] = " + this.float_matrix_b[i][j]);
+      }
+    }
+    println("--- FLOAT MATRIX C ---");
+    for(i = 0; i < 5; i++){
+      for(j = 0; j < 5; j++){
+        println("float_matrix_c[" + i + "][" + j + "] = " + this.float_matrix_c[i][j]);
+      }
+    }
+  }
+
+  void fill_float_matrices_from_file(file_path : string, separator : string)
+  VARS {
+    i, j : int;
+    buffer[50] : string;
+  }
+  {
+    open(buffer, file_path, separator);
+    for(i = 0; i < 5; i++){
+      for(j = 0; j < 5; j++){
+        this.float_matrix_a[i][j] = stof(buffer[i * 5 + j]);
+        this.float_matrix_b[i][j] = stof(buffer[(i * 5 + j) + 25]);
+      }
+    }
+  }
+
+  void multiply_float_matrices()
+  VARS {
+    i, j : int;
+  }
+  {
+    for(i = 0; i < 5; i++){
+      for(j = 0; j < 5; j++){
+        this.float_matrix_c[i][j] = this.float_matrix_a[i][j]  * this.float_matrix_b[i][j];
+      }
+    }
+  }
+
+  /*/ File I/O ! /*/
+  void self_read()
+  VARS{}
+  {
+    open(this.buffer, "example_nuca.nuca", "\n");
+  }
+
+  void self_write()
+  VARS{}
+  {
+    write(this.buffer, "output_file.txt", "\t" * 15 + "/*/ " + this.separator + " /*/\n");
+  }
+
+}
+
+/*/ Object variable to instantiate /*/
+example_obj : object;
+
+/*/ Main Method /*/
+main () {
+  example_obj = new ExampleNuca();
+
+  println(example_obj.faclin(10), example_obj.facrec(10));
+  println(example_obj.fiblin(15), example_obj.fibrec(15));
+
+  example_obj.fill_int_array(False);
+  println(">> Before Sort:");
+  example_obj.print_int_array();
+
+  example_obj.sort_int_arr(True);
+  println(">> After sort:");
+  example_obj.print_int_array();
+
+  example_obj.fill_float_matrices_from_file("matrix_input.txt", ",");
+  println(">> Before multiplication:");
+  example_obj.print_float_matrices();
+
+  example_obj.multiply_float_matrices();
+  println(">> After multiplication:");
+  example_obj.print_float_matrices();
+
+  example_obj.self_read();
+
+  print(">> Enter a funny string:\n-- ");
+  read(example_obj.separator);
+
+  example_obj.self_write();
+  println(">> All done : )");
+
+}

@@ -26,6 +26,8 @@
         -> builtin methods? (wait, exit, etc..)
 
     OTHER:
+        -> #DEFINITIONS to get rid of all of the magic numbers... make them work like constants!
+        -> try / catch block?
         -> atom syntactic highliter ?
         -> post-compile quad optimization ?
         -> tmp management optimization? (in Avail)
@@ -36,49 +38,49 @@
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    [0,                                                                                                                    MAX_CONSTANTS - 1]                                                                                                        ->          Constant Ints
-    [MAX_CONSTANTS,                                                                                                        2 * MAX_CONSTANTS - 1]                                                                                                    ->          Constant Floats
-    [2 * MAX_CONSTANTS,                                                                                                    3 * MAX_CONSTANTS - 1]                                                                                                    ->          Constant Strings
-    [3 * MAX_CONSTANTS,                                                                                                    4 * MAX_CONSTANTS - 1]                                                                                                    ->          Constant Booleans
+    [0,                                                                                                        MAX_CONSTANTS - 1]                                                                               ->          Constant Ints
+    [MAX_CONSTANTS,                                                                                            2 * MAX_CONSTANTS - 1]                                                                           ->          Constant Floats
+    [2 * MAX_CONSTANTS,                                                                                        3 * MAX_CONSTANTS - 1]                                                                           ->          Constant Strings
+    [3 * MAX_CONSTANTS,                                                                                        4 * MAX_CONSTANTS - 1]                                                                           ->          Constant Booleans
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    [4 * MAX_CONSTANTS,                                                                                                    4 * MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                                                      ->          Global Ints
-    [4 * MAX_CONSTANTS + MAX_SYMBOLS,                                                                                      4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS - 1]                                                                                  ->          Global Floats
-    [4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS - 1]                                                                                  ->          Global Strings
-    [4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS - 1]                                                                                  ->          Global Booleans
-    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS - 1]                                                                                  ->          Global Objects
+    [4 * MAX_CONSTANTS,                                                                                        4 * MAX_CONSTANTS + MAX_SYMBOLS - 1]                                                             ->          Global Ints
+    [4 * MAX_CONSTANTS + MAX_SYMBOLS,                                                                          4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS - 1]                                                         ->          Global Floats
+    [4 * MAX_CONSTANTS + 2 * MAX_SYMBOLS,                                                                      4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS - 1]                                                         ->          Global Strings
+    [4 * MAX_CONSTANTS + 3 * MAX_SYMBOLS,                                                                      4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS - 1]                                                         ->          Global Booleans
+    [4 * MAX_CONSTANTS + 4 * MAX_SYMBOLS,                                                                      4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS - 1]                                                         ->          Global Objects
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS,                                                                                  4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                                                ->          Global Temp Ints
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + MAX_TMP_SYMBOLS,                                                                4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Floats
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Strings
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Booleans
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Global Temp Objects
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS,                                                                      4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + MAX_TMP_SYMBOLS - 1]                                       ->          Global Temp Ints
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + MAX_TMP_SYMBOLS,                                                    4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS - 1]                                   ->          Global Temp Floats
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 2 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS - 1]                                   ->          Global Temp Strings
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 3 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS - 1]                                   ->          Global Temp Booleans
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 4 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                   ->          Global Temp Objects
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Ints
-    [4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Floats
-    [4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Strings
-    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                            ->          Local Booleans
-    [4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Objects
+    [4 * MAX_CONSTANTS + 5 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                   ->          Local Ints
+    [4 * MAX_CONSTANTS + 6 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                   ->          Local Floats
+    [4 * MAX_CONSTANTS + 7 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                   ->          Local Strings
+    [4 * MAX_CONSTANTS + 8 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                   ->          Local Booleans
+    [4 * MAX_CONSTANTS + 9 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS - 1]                                  ->          Local Objects
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Ints
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Floats
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS - 1]                                                           ->          Local Temp Booleans
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS,                                                           4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS - 1]                                                          ->          Local Temp Objects
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 5 * MAX_TMP_SYMBOLS,                                               4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS - 1]                                  ->          Local Temp Ints
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 6 * MAX_TMP_SYMBOLS,                                               4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS - 1]                                  ->          Local Temp Floats
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 7 * MAX_TMP_SYMBOLS,                                               4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS - 1]                                  ->          Local Temp Strings
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 8 * MAX_TMP_SYMBOLS,                                               4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS - 1]                                  ->          Local Temp Booleans
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 9 * MAX_TMP_SYMBOLS,                                               4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS - 1]                                 ->          Local Temp Objects
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS,                                                          4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS - 1]                                        ->          Object Ints
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS,                                        4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Floats
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                                     4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                                    4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]                                    ->          Object Boooleans
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS,                                              4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS - 1]               ->          Object Ints
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS,                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOLS - 1]           ->          Object Floats
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                         4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]           ->          Object Strings
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                        4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]           ->          Object Boooleans
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -156,14 +158,15 @@
 // SPRINT //
 
 // TODO: Documentation!
-            -> work on "super example script" with every single possible special use case imaginable, including all of the requested test cases
             -> work on README (this is where full documentation should be (in an explicative manner))
-            -> work on the memory diagrams and stack/neuralgic actions explanations on the doc
+                -> missing -i and -o input options
+                -> missing logic expressions
             -> record video tutorial on how to compile  a nuca_script program
 
 // TODO : More builtin methods!
             -> math builtin methods (pow, sqrt)
             -> random builtin method (randint(min, max), randfloat() // randfloat from 0 to 1)
+            -> useful methods like strlen()
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1198,7 +1201,7 @@ def p_seen_array_access(p):
     access = OPERAND_STACK.pop()
     access_type = TYPE_STACK.pop()
     if access_type not in ["int", "boolean"]:
-        raise Exception("TypeError: Cannot use " + access_type + " as access index for " + ARRAY_DIMENSION_STACK[-1][0])
+        raise Exception("Type Error: Cannot use " + access_type + " as access index for " + ARRAY_DIMENSION_STACK[-1][0])
 
     ARRAY_DIMENSION_STACK[-1].append(access)
 
@@ -1988,7 +1991,7 @@ def main(argv):
         elif param == "-o":
             output_file_path = arg
         else:
-            raise Exception("Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
+            raise Exception(">> Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
 
 
     s = ""
@@ -2060,6 +2063,6 @@ def main(argv):
     if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):
         print(">> Compilation Successfull!")
 
-## Runs main uppon invoking this script with python nuca_script.py ##
+## Runs main upon invoking this script with python nuca_script.py ##
 if __name__=='__main__':
     main(sys.argv[1:])

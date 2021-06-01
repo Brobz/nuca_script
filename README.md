@@ -1,7 +1,7 @@
 
 # NucaScript
 
-A strongly-typed, syntactically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
+An object-oriented, strongly-typed, syntactically "*C-esque" and semantically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
 
 Developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
@@ -36,11 +36,11 @@ g++ version check:
 
 Now that we are done with the setup, let's get a hello world going!
 
-    touch example_nuca.nuca
+    touch tutorial_nuca.nuca
 
 First, we'll lay down the most basic structure for a (compilable) NucaScript program:
 
-    program EXAMPLE_NUCA;
+    program TUTORIAL_NUCA;
 
     main () {
 
@@ -49,13 +49,13 @@ This is the bare minimun a NucaScript file must contain: a program name, which w
 
 If everything was setup correctly, you should be able to compile and run this program like so:
 
-    python nuca_script.py example_nuca.nuca
-    ./EXAMPLE_NUCA
+    python nuca_script.py tutorial_nuca.nuca
+    ./TUTORIAL_NUCA
 
 Of course, the execution result is.. Nothing!
 But thats all we need to make Something happen!
 
-    program EXAMPLE_NUCA;
+    program TUTORIAL_NUCA;
 
     main () {
 	    println("Hello World!");
@@ -69,12 +69,12 @@ Note: Don't forget to save and recompile your program everytime you make a chang
 
 Next up, variables! Handy strong-typed data containers identified by a unique name.
 
-    program EXAMPLE_NUCA;
+    program TUTORIAL_NUCA;
 
     i, j, k : int;
     pi, phi : float;
     color, size: string;
-    state : boolean;
+    state, derived_state : boolean;
 
     main () {
     	println("Hello World!");
@@ -91,22 +91,22 @@ It is possible to declare multiple variables of the same type in one statement, 
 There are four basic types in NucaScript:
 
  - Int
--> A natural number (internaly representend as a C++ long long)
+-> A natural number (internally representend as a C++ long long)
  - Float
--> A real number (internaly represented as a C++ long double)
+-> A real number (internally represented as a C++ long double)
  - String
- -> A sequence of characters (internaly represented  as a C++ string)
+ -> A sequence of characters (internally represented  as a C++ string)
  - Boolean
- -> A binary value that can be either True or False (internaly represented as a C++ bool)
+ -> A binary value that can be either True or False (internally represented as a C++ bool)
 
 Note that any and all declarations of any type must be done **before** the main method definition!
 
 There is also a special *object* type, but more on that later : )
 
-## **Basic Arithmetic**
+## **Basic Logic and Arithmetic**
 
-NucaScript supports all of the basic arithmetic operations, and a couple more!
-P.S: Anything in between  a pair of /*/ is considered a comment, and is ignored by the compiler.
+NucaScript supports all of the basic arithmetical and logic operators, and a couple more!
+Note: Anything in between  a pair of /*/ is considered a comment, and is ignored by the compiler.
 
     main () {
 	    println("Hello World!");
@@ -122,6 +122,7 @@ P.S: Anything in between  a pair of /*/ is considered a comment, and is ignored 
 	    result = "the result is:";
 
 	    state = False; /*/ This could also be FALSE, false or simply a 0 /*/
+	    derived_state = (state || TRUE) && (true || (0 > 1)); /*/ Standard c-style logical operators! /*/
 
 		println(i, j, k);
 		println(pi, phi);
@@ -133,7 +134,7 @@ Expressions are calculated using normal mathematical precedence, and comparative
 
 Just be careful with the type semantics; You can do almost any operation that makes sense between all of the types, but some of them are still ill-defined!
 
-For complete details on all of the operations between types and how they are defined, please take a look at the Compier/SemanticCube.py file within this repository.
+For complete details on all of the operations between types and how they are defined, please take a look at the Compiler/SemanticCube.py file within this repository.
 
 ## **User Input and Control Flow**
 
@@ -164,7 +165,7 @@ You can have as many ifs and else ifs as you would like on a chain, however ther
 ## **Arrays**
 
 This is where it starts to get interesting!
-NucaScript supports homogenous lists of variables with a constant and fixed sized, decided on declaration:
+NucaScript supports homogenous lists of variables with a constant and fixed size, decided on declaration:
 
     int_arr[10] : int;
 
@@ -261,7 +262,7 @@ Once again, be mindful of the statements that define the loop so that you don't 
 
 ## **Functions**
 
-Writing all of our code on the *main* method can become a hastle after some time, especially when we need to reuse the same bits of code over and over to perform our calculations.
+Writing all of our code on the *main* method can become a hassle after some time, especially when we need to reuse the same bits of code over and over to perform our calculations.
 
 This can be easily solved with the use of functions!
 A function is a modularized block of code with its own local variables that only mean something inside of this block. It can also take in parameters and return values, just like in mathematics!
@@ -286,7 +287,7 @@ Next we need to define the body of our function, which will contain the code tha
     {
       return n * 2;
     }
-The *return* statement will be responsible to.. uh.. return this functions value after its execution!
+The *return* statement will be responsible for.. uh.. return this functions value after its execution!
 It automatically leaves the function context and returns to where the function was previously called, placing its value on the correct spot.
 
 In this case, all our function does is take in an integer, and return its value multiplied by 2.
@@ -325,13 +326,13 @@ Which will throw a Type Mismatch exception at compile time, since this empty ret
 You can always declare your functions as *void* type if they don't return anything, of course!
 Just like they can also be defined without any parameters to take in.
 
-Note: as of NucaScript 1.0, functions cannot yet take in either object type parameters or arrays. Don't worry though, there are plenty of ways around it, and a future update will allow this to happen! (hopefully)
+Note: as of NucaScript 1.0, functions cannot yet take in neither object type parameters nor arrays. Don't worry though, there are plenty of ways around it, and a future update will allow this to happen! (hopefully)
 
 ## **Classes**
 
 This is where the fun really begins!
 
-Classes are a way of structuring variables and functions together in one neat little package, and we can store it's information inside of variables that have the *object* type.
+Classes are a way of structuring variables and functions together in one neat little package, and we can store its information inside of variables that have the *object* type.
 
 NucaScript objects **cannot** be *compound*; This means that a class declaration cannot contain any variable of *object* type.
 
@@ -388,7 +389,7 @@ To instantiate, we use the *new* keyword, followed by the class name as if it wa
 
 This will do two things: initiate the values like we talked about, and also *assert* this variable as having the MyClass type for the rest of this scope (unless re-instantiated to a different class type, of course).
 
-This is useful for the compiler to know which attributes and methos are valid for this object variable to use.
+This is useful for the compiler to know which attributes and methods are valid for this object variable to use.
 
 We can now access all of the goodies that come with this class with the . operator, like so:
 
@@ -416,8 +417,8 @@ We could do something like this:
       println(my_class.class_int);
     }
 So easy! Just tell the compiler we are *using* my_class *as* MyClass!
-This makes the following statement valid, since class_int is indeed an attribute of this class type.
-If the assertion was not there, there would be a Class Exception, since the compiler wouldn't know in which class type to check for the clas_int variable.
+This makes the next statement valid, since class_int is indeed an attribute of this class type.
+If the assertion was not there, there would be a Class Exception, since the compiler wouldn't know in which class type to check for the class_int variable.
 
 Be careful though, since this method will throw an error if the variable is either not yet instantiated, or instantiated to a different class type!
 
@@ -436,6 +437,7 @@ Here is an example, supposing we have an object array called *objs*:
 	    println(objs[0].class_int, objs[1].class_int);
     }
 This keeps object arrays homogenous, just like we want them, and allows the compiler to know where to look for their values!
+Note: Just like in variable declarations, you can assert multiple objects (or arrays of objects) of the same class type within the same line by separating their IDs with commas!
 
 ## **Builtin Methods**
 
@@ -443,12 +445,12 @@ NucaScript 1.0 ships with a variety of useful builtin methods, with more coming 
 (hopefully)
 
 - **string stoi(s : string)**
--> Takes in a string, and if possilble, returns its conversion as an int
+-> Takes in a string, and if possible, returns its conversion as an int
 
 - **string stof(s : string)**
--> Takes in a string, and if possilble, returns its conversion as a float
+-> Takes in a string, and if possible, returns its conversion as a float
 - **string stob(s : string)**
--> Takes in a string, and if possilble, returns its conversion as a boolean
+-> Takes in a string, and if possible, returns its conversion as a boolean
 - **string substr(s : string, sarting_index : int, size : int)**
 --> Takes in a string s, a starting index (int) and a size (int), and returns the appropriate substring of s, from starting_index to starting_index + size
 - **void open(buffer : string[],  file_path : string, separator : string)**
