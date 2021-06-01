@@ -691,6 +691,9 @@ def p_seen_write_buffer(p):
     if not FUNC_DIR.is_sym_arr(buffer, buffer_scope):
         raise Exception("Type Error: cannot write into file from a non-array variable")
 
+    if buffer_type == "object":
+        raise Exception("Type Error: cannot write into file from an object type array")
+
     buffer_dimension = FUNC_DIR.get_symbol_dimensions(buffer, buffer_scope, buffer_attr)
 
     if len(buffer_dimension) > 1:

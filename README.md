@@ -5,15 +5,15 @@ A strongly-typed, syntactically *"pythonesque"* string manipulation and file I/O
 
 Developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
-## Dependencies
+## List of Dependencies
 
 python 3.7.4 (+)
 
 g++ 8.1.0 (+)
 
-## **NucaScript 101 : The Official Docs**
+# **NucaScript 101 : The Official Docs**
 
-**Dependencies**
+## **Environment Setup**
 
 To get started with NucaScript, the first step is to make sure you have all of the dependencies properly installed in your working environment;
 You can run the following commands to double check:
@@ -32,7 +32,7 @@ g++ version check:
       git clone https://github.com/Brobz/nuca_script
 
 
-  **Hello World!**
+## **Hello World!**
 
 Now that we are done with the setup, let's get a hello world going!
 
@@ -65,7 +65,7 @@ This just uses a println statement with a constant string as a paramater, and of
 
 Note: Don't forget to save and recompile your program everytime you make a change, or else it will not be reflected in the executable output!
 
-  **Variables and Types**
+## **Variables and Types**
 
 Next up, variables! Handy strong-typed data containers identified by a unique name.
 
@@ -103,7 +103,7 @@ Note that any and all declarations of any type must be done **before** the main 
 
 There is also a special *object* type, but more on that later : )
 
-**Basic Arithmetic**
+## **Basic Arithmetic**
 
 NucaScript supports all of the basic arithmetic operations, and a couple more!
 P.S: Anything in between  a pair of /*/ is considered a comment, and is ignored by the compiler.
@@ -135,7 +135,7 @@ Just be careful with the type semantics; You can do almost any operation that ma
 
 For complete details on all of the operations between types and how they are defined, please take a look at the Compier/SemanticCube.py file within this repository.
 
-**User Input and Control Flow**
+## **User Input and Control Flow**
 
 To get user input from the console, you can use the builtin method  *read*, which can take in any amount of variables separated by commas, and will prompt the user for input for each of those variables, storing the retrieved value within them.
 
@@ -160,7 +160,8 @@ If it evaluates as False,the program will jump its execution to after the braces
 
 You can have as many ifs and else ifs as you would like on a chain, however there can only be one else, and it wil forcefully denote the end of the conditional chain.
 
- **Arrays**
+
+## **Arrays**
 
 This is where it starts to get interesting!
 NucaScript supports homogenous lists of variables with a constant and fixed sized, decided on declaration:
@@ -193,7 +194,7 @@ This will create a 3x3x3 matrix of floating point numbers, and it can be accesse
 
 Arrays can have any number of dimensions with any size you want, just be careful not to exceed the compiler's variable limit of 30000 per type!
 
- **Loops**
+## **Loops**
 
 You might be wondering how to quickly print out all of the values of  an integer array with size 100 without writing either one gigantic line or 100 individual *print* statements...
 
@@ -258,7 +259,7 @@ This loop type takes in three statements, in order, and separated by semicolons:
 
 Once again, be mindful of the statements that define the loop so that you don't end up with an infinite loop problem!
 
- **Functions**
+## **Functions**
 
 Writing all of our code on the *main* method can become a hastle after some time, especially when we need to reuse the same bits of code over and over to perform our calculations.
 
@@ -326,7 +327,7 @@ Just like they can also be defined without any parameters to take in.
 
 Note: as of NucaScript 1.0, functions cannot yet take in either object type parameters or arrays. Don't worry though, there are plenty of ways around it, and a future update will allow this to happen! (hopefully)
 
- **Classes**
+## **Classes**
 
 This is where the fun really begins!
 
@@ -399,7 +400,7 @@ Imagine what we could do with a bunch of objects in an array...
 
 Correct, many things! Good things. But to be able to do that, we'll need one extra piece of knowledge...
 
- **Class Type Assertion**
+## **Class Type Assertion**
 
 The *using as* keyword is used to assert the class type of an object variable (or a whole object array) without having to re-instantiate it, losing its current state in the process!
 
@@ -436,8 +437,4 @@ Here is an example, supposing we have an object array called *objs*:
     }
 This keeps object arrays homogenous, just like we want them, and allows the compiler to know where to look for their values!
 
- **Builtin Methods**
-
-COMING SOON!
-I PROMISE THEY ARE PRETTY COOL!
-: )
+## **Builtin Methods**
