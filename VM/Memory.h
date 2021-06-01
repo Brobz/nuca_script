@@ -11,6 +11,15 @@ using namespace std;
 class MemoryContext;
 
 class Memory{
+
+  /*/
+        The bottom of the VM memory architecture:
+        This class contains all of the values for a specific segment of memory,
+        and is constantly instantiated by the MemoryContext instances that control
+        the flow of memory during execution
+        
+  /*/
+
   public:
 
     static int MEM_ID;

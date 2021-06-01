@@ -9,7 +9,7 @@ program FILE_IO;
 
 /*/
 
-c_obj, cc_obj, other_obj, objs[10] : object;
+c_obj, cc_obj, other_obj, objs[10], objs_2[10][10] : object;
 i : int;
 
 
@@ -75,20 +75,22 @@ class C{
   }
 }
 
-arr[50] : int;
+j, arr[50] : int;
 str : string;
 
 main(){
-  using objs as C;
-  objs[0].n = 10;
-  objs[0].n++;
-  objs[1] = new C();
+  using objs, objs_2 as C;
+  objs_2[0][0].n = 10;
+  objs_2[0][0].n++;
+  objs_2[1][0] = new C();
   println("--------");
-  println(objs[0].n);
+  println(objs_2[0][0].n);
   println("--------");
-  for(i = 1; i < 10; i++){
-    objs[i].n += 10 + objs[i - 1].n;
-    println(objs[i].n);
+  for(i = 0; i < 10; i++){
+    for(j = 0; j < 10; j++){
+      objs_2[i][j].n += 10 + objs_2[i][j - (j != 0)].n;
+      println(objs_2[i][j].n);
+    }
   }
   println("here we go");
   println(objs[0].n, objs[5].n, objs[5].get_spaces(5) + "ok");

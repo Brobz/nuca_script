@@ -9,9 +9,14 @@ using namespace std;
 const string STRING_BUFFER_PADDING = " ";
 
 class MemoryContext{
+    /*/
+
+            This class serves mainly as an interface between the VM's processing loop and the
+            underlying Memory object instances that contain all of the runtime data.
+
+            It is also used to maniupulate the output buffer of the console
+    /*/
     public:
-
-
       int return_addr = 0;
       MemoryContext* return_scope;
       bool active = true;

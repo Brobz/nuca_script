@@ -12,6 +12,12 @@ class Memory;
 using namespace std;
 
 class Value{
+    /*/
+          The Value class is a container for all of the different types that a NucaScript value can assume.
+          Its main purpose is to allow handy computing of operations between data types by the VM,
+          as well as to easily identify which data type is associated with each value.
+
+    /*/
     public:
 
       int type;
@@ -86,6 +92,32 @@ class Value{
         }
       }
 
+      void set_i(long long _i){
+        i = _i;
+        type = 0;
+      }
+
+      void set_f(long double _f){
+        f = _f;
+        type = 1;
+      }
+
+      void set_s(string _s){
+        s = _s;
+        type = 2;
+      }
+
+      void set_b(bool _b){
+        b = _b;
+        type = 3;
+      }
+
+      void set_o(Memory _o){
+        o = _o;
+        type = 4;
+      }
+      
+      /*/ This next set of methods resolve all of the legal operations in NucaScript (as seen in the SemanticCube) /*/
 
       Value operator+(const Value v){
         Value temp;
@@ -102,6 +134,10 @@ class Value{
           case 2: // INT + STRING = STRING
           {
             temp.set_s(to_string(i) + v.s);
+          } break;
+          case 3: // INT + BOOLEAN = INT
+          {
+            temp.set_i(i + ((int) v.b));
           } break;
           case 10: // FLOAT + INT + FLOAT
           {
@@ -131,6 +167,10 @@ class Value{
           {
             temp.set_s(s + to_string(v.b));
           } break;
+          case 30: // BOOLEAN + INT = INT
+          {
+            temp.set_i(((int)b) + v.i);
+          } break;
           case 32: // BOOLEAN + STRING = STRING
           {
             temp.set_s(to_string(b) + v.s);
@@ -148,21 +188,29 @@ class Value{
         Value temp;
         int operation_case = stoi(to_string(type) + to_string(v.type));
         switch(operation_case){
-          case 0: // INT - INT
+          case 0: // INT - INT = INT
           {
             temp.set_i(i - v.i);
           } break;
-          case 1: // INT - FLOAT
+          case 1: // INT - FLOAT = FLOAT
           {
             temp.set_f(i - v.f);
           } break;
-          case 10: // FLOAT - INT
+          case 3: // INT - BOOLEAN = INT
+          {
+            temp.set_i(i - ((int) v.b));
+          } break;
+          case 10: // FLOAT - INT = FLOAT
           {
             temp.set_f(f - v.i);
           } break;
-          case 11: // FLOAT - FLOAT
+          case 11: // FLOAT - FLOAT = FLOAT
           {
             temp.set_f(f - v.f);
+          } break;
+          case 30: // BOOLEAN - INT = INT
+          {
+            temp.set_i(((int)b) - v.i);
           } break;
           default:
           {
@@ -695,30 +743,6 @@ class Value{
         return temp;
       }
 
-      void set_i(long long _i){
-        i = _i;
-        type = 0;
-      }
-
-      void set_f(long double _f){
-        f = _f;
-        type = 1;
-      }
-
-      void set_s(string _s){
-        s = _s;
-        type = 2;
-      }
-
-      void set_b(bool _b){
-        b = _b;
-        type = 3;
-      }
-
-      void set_o(Memory _o){
-        o = _o;
-        type = 4;
-      }
 };
 
 #endif /*Value_H_*/

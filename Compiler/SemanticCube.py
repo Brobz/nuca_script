@@ -65,8 +65,8 @@ SemanticCube["boolean"] = {
                         "!=" : {"int" : "boolean", "float" : "boolean", "string" : "err", "boolean" : "boolean", "void" : "err", "object" : "err"},
                         "*" : {"int" : "int", "float" : "float", "string" : "string", "boolean" : "err", "void" : "err", "object" : "err"},
                         "/" : {"int" : "err", "float" : "err", "string" : "err", "boolean" : "err", "void" : "err", "object" : "err"},
-                        "+" : {"int" : "err", "float" : "err", "string" : "string",  "boolean" : "err", "void" : "err", "object" : "err"},
-                         "-" : {"int" : "err", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err", "object" : "err"}
+                        "+" : {"int" : "int", "float" : "err", "string" : "string",  "boolean" : "err", "void" : "err", "object" : "err"},
+                         "-" : {"int" : "int", "float" : "err", "string" : "err",  "boolean" : "err", "void" : "err", "object" : "err"}
                         }
 
 
@@ -110,7 +110,7 @@ SemanticCube["-"] = {
                         "string" : "string",
                         "boolean" : "err",
                         "object" : "err"
-                        }
+                    }
 
 # Unary Negtaion
 SemanticCube["!"] = {
@@ -119,4 +119,4 @@ SemanticCube["!"] = {
                         "string" : "boolean",
                         "boolean" : "boolean",
                         "object" : "err"
-                        }
+                    }
