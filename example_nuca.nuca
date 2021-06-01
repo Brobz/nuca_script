@@ -1,0 +1,114 @@
+program EXAMPLE_NUCA;
+
+i, j, k : int;
+pi, phi : float;
+color, result: string;
+state : boolean;
+
+int_arr[10] : int;
+
+float_matrix[3][3][3] : float;
+
+
+int double(n : int)
+VARS {}
+{
+  return n * 2;
+}
+
+
+class MyClass{
+  ATTR{
+      class_int : int;
+      class_string_arr[10] : string;
+  }
+
+  void print_class_int()
+  VARS{
+      class_int : int; /*/ This is a local variable, and is different from the class attribute var with the same name! /*/
+  }
+  {
+      /*/ We can use the this. operator to identify between class variables and global / local ones /*/
+      println(">> Local int is: " + class_int);
+      println(">> Class Int is: " + this.class_int);
+  }
+}
+
+obj_var, my_class, objs[5] : object;
+
+void my_void()
+VARS{}
+{
+  using my_class as MyClass;  /*/ Asserts my_clas as instance of MyClass in this scope /*/
+  println(my_class.class_int);
+}
+
+main () {
+  println("Hello World!");
+  i = 10;                       /*/ A single = assigns the value on the right side to the variable on the  left side /*/
+  j = 10 * 5 / 5;
+  k = i * j + (10 / 2) - 5;     /*/ Variables can be used in expressions just like any other constant /*/
+
+  pi = 3.14 + 0.0015;
+  phi = 0.16180 * 10;
+
+  color = "blue";               /*/ String constants go inside "" /*/
+  result = "the result is:";
+
+  print(">> Enter an integer: "); /*/ Unlike println, print does not add a newline at the end of its parameter list! /*/
+  read(k);
+
+  if (k < 0) {
+    println(">> It is less than zero!");
+  } else if (k == 0){
+    println(">> It is exactly zero!");
+  } else {
+    println(">> It is bigger than zero!");
+  }
+
+  int_arr[0] = 5;
+  int_arr[5 + 4] = 10;
+  println(int_arr[0], int_arr[9]);
+
+  float_matrix[0][0][0] = 5; /*/ The first element of the first row of the first column /*/
+  float_matrix[1][2][0] = 10; /*/ The first element of the third row of the second column /*/
+  println(float_matrix[0][0][0], float_matrix[1][2][0]);
+
+  i = 0;
+
+  println(">> Entering while loop!");
+
+  while (i < 10){
+   println(">> Inside while loop! i is now: " + i);
+   i += 1;  /*/   The += operator is short for "add to this value and overwrite it afterwards"
+                  It is the same as writing i = i + 1, and this is valid for all of the 4
+                  basic arithmetic operators:  +, -, * and / 								               /*/
+  }
+  println(">> All done with the while loop!");
+
+  println(">> Entering for loop!");
+  for (i = 0; i < 10; i++){
+    println(">> Inside for loop! i is now: " + i);
+  }
+  println(">> All done with the for loop!");
+
+  for (i = 0; i < 10; i++){
+    int_arr[i] = i;
+    println(">> arr[" + i + "] = "  + i);
+  }
+
+  println(">> 10 doubled is: " + double(10));
+
+  obj_var = new MyClass();
+
+  obj_var.class_int = 10;
+  obj_var.class_string_arr[5] = "Hi!";
+  obj_var.print_class_int();
+
+  using objs as MyClass; /*/ Asserts and instatiates the array members as MyClass /*/
+  objs[0].class_int += 5;
+  objs[1].class_int += 5 * objs[0].class_int;
+  println(objs[0].class_int, objs[1].class_int);
+
+  state = False; /*/ This could also be FALSE, false or simply a 0 /*/
+}

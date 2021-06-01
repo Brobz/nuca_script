@@ -35,6 +35,11 @@ class C{
       using c_obj, cc_obj, objs, ooo as C;
 
       ooo[0] = new C();
+      ooo[0].file_path = "0123456789";
+      ooo[0].n += 5;
+      println("|||||||||");
+      println(substr(ooo[0].file_path, ooo[0].n - 5, ooo[0].n));
+      println("|||||||||");
       ooo[0].n = 101;
       ooo[1].n += ooo[0].n + 5;
       println(ooo[0].n, ooo[1].n);

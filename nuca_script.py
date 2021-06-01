@@ -155,13 +155,15 @@
 
 // SPRINT //
 
-// TODO : Refactor files and methods
+// TODO: Documentation!
+            -> work on "super example script" with every single possible special use case imaginable, including all of the requested test cases
+            -> work on README (this is where full documentation should be (in an explicative manner))
+            -> work on the memory diagrams and stack/neuralgic actions explanations on the doc
+            -> record video tutorial on how to compile  a nuca_script program
 
-        -> maybe separate gramamr rules for different "sections" into different files?
-        -> there are several sections where the same code is reused with dfferent variable names (parse_var's code, especially the parent_obj_dir thing), make methods for these segments!
-        -> maybe clean up FunctionDirectory's lookup methods logic a bit?
-
-// TODO: Update Formal grammar and flow diagrams. Work on Documentation!
+// TODO : More builtin methods!
+            -> math builtin methods (pow, sqrt)
+            -> random builtin method (randint(min, max), randfloat() // randfloat from 0 to 1)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1981,7 +1983,7 @@ def main(argv):
         if param == "-i":
             input_file_path = arg
         elif param == "-o":
-            output_file_path = arg + ".exe"
+            output_file_path = arg
         else:
             raise Exception("Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
 
@@ -2049,7 +2051,7 @@ def main(argv):
     fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
 
     if output_file_path == None:
-        output_file_path = FUNC_DIR.program_name + ".exe"
+        output_file_path = FUNC_DIR.program_name
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)
     if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):
