@@ -2,7 +2,7 @@ from Compiler.SemanticCube import *
 from Compiler.SymbolTable import *
 
 class FunctionDirectory(object):
-    """docstring for FunctionDirectory."""
+    """ Main Compiladtion object, handles basically all of the operations in compilation time"""
 
     MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean", "object"]
     VAR_TYPES = len(MEMORY_SECTOR_INDICES)

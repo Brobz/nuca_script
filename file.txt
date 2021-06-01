@@ -4,6 +4,7 @@ program FI										 // An extra funny comment to confirm this works : ) 93 //
 /*//*/										 // An extra funny comment to confirm this works : ) 93 //
 /*/										 // An extra funny comment to confirm this works : ) 93 //
 c_obj, cc_										 // An extra funny comment to confirm this works : ) 93 //
+i : int;										 // An extra funny comment to confirm this works : ) 93 //
 class D{										 // An extra funny comment to confirm this works : ) 93 //
   ATTR{}										 // An extra funny comment to confirm this works : ) 93 //
 }										 // An extra funny comment to confirm this works : ) 93 //
@@ -26,6 +27,9 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
       ooo[										 // An extra funny comment to confirm this works : ) 93 //
       ooo[										 // An extra funny comment to confirm this works : ) 93 //
       ooo[										 // An extra funny comment to confirm this works : ) 93 //
+      prin										 // An extra funny comment to confirm this works : ) 93 //
+      i = 										 // An extra funny comment to confirm this works : ) 93 //
+      i +=										 // An extra funny comment to confirm this works : ) 93 //
       prin										 // An extra funny comment to confirm this works : ) 93 //
       prin										 // An extra funny comment to confirm this works : ) 93 //
       objs										 // An extra funny comment to confirm this works : ) 93 //
@@ -59,7 +63,7 @@ class C{										 // An extra funny comment to confirm this works : ) 93 //
     open(t										 // An extra funny comment to confirm this works : ) 93 //
   }										 // An extra funny comment to confirm this works : ) 93 //
 }										 // An extra funny comment to confirm this works : ) 93 //
-i, arr[50]										 // An extra funny comment to confirm this works : ) 93 //
+arr[50] : 										 // An extra funny comment to confirm this works : ) 93 //
 str : stri										 // An extra funny comment to confirm this works : ) 93 //
 main(){										 // An extra funny comment to confirm this works : ) 93 //
   using ob										 // An extra funny comment to confirm this works : ) 93 //

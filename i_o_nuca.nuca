@@ -10,6 +10,8 @@ program FILE_IO;
 /*/
 
 c_obj, cc_obj, other_obj, objs[10] : object;
+i : int;
+
 
 class D{
   ATTR{}
@@ -36,6 +38,9 @@ class C{
       ooo[0].n = 101;
       ooo[1].n += ooo[0].n + 5;
       println(ooo[0].n, ooo[1].n);
+      i = ooo[1].n;
+      i += ooo[1].n;
+      println(i);
 
       println("cc_obj.n = " + cc_obj.n);
       objs[1].n *= objs[0].n * objs[2].n;
@@ -70,7 +75,7 @@ class C{
   }
 }
 
-i, arr[50] : int;
+arr[50] : int;
 str : string;
 
 main(){

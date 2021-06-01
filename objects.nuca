@@ -51,7 +51,7 @@ class Value {
     obj : object;
   }
   {
-    no_2 = new Value(); // If no_2 was the one calling this class method, this would throw! //
+    no_2 = new Value(); /*/ If no_2 was the one calling this class method, this would throw! /*/
     this.i = 2.45;
     this.init(-5, 5, this.value_other);
     println("we got here!");

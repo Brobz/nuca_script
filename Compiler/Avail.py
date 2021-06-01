@@ -1,5 +1,5 @@
 class Avail(object):
-    """docstring for Avail."""
+    """ Object that handles temporal variable assignment """
 
     def __init__(self):
         self.current = -1

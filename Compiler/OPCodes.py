@@ -1,5 +1,5 @@
 OPCodes = {
-
+                ## OPCOODE translation for the VM ##
                 "=" :               0,
                 "+" :               1,
                 "-" :               2,
