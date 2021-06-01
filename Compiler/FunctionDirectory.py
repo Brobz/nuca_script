@@ -2,7 +2,13 @@ from Compiler.SemanticCube import *
 from Compiler.SymbolTable import *
 
 class FunctionDirectory(object):
-    """ Main Compiladtion object, handles basically all of the operations in compilation time"""
+    """
+
+    Main Compiladtion object, handles basically all of the operations in compilation time.
+
+    Mainly interfaces between the compiler rule actions and the underlying SymbolTables that contain all of the important data.
+
+    """
 
     MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean", "object"]
     VAR_TYPES = len(MEMORY_SECTOR_INDICES)
@@ -436,9 +442,10 @@ class FunctionDirectory(object):
         elif func_id not in self.FUNCS[scope]:
             self.declare_symbol(scope + "." + func_id, func_type, "GLOBAL", is_return_value = True) # Third argument as true sets this simbol to a return value; This is used as storage for the return value of the function with the same ID
             if scope == "GLOBAL":
-                self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+                # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+                self.FUNCS[scope][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False]
             else:
-                self.FUNCS[scope]["FUNCS"][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False] # TYPE, ARG_TABLE, VAR_TABLE, START_ADDR, PARAM_POINTER, HAS_VALID_RTN
+                self.FUNCS[scope]["FUNCS"][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False]
             self.change_current_scope(func_id)
         else:
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)

@@ -8,8 +8,12 @@
 using namespace std;
 
 class FileIO{
+    /*/
+          Class to encompass static methods related to file I/O
+    /*/
     public:
 
+      // Parses file info into the buffer using the separator
       static vector<string> parse_file(string file_path, string separator, int buffer_size){
         if (!separator.length()){
           cout << ">> Fatal Error: cannot parse " << file_path << " using an empty string separator" << endl;
@@ -62,6 +66,7 @@ class FileIO{
         return entries;
       }
 
+      // Writes the buffer into file_path using the separator
       static void write_to_file(vector<string> buffer, string file_path, string separator){
         ofstream output_file(file_path);
         if (output_file.is_open()){
@@ -76,6 +81,7 @@ class FileIO{
 
     private:
 
+      // Internal method to avoid buffer overflows
       static void overflow_check(int index, int size, string file_path){
         if (index + 1 > size){
           cout << ">> Fatal Error: buffer overflow while reading from " << file_path << endl;

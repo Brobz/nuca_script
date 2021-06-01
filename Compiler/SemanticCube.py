@@ -1,3 +1,4 @@
+## Contais all of the typematching information needed for NucaScript ##
 SemanticCube = {}
 
 SemanticCube["int"] = {

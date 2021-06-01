@@ -1,7 +1,14 @@
 from Compiler.Avail import *
 
 class SymbolTable(object):
-    """docstring for SymbolTable."""
+    """
+
+    Basic data structure that stands at the bottom of the NucaScript compiler
+
+    SymbolTables are instantiaded and maintained by the FunctionDirectory class, and store all of the information needed
+    to generate the memory and instructions of the virtual machine.
+
+    """
 
     #                                   // Memory Signature Translation
     #
@@ -163,7 +170,8 @@ class SymbolTable(object):
     def declare_symbol(self, sym_id, sym_type, mem_sec_sign, is_return_value = False, is_temp = False, is_cnst = False, is_param = False, is_array = False, dimensions = None, is_ptr = False, arr_pointed = None):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
-            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None, arr_pointed) # type, memory index, return value flag, constant flag, array flag, dimensions (in case it is an array), ptr flag, object type (in case it is an object), array pointed to (in case it is a pointer)
+            # type, memory index, return value flag, constant flag, array flag, dimensions (in case it is an array), ptr flag, object type (in case it is an object), array pointed to (in case it is a pointer)
+            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None, arr_pointed)
             if is_cnst:
                 self.update_const_mem_sign(sym_type, dimensions)
             elif not is_temp:

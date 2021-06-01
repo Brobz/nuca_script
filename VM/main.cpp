@@ -13,6 +13,19 @@
 
 using namespace std;
 
+/*/
+
+		VM execution file for NucaScript
+
+		!!! ATENTION !!!
+		The next few code segments are automatically generated during compilation time,
+		and should not be tampered with!
+		Doing so migh mess up the following compilation cycle!
+		!!! ATENTION !!!
+
+
+/*/
+
 // MEMORY_CONSTRAINTS //
 const int MAX_CONSTANTS = 10000, MAX_SYMBOLS = 30000, MAX_TMP_SYMBOLS = 30000, MAX_OBJ_SYMBOLS = 30000, VAR_TYPES = 5, MEMORY_STACK_LIMIT = 100000;
 // MEMORY_CONSTRAINTS //
@@ -674,6 +687,15 @@ const vector<vector<int>> QUADS = {
 										};
 // QUADS //
 
+
+/*/
+
+		Auto-generated Section ends here!
+		Fell free to tamper with the rest of the code!
+		Break something, learn something!
+
+/*/
+
 // GLOBAL VARS //
 int PROGRAM_START; // Quad index of the start of main()
 bool RUNNING = false;
@@ -746,6 +768,7 @@ bool s_stob(string s){
 	}
 }
 
+// Gien a variable's memory index, calculates its signature
 string mem_index_to_mem_sign(int index){
   if (index < MAX_CONSTANTS * (VAR_TYPES - 1)){ // CONSTANTS
 		string mem_sign = "0" + to_string(index / MAX_CONSTANTS) + "0";
@@ -767,11 +790,12 @@ string mem_index_to_mem_sign(int index){
 		return mem_sign;
 	}
 
-  // ERROR! Nothing was written
+  // ERROR!
   cout << ">> Fatal Error: could not locate "  << index << " in memory" << endl;
   exit(EXIT_FAILURE);
 }
 
+// Given a variable's memory signature, calculates the displacement needed to convert from virtual memory to real memory
 int mem_sign_to_index_displacement(string mem_sign){
 	int index_displacement = 0;
 	int mem_class = mem_sign[0] - '0', var_type = mem_sign[1] - '0', is_temp = mem_sign[2] - '0';
@@ -804,8 +828,7 @@ int mem_sign_to_index_displacement(string mem_sign){
 	return index_displacement;
 }
 
-// HELPER METHODS //
-
+// Given a memory index, retrieves a pointer to the Object Memory instance located in it, if there is one
 Memory* get_object_memory(int index){
 	string mem_sign = mem_index_to_mem_sign(index);
 	int int_mem_sign = stoi(mem_sign);
@@ -840,6 +863,8 @@ Memory* get_object_memory(int index){
 	}
 }
 
+// Reads and returns the value of a memory index
+// Responsible for figuring out which memory to read from (local / global, constant / var / temp, and type)
 Value read_from_memory(int index){
   string mem_sign = mem_index_to_mem_sign(index);
   if(mem_sign[0] == '2'){
@@ -988,6 +1013,8 @@ Value read_from_memory(int index){
   return v;
 }
 
+// Reads and returns the value of a memory index, in the given object memory
+// Responsible for figuring out which memory to read from (types)
 Value read_from_memory(Memory* this_mem, int index){
   string mem_sign = mem_index_to_mem_sign(index);
 	int int_mem_sign = stoi(mem_sign);
@@ -1027,6 +1054,8 @@ Value read_from_memory(Memory* this_mem, int index){
 	return v;
 }
 
+// Writes the given value into the given memory index
+// Responsible for figuring out which memory to write into (local / global, constant / var / temp, and type)
 void write_to_memory(int index, string value){
   string mem_sign = mem_index_to_mem_sign(index);
 
@@ -1170,6 +1199,9 @@ void write_to_memory(int index, string value){
   }
 }
 
+
+// Writes the given value into the given memory index of the given object memory
+// Responsible for figuring out which memory to write into (types)
 void write_to_memory(Memory* this_mem, int index, string value){
   string mem_sign = mem_index_to_mem_sign(index);
 	int int_mem_sign = stoi(mem_sign);
@@ -1205,6 +1237,9 @@ void write_to_memory(Memory* this_mem, int index, string value){
 	}
 }
 
+
+// Writes the given value into the given memory index, but into the top of the memory stack instead of LOCAL_MEM
+// Responsible for figuring out which memory to write into (types)
 void write_to_param(int index, string value){
 	string mem_sign = mem_index_to_mem_sign(index);
   if(mem_sign[0] == '2'){
@@ -1248,6 +1283,8 @@ void write_to_param(int index, string value){
 	}
 }
 
+
+// Does all of the needed initializations so that the program can be run
 void setup(){
 
 	// Memory signature with highest value is always pointing to the start of the main() method (no function can syntactically come after the main)
@@ -1271,6 +1308,7 @@ void setup(){
 	THIS_MEM = new Memory();
 }
 
+// Runs the program, starting from QUAD 0
 void run(){
   while(RUNNING){
     int op = QUADS[IP][0];
