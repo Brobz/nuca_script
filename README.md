@@ -438,3 +438,21 @@ Here is an example, supposing we have an object array called *objs*:
 This keeps object arrays homogenous, just like we want them, and allows the compiler to know where to look for their values!
 
 ## **Builtin Methods**
+
+NucaScript 1.0 ships with a variety of useful builtin methods, with more coming soon:
+(hopefully)
+
+- **string stoi(s : string)**
+-> Takes in a string, and if possilble, returns its conversion as an int
+
+- **string stof(s : string)**
+-> Takes in a string, and if possilble, returns its conversion as a float
+- **string stob(s : string)**
+-> Takes in a string, and if possilble, returns its conversion as a boolean
+- **string substr(s : string, sarting_index : int, size : int)**
+--> Takes in a string s, a starting index (int) and a size (int), and returns the appropriate substring of s, from starting_index to starting_index + size
+- **void open(buffer : string[],  file_path : string, separator : string)**
+-> Takes in linear string array as a *buffer*, a string as *file_path* and a third string as *separator*. Opens and parses the file at *file_path* (relative to the executable's directory at the moment of execution) using the *separator* (or untill it reaches a \n character) and writes the data into the *buffer*.
+Note: The *buffer* must be passed in with no bracket operators, and must have enough space to contain all of the file data, or else the VM will thrown a Buffer Overflow error. If the file ends and there is still space left in the buffer, a "END_OF_STREAM" entry will be  added at the end.
+- **void write(buffer : [], file_path : string, separator : string)**
+-> Takes in any linear array type (except object) as a *buffer*, a string as *file_path* and a second string as *separator*. Writes all of the entries from the *buffer* into the file at *file_path*, with a *separator* in between each entry, creating one if it does not previously exist. If the buffer contains an "END_OF_STREAM" entry, output to the file will be stopped at that point.
