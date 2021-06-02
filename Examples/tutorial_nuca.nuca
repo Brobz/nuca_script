@@ -1,5 +1,7 @@
 program TUTORIAL_NUCA;
 
+/*/ As seen on NucaScript 101: The Official Docs! /*/
+
 i, j, k : int;
 pi, phi : float;
 color, result: string;

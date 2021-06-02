@@ -161,7 +161,7 @@ class ExampleNuca{
   void self_read()
   VARS{}
   {
-    open(this.buffer, "example_nuca.nuca", "\n");
+    open(this.buffer, "Examples/example_nuca.nuca", "\n");
   }
 
   void self_write()
@@ -190,7 +190,7 @@ main () {
   println(">> After sort:");
   example_obj.print_int_array();
 
-  example_obj.fill_float_matrices_from_file("matrix_input.txt", ",");
+  example_obj.fill_float_matrices_from_file("Examples/matrix_input.txt", ",");
   println(">> Before multiplication:");
   example_obj.print_float_matrices();
 

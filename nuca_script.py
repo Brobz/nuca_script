@@ -23,7 +23,7 @@
     FUNCTIONS:
         -> overloaded functions?
         -> default arguments?
-        -> builtin methods? (wait, exit, etc..)
+        -> time-related builtin methods? (wait, exit, time, etc..)
 
     OTHER:
         -> #DEFINITIONS to get rid of all of the magic numbers... make them work like constants!
@@ -157,16 +157,8 @@
 
 // SPRINT //
 
-// TODO: Documentation!
-            -> work on README (this is where full documentation should be (in an explicative manner))
-                -> missing -i and -o input options
-                -> missing logic expressions
-            -> record video tutorial on how to compile  a nuca_script program
-
 // TODO : More builtin methods!
             -> math builtin methods (pow, sqrt)
-            -> random builtin method (randint(min, max), randfloat() // randfloat from 0 to 1)
-            -> useful methods like strlen()
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -239,6 +231,8 @@ reserved = {
     'stof'      :   'STOF_KWD',
     'stob'      :   'STOB_KWD',
     'substr'    :   'SUBSTR_KWD',
+    'strlen'    :   'STRLEN_KWD',
+    'randint'   :   'RANDINT_KWD',
     'read'      :   'READ_KWD',
     'open'      :   'OPEN_KWD',
     'write'     :   'WRITE_KWD',
@@ -843,10 +837,61 @@ def p_factor(p):
                 | STOF_KWD seen_stof_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
                 | STOB_KWD seen_stob_kwd OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION CLOSE_PARENTHESIS seen_close_parenthesis seen_stox_factor
                 | SUBSTR_KWD OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION seen_substr_str COMMA EXPRESSION seen_substr_idx COMMA EXPRESSION seen_substr_size CLOSE_PARENTHESIS seen_close_parenthesis seen_substr
+                | STRLEN_KWD OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION seen_strlen CLOSE_PARENTHESIS seen_close_parenthesis
+                | RANDINT_KWD OPEN_PARENTHESIS seen_open_parenthesis EXPRESSION seen_randint_arg COMMA EXPRESSION seen_randint_arg seen_randint CLOSE_PARENTHESIS seen_close_parenthesis
                 | FUNC_CALL
                 | CLASS_INSTANCE
                 | VAR seen_var_as_factor
                 | CONSTANT '''
+
+def p_seen_randint(p):
+    ''' seen_randint : empty '''
+    lower_arg = p[-4]
+    upper_arg = p[-1]
+
+    int_temp = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
+
+    push_to_quads(Quad("RANDINT", FUNC_DIR.get_symbol_mem_index(lower_arg[0], lower_arg[1], lower_arg[2]),  FUNC_DIR.get_symbol_mem_index(upper_arg[0], upper_arg[1], upper_arg[2]), FUNC_DIR.get_symbol_mem_index(int_temp, SCOPES_STACK[-1], False)))
+
+    OPERAND_STACK.append([int_temp, SCOPES_STACK[-1], False])
+    TYPE_STACK.append("int")
+
+
+def p_seen_randint_arg(p):
+    ''' seen_randint_arg : empty '''
+    randint_arg_scope =  SCOPES_STACK[-1]
+    randint_arg_attr = False
+    randint_arg = OPERAND_STACK.pop()
+    randint_arg_type = TYPE_STACK.pop()
+
+    if type(randint_arg) == list:
+        randint_arg, randint_arg_scope, randint_arg_attr = randint_arg
+
+    if randint_arg_type != "int":
+        raise Exception('Type Error: "randint" arguments must be ints')
+
+    p[0] = [randint_arg, randint_arg_scope, randint_arg_attr]
+
+
+def p_seen_strlen(p):
+    ''' seen_strlen : empty '''
+    strlen_arg_scope =  SCOPES_STACK[-1]
+    strlen_arg_attr = False
+    strlen_arg = OPERAND_STACK.pop()
+    strlen_arg_type = TYPE_STACK.pop()
+
+    if type(strlen_arg) == list:
+        strlen_arg, strlen_arg_scope, strlen_arg_attr = strlen_arg
+
+    if strlen_arg_type != "string":
+        raise Exception('Type Error: "strlen" argument must be a string')
+
+    int_temp = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
+
+    push_to_quads(Quad("STRLEN", -1, FUNC_DIR.get_symbol_mem_index(strlen_arg, strlen_arg_scope, strlen_arg_attr), FUNC_DIR.get_symbol_mem_index(int_temp, SCOPES_STACK[-1], False)))
+
+    OPERAND_STACK.append([int_temp, SCOPES_STACK[-1], False])
+    TYPE_STACK.append("int")
 
 def p_seen_substr_str(p):
     ''' seen_substr_str : empty '''
@@ -861,15 +906,7 @@ def p_seen_substr_str(p):
     if substr_arg_type != "string":
         raise Exception('Type Error: "substr" argument must be a string')
 
-    parent_obj_dir = -1 # This means, just use the current context!
-    if substr_arg_attr and len(CLASS_INSTANCE_STACK):
-        parent_obj = CLASS_INSTANCE_STACK.pop()
-        if parent_obj != "this_kwd":
-            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
-        else:
-            parent_obj_dir = 0 # This means, use this. reference !
-
-    p[0] = [parent_obj_dir, substr_arg, substr_arg_scope, substr_arg_attr]
+    p[0] = [substr_arg, substr_arg_scope, substr_arg_attr]
 
 def p_seen_substr_idx(p):
     ''' seen_substr_idx : empty '''
@@ -903,16 +940,15 @@ def p_seen_substr_size(p):
 
 def p_seen_substr(p):
     ''' seen_substr : empty '''
-    substr_arg_scope =  p[-9][2]
-    substr_arg_attr = p[-9][3]
-    substr_arg = p[-9][1]
-    parent_obj_dir = p[-9][0]
+    substr_arg_scope =  p[-9][1]
+    substr_arg_attr = p[-9][2]
+    substr_arg = p[-9][0]
     substr_idx = p[-6]
     substr_size = p[-3]
 
     new_str_temp = FUNC_DIR.next_avail("string", SCOPES_STACK[-1])
 
-    push_to_quads(Quad("SUBSTR", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(substr_arg, substr_arg_scope, substr_arg_attr), FUNC_DIR.get_symbol_mem_index(substr_idx[0], substr_idx[1], substr_idx[2]), FUNC_DIR.get_symbol_mem_index(substr_size[0], substr_size[1], substr_size[2]), FUNC_DIR.get_symbol_mem_index(new_str_temp, SCOPES_STACK[-1], False)))
+    push_to_quads(Quad("SUBSTR", FUNC_DIR.get_symbol_mem_index(substr_arg, substr_arg_scope, substr_arg_attr), FUNC_DIR.get_symbol_mem_index(substr_idx[0], substr_idx[1], substr_idx[2]), FUNC_DIR.get_symbol_mem_index(substr_size[0], substr_size[1], substr_size[2]), FUNC_DIR.get_symbol_mem_index(new_str_temp, SCOPES_STACK[-1], False)))
 
     OPERAND_STACK.append([new_str_temp, SCOPES_STACK[-1], False])
     TYPE_STACK.append("string")
@@ -932,19 +968,9 @@ def p_seen_stox_factor(p):
     if stox_arg_type != "string":
         raise Exception('Type Error: "string to ' + x + '" argument must be a string')
 
-    parent_obj_dir = -1 # This means, just use the current context!
-    if stox_arg_attr and len(CLASS_INSTANCE_STACK):
-        parent_obj = CLASS_INSTANCE_STACK.pop()
-        if parent_obj != "this_kwd":
-            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
-        else:
-            parent_obj_dir = 0 # This means, use this. reference !
-
-
-
     new_type_temp = FUNC_DIR.next_avail(x, SCOPES_STACK[-1])
 
-    push_to_quads(Quad("STOX", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(stox_arg, stox_arg_scope, stox_arg_attr), FUNC_DIR.get_symbol_mem_index(new_type_temp, SCOPES_STACK[-1], False)))
+    push_to_quads(Quad("STOX", -1, FUNC_DIR.get_symbol_mem_index(stox_arg, stox_arg_scope, stox_arg_attr), FUNC_DIR.get_symbol_mem_index(new_type_temp, SCOPES_STACK[-1], False)))
 
     OPERAND_STACK.append([new_type_temp, SCOPES_STACK[-1], False])
     TYPE_STACK.append(x)

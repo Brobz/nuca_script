@@ -1,7 +1,7 @@
 
 # NucaScript
 
-An object-oriented, strongly-typed, syntactically "*C-esque" and semantically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
+An object-oriented, strongly-typed, syntactically *"C-esque"* and semantically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
 
 Developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
@@ -47,10 +47,18 @@ First, we'll lay down the most basic structure for a (compilable) NucaScript pro
     }
 This is the bare minimun a NucaScript file must contain: a program name, which will be used as the default file name for the executable output of the program; and a main method, where the program will start its execution.
 
-If everything was setup correctly, you should be able to compile and run this program like so:
+If everything was setup correctly, you should be able to compile this program like so:
 
     python nuca_script.py tutorial_nuca.nuca
-    ./TUTORIAL_NUCA
+
+This should parse the source file (tutorial_nuca.nuca) and compile it into an executable called TUTORIAL_NUCA (our specified program name)
+**Note:** If you want to change the output file name, you can pass in an outut parameter like this:
+
+    python nuca_script.py tutorial_nuca.nuca -o output_file_name
+
+To run the program, simply write a ./ followed by the output file name:
+
+     ./TUTORIAL_NUCA
 
 Of course, the execution result is.. Nothing!
 But thats all we need to make Something happen!
@@ -453,6 +461,10 @@ NucaScript 1.0 ships with a variety of useful builtin methods, with more coming 
 -> Takes in a string, and if possible, returns its conversion as a boolean
 - **string substr(s : string, sarting_index : int, size : int)**
 --> Takes in a string s, a starting index (int) and a size (int), and returns the appropriate substring of s, from starting_index to starting_index + size
+- **int strlen(s : string)**
+--> Takes in a string, and returns the length of the string (total number of characters) as an integer value
+- **int randint(lower_bound : int, upper_bound : int)**
+--> Takes in two ints: a lower and an upper bound, and returns a pseudo-randomly generated integer ranging from *lower_bound* to *upper_bound* (inclusive on both ends)
 - **void open(buffer : string[],  file_path : string, separator : string)**
 -> Takes in linear string array as a *buffer*, a string as *file_path* and a third string as *separator*. Opens and parses the file at *file_path* (relative to the executable's directory at the moment of execution) using the *separator* (or untill it reaches a \n character) and writes the data into the *buffer*.
 Note: The *buffer* must be passed in with no bracket operators, and must have enough space to contain all of the file data, or else the VM will thrown a Buffer Overflow error. If the file ends and there is still space left in the buffer, a "END_OF_STREAM" entry will be  added at the end.
