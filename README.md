@@ -55,7 +55,7 @@ If everything was setup correctly, you should be able to compile this program li
     python nuca_script.py tutorial_nuca.nuca
 
 This should parse the source file (tutorial_nuca.nuca) and compile it into an executable called TUTORIAL_NUCA (our specified program name)
-**Note:** If you want to change the output file name, you can pass in an outut parameter like this:
+**Note:** If you want to change the output file name, you can pass in an output parameter like this:
 
     python nuca_script.py tutorial_nuca.nuca -o output_file_name
 
@@ -481,6 +481,7 @@ Note: The *buffer* must be passed in with no bracket operators, and must have en
 
 You now know pretty much everything  there is to know about NucaScript!
 Fell free to contact me if you find any bugs or typos  : )
+
 Have fun creating!
 
 Gui.

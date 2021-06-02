@@ -96,7 +96,7 @@
     -> Create a THIS_MEM pointer in VM, which will be used to know which object's memory to use as the "this" referentiator inside class methods
     -> Uppon creating an object instance, generate a MemoryContext using the signature, and store it in this symbols mem (will need to have a Memory var in Value to store this)
 
-    -> Similarly to arrays, objects quads will dependend on where they are seen:
+    -> Similarly to arrays, objects quads will depend on where they are seen:
         - If an obj is seen on the left side of an assignment, we will use OBJ_WRITE
         - If an obj is seen on the right side of an assignment (as a factor), we will use OBJ_READ
         - If an obj calls a function, we will OBJ_GOSUB to that function, setting all of the  "this" to point to its memory context, so that the function can do OBJ_READS on it
@@ -1431,12 +1431,12 @@ def p_read(p):
     DOT_OP_STACK.clear()
 
 def p_print(p):
-    ''' PRINT : PRINT_KWD seen_print_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
+    ''' PRINT : PRINT_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
     push_to_quads(Quad("PRNT", -1, -1, -1))
     DOT_OP_STACK.clear()
 
 def p_println(p):
-    ''' PRINTLN : PRINTLN_KWD seen_println_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
+    ''' PRINTLN : PRINTLN_KWD OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
     push_to_quads(Quad("PRNTLN", -1, -1, -1))
     DOT_OP_STACK.clear()
 
