@@ -1435,16 +1435,10 @@ def p_print(p):
     push_to_quads(Quad("PRNT", -1, -1, -1))
     DOT_OP_STACK.clear()
 
-def p_seen_print_kwd(p):
-    ''' seen_print_kwd : empty '''
-
 def p_println(p):
     ''' PRINTLN : PRINTLN_KWD seen_println_kwd OPEN_PARENTHESIS PRINTABLE CLOSE_PARENTHESIS '''
     push_to_quads(Quad("PRNTLN", -1, -1, -1))
     DOT_OP_STACK.clear()
-
-def p_seen_println_kwd(p):
-    ''' seen_println_kwd : empty '''
 
 def p_printable(p):
     ''' PRINTABLE : EXPRESSION seen_printable PRINTABLE_P '''

@@ -3,7 +3,9 @@
 
 An object-oriented, strongly-typed, syntactically *"C-esque"* and semantically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
 
-Developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
+Version 1.0 developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
+
+**Current Version: 1.0**
 
 ## List of Dependencies
 
@@ -452,12 +454,12 @@ Note: Just like in variable declarations, you can assert multiple objects (or ar
 NucaScript 1.0 ships with a variety of useful builtin methods, with more coming soon:
 (hopefully)
 
-- **string stoi(s : string)**
+- **int stoi(s : string)**
 -> Takes in a string, and if possible, returns its conversion as an int
 
-- **string stof(s : string)**
+- **float stof(s : string)**
 -> Takes in a string, and if possible, returns its conversion as a float
-- **string stob(s : string)**
+- **boolean stob(s : string)**
 -> Takes in a string, and if possible, returns its conversion as a boolean
 - **string substr(s : string, sarting_index : int, size : int)**
 --> Takes in a string s, a starting index (int) and a size (int), and returns the appropriate substring of s, from starting_index to starting_index + size
