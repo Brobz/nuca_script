@@ -1,4 +1,5 @@
 
+
 # NucaScript
 
 An object-oriented, strongly-typed, syntactically *"C-esque"* and semantically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
@@ -102,6 +103,7 @@ There are four basic types in NucaScript:
 
  - Int
 -> A natural number (internally representend as a C++ long long)
+
  - Float
 -> A real number (internally represented as a C++ long double)
  - String
@@ -111,7 +113,7 @@ There are four basic types in NucaScript:
 
 Note that any and all declarations of any type must be done **before** the main method definition!
 
-There is also a special *object* type, but more on that later : )
+There is also the *void* type, which is only used for functions, and a special *object* type, but more on that later : )
 
 ## **Basic Logic and Arithmetic**
 
@@ -246,20 +248,23 @@ NucaScript also has another type of loop, commonly known as a *for loop*:
 This loop type takes in three statements, in order, and separated by semicolons:
 
  - Initialization Statement
+
  -> This statement is only processed once, the first time that the program hits the loop; It is used to set the initial value for the counter variable.
 
     i = 0;
 
  - Exit Condition Statement
+
  -> This statement is processed every time the loop is about to restart, and if it evaluates as True, it will indeed continue looping the section within the curly braces; If it is false, however, it will jump to after the curly braces.
 
     i < 10;
 
  - Increment Statement
+
  -> This statement is processed after every loop iteration, before checking the condition statement again, and serves the purpose of modifying our counter variable so that the loop condition may eventually flip, and the program will be free from the loop!
 
 
-    i++; /*/ This syntax simply increments the value of i by 1 /\*/
+    i++; /*/ This syntax simply increments the value of i by 1 /*/
 
 *For loops* are very useful when looping through arrays, or when performing a number of operations that is defined by other constants:
 
@@ -281,13 +286,13 @@ To declare a function in NucaScript, first we must declare its type, followed by
 
     int double(n : int)
 
-This declares a function called doubled, that will take in an integer value and return an integer value.
+This declares a function called double, that will take in an integer value and return an integer value.
 Next we need to declare this function's local variables:
 
     VARS {
 	    local_int : int;
     }
-As you can see, just like declaring global variables!
+As you can see, it's just like declaring global variables!
 We won't really be using any local variables in this function, so we can leave this section empty:
 
     VARS {}
@@ -297,7 +302,7 @@ Next we need to define the body of our function, which will contain the code tha
     {
       return n * 2;
     }
-The *return* statement will be responsible for.. uh.. return this functions value after its execution!
+The *return* statement will be responsible for.. uh.. returning this functions value after its execution!
 It automatically leaves the function context and returns to where the function was previously called, placing its value on the correct spot.
 
 In this case, all our function does is take in an integer, and return its value multiplied by 2.
@@ -316,7 +321,7 @@ And we can call it like this:
 
     println(">> 10 doubled is: " + double(10));
 
-Note that every NucaScript function assumes an empty return as the last statement of the function body, in the case that it is not already a return statment;
+Note that every NucaScript function assumes an empty return as the last statement of the function body, in the case that it is not already a return statment.
 
 This means that  this:
 
@@ -416,7 +421,7 @@ Correct, many things! Good things. But to be able to do that, we'll need one ext
 The *using as* keyword is used to assert the class type of an object variable (or a whole object array) without having to re-instantiate it, losing its current state in the process!
 
 It works this way:
-Imagine there is a global object variable *my_class*, which in the main is instantiated as a *MyClass* instance.
+Imagine there is a global object variable *my_class*, which is instantiated in the main method as a *MyClass* instance.
 What if we want to access its values from within another function?
 We could do something like this:
 
@@ -427,8 +432,8 @@ We could do something like this:
       println(my_class.class_int);
     }
 So easy! Just tell the compiler we are *using* my_class *as* MyClass!
-This makes the next statement valid, since class_int is indeed an attribute of this class type.
-If the assertion was not there, there would be a Class Exception, since the compiler wouldn't know in which class type to check for the class_int variable.
+This makes the next statement valid, since *class_int* is indeed an attribute of this class type.
+If the assertion was not there, there would be a Class Exception, since the compiler wouldn't know in which class type to check for the *class_int* variable.
 
 Be careful though, since this method will throw an error if the variable is either not yet instantiated, or instantiated to a different class type!
 
@@ -469,6 +474,13 @@ NucaScript 1.0 ships with a variety of useful builtin methods, with more coming 
 --> Takes in two ints: a lower and an upper bound, and returns a pseudo-randomly generated integer ranging from *lower_bound* to *upper_bound* (inclusive on both ends)
 - **void open(buffer : string[],  file_path : string, separator : string)**
 -> Takes in linear string array as a *buffer*, a string as *file_path* and a third string as *separator*. Opens and parses the file at *file_path* (relative to the executable's directory at the moment of execution) using the *separator* (or untill it reaches a \n character) and writes the data into the *buffer*.
-Note: The *buffer* must be passed in with no bracket operators, and must have enough space to contain all of the file data, or else the VM will thrown a Buffer Overflow error. If the file ends and there is still space left in the buffer, a "END_OF_STREAM" entry will be  added at the end.
+Note: The *buffer* must be passed in with no bracket operators, and must have enough space to contain all of the file data, or else the VM will throw a Buffer Overflow error. If the file ends and there is still space left in the buffer, a "END_OF_STREAM" entry will be  added at the end.
 - **void write(buffer : [], file_path : string, separator : string)**
--> Takes in any linear array type (except object) as a *buffer*, a string as *file_path* and a second string as *separator*. Writes all of the entries from the *buffer* into the file at *file_path*, with a *separator* in between each entry, creating one if it does not previously exist. If the buffer contains an "END_OF_STREAM" entry, output to the file will be stopped at that point.
+-> Takes in any linear array type (except object) as a *buffer*, a string as *file_path* and a second string as *separator*. Writes all of the entries from the *buffer* into the file at *file_path*, with a *separator* in between each entry, creating the file if it does not previously exist. If the buffer contains an "END_OF_STREAM" entry, output to the file will be stopped at that point.
+## **That's It!**
+
+You now know pretty much everything  there is to know about NucaScript!
+Fell free to contact me if you find any bugs or typos  : )
+Have fun creating!
+
+Gui.
