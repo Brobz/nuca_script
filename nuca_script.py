@@ -18,6 +18,12 @@
 // IDEAS FOR FUTURE IMPROVEMENT //
 
     ARRAYS:
+        -> add List methods! (upon accessing list variable name directly with a . operator, trigger search for special list methods!)
+            -> size()!
+            -> head()!
+            -> tail()!
+            -> find()! -> returns idx if in list, -1 otherwise !
+            -> what to do with multidimentional arrays????
         -> optimize array access process by either reusing temps or having specific global temps for the process
 
     FUNCTIONS:
@@ -612,7 +618,7 @@ def p_using(p):
 
         FUNC_DIR.set_symbol_object_type(obj_id, class_type, SCOPES_STACK[-1])
 
-        is_arr = FUNC_DIR.is_sym_arr(obj_id, SCOPES_STACK[-1])
+        is_arr = FUNC_DIR.is_sym_arr(obj_id, SCOPES_STACK[-1], False)
         if is_arr:
             push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(obj_id, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
         else:
@@ -645,7 +651,7 @@ def p_seen_open_buffer(p):
     if type(buffer) == list:
         buffer, buffer_scope, buffer_attr = buffer
 
-    if not FUNC_DIR.is_sym_arr(buffer, buffer_scope):
+    if not FUNC_DIR.is_sym_arr(buffer, buffer_scope, buffer_attr):
         raise Exception("Type Error: cannot open file into a non-array variable")
 
     if buffer_type != "string":
@@ -685,7 +691,7 @@ def p_seen_write_buffer(p):
     if type(buffer) == list:
         buffer, buffer_scope, buffer_attr = buffer
 
-    if not FUNC_DIR.is_sym_arr(buffer, buffer_scope):
+    if not FUNC_DIR.is_sym_arr(buffer, buffer_scope, buffer_attr):
         raise Exception("Type Error: cannot write into file from a non-array variable")
 
     if buffer_type == "object":
@@ -1211,7 +1217,7 @@ def p_seen_array_id(p):
         is_attr = True
 
     FUNC_DIR.symbol_lookup(id, scope_in_use, is_attr)
-    if not FUNC_DIR.is_sym_arr(id, scope_in_use):
+    if not FUNC_DIR.is_sym_arr(id, scope_in_use, is_attr):
         raise Exception("Name Error: Cannot access non-array symbol " + id + " with [] operator")
 
     ARRAY_DIMENSION_STACK.append([id])
@@ -1726,7 +1732,7 @@ def parse_var(id, is_factor, is_io = 0):
         if not is_class_attr:
             # Regular Variable
             var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], is_class_attr)
-            if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1]) and not is_io:
+            if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1], False) and not is_io:
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
@@ -1736,7 +1742,7 @@ def parse_var(id, is_factor, is_io = 0):
         else:
             var = FUNC_DIR.symbol_lookup(id, DOT_OP_STACK[-1], True)
             # Class Variable
-            if FUNC_DIR.is_sym_arr(id, DOT_OP_STACK[-1]) and not is_io:
+            if FUNC_DIR.is_sym_arr(id, DOT_OP_STACK[-1], is_class_attr) and not is_io:
                 # Trying to access an array symbol without [] !
                 raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 

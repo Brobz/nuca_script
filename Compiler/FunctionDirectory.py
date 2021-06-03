@@ -132,7 +132,7 @@ class FunctionDirectory(object):
                         return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
                 return is_ptr
 
-    def is_sym_arr(self, sym_id, scope):
+    def is_sym_arr(self, sym_id, scope, is_class_attr):
         if self.current_scope == None:
             if scope == "GLOBAL":
                 return self.FUNCS[self.program_name].is_sym_arr(sym_id)
@@ -144,7 +144,7 @@ class FunctionDirectory(object):
         else:
             if scope == "GLOBAL":
                 is_arr = -1
-                if self.current_scope in self.FUNCS[scope]:
+                if self.current_scope in self.FUNCS[scope] and not is_class_attr:
                     is_arr = self.FUNCS[scope][self.current_scope][2].is_sym_arr(sym_id)
                 if is_arr == -1:
                     return self.FUNCS[self.program_name].is_sym_arr(sym_id)
