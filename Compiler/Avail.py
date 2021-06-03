@@ -7,7 +7,9 @@ class Avail(object):
 
     def next(self):
         self.current += 1
-        return "t" + str(self.current)
+        # Strange temporal name is so that no possible ID could preventa a temporal from being generated
+        # (IDs cannot start with a number)
+        return "93t" + str(self.current)
 
     def reset_counter(self):
         self.current = -1

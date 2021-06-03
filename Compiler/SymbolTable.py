@@ -15,7 +15,7 @@ class SymbolTable(object):
     #                                           0 -> INT
     #                       0 -> CONSANT        1 -> FLOAT
     #                       1 -> GLOBAL         2 -> STRING
-    #                       2 -> LOCAL          3 -> BOOL           0 -> VAR
+    #                       2 -> LOCAL          3 -> BOOLEAN        0 -> VAR
     #                       3 -> CLASS          4 -> OBJECT         1 -> TMP
 
     TRUTH = ["0FALSEFalsefalse", "1TRUETruetrue"]

@@ -172,11 +172,23 @@ class ExampleNuca{
 
 }
 
+
 /*/ Object variable to instantiate /*/
-example_obj : object;
+example_obj, objs[5] : object;
+
+void my_void()
+VARS{}
+{
+  using example_obj as ExampleNuca;
+  println(example_obj.separator);
+}
+
+
 
 /*/ Main Method /*/
 main () {
+  using objs as ExampleNuca;
+  objs[0] = new ExampleNuca();
   example_obj = new ExampleNuca();
 
   println(example_obj.faclin(10), example_obj.facrec(10));
