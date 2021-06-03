@@ -123,7 +123,9 @@ class FunctionDirectory(object):
                     return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
                 return is_ptr
             else:
-                is_ptr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_ptr(sym_id)
+                is_ptr = -1
+                if self.current_scope in self.FUNCS[scope]["FUNCS"]: # This means we might be checking a func var
+                    is_ptr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_ptr(sym_id)
                 if is_ptr == -1:
                     is_ptr = self.FUNCS[scope]["SYMBOLS"].is_sym_ptr(sym_id)
                     if is_ptr == -1:
