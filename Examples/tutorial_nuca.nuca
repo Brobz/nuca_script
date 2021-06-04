@@ -99,13 +99,15 @@ main () {
 
   println(">> 10 doubled is: " + double(10));
 
-  obj_var = new MyClass();
+
 
   obj_var.class_int = 10;
   obj_var.class_string_arr[5] = "Hi!";
   obj_var.print_class_int();
 
-  using objs as MyClass; /*/ Asserts and instatiates the array members as MyClass /*/
+  obj_var = new MyClass();  /*/ Resets this objects state! /*/
+  obj_var.print_class_int();
+  
   objs[0].class_int += 5;
   objs[1].class_int += 5 * objs[0].class_int;
   println(objs[0].class_int, objs[1].class_int);
