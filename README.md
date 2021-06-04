@@ -1,12 +1,32 @@
 
 
+
 # NucaScript
 
 An object-oriented, strongly-typed, syntactically *"C-esque"* and semantically *"pythonesque"* string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
 
 Version 1.0 developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
-**Current Version: 1.0**
+## Version Log
+
+**Current Version:** 1.1
+
+#### Change Log
+- ##### 04/06/2021
+	- Version 1.1 officially released!
+
+		- Bug fixes
+			- Fixes compile time bugs caused by referencing class attributes inside of a method from a different class
+			- Fixes bugs related to naming variables "t" + a numerical value, which conflicted with temporal names
+			- Temporal names now start with a numerical value, which is not allowed for other IDS, resolving the conflict
+		- Major changes to the *object* type variables
+			- Object variables must now specify their class type upon declaration, and cannot change afterwards
+			- Object variables are now automatically instantiated upon entering their scope block (including object arrays)
+			- *using as* keyword removed!
+			- Documentation updated to reflect these changes
+
+- ##### 02/06/2021
+	- Version 1.0 officially released!
 
 ## List of Dependencies
 
@@ -392,8 +412,11 @@ If it is not used, the compiler will search everywhere besides the class attribu
 
 Now that we have our class well defined, we can declare an *object* variable and *instantiate* it as MyClass!
 
-    obj_var : object;
-In NucaScript, all object  variables are of this general type, and take on the role of a specific class type one instantiated.
+    obj_var : MyClass;
+
+In NucaScript, all object variables **must** specify their class type upon declaration, and are automatically instantiated for their scope.
+
+This class type **cannot** be changed, and trying to instantiate an object variable to a different class type to the one declared will result in a Type Error!
 
 But what is instantiating, you ask, puzzled?
 
@@ -402,9 +425,9 @@ It's when we tell the compiler to generate a new instance of all of the class at
      obj_var = new MyClass();
 To instantiate, we use the *new* keyword, followed by the class name as if it was a parameterless function call.
 
-This will do two things: initiate the values like we talked about, and also *assert* this variable as having the MyClass type for the rest of this scope (unless re-instantiated to a different class type, of course).
+This will basically wipe out the objects state, and set all of its variables to the default values!
 
-This is useful for the compiler to know which attributes and methods are valid for this object variable to use.
+Of course, this is done automatically for us at the start of the variables scope, so there is no reason to explicitly instantiate an object until we have actually modified its values.
 
 We can now access all of the goodies that come with this class with the . operator, like so:
 
@@ -414,45 +437,7 @@ We can now access all of the goodies that come with this class with the . operat
 So convenient!
 Imagine what we could do with a bunch of objects in an array...
 
-Correct, many things! Good things. But to be able to do that, we'll need one extra piece of knowledge...
-
-## **Class Type Assertion**
-
-The *using as* keyword is used to assert the class type of an object variable (or a whole object array) without having to re-instantiate it, losing its current state in the process!
-
-It works this way:
-Imagine there is a global object variable *my_class*, which is instantiated in the main method as a *MyClass* instance.
-What if we want to access its values from within another function?
-We could do something like this:
-
-    void my_void()
-    VARS{}
-    {
-      using my_class as MyClass; /*/ Asserts my_clas as instance of MyClass in this scope /*/
-      println(my_class.class_int);
-    }
-So easy! Just tell the compiler we are *using* my_class *as* MyClass!
-This makes the next statement valid, since *class_int* is indeed an attribute of this class type.
-If the assertion was not there, there would be a Class Exception, since the compiler wouldn't know in which class type to check for the *class_int* variable.
-
-Be careful though, since this method will throw an error if the variable is either not yet instantiated, or instantiated to a different class type!
-
-The assertion statement works similarly with object arrays, except that you **MUST** assert the array before instantiating any of its objects. Asserting an array also automatically instantiates all of the non-instantiated members for the sake of convenience. Yay!
-
-Once again, if you assert an array that is already instantiated to a different class type, an error will ensue, so be careful!
-
-Here is an example, supposing we have an object array called *objs*:
-
-    objs[5] : object;
-
-    int main (){
-	    using objs as MyClass; /*/ Asserts and instatiates the array members as MyClass /*/
-	    objs[0].class_int += 5;
-	    objs[1].class_int += 5 * objs[0].class_int;
-	    println(objs[0].class_int, objs[1].class_int);
-    }
-This keeps object arrays homogenous, just like we want them, and allows the compiler to know where to look for their values!
-Note: Just like in variable declarations, you can assert multiple objects (or arrays of objects) of the same class type within the same line by separating their IDs with commas!
+Correct, many things! Great things!
 
 ## **Builtin Methods**
 
@@ -477,6 +462,7 @@ NucaScript 1.0 ships with a variety of useful builtin methods, with more coming 
 Note: The *buffer* must be passed in with no bracket operators, and must have enough space to contain all of the file data, or else the VM will throw a Buffer Overflow error. If the file ends and there is still space left in the buffer, a "END_OF_STREAM" entry will be  added at the end.
 - **void write(buffer : [], file_path : string, separator : string)**
 -> Takes in any linear array type (except object) as a *buffer*, a string as *file_path* and a second string as *separator*. Writes all of the entries from the *buffer* into the file at *file_path*, with a *separator* in between each entry, creating the file if it does not previously exist. If the buffer contains an "END_OF_STREAM" entry, output to the file will be stopped at that point.
+
 ## **That's It!**
 
 You now know pretty much everything  there is to know about NucaScript!
