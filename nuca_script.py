@@ -124,11 +124,7 @@
     | OBJ_GOSUB | -1 | obj_dir (local_mem) | start_addr (local_mem) |
 
     // USNG_AS //
-    -> allows the user to declare the class of an object type variable within a scope without having to re-instantiate it, losing its previous state
-    -> will throw proper runtime error if used with either an uninstantiated object variable or an object variable instatiated to a different class type; in both of these cases, the only option is instatiation (or re-instantiation)
-    -> will work a bit differently for arrays of objects:
-        -> if there is at least one object instantiated as some other class type, will throw error
-        -> if there is no object instantiated, or if all of the instantiated objects are of the correct type, it will succeed, instantiating all non instantiated objects to the using as type
+    -> allows the VM to instantiate all objects of an object array to their respective class type upon program start
     | USNG_AS | arr_size (local_mem) | class_sign (int) | object_dir (local_mem) |
 
     //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
@@ -229,8 +225,6 @@ reserved = {
     'main'      :   'MAIN_KWD',
     'new'       :   'NEW_KWD',
     'this'      :   'THIS_KWD',
-    'using'     :   'USING_KWD',
-    'as'        :   'AS_KWD',
     'println'   :   'PRINTLN_KWD',
     'print'     :   'PRINT_KWD',
     'stoi'      :   'STOI_KWD',
@@ -251,7 +245,6 @@ reserved = {
     'float'     :   'TYPE_F',
     'string'    :   'TYPE_S',
     'boolean'   :   'TYPE_B',
-    'object'    :   'TYPE_O',
     'void'      :   'TYPE_V',
 }
 
@@ -414,6 +407,10 @@ def p_seen_main_kwd(p):
     ''' seen_main_kwd : empty '''
     FUNC_DIR.set_main_start_addr(QUAD_POINTER)
     fill_quad(0, QUAD_POINTER)
+    for sym in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS:
+        symbol = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[sym]
+        if symbol[4] and symbol[7] != None: # is_arr and class_type != None
+            push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
 
 def p_class_star(p):
     ''' CLASS_STAR : CLASS CLASS_STAR
@@ -541,6 +538,14 @@ def p_seen_func_vars(p):
         parse_vars_declaration(p[-1])
 
     FUNC_DIR.set_start_addr(QUAD_POINTER, SCOPES_STACK[-1])
+    if SCOPES_STACK[-1] != "GLOBAL":
+        for sym in FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS:
+            symbol = FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS[sym]
+            if symbol[4] and symbol[7] != None: # is_arr and class_type != None
+                push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
+            elif symbol[7] != None:
+                push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
+
 
 def p_func_param(p):
     ''' FUNC_PARAM : ARG_DECLARATION FUNC_PARAM_P
@@ -580,49 +585,8 @@ def p_statement(p):
                   | PRINTLN SEMI_COLON
                   | OPEN SEMI_COLON
                   | WRITE SEMI_COLON
-                  | USING SEMI_COLON
                   | FLOW_CONTROL
                   | FUNC_RETURN  '''
-
-def p_id_list(p):
-    ''' ID_LIST :   ID ID_LIST_P'''
-    p[0] = p[1]
-    if p[2] != None:
-        p[0]  += p[2]
-
-def p_id_list_p(p):
-    ''' ID_LIST_P :         COMMA ID ID_LIST_P
-                        |   COMMA
-                        |   empty '''
-
-    if len(p) > 2:
-        p[0] = "," + p[2]
-        if p[3] != None:
-            p[0] += p[3]
-
-def p_using(p):
-    ''' USING : USING_KWD ID_LIST AS_KWD ID '''
-    obj_ids = p[2].split(',')
-    class_type = p[4]
-
-    FUNC_DIR.valid_class_check(class_type)
-
-    for obj_id in obj_ids:
-        FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1], False)
-        if FUNC_DIR.symbol_type_lookup(obj_id, SCOPES_STACK[-1], False) != "object":
-            raise Exception("Type Error: 'using' keyword can only be used with 'object' type variables")
-
-        obj_prev_class = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
-        if obj_prev_class != None and obj_prev_class != class_type:
-            raise Exception("Class Error: cannot set " + obj_id + " object type to " + class_type + " while it is explicitly instantiated as " + obj_prev_class)
-
-        FUNC_DIR.set_symbol_object_type(obj_id, class_type, SCOPES_STACK[-1])
-
-        is_arr = FUNC_DIR.is_sym_arr(obj_id, SCOPES_STACK[-1], False)
-        if is_arr:
-            push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(obj_id, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
-        else:
-            push_to_quads(Quad("USNG_AS", -1, FUNC_DIR.get_class_idx(class_type), FUNC_DIR.get_symbol_mem_index(obj_id, SCOPES_STACK[-1], False)))
 
 def p_open(p):
     ''' OPEN : OPEN_KWD OPEN_PARENTHESIS VAR seen_var_in_io seen_open_buffer COMMA EXPRESSION seen_file_path COMMA EXPRESSION seen_separator CLOSE_PARENTHESIS '''
@@ -1162,6 +1126,7 @@ def p_class_instance(p):
     class_instance = FUNC_DIR.next_avail("object", SCOPES_STACK[-1]) # Tmp for semantic purposes
     FUNC_DIR.set_symbol_object_type(class_instance, p[2], SCOPES_STACK[-1]) # Set its class type
     OPERAND_STACK.append(class_instance) # Push it to the stack
+    CLASS_INSTANCE_STACK.append(class_instance) # Pushing it to this stack allows the compiler to easily tell the difference between instantiation and assignation of objs down the road
     TYPE_STACK.append("object") # Push the object type as well
 
 def p_seen_class_id_instance(p):
@@ -1559,10 +1524,18 @@ def p_type(p):
                 |   TYPE_F
                 |   TYPE_S
                 |   TYPE_B
-                |   TYPE_O
+                |   ID seen_id_as_class_name
                 |   TYPE_V '''
 
-    p[0] = p[1]
+    if len(p) == 2: # Regular Type
+        p[0] = p[1]
+    else: # Class Type
+        p[0] = p[2]
+
+def p_seen_id_as_class_name(p):
+    ''' seen_id_as_class_name : empty '''
+    FUNC_DIR.valid_class_check(p[-1])
+    p[0] = "object|" + p[-1]
 
 def p_empty(p):
      'empty :'
@@ -1579,6 +1552,9 @@ def p_error(p): # Error rule for syntax errors
 def parse_vars_declaration(var_list):
     for list in var_list.split("||"):
         type = list.split(":")[1]
+        class_name = None
+        if "object" in type:
+            type, class_name = type.split("|")
         for id in list.split(":")[0].split(','):
             if type == "void":
                 raise Exception("Type Error: Cannot declare 'void' type variables")
@@ -1587,6 +1563,9 @@ def parse_vars_declaration(var_list):
                 FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
             else:
                 FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1])
+
+            if class_name != None:
+                FUNC_DIR.set_symbol_object_type(id, class_name, SCOPES_STACK[-1])
 
 def get_ptr_value(left = None, right = None):
     ptr_value = -1
@@ -1806,16 +1785,21 @@ def assign_to_var(push_back_operand = False):
     class_idx = -1
     if res_type == "object":
         # We are assigning to an object, which means we are instantiating it!
+        # First lets check this is ACTUALLY an instantation  and check  if the right operand is a temporal:
+        if not  len(CLASS_INSTANCE_STACK): # Its not an instantation!
+            raise Exception("Type Error: cannot assign to objects directly, only by instantiation!")
+        CLASS_INSTANCE_STACK.pop() # Remove the instantiation validation
         class_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
         class_idx = FUNC_DIR.get_class_idx(class_type) # From that, find out what the class index is
         if FUNC_DIR.is_sym_ptr(res, res_scope): # If we are instantiating into an array,
             arr_pointed = FUNC_DIR.get_arr_pointed(res, res_scope) # We need to check if this array has the appropriate (if any) class type, and update it if needed
             arr_pointed_object_type = FUNC_DIR.get_symbol_object_type(arr_pointed[0], arr_pointed[1])
-            if arr_pointed_object_type == None:
-                    raise Exception("Class Error: cannot instantiate array symbol " + arr_pointed[0] + " as " + class_type + " before asserting it with 'using as' operator")
-            elif arr_pointed_object_type != class_type:
-                raise Exception("Class Error: cannot instantiate array symbol " + arr_pointed[0] + " as " + class_type + " while its members are explicitly instantiated as " + arr_pointed_object_type)
+            if arr_pointed_object_type != class_type:
+                raise Exception("Type Error: " + arr_pointed_object_type + " = " + class_type)
         else:
+            res_class_type = FUNC_DIR.get_symbol_object_type(res, res_scope)
+            if res_class_type != class_type:
+                raise Exception("Type Error: " + res_class_type + " = " + class_type)
             FUNC_DIR.set_symbol_object_type(res, class_type, SCOPES_STACK[-1]) # Set this object's type
 
 
@@ -2061,15 +2045,18 @@ def main(argv):
 
     fill_vm_file(VM_FILE_PATH, VM_OBJECT_MEMORY_MARKER_STR, VM_OBJECT_MEMORY_START_STR, VM_OBJECT_MEMORY_END_STR, vm_obj_memory)
 
+
     vm_constants = []
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
         var = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
-        if var[3]:
-            if id in SymbolTable.TRUTH:
+        if var[3] or var[7] != None: # If is constant OR object
+            if id in SymbolTable.TRUTH: # Bool constant
                 constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(SymbolTable.TRUTH.index(id)) + '"},\n'
+            elif var[7] != None:  # Object to be initialized
+                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(FUNC_DIR.get_class_idx(var[7])) + '"},\n'
             elif isinstance(id, str): # String Constant
                 constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + id[1:-1] + '"},\n'
-            else:
+            else: # Int / Float constant
                 constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
             vm_constants.append(constant_string)
 

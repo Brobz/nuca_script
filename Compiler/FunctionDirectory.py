@@ -452,18 +452,6 @@ class FunctionDirectory(object):
             raise Exception("Multiple Declarations of " + func_id + " in " + scope)
 
     def change_current_scope(self, new_scope):
-        for key in self.FUNCS:
-            if key == self.program_name:
-                self.FUNCS[key].reset_object_symbol_types()
-            elif key == "GLOBAL":
-                for func in self.FUNCS[key]:
-                    self.FUNCS[key][func][2].reset_object_symbol_types()
-            else:
-                for func in self.FUNCS[key]["FUNCS"]:
-                    self.FUNCS[key]["FUNCS"][func][2].reset_object_symbol_types()
-
-                self.FUNCS[key]["SYMBOLS"].reset_object_symbol_types()
-
         self.current_scope = new_scope
 
     def symbol_lookup(self, sym_id, scope, is_class_attr = False):

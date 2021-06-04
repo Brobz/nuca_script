@@ -36,14 +36,7 @@ class MyClass{
   }
 }
 
-obj_var, my_class, objs[5] : object;
-
-void my_void()
-VARS{}
-{
-  using my_class as MyClass;  /*/ Asserts my_clas as instance of MyClass in this scope /*/
-  println(my_class.class_int);
-}
+obj_var, my_class, objs[5] : MyClass;
 
 main () {
   println("Hello World!");

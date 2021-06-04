@@ -172,14 +172,22 @@ class ExampleNuca{
 
 }
 
+/*/ Another Class /*/
+
+class AnotherClass{
+  ATTR{
+      a, b[50] : int;
+  }
+}
+
 
 /*/ Object variable to instantiate /*/
-example_obj, objs[5] : object;
+example_obj, objs[5] : ExampleNuca;
+another_obj : AnotherClass;
 
 void my_void()
 VARS{}
 {
-  using example_obj as ExampleNuca;
   println(example_obj.separator);
 }
 
@@ -187,9 +195,13 @@ VARS{}
 
 /*/ Main Method /*/
 main () {
-  using objs as ExampleNuca;
+  example_obj.separator = "---!---";
+  objs[1].separator = "!!!!";
+  another_obj = new AnotherClass();
   objs[0] = new ExampleNuca();
-  example_obj = new ExampleNuca();
+
+  println(objs[1].separator, example_obj.separator);
+
 
   println(example_obj.faclin(10), example_obj.facrec(10));
   println(example_obj.fiblin(15), example_obj.fibrec(15));
