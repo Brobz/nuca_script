@@ -22,6 +22,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 		- Major changes to the *object* type variables
 			- Object variables must now specify their class type upon declaration, and cannot change afterwards
 			- Object variables are now automatically instantiated upon entering their scope block (including object arrays)
+      - Direct assignment to object variables is now disallowed, except for instantiations with the *new* keyword.
 			- *using as* keyword removed!
 			- Documentation updated to reflect these changes
 
