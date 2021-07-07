@@ -9,9 +9,18 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 ## Version Log
 
-**Current Version:** 1.1
+**Current Version:** 1.2
 
 #### Change Log
+- ##### 07/07/2021
+	- Version 1.2 officially released!
+
+		- Bug Fixes
+			- Fixes major structural bug that threw compiler errors upon declaring global variables after a global method
+			- Fixes type checking bug when using the result value of a class method on an arithmetical expression
+		- New Ideas
+			- Came up with new architectural ideas for object constructors; Stay tuned for future updates!
+
 - ##### 04/06/2021
 	- Version 1.1 officially released!
 
@@ -132,7 +141,7 @@ There are four basic types in NucaScript:
  - Boolean
  -> A binary value that can be either True or False (internally represented as a C++ bool)
 
-Note that any and all declarations of any type must be done **before** the main method definition!
+Note that any and all declarations of all types must be done **before** the main method definition!
 
 There is also the *void* type, which is only used for functions, and a special *object* type, but more on that later : )
 

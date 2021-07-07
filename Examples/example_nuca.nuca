@@ -191,7 +191,7 @@ VARS{}
   println(example_obj.separator);
 }
 
-
+i : int;
 
 /*/ Main Method /*/
 main () {
@@ -202,6 +202,9 @@ main () {
 
   println(objs[1].separator, example_obj.separator);
 
+  for (i = 0; i < 5; i++){
+    println("hi " + i + " : " + objs[i].faclin(10) + ", " + objs[i].separator);
+  }
 
   println(example_obj.faclin(10), example_obj.facrec(10));
   println(example_obj.fiblin(15), example_obj.fibrec(15));

@@ -17,6 +17,11 @@
 
 // IDEAS FOR FUTURE IMPROVEMENT //
 
+    OBJECTS:
+        -> add special "constructor" and  "initializer" keywords for constructor methods
+        -> have the constructor method run uppon using the "new" keyword; this method can have any amount of parameters
+        -> have the initializer method run uppon declaring an array of objects of that type; this method cannot have parameters
+
     ARRAYS:
         -> add List methods! (upon accessing list variable name directly with a . operator, trigger search for special list methods!)
             -> size()!
@@ -395,8 +400,8 @@ def p_program(p):
 
 def p_structure_definition(p):
     ''' STRUCTURE_DEFINITION :      GLOBAL_VAR STRUCTURE_DEFINITION
-                                |   CLASS_STAR STRUCTURE_DEFINITION
-                                |   FUNC_DEF_STAR STRUCTURE_DEFINITION
+                                |   CLASS STRUCTURE_DEFINITION
+                                |   FUNC_DEF STRUCTURE_DEFINITION
                                 |   empty '''
 
 def p_seen_program_id(p):
@@ -411,10 +416,6 @@ def p_seen_main_kwd(p):
         symbol = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[sym]
         if symbol[4] and symbol[7] != None: # is_arr and class_type != None
             push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
-
-def p_class_star(p):
-    ''' CLASS_STAR : CLASS CLASS_STAR
-                   | empty '''
 
 def p_class(p):
     ''' CLASS : CLASS_KWD ID seen_class_id_declaration OPEN_CURLY CLASS_ATTR seen_class_attr FUNC_DEF_STAR CLOSE_CURLY '''
@@ -1251,10 +1252,12 @@ def p_func_call(p):
     ''' FUNC_CALL :     ID seen_func_call_id OPEN_PARENTHESIS ARG_LIST CLOSE_PARENTHESIS
                     |   CLASS_REFERENCE FUNC_CALL'''
 
-    if len(p) > 3:
-        p[0] = p[1] # Class reference func call
+    if len(p) > 3: # Normal func call
+        p[0] = p[1]
+        if len(TYPE_STACK) and TYPE_STACK[-1] == "object": # This is a normal func call contained WITHIN the class reference one;
+            TYPE_STACK.pop() # Need to get rid of the class reference "object" type on the type stack
     else:
-        p[0] = p[2] # Normal func call
+        p[0] = p[2] # Class reference func call
         return
 
     if not len(DOT_OP_STACK):
@@ -1583,7 +1586,6 @@ def get_ptr_value(left = None, right = None):
     return ptr_value
 
 def generate_expression_quad():
-
     right_scope = left_scope= SCOPES_STACK[-1]
     right_operand = OPERAND_STACK.pop()
     right_attr = False
