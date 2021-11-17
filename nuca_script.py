@@ -352,6 +352,7 @@ SCOPES_STACK = ["GLOBAL"]
 DOT_OP_STACK = []
 OBJECT_ACCESS_STACK = []
 CLASS_INSTANCE_STACK = []
+CONDITIONAL_DEPTH_STACK = []
 
 ## Quad Initialization
 QUAD_POINTER = 1
@@ -515,7 +516,7 @@ def p_func_def_star(p):
 def p_func_def(p):
     ''' FUNC_DEF : TYPE ID seen_func_id OPEN_PARENTHESIS FUNC_PARAM CLOSE_PARENTHESIS seen_func_params VARS seen_func_vars OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
     if not FUNC_DIR.valid_return_check(QUAD_POINTER - 1, SCOPES_STACK[-1]): # This means the last statement of this functions block was not a return statement!
-        FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])  # In that case, assume a void return (return;) and check if iit is valid
+        FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1], len(CONDITIONAL_DEPTH_STACK))  # In that case, assume a void return (return;) and check if iit is valid
         push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL"))) # All good!
 
     FUNC_DIR.change_current_scope(None)
@@ -1376,7 +1377,7 @@ def p_func_return(p):
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
 
-    FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER + 1, SCOPES_STACK[-1])
+    FUNC_DIR.return_type_check(rtn_type, QUAD_POINTER + 1, SCOPES_STACK[-1], len(CONDITIONAL_DEPTH_STACK))
 
     if rtn_type != "void": # No need to set values in case of a void return
         retn_scope = SCOPES_STACK[-1]
@@ -1397,7 +1398,7 @@ def p_void_func_return(p):
         push_to_quads(Quad("END", -1, -1, -1))
     else:
         # Void return in a regular function.. need to check if its type mathes!
-        FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1])
+        FUNC_DIR.return_type_check("void", QUAD_POINTER, SCOPES_STACK[-1], len(CONDITIONAL_DEPTH_STACK))
         push_to_quads(Quad("ENDFNC", -1, -1, int(SCOPES_STACK[-1] != "GLOBAL")))
 
 def p_read(p):
@@ -1435,8 +1436,16 @@ def p_seen_printable(p):
 
     push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope, printable_is_attr)))
 
+def p_entered_condition(p):
+    ''' entered_condition : empty '''
+    CONDITIONAL_DEPTH_STACK.append("|CONDITION|")
+
+def p_left_condition(p):
+    ''' left_condition : empty '''
+    CONDITIONAL_DEPTH_STACK.pop()
+
 def p_decision(p):
-    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY STATEMENT_STAR CLOSE_CURLY DECISION_P '''
+    ''' DECISION : IF_KWD OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_if_kwd OPEN_CURLY entered_condition STATEMENT_STAR left_condition CLOSE_CURLY DECISION_P '''
     dir = JUMP_STACK.pop()
     fill_quad(dir, QUAD_POINTER)
 
@@ -1461,7 +1470,7 @@ def p_repetition(p):
                    | UNCONDITIONAL_REP '''
 
 def p_conditional_rep(p):
-    ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY entered_condition STATEMENT_STAR CLOSE_CURLY left_condition '''
     end_dir = JUMP_STACK.pop()
     return_dir = JUMP_STACK.pop()
     push_to_quads(Quad("GOTO", -1, -1, return_dir))
@@ -1476,7 +1485,7 @@ def p_seen_while_exp(p):
     decision_statement()
 
 def p_unconditional_rep(p):
-    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS VAR seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY STATEMENT_STAR CLOSE_CURLY '''
+    ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS VAR seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY entered_condition STATEMENT_STAR CLOSE_CURLY left_condition '''
     swap_end_dir = JUMP_STACK.pop()
     swap_start_dir = JUMP_STACK.pop()
     end_dir = JUMP_STACK.pop()

@@ -105,6 +105,24 @@ class ExampleNuca{
 
   }
 
+  int getOne()
+  VARS{
+   i : int;
+  }
+  {
+  if(0){
+      if(0){
+        return 0;
+      }
+      else{
+      return 1;
+      }
+      }
+      else{
+      return 1;
+      }
+  }
+
   void print_float_matrices()
   VARS {
     i, j : int;
@@ -195,11 +213,13 @@ i : int;
 
 /*/ Main Method /*/
 main () {
+i = objs[0].getOne();
+objs[0].getOne();
+i = 1 + objs[0].getOne();
   example_obj.separator = "---!---";
   objs[1].separator = "!!!!";
   another_obj = new AnotherClass();
   objs[0] = new ExampleNuca();
-
   println(objs[1].separator, example_obj.separator);
 
   for (i = 0; i < 5; i++){

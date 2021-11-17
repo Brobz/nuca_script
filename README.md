@@ -12,6 +12,15 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 **Current Version:** 1.2
 
 #### Change Log
+- ##### 11/17/2021
+	- Version 1.3 officially released!
+
+		- Bug Fixes
+			- Fixes a compile time bug that allowed for typed methods to be accepted even when their return method was contained inside an impossible conditional
+				- This would cause all sorts of memory leaks on runtime, even though the program would compile with no error!
+				- Typed methods now require not only that the last instruction of the method is a return statement with the correct type, but that it is contained within the topmost conditional depth of the method's scope
+				- PS: *else* statements don't count as a conditional, so feel free to write return statements under those! (if you love some redundancy hehe)
+
 - ##### 07/07/2021
 	- Version 1.2 officially released!
 

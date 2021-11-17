@@ -247,7 +247,7 @@ class FunctionDirectory(object):
         else:
             return self.FUNCS[scope]["FUNCS"][self.current_scope][5] == ptr
 
-    def return_type_check(self, rtn_type, ptr, scope):
+    def return_type_check(self, rtn_type, ptr, scope, conditional_depth):
         if self.current_scope == None:
             raise Exception("Scope error: cant check return type")
 
@@ -265,10 +265,12 @@ class FunctionDirectory(object):
         if SemanticCube[rtn_type]["=="][func_type] == "err":
             raise Exception("Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead. Maybe missing default return statement?")
 
-        if scope == "GLOBAL":
-            self.FUNCS[scope][self.current_scope][5] = ptr
-        else:
-            self.FUNCS[scope]["FUNCS"][self.current_scope][5] = ptr
+        # conditional_depth contains the current depth of conditionals at the time of the return statement
+        if not conditional_depth:  # so if it is 0, this means that it counts as a valid return for this method's type checking
+            if scope == "GLOBAL":
+                self.FUNCS[scope][self.current_scope][5] = ptr
+            else:
+                self.FUNCS[scope]["FUNCS"][self.current_scope][5] = ptr
 
     def args_ok(self, func_id, scope):
         if scope == "GLOBAL":
