@@ -171,12 +171,12 @@
 
 '''
 
-
 import sys, os, getopt
 
 import Libraries.ply.lex as lex
 import Libraries.ply.yacc as yacc
 
+from Compiler.ExceptionHandler import *
 from Compiler.SymbolTable import *
 from Compiler.FunctionDirectory import *
 from Compiler.Quad import *
@@ -323,6 +323,11 @@ def t_CTE_S(t):
 def t_COMMENT(t):
     r'/\*/((?!/\*/).)*/\*/'
 
+# Define a rule so we can track line numbers
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
 # To ignore whitespaces and tabs
 t_ignore  = ' \t'
 
@@ -335,6 +340,13 @@ def t_error(t):
 lexer = lex.lex()
 
 # Now to parsing!
+
+## First, lets initialize our ExceptionHandler object, which will handle excepiton raising with useful error meessages
+EXCEPTION_HANDLER = ExceptionHandler(lexer)
+
+## THen, set the reference to this exception handler object on the rest of the classes
+FunctionDirectory.EXCEPTION_HANDLER = EXCEPTION_HANDLER
+SymbolTable.EXCEPTION_HANDLER = EXCEPTION_HANDLER
 
 ## Here we define the memory constraints of our parser
 MAX_CONSTANTS = 10000                                        # (per type)
@@ -379,7 +391,7 @@ def fill_quad(dir, fill):
     if q.arg_3 == "PND":
         q.arg_3 = fill
     else:
-        raise Exception("Quad Error: trying to fill complete quad!")
+        EXCEPTION_HANDLER.raiseException(">> Quad Error: trying to fill complete quad!")
 
 def swap_quads(q1, q2):
     if q2 > len(QUADS) - 1:
@@ -418,7 +430,7 @@ def p_def_statement(p):
         # Our DEF is, technically, a string...
         # More accurately though, it is TRUTH string, which will be representing a boolean type in nuca_script
         # So we just set it to the according integer
-        def_value = str(SymbolTable.TRUTH.index(def_value))
+        def_value = ["False", "True"][SymbolTable.TRUTH.index(def_value)]
     elif def_value[0] == "'" and def_value[-1:] == "'":
         # Our DEF is, indeed, a proper string; Swap ecompassing '' for ""
         def_value = '"' + def_value[1 : len(def_value) - 1] + '"'
@@ -532,9 +544,9 @@ def p_seen_readable(p):
 
     if id_type in ["void", "object"]:
         if id != None:
-            raise Exception("Type Error: Cannot read into symbol " + id + " of type " + id_type)
+            EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot read into symbol " + id + " of type " + id_type)
         else:
-            raise Exception("Type Error: Cannot read into " + printable_type)
+            EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot read into " + printable_type)
 
     is_ptr = int(FUNC_DIR.is_sym_ptr(id, id_scope))
     if not is_ptr:
@@ -663,15 +675,15 @@ def p_seen_open_buffer(p):
         buffer, buffer_scope, buffer_attr = buffer
 
     if not FUNC_DIR.is_sym_arr(buffer, buffer_scope, buffer_attr):
-        raise Exception("Type Error: cannot open file into a non-array variable")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: cannot open file into a non-array variable")
 
     if buffer_type != "string":
-        raise Exception("Type Error: cannot open file into a non-string array")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: cannot open file into a non-string array")
 
     buffer_dimension = FUNC_DIR.get_symbol_dimensions(buffer, buffer_scope, buffer_attr)
 
     if len(buffer_dimension) > 1:
-        raise Exception("Type Error: Cannot open file into non-linear array")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot open file into non-linear array")
 
     p[0] = [buffer, buffer_scope, buffer_attr, buffer_dimension[0]]
 
@@ -703,15 +715,15 @@ def p_seen_write_buffer(p):
         buffer, buffer_scope, buffer_attr = buffer
 
     if not FUNC_DIR.is_sym_arr(buffer, buffer_scope, buffer_attr):
-        raise Exception("Type Error: cannot write into file from a non-array variable")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: cannot write into file from a non-array variable")
 
     if buffer_type == "object":
-        raise Exception("Type Error: cannot write into file from an object type array")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: cannot write into file from an object type array")
 
     buffer_dimension = FUNC_DIR.get_symbol_dimensions(buffer, buffer_scope, buffer_attr)
 
     if len(buffer_dimension) > 1:
-        raise Exception("Type Error: cannot write into file from a non-linear array")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: cannot write into file from a non-linear array")
 
     p[0] = [buffer, buffer_scope, buffer_attr, buffer_dimension[0]]
 
@@ -726,7 +738,7 @@ def p_seen_file_path(p):
         file_path, file_path_scope, file_path_attr = file_path
 
     if file_path_type != "string":
-        raise Exception('Type Error: file path argument of file I/O must be a string')
+        EXCEPTION_HANDLER.raiseException(">> Type Error: file path argument of file I/O must be a string")
 
     p[0] = [file_path, file_path_scope, file_path_attr]
 
@@ -741,7 +753,7 @@ def p_seen_separator(p):
         separator, separator_scope, separator_attr = separator
 
     if separator_type != "string":
-        raise Exception('Type Error: separator argument of file I/O methods must be a string')
+        EXCEPTION_HANDLER.raiseException(">> Type Error: separator argument of file I/O methods must be a string")
 
     p[0] = [separator, separator_scope, separator_attr]
 
@@ -885,7 +897,7 @@ def p_seen_randint_arg(p):
         randint_arg, randint_arg_scope, randint_arg_attr = randint_arg
 
     if randint_arg_type != "int":
-        raise Exception('Type Error: "randint" arguments must be ints')
+        EXCEPTION_HANDLER.raiseException('>> Type Error: "randint" arguments must be ints')
 
     p[0] = [randint_arg, randint_arg_scope, randint_arg_attr]
 
@@ -901,7 +913,7 @@ def p_seen_strlen(p):
         strlen_arg, strlen_arg_scope, strlen_arg_attr = strlen_arg
 
     if strlen_arg_type != "string":
-        raise Exception('Type Error: "strlen" argument must be a string')
+        EXCEPTION_HANDLER.raiseException('>> Type Error: "strlen" argument must be a string')
 
     int_temp = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
 
@@ -921,7 +933,7 @@ def p_seen_substr_str(p):
         substr_arg, substr_arg_scope, substr_arg_attr = substr_arg
 
     if substr_arg_type != "string":
-        raise Exception('Type Error: "substr" argument must be a string')
+        EXCEPTION_HANDLER.raiseException('>> Type Error: "substr" argument must be a string')
 
     p[0] = [substr_arg, substr_arg_scope, substr_arg_attr]
 
@@ -936,7 +948,7 @@ def p_seen_substr_idx(p):
         substr_idx, substr_idx_scope, substr_idx_attr = substr_idx
 
     if substr_idx_type not in ["int", "boolean"]:
-        raise Exception('Type Error: starting index argument in "substr" must be an int')
+        EXCEPTION_HANDLER.raiseException('>> Type Error: starting index argument in "substr" must be an int')
 
     p[0] = [substr_idx, substr_idx_scope, substr_idx_attr]
 
@@ -951,7 +963,7 @@ def p_seen_substr_size(p):
         susbtr_size, susbtr_size_scope, susbtr_size_attr = susbtr_size
 
     if susbtr_size_type not in ["int", "boolean"]:
-        raise Exception('Type Error: starting index argument in "substr" must be an int')
+        EXCEPTION_HANDLER.raiseException('>> Type Error: starting index argument in "substr" must be an int')
 
     p[0] = [susbtr_size, susbtr_size_scope, susbtr_size_attr]
 
@@ -983,7 +995,7 @@ def p_seen_stox_factor(p):
         stox_arg, stox_arg_scope, stox_arg_attr = stox_arg
 
     if stox_arg_type != "string":
-        raise Exception('Type Error: "string to ' + x + '" argument must be a string')
+        EXCEPTION_HANDLER.raiseException('>> Type Error: "string to ' + x + '" argument must be a string')
 
     new_type_temp = FUNC_DIR.next_avail(x, SCOPES_STACK[-1])
 
@@ -1020,7 +1032,7 @@ def p_pop_not(p):
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
-        raise Exception("Type Mismatch: " + op + right_type)
+        EXCEPTION_HANDLER.raiseException(">> Type Mismatch: " + op + right_type)
 
 def p_seen_not(p):
     ''' seen_not : empty '''
@@ -1043,10 +1055,10 @@ def p_pop_unary_minus(p):
         OPERAND_STACK.append(res)
         TYPE_STACK.append(res_type)
     else:
-        exception_txt = "Type Mismatch: " + op + right_type
+        exception_txt = ">> Type Mismatch: " + op + right_type
         if right_type == "boolean":
             exception_txt += " (maybe use !boolean instead?)"
-        raise Exception(exception_txt)
+        EXCEPTION_HANDLER.raiseException(exception_txt)
 
 def p_seen_unary_minus(p):
     ''' seen_unary_minus : empty '''
@@ -1129,10 +1141,10 @@ def p_class_reference(p):
 def p_seen_this_kwd(p):
     ''' seen_this_kwd : empty '''
     if len(SCOPES_STACK) < 2:
-        raise Exception("Syntax Error: this operator used outside of Class scope")
+        EXCEPTION_HANDLER.raiseException(">> Syntax Error: this operator used outside of Class scope")
 
     if len(OBJECT_ACCESS_STACK) and OBJECT_ACCESS_STACK[-1] != "|ARG_WALL|":
-        raise Exception("Attribute Error: symbol " + p[-2] + " has no attribute 'this'")
+        EXCEPTION_HANDLER.raiseException(">> Attribute Error: symbol " + p[-2] + " has no attribute 'this'")
 
     p[0] = "this_kwd"
 
@@ -1157,7 +1169,7 @@ def p_var(p):
                 p[1] = p[1][1][0]
             class_obj = FUNC_DIR.symbol_lookup(p[1], SCOPES_STACK[-1])
             if FUNC_DIR.symbol_type_lookup(p[1], SCOPES_STACK[-1]) != "object":
-                raise Exception("Syntax Error: cannot use . operator on non-object type " + p[1])
+                EXCEPTION_HANDLER.raiseException(">> Syntax Error: cannot use . operator on non-object type " + p[1])
 
         if type(p[2]) != list: # Parse the accessed attribute
             accessed_attr = FUNC_DIR.symbol_lookup(p[2], DOT_OP_STACK[-1], len(DOT_OP_STACK) > 0)
@@ -1192,7 +1204,7 @@ def p_seen_dot_operator(p):
     FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1])
     class_type = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
     if class_type == None:
-        raise Exception("Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new' or assertion with 'using as'?)")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new' or assertion with 'using as'?)")
     DOT_OP_STACK.append(class_type)
 
 def p_seen_this_dot_operator(p):
@@ -1230,7 +1242,7 @@ def p_seen_array_id(p):
 
     FUNC_DIR.symbol_lookup(id, scope_in_use, is_attr)
     if not FUNC_DIR.is_sym_arr(id, scope_in_use, is_attr):
-        raise Exception("Name Error: Cannot access non-array symbol " + id + " with [] operator")
+        EXCEPTION_HANDLER.raiseException(">> Name Error: Cannot access non-array symbol " + id + " with [] operator")
 
     ARRAY_DIMENSION_STACK.append([id])
 
@@ -1245,7 +1257,7 @@ def p_seen_array_access(p):
     access = OPERAND_STACK.pop()
     access_type = TYPE_STACK.pop()
     if access_type not in ["int", "boolean"]:
-        raise Exception("Type Error: Cannot use " + access_type + " as access index for " + ARRAY_DIMENSION_STACK[-1][0])
+        EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot use " + access_type + " as access index for array '" + ARRAY_DIMENSION_STACK[-1][0] + "'")
 
     ARRAY_DIMENSION_STACK[-1].append(access)
 
@@ -1274,7 +1286,7 @@ def p_seen_array_def_dim(p):
     dim = OPERAND_STACK.pop()
     TYPE_STACK.pop() # pop dim type (will always be int)
     if dim <= 0:
-        raise Exception("Value Error: array dimension must be a non-zero positive integer")
+        EXCEPTION_HANDLER.raiseException(">> Value Error: array dimension must be a non-zero positive integer")
     ARRAY_DIMENSION_STACK[-1].append(dim)
 
 def p_term(p):
@@ -1417,7 +1429,7 @@ def p_func_return(p):
 
     if FUNC_DIR.current_scope == None:
         # Return statement outside of function
-        raise Exception('Context Error: non-void return statement outside of function or method (maybe use "return;"?)')
+        EXCEPTION_HANDLER.raiseException('>> Context Error: non-void return statement outside of function or method (maybe use "return;"?)')
 
     rtn_type = TYPE_STACK.pop()
     rtn_id = OPERAND_STACK.pop()
@@ -1477,7 +1489,7 @@ def p_seen_printable(p):
     printable_type = TYPE_STACK.pop()
 
     if printable_type in ["void", "object"]:
-            raise Exception("Type Error: Cannot print '" + printable_type + "' type")
+            EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot print '" + printable_type + "' type")
 
     push_to_quads(Quad("PRNTBFFR", -1, -1, FUNC_DIR.get_symbol_mem_index(printable, printable_scope, printable_is_attr)))
 
@@ -1565,7 +1577,7 @@ def p_seen_for_end_exp(p):
     expr_end_type = TYPE_STACK.pop()
 
     if SemanticCube[expr_end_type]["=="]["boolean"] == "err":
-        raise Exception("Type mismatch: non-boolean end expression in 'for' statement")
+        EXCEPTION_HANDLER.raiseException(">> Type mismatch: non-boolean end expression in 'for' statement")
 
     res_scope = SCOPES_STACK[-1]
     res = OPERAND_STACK.pop()
@@ -1599,9 +1611,7 @@ def p_empty(p):
      pass
 
 def p_error(p): # Error rule for syntax errors
-    print(">> Syntax error in input!")
-    print(">> Unexpected token:", p)
-    exit()
+    EXCEPTION_HANDLER.raiseException(">> Syntax error! Unexpected token: '" + str(p.value) + "', of type '" + p.type + "'")
 
 ## Helper Action Methods ##
 # a few methods that help reuse code on some of the similar actions thtat need to be taken by the parser in multiple situations #
@@ -1614,7 +1624,7 @@ def parse_vars_declaration(var_list):
             type, class_name = type.split("|")
         for id in list.split(":")[0].split(','):
             if type == "void":
-                raise Exception("Type Error: Cannot declare 'void' type variables")
+                EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot declare 'void' type variables")
             if len(ARRAY_DIMENSION_STACK) and ARRAY_DIMENSION_STACK[0][0] == id:
                 dims = ARRAY_DIMENSION_STACK.pop(0)
                 FUNC_DIR.declare_symbol(id, type, SCOPES_STACK[-1], is_array = True, dimensions = dims[1:])
@@ -1660,7 +1670,7 @@ def generate_expression_quad():
         OPERAND_STACK.append(result)
         TYPE_STACK.append(result_type)
     else:
-        raise Exception("Type Mismatch: " + left_type + " " + operator + " " + right_type)
+        EXCEPTION_HANDLER.raiseException(">> Type Mismatch: " + left_type + " " + operator + " " + right_type)
 
 def parse_var(id, is_factor, is_io = 0):
     is_arr = False
@@ -1683,7 +1693,7 @@ def parse_var(id, is_factor, is_io = 0):
 
         if len(access_values) != len(dims):
             # Accessing array incompletely (would need to return an array obj)
-            raise Exception("Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
+            EXCEPTION_HANDLER.raiseException(">> Index Error: array " + array_id + " expects " + str(len(dims)) + " access indices, received " + str(len(access_values)))
 
         final_access_value = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
         # Here, we need to reset the values of all the temps used in the array index calculation, in case there is a loop going on, since it will use the same temporals over and over again, causing an eventual overflow
@@ -1769,7 +1779,7 @@ def parse_var(id, is_factor, is_io = 0):
             var = FUNC_DIR.symbol_lookup(id, SCOPES_STACK[-1], is_class_attr)
             if FUNC_DIR.is_sym_arr(id, SCOPES_STACK[-1], False) and not is_io:
                 # Trying to access an array symbol without [] !
-                raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
+                EXCEPTION_HANDLER.raiseException(">> Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
             OPERAND_STACK.append([var, SCOPES_STACK[-1], is_class_attr])
             TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(id, SCOPES_STACK[-1], is_class_attr))
@@ -1779,7 +1789,7 @@ def parse_var(id, is_factor, is_io = 0):
             # Class Variable
             if FUNC_DIR.is_sym_arr(id, DOT_OP_STACK[-1], is_class_attr) and not is_io:
                 # Trying to access an array symbol without [] !
-                raise Exception("Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
+                EXCEPTION_HANDLER.raiseException(">> Name Error: symbol " + id + " is defined as an array and cannot be referenced directly (maybe missing [] operator?)")
 
             if not is_factor: # We are assigning to this object's attribute, need a pointer
 
@@ -1836,14 +1846,14 @@ def assign_to_var(push_back_operand = False):
     res_type = TYPE_STACK.pop()
 
     if SemanticCube[res_type][op][right_type] == "err":
-        raise Exception("Type Mismatch: " + res_type + " " + op + " " + right_type)
+        EXCEPTION_HANDLER.raiseException(">> Type Mismatch: " + res_type + " " + op + " " + right_type)
 
     class_idx = -1
     if res_type == "object":
         # We are assigning to an object, which means we are instantiating it!
         # First lets check this is ACTUALLY an instantation  and check  if the right operand is a temporal:
         if not  len(CLASS_INSTANCE_STACK): # Its not an instantation!
-            raise Exception("Type Error: cannot assign to objects directly, only by instantiation!")
+            EXCEPTION_HANDLER.raiseException(">> Type Error: cannot assign to objects directly, only by instantiation!")
         CLASS_INSTANCE_STACK.pop() # Remove the instantiation validation
         class_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
         class_idx = FUNC_DIR.get_class_idx(class_type) # From that, find out what the class index is
@@ -1851,11 +1861,11 @@ def assign_to_var(push_back_operand = False):
             arr_pointed = FUNC_DIR.get_arr_pointed(res, res_scope) # We need to check if this array has the appropriate (if any) class type, and update it if needed
             arr_pointed_object_type = FUNC_DIR.get_symbol_object_type(arr_pointed[0], arr_pointed[1])
             if arr_pointed_object_type != class_type:
-                raise Exception("Type Error: " + arr_pointed_object_type + " = " + class_type)
+                EXCEPTION_HANDLER.raiseException(">> Type Error: " + arr_pointed_object_type + " = " + class_type)
         else:
             res_class_type = FUNC_DIR.get_symbol_object_type(res, res_scope)
             if res_class_type != class_type:
-                raise Exception("Type Error: " + res_class_type + " = " + class_type)
+                EXCEPTION_HANDLER.raiseException(">> Type Error: " + res_class_type + " = " + class_type)
             FUNC_DIR.set_symbol_object_type(res, class_type, SCOPES_STACK[-1]) # Set this object's type
 
 
@@ -1944,7 +1954,7 @@ def parse_compound_asignment(op):
 
     if op in ['++', '--']: # Increment / decrement compound assignment!
         if TYPE_STACK[-1] not in ["int", "float"]:
-            raise Exception("Type Error: cannot use " + op + " operator with " + TYPE_STACK[-1] + " type variable")
+            EXCEPTION_HANDLER.raiseException(">> Type Error: cannot use " + op + " operator with " + TYPE_STACK[-1] + " type variable")
 
         OPERATOR_STACK.append(op[0])
         unit_temp = FUNC_DIR.next_avail("int", SCOPES_STACK[-1])
@@ -1961,7 +1971,7 @@ def decision_statement():
     expr_type = TYPE_STACK.pop()
 
     if SemanticCube[expr_type]["=="]["boolean"] == "err":
-        raise Exception("Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
+        EXCEPTION_HANDLER.raiseException(">> Type Mismatch: non-boolean (" + expr_type + ") expression in decision statement")
 
     res_scope = SCOPES_STACK[-1]
     res_attr = False
@@ -2058,18 +2068,20 @@ def main(argv):
         elif param == "-o":
             output_file_path = arg
         else:
-            raise Exception(">> Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
+            EXCEPTION_HANDLER.raiseException(">> Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
 
     if input_file_path == None:
-        raise Exception(">> Param Error! Please provide an input file path (assumed as first parameter)")
+        EXCEPTION_HANDLER.raiseException(">> Param Error! Please provide an input file path (assumed as first parameter)")
 
-    s = ""
-    with open(input_file_path) as f:
-        lines = f.readlines()
-        for l in lines:
-            s += l[:-1]
+    EXCEPTION_HANDLER.setSourceFilePath(input_file_path)
+
+    lex_data = ""
+    with open(input_file_path) as source_file:
+        lines = source_file.readlines()
+        for line in lines:
+            lex_data += line
         print(">> Parsing " + input_file_path + "...")
-        parser.parse(s)
+        parser.parse(lex_data)
 
     mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
 

@@ -9,12 +9,23 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 ## Version Log
 
-**Current Version:** 1.4
+**Current Version:** 1.5
 
 - ##### 01/02/2022
-	- Happy Ney Year!
+	- Version 1.5 officially released!
+		- Revamps exception system and refactors most of the symbol & type lookup logic
+			- Adds a brand new ```ExceptionHandler``` object, which takes care of relaying useful error messages on exceptions
+				- _**Hurray**_ for line numbers on error messages!!
+				- Program now exits gracefully on exceptions with a neat message followed by python's ```exit()```, which looks cleaner on the console in comparison to the old ```raise Exception()``` jargon
+			- Refactors lookup logic inside of ```FunctionDirectory``` in order to completely remove all ```try / except``` logic
+				- Replaced it with ```return``` values and ```if``` statements, which got rid of about 80% of the indentation levels in each section
+		- Small changes to how ```#DEF``` statements work with booleans
+			- Previously coded them as an integer (either 0 or 1), now actually writes them down as ```True``` or ```False```, which will ensure the correct type check when using its value in the code
+
+- ##### 01/01/2022
+	- **Happy Ney Year!!!**
 	- Version 1.4 officially released!
-		- Adds C-like #DEF statements for all basic data types!
+		- Adds C-like ```#DEF``` statements for all basic data types!
 			- Just like in C, these work by replacing the actual source code text with whatever value the definition name is coupled with
 			- Currently, this **WILL** replace **ALL** instances of the definition name on the source code, **INCLUDING** those that are inside a string (within quotations)
 				- PS: This behavior will be patched as soon as I figure out a *lazy* way to get rid of it : )
@@ -497,22 +508,22 @@ P.S: Be careful with these, since they **WILL** (*currently*) replace **ANY** in
 NucaScript 1.0 shipped with a variety of useful builtin methods, with more coming in a constant stream (hopefully)
 Here are all of the currently available builtin methods for NucaScript:
 
-- **int stoi(s : string)**
+- ```int stoi(s : string)```
 -> Takes in a string, and if possible, returns its conversion as an int
-- **float stof(s : string)**
+- ```float stof(s : string)```
 -> Takes in a string, and if possible, returns its conversion as a float
-- **boolean stob(s : string)**
+- ```boolean stob(s : string)```
 -> Takes in a string, and if possible, returns its conversion as a boolean
-- **string substr(s : string, sarting_index : int, size : int)**
---> Takes in a string s, a starting index (int) and a size (int), and returns the appropriate substring of s, from starting_index to starting_index + size
-- **int strlen(s : string)**
+- ```string substr(s : string, sarting_index : int, size : int)```
+--> Takes in a string s, a starting index (int) and a size (int), and returns the appropriate substring of s, from starting_index up to starting_index + size (inclusive on both ends)
+- ```int strlen(s : string)```
 --> Takes in a string, and returns the length of the string (total number of characters) as an integer value
-- **int randint(lower_bound : int, upper_bound : int)**
+- ```int randint(lower_bound : int, upper_bound : int)```
 --> Takes in two ints: a lower and an upper bound, and returns a pseudo-randomly generated integer ranging from *lower_bound* to *upper_bound* (inclusive on both ends)
-- **void open(buffer : string[],  file_path : string, separator : string)**
+- ```void open(buffer : string[],  file_path : string, separator : string)```
 -> Takes in linear string array as a *buffer*, a string as *file_path* and a third string as *separator*. Opens and parses the file at *file_path* (relative to the executable's directory at the moment of execution) using the *separator* (or untill it reaches a \n character) and writes the data into the *buffer*.
 Note: The *buffer* must be passed in with no bracket operators, and must have enough space to contain all of the file data, or else the VM will throw a Buffer Overflow error. If the file ends and there is still space left in the buffer, a "END_OF_STREAM" entry will be  added at the end.
-- **void write(buffer : [], file_path : string, separator : string)**
+- ```void write(buffer : [], file_path : string, separator : string)```
 -> Takes in any linear array type (except object) as a *buffer*, a string as *file_path* and a second string as *separator*. Writes all of the entries from the *buffer* into the file at *file_path*, with a *separator* in between each entry, creating the file if it does not previously exist. If the buffer contains an "END_OF_STREAM" entry, output to the file will be stopped at that point.
 
 ## **That's It!**

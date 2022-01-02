@@ -22,7 +22,7 @@ class SymbolTable(object):
     SYMBOL_CLASSES = ["constant", "symbol", "temporal variable", "class variable"]
     MEMORY_SECTOR_SIGN = [["0", "1", "2", "3"], ["0", "1", "2", "3", "4"], ["0", "1"]]
     MEMORY_SECTOR_SHIFTS = None
-
+    EXCEPTION_HANDLER = None
 
     def __init__(self, scope, mem_constraints, var_types, program_name, set_truth = False):
         self.scope = scope
@@ -42,41 +42,54 @@ class SymbolTable(object):
             self.declare_symbol(SymbolTable.TRUTH[0], "boolean", "030", False, False, True, False, False, None, False)
             self.declare_symbol(SymbolTable.TRUTH[1], "boolean", "030", False, False, True, False, False, None, False)
 
-    def get_array_symbol_element_size(self, sym_id):
+    def get_array_symbol_element_size(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
             return self.get_array_element_size(self.SYMBOLS[sym_id][5])
 
-        raise Exception("Cannot get array element size for symbol " + sym_id)
+        if last_attempt:
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot get array element size for symbol " + sym_id)
 
-    def get_arr_pointed(self, sym_id):
+        return None
+
+    def get_arr_pointed(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][8]
 
-        raise Exception("Cannot get array pointed to by " + sym_id)
+        if last_attempt:
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot get array pointed to by " + sym_id)
+
+        return None
 
     def reset_object_symbol_types(self):
         for sym_id in self.SYMBOLS:
             self.set_sym_obj_type(sym_id, None)
 
-    def set_sym_obj_type(self, sym_id, obj_type):
+    def set_sym_obj_type(self, sym_id, obj_type, last_attempt = False):
         if sym_id in self.SYMBOLS:
             self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2],
                                     self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type, self.SYMBOLS[sym_id][8])
-        else:
-            raise Exception("Cannot set object type " + obj_type + " to " + sym_id + " in " + self.scope)
+            return True
 
-    def get_symbol_object_type(self, sym_id):
+        if last_attempt:
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot set object type " + obj_type + " to " + sym_id + " in " + self.scope)
+
+        return None
+
+    def get_symbol_object_type(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][7]
 
-        raise Exception("Cannot get objet type for symbol " + sym_id + " in " + self.scope)
+        if last_attempt:
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot get objet type for symbol " + sym_id + " in " + self.scope)
+
+        return None
 
     def is_sym_arr(self, sym_id):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][4]
         else:
             if self.scope == self.program_name:
-                raise Exception("Cannot check if " + sym_id + " is an array in " + self.scope)
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot check if " + sym_id + " is an array in " + self.scope)
             return -1
 
     def is_sym_ptr(self, sym_id):
@@ -84,7 +97,7 @@ class SymbolTable(object):
             return self.SYMBOLS[sym_id][6]
         else:
             if self.scope == self.program_name:
-                raise Exception("Cannot check if " + sym_id + " is a pointer in " + self.scope)
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot check if " + sym_id + " is a pointer in " + self.scope)
             return -1
 
     def get_dimensions(self, sym_id):
@@ -92,7 +105,7 @@ class SymbolTable(object):
             return self.SYMBOLS[sym_id][5]
         else:
             if self.scope == self.program_name:
-                raise Exception("Cannot get dimensions for symbol " + sym_id + " in " + self.scope)
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot get dimensions for symbol " + sym_id + " in " + self.scope)
             return -1
 
     def build_memory_secor_shift(self, mem_constraints):
@@ -106,7 +119,7 @@ class SymbolTable(object):
             return self.SYMBOLS[sym_id][1]
         else:
             if self.scope == self.program_name:
-                raise Exception("Cannot get memory index for symbol " + sym_id + " in " + self.scope)
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Cannot get memory index for symbol " + sym_id + " in " + self.scope)
             return -1
 
     def next_avail(self, t_id, type, mem_sec_sign, is_ptr, arr_pointed = None):
@@ -118,7 +131,7 @@ class SymbolTable(object):
         if type not in self.const_memory_signature:
             if type == "void":
                 return
-            raise Exception("Type error: type " + type + " is unknown")
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Type error: type " + type + " is unknown")
 
         if is_arr:
             self.const_memory_signature[type] += self.get_array_element_size(dimensions)
@@ -131,7 +144,7 @@ class SymbolTable(object):
         if type not in self.temp_memory_signature:
             if type == "void":
                 return
-            raise Exception("Type error: type " + type + " is unknown")
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Type error: type " + type + " is unknown")
 
         if is_arr:
             self.temp_memory_signature[type] += self.get_array_element_size(dimensions)
@@ -144,7 +157,7 @@ class SymbolTable(object):
         if type not in self.var_memory_signature:
             if type == "void":
                 return
-            raise Exception("Type error: type " + type + " is unknown")
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Type error: type " + type + " is unknown")
 
         if is_arr:
             self.var_memory_signature[type] += self.get_array_element_size(dimensions)
@@ -182,7 +195,7 @@ class SymbolTable(object):
             if is_cnst or is_return_value:
                 pass
             else:
-                raise Exception("Multiple Declarations of " + sym_id + " in " + self.scope)
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Multiple Declarations of " + sym_id + " in " + self.scope)
 
     def calculate_mem_index(self, mem_sec_sign):
         # Here we define where in memory to place this based on the memory sector signature
@@ -219,13 +232,13 @@ class SymbolTable(object):
         limit = self.mem_constraints[int(mem_sec_sign[0])]
         if displacement >= limit:
             # TOO MANY VARIABLES!
-            raise Exception("Memory Error: Program " + self.program_name + " exceeds " + SymbolTable.SYMBOL_CLASSES[int(mem_sec_sign[0])] + " limit of " + str(limit))
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Memory Error: Program " + self.program_name + " exceeds " + SymbolTable.SYMBOL_CLASSES[int(mem_sec_sign[0])] + " limit of " + str(limit))
 
         mem_index += displacement
 
         return mem_index
 
-    def symbol_lookup(self, sym_id):
+    def symbol_lookup(self, sym_id, last_attempt = False):
         in_table_id = sym_id
 
         if "+" in sym_id:
@@ -235,13 +248,19 @@ class SymbolTable(object):
 
         if in_table_id in self.SYMBOLS:
             if self.SYMBOLS[in_table_id][2]: # This symbol is marked as RETURN VALUE, meaning it is used as a global storage for the function with the same name to store its return value
-                raise Exception("Syntax Error: Use of function name " + in_table_id + " as variable ID. (Maybe missing '()' ?)")
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Syntax Error: Use of function name " + in_table_id + " as variable ID. (Maybe missing '()' ?)")
             return sym_id
-        else:
-            raise Exception("Unseen symbol " + in_table_id + " in " + self.scope)
 
-    def type_lookup(self, sym_id):
+        if last_attempt:
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Unseen symbol " + in_table_id + " in " + self.scope)
+
+        return None
+
+    def type_lookup(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
             return self.SYMBOLS[sym_id][0]
-        else:
-            raise Exception("Unseen symbol " + sym_id + " in " + self.scope)
+
+        if last_attempt:
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Unseen symbol " + sym_id + " in " + self.scope)
+
+        return None

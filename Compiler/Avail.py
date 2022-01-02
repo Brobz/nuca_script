@@ -4,7 +4,6 @@ class Avail(object):
     def __init__(self):
         self.current = -1
 
-
     def next(self):
         self.current += 1
         # Strange temporal name is so that no possible ID could preventa a temporal from being generated

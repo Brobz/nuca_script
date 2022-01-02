@@ -223,6 +223,7 @@ main () {
   /*/ Testing out #DEF constants /*/
 
   println("HI" + TABULATOR * CONSTANT_INT + CONSTANT_FLOAT * 2);
+  println(1 * CONSTANT_STATE);
 
   /*/ Other random tests /*/
 
