@@ -37,7 +37,6 @@
         -> time-related builtin methods? (wait, exit, time, etc..)
 
     OTHER:
-        -> #DEFINITIONS to get rid of all of the magic numbers... make them work like constants!
         -> try / catch block?
         -> atom syntactic highliter ?
         -> post-compile quad optimization ?
@@ -183,6 +182,7 @@ from Compiler.Quad import *
 
 # Tokens for the lexer
 tokens = [
+'HASHTAG',
 'SEMI_COLON',
 'COLON',
 'COMMA',
@@ -224,6 +224,7 @@ tokens = [
 # Reserved ids for the keywords
 reserved = {
     'program'   :   'PROGRAM_KWD',
+    'DEF'       :   'DEF_KWD',
     'ATTR'      :   'ATTR_KWD',
     'VARS'      :   'VARS_KWD',
     'class'     :   'CLASS_KWD',
@@ -256,6 +257,7 @@ reserved = {
 tokens += list(reserved.values())
 
 # Simple Tokens
+t_HASHTAG                   =   r'\#'
 t_SEMI_COLON                =   r';'
 t_COLON                     =   r':'
 t_COMMA                     =   r','
@@ -395,9 +397,50 @@ def swap_quads(q1, q2):
 # the next set of functions define the grammar rules of NucaScript, as well as the actions they should execute during parsing #
 
 def p_program(p):
-    ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON STRUCTURE_DEFINITION MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
+    ''' PROGRAM : PROGRAM_KWD ID seen_program_id SEMI_COLON DEF_SECTION STRUCTURE_DEFINITION MAIN_KWD OPEN_PARENTHESIS CLOSE_PARENTHESIS OPEN_CURLY seen_main_kwd STATEMENT_STAR CLOSE_CURLY '''
     push_to_quads(Quad("END", -1, -1, -1))
     print(">> Syntax Approved!")
+
+def p_def_section(p):
+    ''' DEF_SECTION : DEF_STATEMENT_STAR '''
+
+def p_def_statement_star(p):
+    ''' DEF_STATEMENT_STAR :        DEF_STATEMENT DEF_STATEMENT_STAR
+                                |   empty '''
+
+def p_def_statement(p):
+    ''' DEF_STATEMENT : HASHTAG DEF_KWD ID COLON CONSTANT'''
+    def_name = p[3]
+    def_value = str(OPERAND_STACK.pop())
+
+    if def_value in SymbolTable.TRUTH:
+        # Our DEF is, technically, a string...
+        # More accuretaly though, it is TRUTH string, which will be representing a boolean type in nuca_script
+        # So we just set it to the according integer
+        def_value = str(SymbolTable.TRUTH.index(def_value))
+    elif def_value[0] == "'" and def_value[-1:] == "'":
+        # Our DEF is, indeed, a proper string; Swap ecompassing '' for ""
+        def_value = '"' + def_value[1 : len(def_value) - 1] + '"'
+
+    # Since we will be messing with the lexdata (lexer's input) on the fly,
+    # we will need to reajust both the lexer cursor position (lexpos) and
+    # the size of the data (lexlen)
+    lexpos_shift = len(def_name) - len(def_value)
+    original_lexdata_length = len(p.lexer.lexdata)
+
+    # Here we do the actual #DEF replacements, in a C-like fashion
+    p.lexer.lexdata = p.lexer.lexdata.replace(def_name, def_value)
+
+    # Here we figure out how much the lexdata changed after the replacement
+    lexdata_length_diff = original_lexdata_length - len(p.lexer.lexdata)
+
+    # If our #DEF name is any bigger then the value it will be substituted with, then our cursor moved!
+    if lexpos_shift > 0:
+        # Adjust the cursor (lexpos) with the appropriate shift
+        p.lexer.lexpos -= lexpos_shift
+
+    # Finally, we adjust the lexlen value with how much text was shaved of (or added) by the substitutions
+    p.lexer.lexlen -= lexdata_length_diff
 
 def p_structure_definition(p):
     ''' STRUCTURE_DEFINITION :      GLOBAL_VAR STRUCTURE_DEFINITION

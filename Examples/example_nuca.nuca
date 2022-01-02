@@ -1,12 +1,17 @@
 program EXAMPLE_NUCA;
 
+#DEF CONSTANT_INT : 5
+#DEF TABULATOR : "\t"
+#DEF CONSTANT_FLOAT : 5.54
+#DEF CONSTANT_STATE : FALSE
+
 /*/ Example Class /*/
 /*/ Showcases NucaScript /*/
 
 class ExampleNuca{
   ATTR{
       int_arr[25] : int;
-      float_matrix_a[5][5], float_matrix_b[5][5], float_matrix_c[5][5] : float;
+      float_matrix_a[CONSTANT_INT][CONSTANT_INT], float_matrix_b[CONSTANT_INT][CONSTANT_INT], float_matrix_c[CONSTANT_INT][CONSTANT_INT] : float;
       buffer[1000], separator : string;
   }
 
@@ -185,7 +190,7 @@ class ExampleNuca{
   void self_write()
   VARS{}
   {
-    write(this.buffer, "output_file.txt", "\t" * 15 + "/*/ " + this.separator + " /*/\n");
+    write(this.buffer, "output_file.txt", TABULATOR * 15 + "/*/ " + this.separator + " /*/\n");
   }
 
 }
@@ -213,9 +218,15 @@ i : int;
 
 /*/ Main Method /*/
 main () {
-i = objs[0].getOne();
-objs[0].getOne();
-i = 1 + objs[0].getOne();
+  /*/ Testing out #DEF constants /*/
+
+  println("HI" + TABULATOR * CONSTANT_INT + CONSTANT_FLOAT * 2);
+
+  /*/ Other random tests /*/
+
+  i = objs[0].getOne();
+  objs[0].getOne();
+  i = 1 + objs[0].getOne();
   example_obj.separator = "---!---";
   objs[1].separator = "!!!!";
   another_obj = new AnotherClass();
@@ -225,6 +236,8 @@ i = 1 + objs[0].getOne();
   for (i = 0; i < 5; i++){
     println("hi " + i + " : " + objs[i].faclin(10) + ", " + objs[i].separator);
   }
+
+  /*/ Now to some calculations /*/
 
   println(example_obj.faclin(10), example_obj.facrec(10));
   println(example_obj.fiblin(15), example_obj.fibrec(15));
