@@ -1,14 +1,14 @@
 '''
 ----------------------------------------------------------------------------
 |                                                                           |
-|                       Nuca Script                                         |
+|                      Nuca Script                                          |
 |                                                                           |
-|                       Diseno de Compiladores - OBJ17                      |
+|                      Diseno de Compiladores - OBJ17                       |
 |                                                                           |
-|                       Guilherme Bittencourt de Borba                      |
-|                       A01194571                                           |
-|                       Alvaro Fernando Santana Martinez                    |
-|                       A01196914                                           |
+|                      Guilherme Bittencourt de Borba                       |
+|                      A01194571                                            |
+|                      Alvaro Fernando Santana Martinez                     |
+|                      A01196914                                            |
 |                                                                           |
 ----------------------------------------------------------------------------
 
@@ -1998,6 +1998,7 @@ def main(argv):
     parser = yacc.yacc()
 
     output_file_path = None
+    input_file_path = None
 
     while len(argv):
         if len(argv) == 1:
@@ -2014,6 +2015,8 @@ def main(argv):
         else:
             raise Exception(">> Param Error! Use -i for input file path (assumed as first parameter) and -o for output file path.")
 
+    if input_file_path == None:
+        raise Exception(">> Param Error! Please provide an input file path (assumed as first parameter)")
 
     s = ""
     with open(input_file_path) as f:
