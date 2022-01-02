@@ -1,13 +1,14 @@
 '''
 ----------------------------------------------------------------------------
 |                                                                           |
-|                      Nuca Script                                          |
+|                     NucaScript                                            |
 |                                                                           |
-|                      Diseno de Compiladores - OBJ17                       |
+|                     Diseno de Compiladores - OBJ17                        |
+|                     ITESM 2021                                            |
 |                                                                           |
-|                      Guilherme Bittencourt de Borba                       |
+|                     Guilherme Bittencourt de Borba                        |
 |                      A01194571                                            |
-|                      Alvaro Fernando Santana Martinez                     |
+|                     Alvaro Fernando Santana Martinez                      |
 |                      A01196914                                            |
 |                                                                           |
 ----------------------------------------------------------------------------
@@ -32,15 +33,15 @@
         -> optimize array access process by either reusing temps or having specific global temps for the process
 
     FUNCTIONS:
-        -> overloaded functions?
         -> default arguments?
         -> time-related builtin methods? (wait, exit, time, etc..)
+        -> overloaded functions?
 
     OTHER:
-        -> try / catch block?
         -> atom syntactic highliter ?
+        -> try / catch block?
         -> post-compile quad optimization ?
-        -> tmp management optimization? (in Avail)
+        -> tmp management optimization (in Avail)?
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -429,6 +430,8 @@ def p_def_statement(p):
     original_lexdata_length = len(p.lexer.lexdata)
 
     # Here we do the actual #DEF replacements, in a C-like fashion
+    # TODO: Figure out a way to NOT replace names that are inside of a string (within quotations)
+    #       maybe using regex?
     p.lexer.lexdata = p.lexer.lexdata.replace(def_name, def_value)
 
     # Here we figure out how much the lexdata changed after the replacement

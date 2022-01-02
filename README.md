@@ -11,7 +11,6 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 **Current Version:** 1.4
 
-#### Change Log
 - ##### 01/02/2022
 	- Happy Ney Year!
 	- Version 1.4 officially released!
