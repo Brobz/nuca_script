@@ -174,8 +174,8 @@
 
 import sys, os, getopt
 
-import ply.lex as lex
-import ply.yacc as yacc
+import Libraries.ply.lex as lex
+import Libraries.ply.yacc as yacc
 
 from Compiler.SymbolTable import *
 from Compiler.FunctionDirectory import *
