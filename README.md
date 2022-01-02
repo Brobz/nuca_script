@@ -461,6 +461,7 @@ We can now access all of the goodies that come with this class with the . operat
     obj_var.class_int = 10;
     obj_var.class_string_arr[5] = "Hi!";
     obj_var.print_class_int();
+
 So convenient!
 Imagine what we could do with a bunch of objects in an array...
 
@@ -485,8 +486,8 @@ Here's an example, taken from ```Examples/example_nuca.nuca``` on this very repo
 
 	println("HI" + TABULATOR * CONSTANT_INT + CONSTANT_FLOAT * 2);
 
-As you can see, it is as easy as writing the #DEF keyword, the definition named, a semicolon, and the value to be replaced by the name.
-Then you can use it in the code, making it super easy to get rid of pesky *magic numbers*, such as array sizes!
+As you can see, it is as easy as writing the #DEF keyword, the definition name, a semicolon, and then the value to be replaced by the name.
+After that, you are ready to use it in the code, making it super easy to get rid of pesky *magic numbers*, such as array sizes!
 
 P.S: Be careful with these, since they **WILL** (*currently*) replace **ANY** instance of the definition name inside of the code, **INCLUDING** ones that are inside of a string (in between quotations). I know, pretty unintuitive behavior... Already working on a *lazy* fix, so stay tuned : )
 
