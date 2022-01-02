@@ -9,9 +9,17 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 ## Version Log
 
-**Current Version:** 1.3
+**Current Version:** 1.4
 
 #### Change Log
+- ##### 01/02/2022
+	- Happy Ney Year!
+	- Version 1.4 officially released!
+		- Adds C-like #DEF statements for all basic data types!
+			- Just like in C, these work by replacing the actual source code text with whatever value the definition name is coupled with
+			- Currently, this **WILL** replace **ALL** instances of the definition name on the source code, **INCLUDING** those that are inside a string (within quotations)
+				- PS: This behavior will be patched as soon as I figure out a *lazy* way to get rid of it : )
+
 - ##### 11/17/2021
 	- Version 1.3 officially released!
 
@@ -458,14 +466,37 @@ Imagine what we could do with a bunch of objects in an array...
 
 Correct, many things! Great things!
 
+## **#DEF Statements**
+
+Since version 1.4, NucaScript allows for C-like #DEF statements!!
+These MUST come right after the program name definition, and before anything else!
+You can have any amount of them as you would like (including none), and it works for all of the basic data types.
+These work by substituting the actual source code that gets parsed in real time, just like in good old C!
+Here's an example, taken from ```Examples/example_nuca.nuca``` on this very repository:
+
+	program EXAMPLE_NUCA;
+
+	#DEF CONSTANT_INT : 5
+	#DEF TABULATOR : "\t"
+	#DEF CONSTANT_FLOAT : 5.54
+	#DEF CONSTANT_STATE : FALSE
+
+	...
+
+	println("HI" + TABULATOR * CONSTANT_INT + CONSTANT_FLOAT * 2);
+
+As you can see, it is as easy as writing the #DEF keyword, the definition named, a semicolon, and the value to be replaced by the name.
+Then you can use it in the code, making it super easy to get rid of pesky *magic numbers*, such as array sizes!
+
+P.S: Be careful with these, since they **WILL** (*currently*) replace **ANY** instance of the definition name inside of the code, **INCLUDING** ones that are inside of a string (in between quotations). I know, pretty unintuitive behavior... Already working on a *lazy* fix, so stay tuned : )
+
 ## **Builtin Methods**
 
-NucaScript 1.0 ships with a variety of useful builtin methods, with more coming soon:
-(hopefully)
+NucaScript 1.0 shipped with a variety of useful builtin methods, with more coming in a constant stream (hopefully)
+Here are all of the currently available builtin methods for NucaScript:
 
 - **int stoi(s : string)**
 -> Takes in a string, and if possible, returns its conversion as an int
-
 - **float stof(s : string)**
 -> Takes in a string, and if possible, returns its conversion as a float
 - **boolean stob(s : string)**
