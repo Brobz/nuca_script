@@ -190,7 +190,9 @@ class ExampleNuca{
   void self_write()
   VARS{}
   {
-    write(this.buffer, "output_file.txt", TABULATOR * 15 + "/*/ " + this.separator + " /*/\n");
+    /*/ Generates a copy of this file, but with a signature! /*/
+    /*/ Hurray for recursion : ) /*/
+    write(this.buffer, "output_file.nuca", TABULATOR * 15 + "/*/ " + this.separator + " /*/\n");
   }
 
 }

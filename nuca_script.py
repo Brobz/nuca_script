@@ -415,7 +415,7 @@ def p_def_statement(p):
 
     if def_value in SymbolTable.TRUTH:
         # Our DEF is, technically, a string...
-        # More accuretaly though, it is TRUTH string, which will be representing a boolean type in nuca_script
+        # More accurately though, it is TRUTH string, which will be representing a boolean type in nuca_script
         # So we just set it to the according integer
         def_value = str(SymbolTable.TRUTH.index(def_value))
     elif def_value[0] == "'" and def_value[-1:] == "'":
@@ -434,10 +434,9 @@ def p_def_statement(p):
     # Here we figure out how much the lexdata changed after the replacement
     lexdata_length_diff = original_lexdata_length - len(p.lexer.lexdata)
 
-    # If our #DEF name is any bigger then the value it will be substituted with, then our cursor moved!
-    if lexpos_shift > 0:
-        # Adjust the cursor (lexpos) with the appropriate shift
-        p.lexer.lexpos -= lexpos_shift
+    # If our #DEF name is any bigger (or smaller) then the value it will be substituted with, then our cursor moved!
+    # Adjust the cursor (lexpos) with the appropriate shift
+    p.lexer.lexpos -= lexpos_shift
 
     # Finally, we adjust the lexlen value with how much text was shaved of (or added) by the substitutions
     p.lexer.lexlen -= lexdata_length_diff

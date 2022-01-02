@@ -84,7 +84,7 @@ const map<int, string> CONSTANTS = {
 										{7, "50"},
 										{20010, "Examples/example_nuca.nuca"},
 										{20011, "\n"},
-										{20012, "output_file.txt"},
+										{20012, "output_file.nuca"},
 										{8, "15"},
 										{20013, "/*/ "},
 										{20014, " /*/\n"},
