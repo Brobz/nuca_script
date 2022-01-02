@@ -54,17 +54,18 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 - ##### 02/06/2021
 	- Version 1.0 officially released!
 
-## List of Dependencies
+# **NucaScript 101 : The Official Docs**
+
+## **Dependencies**
 
 python 3.7.4 (+)
 
 g++ 8.1.0 (+)
 
-# **NucaScript 101 : The Official Docs**
-
 ## **Environment Setup**
 
 To get started with NucaScript, the first step is to make sure you have all of the dependencies properly installed in your working environment;
+
 You can run the following commands to double check:
 
 Python version check:
@@ -75,7 +76,8 @@ Python version check:
 g++ version check:
 
     g++ --version
-  Once this is done, you can proceed by cloning this repository:
+
+Once this is done, you can proceed by cloning this repository:
 
 
       git clone https://github.com/Brobz/nuca_script
