@@ -8,7 +8,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 **Current Version:** 1.5.1
 
-- ##### 05/15/2024
+- ##### 15/05/2024
 
   - Version 1.5.1 officially released!
     - Small compile time Exception bug fixes
@@ -17,7 +17,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
     - Small README changes & typo fixes
     - New Sprint TODO ideas!
 
-- ##### 01/02/2022
+- ##### 02/01/2022
 
   - Version 1.5 officially released!
     - Revamps exception system and refactors most of the symbol & type lookup logic
@@ -38,7 +38,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
       - Currently, this **WILL** replace **ALL** instances of the definition name on the source code, **INCLUDING** those that are inside a string (within quotations)
         - PS: This behavior will be patched as soon as I figure out a _lazy_ way to get rid of it : )
 
-- ##### 11/17/2021
+- ##### 17/11/2021
 
   - Version 1.3 officially released!
 
