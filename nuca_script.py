@@ -164,6 +164,12 @@
 
 // SPRINT //
 
+// TODO: Organize repo
+            -> Breakup nuca_script.py further (2200 lines of code is ABSOLUTELY WAY TOO MUCH)
+
+// TODO : Add .nuca file extension type enforcing (for aesthetic reasons)
+            -> Have compiler raise an error when trying to compile any other file extension type
+
 // TODO : Get rid of C++ code injection for VM compilation
             -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
             -> Optional compilation flags:

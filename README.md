@@ -6,7 +6,16 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 ## Version Log
 
-**Current Version:** 1.5
+**Current Version:** 1.5.1
+
+- ##### 05/15/2024
+
+  - Version 1.5.1 officially released!
+    - Small compile time Exception bug fixes
+      - Mentioning a method identifier (that was previously declared) without a set of () now raises the correct exception at compile time.
+      - TODO: Still need to fix this for VOID type methods, since those do not currently have any reference in the SymbolTable at all.
+    - Small README changes & typo fixes
+    - New Sprint TODO ideas!
 
 - ##### 01/02/2022
 
@@ -122,7 +131,7 @@ To run the program, simply write a ./ followed by the output file name:
 
      ./TUTORIAL_NUCA
 
-Of course, the execution result is.. Nothing!
+Of course, the execution result is... Nothing!
 But thats all we need to make Something happen!
 
     program TUTORIAL_NUCA;
@@ -362,7 +371,7 @@ Next we need to define the body of our function, which will contain the code tha
       return n * 2;
     }
 
-The _return_ statement will be responsible for.. uh.. returning this functions value after its execution!
+The _return_ statement will be responsible for... uh... _returning_ this function's value after its execution!
 It automatically leaves the function context and returns to where the function was previously called, placing its value on the correct spot.
 
 In this case, all our function does is take in an integer, and return its value multiplied by 2.
