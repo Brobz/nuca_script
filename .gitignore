@@ -1,3 +1,6 @@
 __pycache__/
 parser.out
 parsetab.py
+.DS_store
+test.nuca
+TEST

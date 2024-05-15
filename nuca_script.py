@@ -164,6 +164,13 @@
 
 // SPRINT //
 
+// TODO : Get rid of C++ code injection for VM compilation
+            -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
+            -> Optional compilation flags:
+                -> --keep-object: Does not delete intermediate object file after VM compilation
+                -> --object-only: Only generates object file; Does not call any VM utilities
+                -> --from-object: Pass in pre-generated object file to VM; does not call any Compiler utilities
+
 // TODO : More builtin methods!
             -> math builtin methods (pow, sqrt)
 
@@ -546,7 +553,7 @@ def p_seen_readable(p):
         if id != None:
             EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot read into symbol " + id + " of type " + id_type)
         else:
-            EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot read into " + printable_type)
+            EXCEPTION_HANDLER.raiseException(">> Type Error: Cannot read into " + id_type)
 
     is_ptr = int(FUNC_DIR.is_sym_ptr(id, id_scope))
     if not is_ptr:
@@ -1204,7 +1211,7 @@ def p_seen_dot_operator(p):
     FUNC_DIR.symbol_lookup(obj_id, SCOPES_STACK[-1])
     class_type = FUNC_DIR.get_symbol_object_type(obj_id, SCOPES_STACK[-1])
     if class_type == None:
-        EXCEPTION_HANDLER.raiseException(">> Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " and cannot be accessed with . operator (maybe missing initialization with 'new' or assertion with 'using as'?)")
+        EXCEPTION_HANDLER.raiseException(">> Type Error: symbol " + obj_id + " has no object type in " + SCOPES_STACK[-1] + " scope and cannot be accessed with . operator (maybe missing initialization with 'new' keyword ?)")
     DOT_OP_STACK.append(class_type)
 
 def p_seen_this_dot_operator(p):
@@ -2144,7 +2151,7 @@ def main(argv):
         output_file_path = FUNC_DIR.program_name
 
     print(">> Compiling " + input_file_path + " into " + output_file_path)
-    if not os.system('g++ ' + VM_FILE_PATH + ' -o ' + output_file_path):
+    if not os.system('g++ -std=c++11 ' + VM_FILE_PATH + ' -o ' + output_file_path):
         print(">> Compilation Successfull!")
 
 ## Runs main upon invoking this script with python nuca_script.py ##

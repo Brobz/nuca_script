@@ -246,15 +246,20 @@ class SymbolTable(object):
             _plus_index = sym_id.index("+")
             in_table_id = sym_id[:_plus_index]
 
-        if in_table_id in self.SYMBOLS:
-            if self.SYMBOLS[in_table_id][2]: # This symbol is marked as RETURN VALUE, meaning it is used as a global storage for the function with the same name to store its return value
-                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Syntax Error: Use of function name " + in_table_id + " as variable ID. (Maybe missing '()' ?)")
-            return sym_id
+        sym_resolution = self.missing_parenthesis_in_func_call_check(in_table_id, sym_id)
 
-        if last_attempt:
-            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Unseen symbol " + in_table_id + " in " + self.scope)
+        if sym_resolution:
+            return sym_resolution
+        elif last_attempt:
+            # In the case of function identifiers being mentioned without parenthesis in a last attempt (global scope) check,
+            # "GLBOAL." prefix must be preppended to sym_id to match with in_table_id
+            in_table_id = "GLOBAL." + sym_id
+            sym_resolution = self.missing_parenthesis_in_func_call_check(in_table_id, sym_id)
+            if sym_resolution:
+                return sym_resolution
+            SymbolTable.EXCEPTION_HANDLER.raiseException(">> Unseen symbol " + sym_id + " in " + self.scope)
 
-        return None
+        return sym_resolution
 
     def type_lookup(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
@@ -263,4 +268,11 @@ class SymbolTable(object):
         if last_attempt:
             SymbolTable.EXCEPTION_HANDLER.raiseException(">> Unseen symbol " + sym_id + " in " + self.scope)
 
+        return None
+
+    def missing_parenthesis_in_func_call_check(self, in_table_id, sym_id):
+        if in_table_id in self.SYMBOLS:
+            if self.SYMBOLS[in_table_id][2]: # This symbol is marked as RETURN VALUE, meaning it is used as a global storage for the function with the same name to store its return value
+                SymbolTable.EXCEPTION_HANDLER.raiseException(">> Syntax Error: Use of function name " + sym_id + " as variable ID. (Maybe missing '()' ?)")
+            return sym_id
         return None
