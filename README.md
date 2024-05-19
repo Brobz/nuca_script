@@ -6,7 +6,22 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 ## Version Log
 
-**Current Version:** 1.5.1
+**Current Version:** 1.6.0
+
+- ##### 18/05/2024
+
+  - Version 1.6.0 officially released!
+    - Refactors most of the Compiler code
+      - nuca_script.py had over 2.2k lines of code, which are now spread over multiple different new files under the Compiler folder
+        - `Grammar.py` -> Contains all of the Formal Grammar rules and PLY functions that define NucaScript
+        - `Utils.py` -> Contains useful methods that are found all over compiler code
+      - Added new classes to easily manage dependencies
+        - `Bootsrapper` -> Initializes all of the necessary values for building the lexer and the parser
+        - `Globals` -> An abstract class that contains global values to be used between multiple files
+      - Improved python code import structure
+        - Removed (almost) all of the `import *` statements, replacing them with newer python3 module import syntaxis
+      - Small `ExceptionHandler` message changes & typo fixes
+    - Some variable naming refactoring in VM code
 
 - ##### 15/05/2024
 
@@ -19,7 +34,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 - ##### 02/01/2022
 
-  - Version 1.5 officially released!
+  - Version 1.5.0 officially released!
     - Revamps exception system and refactors most of the symbol & type lookup logic
       - Adds a brand new `ExceptionHandler` object, which takes care of relaying useful error messages on exceptions
         - _**Hurray**_ for line numbers on error messages!!
@@ -32,7 +47,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 - ##### 01/01/2022
 
   - **Happy New Year!!!**
-  - Version 1.4 officially released!
+  - Version 1.4.0 officially released!
     - Adds C-like `#DEF` statements for all basic data types!
       - Just like in C, these work by replacing the actual source code text with whatever value the definition name is coupled with
       - Currently, this **WILL** replace **ALL** instances of the definition name on the source code, **INCLUDING** those that are inside a string (within quotations)
@@ -40,7 +55,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 - ##### 17/11/2021
 
-  - Version 1.3 officially released!
+  - Version 1.3.0 officially released!
 
     - Bug Fixes
       - Fixes a compile time bug that allowed for typed methods to be accepted even when their return method was contained inside an impossible conditional
@@ -50,7 +65,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 - ##### 07/07/2021
 
-  - Version 1.2 officially released!
+  - Version 1.2.0 officially released!
 
     - Bug Fixes
       - Fixes major structural bug that threw compiler errors upon declaring global variables after a global method
@@ -60,7 +75,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
 
 - ##### 04/06/2021
 
-  - Version 1.1 officially released!
+  - Version 1.1.0 officially released!
 
     - Bug fixes
       - Fixes compile time bugs caused by referencing class attributes inside of a method from a different class
@@ -74,7 +89,7 @@ Version 1.0 developed in about 10 weeks as the final project of the Compiler Des
       - Documentation updated to reflect these changes
 
 - ##### 02/06/2021
-  - Version 1.0 officially released!
+  - Version 1.0.0 officially released!
 
 # **NucaScript 101 : The Official Docs**
 

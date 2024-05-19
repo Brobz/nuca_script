@@ -1,4 +1,4 @@
-from Compiler.OPCodes import *
+from .OPCodes import OPCodes
 
 class Quad(object):
     """ Mostly quads, anyway... """

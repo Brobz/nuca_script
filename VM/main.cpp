@@ -730,16 +730,16 @@ void run(){
 			// =
 
 			int  is_ptr = QUADS[IP][1];
-			int result_dir;
+			int result_addr;
 			Value value;
 
 			if (is_ptr == 1 || is_ptr == 3) value = read_from_memory(read_from_memory(QUADS[IP][2]).i);
 			else value = read_from_memory(QUADS[IP][2]);
 
-			if (is_ptr == 2 || is_ptr == 3) result_dir = read_from_memory(QUADS[IP][3]).i;
-			else result_dir = QUADS[IP][3];
+			if (is_ptr == 2 || is_ptr == 3) result_addr = read_from_memory(QUADS[IP][3]).i;
+			else result_addr = QUADS[IP][3];
 
-			write_to_memory(result_dir, value.to_str());
+			write_to_memory(result_addr, value.to_str());
 
 			IP++;
 			continue;
@@ -748,7 +748,7 @@ void run(){
 		else if (op <= 13){
 			// Arithmetic Epxressions (unary and binary)
 
-			int result_dir = QUADS[IP][3];
+			int result_addr = QUADS[IP][3];
 
 			Value left_value, right_value;
 
@@ -764,7 +764,7 @@ void run(){
 					{
 						// Sum!
 						Value res_value = left_value + right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -777,7 +777,7 @@ void run(){
 						else
 							// Negate !
 							res_value = -right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -785,7 +785,7 @@ void run(){
 					{
 						// Mutiply!
 						Value res_value = left_value * right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -793,7 +793,7 @@ void run(){
 					{
 						// Divide!
 						Value res_value = left_value / right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -801,7 +801,7 @@ void run(){
 					{
 						// Compare (equals to)!
 						Value res_value = left_value == right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -809,7 +809,7 @@ void run(){
 					{
 						// Compare (bigger than)!
 						Value res_value = left_value > right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -817,7 +817,7 @@ void run(){
 					{
 						// Compare (less than)!
 						Value res_value = left_value < right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -825,7 +825,7 @@ void run(){
 					{
 						// Compare (bigger than or equal to)!
 						Value res_value = left_value >= right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -833,7 +833,7 @@ void run(){
 					{
 						// Compare (less than or equal to)!
 						Value res_value = left_value <= right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -841,7 +841,7 @@ void run(){
 					{
 						// Compare (and)!
 						Value res_value = left_value && right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -849,7 +849,7 @@ void run(){
 					{
 						// Compare (or)!
 						Value res_value = left_value || right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 
@@ -857,14 +857,14 @@ void run(){
 					{
 						// Compare (not equal to)!
 						Value res_value = !(left_value == right_value);
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 					}
 					break;
 				case 13:			// !
 					{
 						// Negate!
 						Value res_value = !right_value;
-						write_to_memory(result_dir, res_value.to_str());
+						write_to_memory(result_addr, res_value.to_str());
 						IP++;
 					}
 					break;
@@ -878,14 +878,14 @@ void run(){
 
 			case 14:			// ARR_ACCESS
         {
-					int result_dir = QUADS[IP][3];
+					int result_addr = QUADS[IP][3];
 
-					int arr_dir = QUADS[IP][1];
+					int arr_addr = QUADS[IP][1];
 					int access_value = read_from_memory(QUADS[IP][2]).i;
 
-					int result = arr_dir + access_value;
+					int result = arr_addr + access_value;
 
-					write_to_memory(result_dir, to_string(result));
+					write_to_memory(result_addr, to_string(result));
 					IP++;
         }
         break;
@@ -957,13 +957,13 @@ void run(){
         {
 
 					Memory* obj_mem;
-					int obj_dir_is_ptr = QUADS[IP][1];
+					int obj_addr_is_ptr = QUADS[IP][1];
 					int object_sign  = QUADS[IP][2];
-					int obj_dir = QUADS[IP][3];
+					int obj_addr = QUADS[IP][3];
 
-					if (obj_dir_is_ptr != -1) obj_dir = read_from_memory(obj_dir).i;
+					if (obj_addr_is_ptr != -1) obj_addr = read_from_memory(obj_addr).i;
 
-					obj_mem = get_object_memory(obj_dir);
+					obj_mem = get_object_memory(obj_addr);
 
 					// Here we check to see if the object we are instatiating is not currently referenced bu the "this." operator
 					// This prevents weird behaviour, e.g. changing an object's type in the middle of its own type's function execution
@@ -972,7 +972,7 @@ void run(){
 							exit(EXIT_FAILURE);
 					}
 
-					write_to_memory(obj_dir, to_string(object_sign));
+					write_to_memory(obj_addr, to_string(object_sign));
 
 					IP++;
         }
@@ -984,11 +984,11 @@ void run(){
 					Memory* this_mem;
 					Value result;
 
-					int obj_dir = QUADS[IP][1];
-					int object_var_dir = QUADS[IP][2];
-					int result_dir = QUADS[IP][3];
+					int obj_addr = QUADS[IP][1];
+					int object_var_addr = QUADS[IP][2];
+					int result_addr = QUADS[IP][3];
 					int ptr_value = -1;
-					int obj_dir_is_ptr = -1;
+					int obj_addr_is_ptr = -1;
 
 
 					if (QUADS[IP].size() >= 5){
@@ -996,22 +996,22 @@ void run(){
 					}
 
 					if (QUADS[IP].size() >= 6){
-						obj_dir_is_ptr = QUADS[IP][5];
+						obj_addr_is_ptr = QUADS[IP][5];
 					}
 
-					if (ptr_value == 1 || ptr_value == 3) object_var_dir = read_from_memory(object_var_dir).i;
+					if (ptr_value == 1 || ptr_value == 3) object_var_addr = read_from_memory(object_var_addr).i;
 
-					if (ptr_value == 2 || ptr_value == 3) result_dir = read_from_memory(result_dir).i;
+					if (ptr_value == 2 || ptr_value == 3) result_addr = read_from_memory(result_addr).i;
 
-					if (obj_dir != -1){
-						if (obj_dir_is_ptr == -1) this_mem = get_object_memory(obj_dir);
-						else this_mem = get_object_memory(read_from_memory(obj_dir).i);
+					if (obj_addr != -1){
+						if (obj_addr_is_ptr == -1) this_mem = get_object_memory(obj_addr);
+						else this_mem = get_object_memory(read_from_memory(obj_addr).i);
 					}
 					else this_mem = THIS_MEM;
 
-					result = read_from_memory(this_mem, object_var_dir);
+					result = read_from_memory(this_mem, object_var_addr);
 
-					write_to_memory(result_dir, result.to_str());
+					write_to_memory(result_addr, result.to_str());
 					IP++;
         }
         break;
@@ -1022,31 +1022,31 @@ void run(){
 				 	Memory* this_mem;
 					Value value;
 
-					int obj_dir = QUADS[IP][1];
-					int value_dir = QUADS[IP][2];
-					int obj_var_dir = QUADS[IP][3];
+					int obj_addr = QUADS[IP][1];
+					int value_addr = QUADS[IP][2];
+					int obj_var_addr = QUADS[IP][3];
 					int ptr_value = -1;
-					int obj_dir_is_ptr = -1;
+					int obj_addr_is_ptr = -1;
 
 					if (QUADS[IP].size() >= 5){
 						ptr_value = QUADS[IP][4];
 					}
 					if (QUADS[IP].size() >= 6){
-						obj_dir_is_ptr = QUADS[IP][5];
+						obj_addr_is_ptr = QUADS[IP][5];
 					}
 
-					if (ptr_value == 1 || ptr_value == 3) value = read_from_memory(read_from_memory(value_dir).i);
-					else value = read_from_memory(value_dir);
+					if (ptr_value == 1 || ptr_value == 3) value = read_from_memory(read_from_memory(value_addr).i);
+					else value = read_from_memory(value_addr);
 
-					if (ptr_value == 2 || ptr_value == 3) obj_var_dir = read_from_memory(obj_var_dir).i;
+					if (ptr_value == 2 || ptr_value == 3) obj_var_addr = read_from_memory(obj_var_addr).i;
 
-					if (obj_dir != -1){
-						if (obj_dir_is_ptr == -1) this_mem = get_object_memory(obj_dir);
-						else this_mem = get_object_memory(read_from_memory(obj_dir).i);
+					if (obj_addr != -1){
+						if (obj_addr_is_ptr == -1) this_mem = get_object_memory(obj_addr);
+						else this_mem = get_object_memory(read_from_memory(obj_addr).i);
 					}
 					else this_mem = THIS_MEM;
 
-					write_to_memory(this_mem, obj_var_dir, value.to_str());
+					write_to_memory(this_mem, obj_var_addr, value.to_str());
 
 					IP++;
         }
@@ -1074,10 +1074,10 @@ void run(){
 
 					Value param_value;
 
-					int parent_obj_dir = QUADS[IP][1];
+					int parent_obj_addr = QUADS[IP][1];
 					int param_addr = QUADS[IP][3];
 
-					if (parent_obj_dir != -1) param_value = read_from_memory(get_object_memory(parent_obj_dir), QUADS[IP][2]);
+					if (parent_obj_addr != -1) param_value = read_from_memory(get_object_memory(parent_obj_addr), QUADS[IP][2]);
 					else param_value = read_from_memory(QUADS[IP][2]);
 
 					write_to_param(param_addr, param_value.to_str());
@@ -1098,22 +1098,22 @@ void run(){
 			case 24:		// OBJ_GOSUB
 				{
 
-					int obj_dir_is_ptr = QUADS[IP][1];
-					int object_dir = QUADS[IP][2];
+					int obj_addr_is_ptr = QUADS[IP][1];
+					int object_addr = QUADS[IP][2];
 					int func_start_addr = QUADS[IP][3];
 
-					if (object_dir != -1){
+					if (object_addr != -1){
 						if (!OBJECT_MEMORY_STACK.size()){
 
-							if (obj_dir_is_ptr == -1) OBJECT_MEMORY_STACK.push(get_object_memory(object_dir));
-							else OBJECT_MEMORY_STACK.push(get_object_memory(read_from_memory(object_dir).i));
+							if (obj_addr_is_ptr == -1) OBJECT_MEMORY_STACK.push(get_object_memory(object_addr));
+							else OBJECT_MEMORY_STACK.push(get_object_memory(read_from_memory(object_addr).i));
 
 						}else{
 
 							Memory* new_class_memory;
 
-							if (obj_dir_is_ptr == -1) new_class_memory = get_object_memory(object_dir);
-							else new_class_memory = get_object_memory(read_from_memory(object_dir).i);
+							if (obj_addr_is_ptr == -1) new_class_memory = get_object_memory(object_addr);
+							else new_class_memory = get_object_memory(read_from_memory(object_addr).i);
 
 							new_class_memory->return_memory = OBJECT_MEMORY_STACK.top();
 							OBJECT_MEMORY_STACK.push(new_class_memory);
@@ -1133,18 +1133,18 @@ void run(){
 			case 25:		// READ
 				{
 
-					int result_dir;
-					int parent_obj_dir = QUADS[IP][1];
-					int dir_is_ptr = QUADS[IP][2];
+					int result_addr;
+					int parent_obj_addr = QUADS[IP][1];
+					int addr_is_ptr = QUADS[IP][2];
 
-					if (dir_is_ptr == 1) result_dir = read_from_memory(QUADS[IP][3]).i;
-					else result_dir = QUADS[IP][3];
+					if (addr_is_ptr == 1) result_addr = read_from_memory(QUADS[IP][3]).i;
+					else result_addr = QUADS[IP][3];
 
 					string user_input;
 					getline(cin, user_input);
 
-					if (parent_obj_dir != -1)  write_to_memory(get_object_memory(parent_obj_dir), result_dir, user_input);
-					else write_to_memory(result_dir, user_input);
+					if (parent_obj_addr != -1)  write_to_memory(get_object_memory(parent_obj_addr), result_addr, user_input);
+					else write_to_memory(result_addr, user_input);
 
 					IP++;
 				}
@@ -1177,12 +1177,12 @@ void run(){
 
 			case 29:			// STOX
         {
-					int parent_obj_dir = QUADS[IP][1];
-					int result_dir = QUADS[IP][3];
+					int parent_obj_addr = QUADS[IP][1];
+					int result_addr = QUADS[IP][3];
 
 					string stox_arg = read_from_memory(QUADS[IP][2]).s;
 
-					write_to_memory(result_dir, stox_arg);
+					write_to_memory(result_addr, stox_arg);
 
 					IP++;
         }
@@ -1192,11 +1192,11 @@ void run(){
         {
 					int start_index = s_stoi(read_from_memory(QUADS[IP][2]).to_str());
 					int size = s_stoi(read_from_memory(QUADS[IP][3]).to_str());
-					int result_dir = QUADS[IP][4];
+					int result_addr = QUADS[IP][4];
 
 					string substr_arg = read_from_memory(QUADS[IP][1]).s;
 
-					write_to_memory(result_dir, substr_arg.substr(start_index, size));
+					write_to_memory(result_addr, substr_arg.substr(start_index, size));
 
 					IP++;
         }
@@ -1205,9 +1205,9 @@ void run(){
 			case 31:			// STRLEN
         {
 					string string_arg = read_from_memory(QUADS[IP][2]).s;
-					int result_dir = QUADS[IP][3];
+					int result_addr = QUADS[IP][3];
 
-					write_to_memory(result_dir, to_string(string_arg.length()));
+					write_to_memory(result_addr, to_string(string_arg.length()));
 
 					IP++;
         }
@@ -1217,11 +1217,11 @@ void run(){
         {
 					int lower_bound = read_from_memory(QUADS[IP][1]).i;
 					int upper_bound = read_from_memory(QUADS[IP][2]).i;
-					int result_dir = QUADS[IP][3];
+					int result_addr = QUADS[IP][3];
 
 					int rand_num = rand() % (upper_bound - lower_bound + 1) + lower_bound; // Generate the number, assign to variable.
 
-					write_to_memory(result_dir, to_string(rand_num));
+					write_to_memory(result_addr, to_string(rand_num));
 
 					IP++;
         }
@@ -1230,22 +1230,22 @@ void run(){
 			case 33:			// F_OPEN
         {
 					Memory* this_mem;
-					int parent_obj_dir = QUADS[IP][1];
-					int buffer_dir = QUADS[IP][4];
+					int parent_obj_addr = QUADS[IP][1];
+					int buffer_addr = QUADS[IP][4];
 					int buffer_size = QUADS[IP][5];
 
 					string file_path = read_from_memory(QUADS[IP][2]).s;
 					string separator = read_from_memory(QUADS[IP][3]).s;
 
-					if (parent_obj_dir > 0) this_mem = get_object_memory(parent_obj_dir);
-					else if (parent_obj_dir == 0) this_mem = THIS_MEM;
+					if (parent_obj_addr > 0) this_mem = get_object_memory(parent_obj_addr);
+					else if (parent_obj_addr == 0) this_mem = THIS_MEM;
 					else this_mem = new Memory();
 
 					vector<string> file_data = FileIO::parse_file(file_path, separator, buffer_size);
 
 					for(int i = 0; i < file_data.size(); i++){
-						if (this_mem->id != -1) write_to_memory(this_mem, buffer_dir + i, file_data[i]);
-						else write_to_memory(buffer_dir + i, file_data[i]);
+						if (this_mem->id != -1) write_to_memory(this_mem, buffer_addr + i, file_data[i]);
+						else write_to_memory(buffer_addr + i, file_data[i]);
 						if (file_data[i] == "END_OF_STREAM") break;
 					}
 
@@ -1256,23 +1256,23 @@ void run(){
 			case 34:			// F_WRITE
         {
 					Memory* this_mem;
-					int parent_obj_dir = QUADS[IP][1];
-					int buffer_dir = QUADS[IP][4];
+					int parent_obj_addr = QUADS[IP][1];
+					int buffer_addr = QUADS[IP][4];
 					int buffer_size = QUADS[IP][5];
 
 					string file_path = read_from_memory(QUADS[IP][2]).s;
 					string separator = read_from_memory(QUADS[IP][3]).s;
 
-					if (parent_obj_dir > 0) this_mem = get_object_memory(parent_obj_dir);
-					else if (parent_obj_dir == 0) this_mem = THIS_MEM;
+					if (parent_obj_addr > 0) this_mem = get_object_memory(parent_obj_addr);
+					else if (parent_obj_addr == 0) this_mem = THIS_MEM;
 					else this_mem = new Memory();
 
 					vector<string> buffer;
 					string next_entry;
 
 					for(int i = 0; i < buffer_size; i++){
-						if (this_mem->id != -1) next_entry = read_from_memory(this_mem, buffer_dir + i).to_str();
-						else next_entry = read_from_memory(buffer_dir + i).to_str();
+						if (this_mem->id != -1) next_entry = read_from_memory(this_mem, buffer_addr + i).to_str();
+						else next_entry = read_from_memory(buffer_addr + i).to_str();
 						if (next_entry == "END_OF_STREAM") break;
 						buffer.push_back(next_entry);
 					}

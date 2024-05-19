@@ -1,5 +1,6 @@
-from Compiler.SemanticCube import *
-from Compiler.SymbolTable import *
+from .Avail import Avail
+from .SemanticCube import SemanticCube 
+from .SymbolTable import SymbolTable
 
 class FunctionDirectory(object):
     """
@@ -57,14 +58,14 @@ class FunctionDirectory(object):
             if context == cls:
                 return i
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Could not get class index for " + cls)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Could not get class index for " + cls)
 
     def valid_class_check(self, cls):
         if cls == "GLOBAL" or cls == self.program_name:
             return False
 
         if cls not in self.FUNCS:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Name Error: " + cls + " is not a valid Class Name")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: " + cls + " is not a valid Class Name")
 
     def set_symbol_object_type(self, sym_id, obj_type, scope):
         if scope == "GLOBAL" or (sym_id not in self.FUNCS[scope]["FUNCS"][self.current_scope][2].SYMBOLS and sym_id not in self.FUNCS[scope]["SYMBOLS"].SYMBOLS):
@@ -101,9 +102,9 @@ class FunctionDirectory(object):
 
     def declare_object_type(self, object_type):
         if object_type in self.FUNCS:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Name Error: object type " + object_type + " is already defined")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: object type " + object_type + " is already defined")
         if object_type in self.FUNCS[self.program_name].SYMBOLS:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Name Error: " + object_type + " is already defined as a symbol in " + self.program_name)
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: " + object_type + " is already defined as a symbol in " + self.program_name)
 
         self.FUNCS[object_type]= {"SYMBOLS" : SymbolTable(object_type, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), "FUNCS" : {}}
 
@@ -190,7 +191,7 @@ class FunctionDirectory(object):
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 return self.FUNCS[scope]["FUNCS"][func_id][1].param_indices[k - 1]
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
 
     def declare_constant(self, cnst_id, cnst_type):
         self.declare_symbol(cnst_id, cnst_type, "GLOBAL", is_cnst = True)
@@ -230,19 +231,19 @@ class FunctionDirectory(object):
     def get_return_obj_name(self, func_name =  None, scope = "GLOBAL"):
         if func_name == None:
             if self.current_scope == None:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Scope error: cannot get function return object name")
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Scope error: cannot get function return object name")
             func_name = self.current_scope
 
         rtn_obj_name = scope + "." + func_name
 
         if rtn_obj_name not in self.FUNCS[self.program_name].SYMBOLS:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Name error: cannot get function return object name for " + rtn_obj_name)
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name error: cannot get function return object name for " + rtn_obj_name)
 
         return rtn_obj_name
 
     def valid_return_check(self, ptr, scope):
         if self.current_scope == None:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Scope error: cant check for valid return")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Scope error: cant check for valid return")
 
         if scope == "GLOBAL":
             return self.FUNCS[scope][self.current_scope][5] == ptr
@@ -251,7 +252,7 @@ class FunctionDirectory(object):
 
     def return_type_check(self, rtn_type, ptr, scope, conditional_depth):
         if self.current_scope == None:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Scope error: cant check return type")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Scope error: cant check return type")
 
         func_type = None
 
@@ -262,10 +263,10 @@ class FunctionDirectory(object):
             func_type = self.FUNCS[scope]["FUNCS"][self.current_scope][0]
 
         if func_type == None:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Cannot check return type for rtn_addr " + str(ptr))
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Cannot check return type for rtn_addr " + str(ptr))
 
         if SemanticCube[rtn_type]["=="][func_type] == "err":
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead. Maybe missing default return statement?")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Type mismatch: function " + self.current_scope + " expects " + func_type + ", got " + rtn_type + " instead. Maybe missing default return statement?")
 
         # conditional_depth contains the current depth of conditionals at the time of the return statement
         if not conditional_depth:  # so if it is 0, this means that it counts as a valid return for this method's type checking
@@ -279,17 +280,17 @@ class FunctionDirectory(object):
             if func_id in self.FUNCS[scope]:
                 k = self.FUNCS[scope][func_id][4]
                 if len(self.FUNCS[scope][func_id][1].SYMBOLS) != k:
-                    FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, expects " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
+                    FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, expects " + str(len(self.FUNCS[scope][func_id][1].SYMBOLS)))
                 return
         else:
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 k = self.FUNCS[scope]["FUNCS"][func_id][4]
                 if len(self.FUNCS[scope]["FUNCS"][func_id][1].SYMBOLS) != k:
-                    FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, expects " + str(len(self.FUNCS[scope]["FUNCS"][func_id][1].SYMBOLS)))
+                    FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: Call to " + func_id + " received " + str(k) + " parameters, expects " + str(len(self.FUNCS[scope]["FUNCS"][func_id][1].SYMBOLS)))
 
                 return
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
 
     def verify_arg_type(self, func_id, arg_type, scope):
         if scope == "GLOBAL":
@@ -299,9 +300,9 @@ class FunctionDirectory(object):
 
                 if not len(types_list): # NO PARAM FUNC
                     self.FUNCS[scope][func_id][4] = -1
-                    FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Argument mismatch: " + func_id + " expects no parameters, got at least 1")
+                    FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: " + func_id + " expects no parameters, got at least 1")
             else:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
         else:
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 k = self.FUNCS[scope]["FUNCS"][func_id][4]
@@ -309,16 +310,16 @@ class FunctionDirectory(object):
 
                 if not len(types_list): # NO PARAM FUNC
                     self.FUNCS[scope]["FUNCS"][func_id][4] = -1
-                    FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Argument mismatch: " + func_id + " expects no parameters, got at least 1")
+                    FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: " + func_id + " expects no parameters, got at least 1")
             else:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
 
 
         if k >= len(types_list): # TOO MANY PARAMS
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Argument mismatch: Call to " + func_id + " received " + str(k + 1) + " or more parameters, expects " + str(len(types_list)))
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: Call to " + func_id + " received " + str(k + 1) + " or more parameters, expects " + str(len(types_list)))
 
         if arg_type != types_list[k]:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Type mismatch: Call to " + scope + "." + func_id + " received " + arg_type + " argument, expects " + types_list[k])
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Type mismatch: Call to " + scope + "." + func_id + " received " + arg_type + " argument, expects " + types_list[k])
 
         self.goto_next_param(func_id, scope)
         return k + 1
@@ -333,7 +334,7 @@ class FunctionDirectory(object):
                 self.FUNCS[scope]["FUNCS"][func_id][4] = index
                 return
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
 
     def goto_next_param(self, func_id, scope):
         if scope == "GLOBAL":
@@ -353,7 +354,7 @@ class FunctionDirectory(object):
                 self.FUNCS[scope]["FUNCS"][func_id][4] += 1
                 return
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
 
     def set_main_start_addr(self, addr):
         self.main_start_addr = addr
@@ -368,7 +369,7 @@ class FunctionDirectory(object):
             else:
                 self.FUNCS[scope]["FUNCS"][self.current_scope][3] = addr # INDEX 3 IS START_ADDR
         else:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Scope Error: Cant declare func start addr")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Scope Error: Cant declare func start addr")
 
     def get_start_addr(self, func_id, scope):
         if scope == "GLOBAL":
@@ -378,7 +379,7 @@ class FunctionDirectory(object):
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 return self.FUNCS[scope]["FUNCS"][func_id][3] # INDEX 3 IS START_ADDR
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Scope Error: Cant get " + func_id + " start addr in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Scope Error: Cant get " + func_id + " start addr in " + scope)
 
     def declare_symbol(self, sym_id, sym_type, scope, is_return_value = False, is_param = False, is_cnst = False, give_warning = True, is_array = False, dimensions = None):
         if sym_type == "void": # Trying to declare a space for the return value of a void function... useless!
@@ -386,12 +387,12 @@ class FunctionDirectory(object):
 
         if sym_type == "object":
             if is_param:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Type Error: cannot declare function parameters of 'object' type")
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Type Error: cannot declare function parameters of 'object' type")
             if scope != "GLOBAL" and self.current_scope == None:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Type Error: cannot declare nested objects ('object' type class atrributes)")
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Type Error: cannot declare nested objects ('object' type class atrributes)")
 
         if sym_id in self.FUNCS[scope]:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Attribute error: symbol " + sym_id + " is already declared as a function within " + scope)
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Attribute error: symbol " + sym_id + " is already declared as a function within " + scope)
 
         # Here we decide where in memory to place this symbol
         memory_sector_signature = list(str(FunctionDirectory.MEMORY_SECTOR_INDICES.index(sym_type)) + "0")
@@ -401,7 +402,7 @@ class FunctionDirectory(object):
         elif self.current_scope != None and scope == "GLOBAL":
             memory_sector_signature.insert(0, "2") # Local Variable
             if sym_id in self.FUNCS[self.program_name].SYMBOLS and give_warning:
-                print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
+                print(">> WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
             sym_table_index = 2
             if is_param:
                 sym_table_index = 1
@@ -410,7 +411,7 @@ class FunctionDirectory(object):
         elif self.current_scope != None and scope != "GLOBAL":
             memory_sector_signature.insert(0, "2") # Local Variable
             if sym_id in self.FUNCS[self.program_name].SYMBOLS and give_warning:
-                print("WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
+                print(">> WARNING: Definition of "  + sym_id + " in " + self.current_scope + " shadows previous global definition.")
             sym_table_index = 2
             if is_param:
                 sym_table_index = 1
@@ -427,20 +428,14 @@ class FunctionDirectory(object):
 
     def declare_param(self, param_id, param_type, scope):
         if self.current_scope == None:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Scope Error: Cant declare param")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Scope Error: Cant declare param")
 
         self.declare_symbol(param_id, param_type, scope, is_param = True)
         self.declare_symbol(param_id, param_type, scope, give_warning = False)
 
-    def define_symbol(self, sym_id, sym_dir):
-        if self.current_scope != None:
-            self.FUNCS[scope][self.current_scope][2].define_symbol(sym_id, sym_dir)
-        else:
-            self.FUNCS[self.program_name].define_symbol(sym_id,  sym_dir)
-
     def declare_function(self, func_id, func_type, scope):
         if func_type == "object":
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Type Error: cannot declare function of 'object' return type")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Type Error: cannot declare function of 'object' return type")
         if scope == "PROGRAM":
             self.program_name = func_id
             self.FUNCS[self.program_name] = SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name, True) # Last parameter sets truth
@@ -453,7 +448,7 @@ class FunctionDirectory(object):
                 self.FUNCS[scope]["FUNCS"][func_id] = [func_type, SymbolTable(func_id + "_param", self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), SymbolTable(func_id, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), None, 0, False]
             self.change_current_scope(func_id)
         else:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Multiple Declarations of " + func_id + " in " + scope)
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Multiple Declarations of " + func_id + " in " + scope)
 
     def change_current_scope(self, new_scope):
         self.current_scope = new_scope
@@ -475,7 +470,7 @@ class FunctionDirectory(object):
                 if res != None:
                     return res
             if is_class_attr:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Name Error: Class " + scope + " has no attribute " + sym_id)
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: Class " + scope + " has no attribute " + sym_id)
             else:
                 res = self.FUNCS[scope]["FUNCS"][self.current_scope][1].symbol_lookup(sym_id)
                 if res != None:
@@ -502,7 +497,7 @@ class FunctionDirectory(object):
                     return res
 
             if is_class_attr:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Name Error: Class " + scope + " has no attribute " + sym_id)
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: Class " + scope + " has no attribute " + sym_id)
 
             return self.FUNCS[self.program_name].type_lookup(sym_id, True) # Last argument flags a last attempt for type_lookup; if it fails, an exception will be thrown
 
@@ -516,4 +511,4 @@ class FunctionDirectory(object):
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 return self.FUNCS[scope]["FUNCS"][func_id][0]
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException(">> Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
