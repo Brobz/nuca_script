@@ -1,16 +1,22 @@
 ## Version Log
 
-**Current Version:** 1.6.0
+**Current Version:** 1.6.1
+
+- ##### 19/05/2024
+
+  - Version 1.6.1 officially released!
+    - Small `ExceptionHandler` message changes
+    - Cleaned up some of the NucaScript 101 docs & Example code
 
 - ##### 18/05/2024
 
   - Version 1.6.0 officially released!
     - Refactors most of the Compiler code
-      - nuca_script.py had over 2.2k lines of code, which are now spread over multiple different new files under the Compiler folder
+      - `nuca_script.py` had over 2.2k lines of code, which are now spread over multiple different files under the Compiler package
         - `Grammar.py` -> Contains all of the Formal Grammar rules and PLY functions that define NucaScript
         - `Utils.py` -> Contains useful methods that are found all over compiler code
       - Added new classes to easily manage dependencies
-        - `Bootsrapper` -> Initializes all of the necessary values for building the lexer and the parser
+        - `Bootsrapper` -> Initializes all of the necessary values for building the lexer & parser
         - `Globals` -> An abstract class that contains global values to be used between multiple files
       - Improved python code import structure
         - Removed (almost) all of the `import *` statements, replacing them with newer python3 module import syntaxis

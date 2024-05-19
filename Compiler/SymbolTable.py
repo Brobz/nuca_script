@@ -255,7 +255,7 @@ class SymbolTable(object):
             sym_resolution = self.missing_parenthesis_in_func_call_check(in_table_id, sym_id)
             if sym_resolution:
                 return sym_resolution
-            SymbolTable.EXCEPTION_HANDLER.raiseException("Unseen symbol " + sym_id + " in " + self.scope)
+            SymbolTable.EXCEPTION_HANDLER.raiseException("Undeclared symbol " + sym_id + " in " + self.scope)
 
         return sym_resolution
 
@@ -264,7 +264,7 @@ class SymbolTable(object):
             return self.SYMBOLS[sym_id][0]
 
         if last_attempt:
-            SymbolTable.EXCEPTION_HANDLER.raiseException("Unseen symbol " + sym_id + " in " + self.scope)
+            SymbolTable.EXCEPTION_HANDLER.raiseException("Undeclared symbol " + sym_id + " in " + self.scope)
 
         return None
 

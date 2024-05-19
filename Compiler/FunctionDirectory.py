@@ -191,7 +191,7 @@ class FunctionDirectory(object):
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 return self.FUNCS[scope]["FUNCS"][func_id][1].param_indices[k - 1]
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
 
     def declare_constant(self, cnst_id, cnst_type):
         self.declare_symbol(cnst_id, cnst_type, "GLOBAL", is_cnst = True)
@@ -290,7 +290,7 @@ class FunctionDirectory(object):
 
                 return
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
 
     def verify_arg_type(self, func_id, arg_type, scope):
         if scope == "GLOBAL":
@@ -302,7 +302,7 @@ class FunctionDirectory(object):
                     self.FUNCS[scope][func_id][4] = -1
                     FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: " + func_id + " expects no parameters, got at least 1")
             else:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
         else:
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 k = self.FUNCS[scope]["FUNCS"][func_id][4]
@@ -312,7 +312,7 @@ class FunctionDirectory(object):
                     self.FUNCS[scope]["FUNCS"][func_id][4] = -1
                     FunctionDirectory.EXCEPTION_HANDLER.raiseException("Argument mismatch: " + func_id + " expects no parameters, got at least 1")
             else:
-                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+                FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
 
 
         if k >= len(types_list): # TOO MANY PARAMS
@@ -334,7 +334,7 @@ class FunctionDirectory(object):
                 self.FUNCS[scope]["FUNCS"][func_id][4] = index
                 return
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
 
     def goto_next_param(self, func_id, scope):
         if scope == "GLOBAL":
@@ -354,7 +354,7 @@ class FunctionDirectory(object):
                 self.FUNCS[scope]["FUNCS"][func_id][4] += 1
                 return
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
 
     def set_main_start_addr(self, addr):
         self.main_start_addr = addr
@@ -511,4 +511,4 @@ class FunctionDirectory(object):
             if func_id in self.FUNCS[scope]["FUNCS"]:
                 return self.FUNCS[scope]["FUNCS"][func_id][0]
 
-        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Unseen function: " + func_id + " in " + scope)
+        FunctionDirectory.EXCEPTION_HANDLER.raiseException("Undeclared function: " + func_id + " in " + scope)
