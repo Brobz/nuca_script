@@ -1,6 +1,6 @@
 ## Version Log
 
-**Current Version:** 1.6.1
+### **Current Version:** 1.6.1
 
 - ##### 19/05/2024
 

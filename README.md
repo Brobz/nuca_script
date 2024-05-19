@@ -4,7 +4,8 @@ An object-oriented, strongly-typed, syntactically _"C-esque"_ and semantically _
 
 Version 1.0 developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
-**Current Version:** 1.6.1
+### **Current Version:** 1.6.1
+
 Check out the latest changes & version history in the [official NucaScript Version Log!](VERSION_LOG.md)
 
 # **NucaScript 101 : The Official Docs**
