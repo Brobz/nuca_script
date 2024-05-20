@@ -1209,4 +1209,7 @@ def p_empty(p):
      pass
 
 def p_error(p): # Error rule for syntax errors
-    EXCEPTION_HANDLER.raiseException("Syntax error! Unexpected token: '" + str(p.value) + "', of type '" + p.type + "'")
+    if p != None:
+        EXCEPTION_HANDLER.raiseException("Syntax error! Unexpected token: '" + str(p.value) + "', of type '" + p.type + "'")
+    else:
+        EXCEPTION_HANDLER.raiseException("Syntax error! No token information found. Maybe an unterminated comment (/*/) pair?")

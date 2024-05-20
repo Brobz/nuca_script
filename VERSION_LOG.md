@@ -1,6 +1,13 @@
 ## Version Log
 
-### **Current Version:** 1.6.1
+### **Current Version:** 1.6.2
+
+- ##### 19/05/2024
+
+  - Version 1.6.2 officially released!
+    - Multi-line comments are back (hurray!)
+    - Cleaned up some comments
+    - Cleaned up some of the NucaScript 101 docs & Example code
 
 - ##### 19/05/2024
 

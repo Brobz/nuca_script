@@ -164,10 +164,6 @@
 
 // SPRINT //
 
-// TODO: Fix multiline comments
-            -> They used to work (?)
-            -> It's pretty lame that they don't !
-
 // TODO : Add .nuca file extension type enforcing (for aesthetic reasons)
             -> Have compiler raise an error when trying to compile any other file extension type
 

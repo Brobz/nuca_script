@@ -82,6 +82,11 @@ reserved = {
 
 tokens += list(reserved.values())
 
+# Lexer States (for catching multi-line comments)
+states = (
+    ("COMMENT", "exclusive"),
+)
+
 # Simple Tokens
 t_HASHTAG                   =   r'\#'
 t_SEMI_COLON                =   r';'
@@ -145,20 +150,35 @@ def t_CTE_S(t):
      r'"(?:[^"\\]|\\.)*"'
      return t
 
-def t_COMMENT(t):
-    r'/\*/((?!/\*/).)*/\*/'
+def t_start_comment(t):
+    r"\/\*\/"
+    t.lexer.push_state("COMMENT")
+
+def t_COMMENT_end(t):
+    r"\/\*\/"
+    t.lexer.pop_state()
 
 # Define a rule so we can track line numbers
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
+# Define a rule so we can track line numbers (in COMMENT state)
+def t_COMMENT_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
 # To ignore whitespaces and tabs
 t_ignore  = ' \t'
+t_COMMENT_ignore = ' \t' 
 
 # Error handling rule
 def t_error(t):
     print(">> Illegal character '%s'" % t.value[0])
+    t.lexer.skip(1)
+
+# Error handling rule (in COMMENT state)
+def t_COMMENT_error(t):
     t.lexer.skip(1)
 
 # Build the lexer

@@ -6,7 +6,7 @@ class Avail(object):
 
     def next(self):
         self.current += 1
-        # Strange temporal name is so that no possible ID could preventa a temporal from being generated
+        # Strange temporal variable name is so that no possible ID could prevent a temporal from being generated
         # (IDs cannot start with a number)
         return "93t" + str(self.current)
 
