@@ -224,7 +224,7 @@ The most basic loop in NucaScript is what is commonly referred to as a _while lo
        println(">> Inside while loop! i is now: " + i);
        i += 1; /*/   The += operator is short for "add to this value and overwrite it afterwards"
                      It is the same as writing i = i + 1, and this is valid for all of the 4
-                     basic arithmetic operators:  +, -, * and / 								                    /*/
+                     basic arithmetic operators:  +, -, * and /                               /*/
     }
 
     println(">> All done with the while loop!");
