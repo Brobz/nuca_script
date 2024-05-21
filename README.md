@@ -54,7 +54,7 @@ If everything was setup correctly, you should be able to compile this program li
 
     python nuca_script.py tutorial_nuca.nuca
 
-This should parse the source file (tutorial_nuca.nuca) and compile it into an executable called TUTORIAL_NUCA (our specified program name)
+This should parse the source file `tutorial_nuca.nuca` and compile it into an executable called `TUTORIAL_NUCA` (our specified program name)
 **Note:** If you want to change the output file name, you can pass in an output parameter like this:
 
     python nuca_script.py tutorial_nuca.nuca -o output_file_name
@@ -73,7 +73,7 @@ But thats all we need to make Something happen!
     }
 
 There we go, our Hello World in NucaScript is complete!
-This just uses a println statement with a constant string as a paramater, and of course, MOST of the statements in NucaScript must end in a semicolon.
+This just uses a `println` statement with a constant string as a paramater, and of course, MOST of the statements in NucaScript must end in a semicolon.
 
 Note: Don't forget to save and recompile your program everytime you make a change, or else it will not be reflected in the executable output!
 
@@ -103,24 +103,24 @@ It is possible to declare multiple variables of the same type in one statement, 
 
 There are four basic types in NucaScript:
 
-- Int
+- `Int`
   -> A natural number (internally representend as a C++ long long)
 
-- Float
+- `Float`
   -> A real number (internally represented as a C++ long double)
-- String
+- `String`
   -> A sequence of characters (internally represented as a C++ string)
-- Boolean
+- `Boolean`
   -> A binary value that can be either True or False (internally represented as a C++ bool)
 
 Note that any and all declarations of all types must be done **before** the main method definition!
 
-There is also the _void_ type, which is only used for functions, and a special _object_ type, but more on that later : )
+There is also the `void` type, which is only used for functions, and a special `object` type, but more on that later : )
 
 ## **Basic Logic and Arithmetic**
 
 NucaScript supports all of the basic arithmetical and logic operators, and a couple more!
-Note: Anything in between a pair of /\*/ is considered a comment, and is ignored by the compiler.
+Note: Anything in between a pair of `/\*/` is considered a comment, and is ignored by the compiler.
 
     main () {
         println("Hello World!");
@@ -151,7 +151,7 @@ For complete details on all of the operations between types and how they are def
 
 ## **User Input and Control Flow**
 
-To get user input from the console, you can use the builtin method _read_, which can take in any amount of variables separated by commas, and will prompt the user for input for each of those variables, storing the retrieved value within them.
+To get user input from the console, you can use the builtin method `read`, which can take in any amount of variables separated by commas, and will prompt the user for input for each of those variables, storing the retrieved value within them.
 
     print(">> Enter an integer: "); /*/ Unlike println, print does not add a newline at the end of its parameter list! /*/
     read(k);
@@ -159,7 +159,7 @@ To get user input from the console, you can use the builtin method _read_, which
 
 Of course, this may throw a runtime exception if the user input string cannot be converted to the destination variable type!
 
-Now that we can get user input, an _if statement_ would be very nice:
+Now that we can get user input, an `if` statement would be very nice:
 
     if (k < 0) {
         println(">> It is less than zero!");
@@ -169,10 +169,10 @@ Now that we can get user input, an _if statement_ would be very nice:
         println(">> It is bigger than zero!");
       }
 
-An _if statement_ is used to decide which code section to run based on a boolean expression; If the expression within the parenthesis evaluates as True, the code within the curly braces ( { and } ) will be run;
-If it evaluates as False,the program will jump its execution to after the braces and keep going.
+An `if` statement is used to decide which code section to run based on a boolean expression; If the expression within the parenthesis evaluates as `True`, the code within the curly braces ( `{` and `}` ) will be run;
+If it evaluates as `False`, the program will jump its execution to after the braces and keep going.
 
-You can have as many ifs and else ifs as you would like on a chain, however there can only be one else, and it wil forcefully denote the end of the conditional chain.
+You can have as many `if` and `else if` as you would like on a chain, however there can only be one `else`, and it wil forcefully denote the end of the conditional chain.
 
 ## **Arrays**
 
@@ -181,7 +181,7 @@ NucaScript supports homogenous lists of variables with a constant and fixed size
 
     int_arr[10] : int;
 
-This will declare an array of 10 ints called int_arr, and just like regular variables, all of them are initialized to 0 (or "" in the case of strings)
+This will declare an array of 10 ints called `int_arr`, and just like regular variables, all of them are initialized to 0 (or "" in the case of strings)
 
 To access these values, you can simply use the bracket operator:
 
@@ -190,9 +190,9 @@ To access these values, you can simply use the bracket operator:
 
     println(int_arr[0], int_arr[9]);
 
-All of the array elements are 0-indexed, meaning the first element will be found at index 0 and the last element at index array_size - 1.
+All of the array elements are 0-indexed, meaning the first element will be found at index 0 and the last element at index `array_size - 1`.
 
-Be careful not enter a negative number or a number that is bigger than the index of the last element, for it will throw an _Array Out of Bounds_ runtime exception!
+Be careful not enter a negative number or a number that is bigger than the index of the last element, for it will throw an `Array Out of Bounds` runtime exception!
 
 Arrays can also have multiple dimensions, which is very useful for modeling matrices and other cool things:
 
@@ -209,12 +209,12 @@ Arrays can have any number of dimensions with any size you want, just be careful
 
 ## **Loops**
 
-You might be wondering how to quickly print out all of the values of an integer array with size 100 without writing either one gigantic line or 100 individual _print_ statements...
+You might be wondering how to quickly print out all of the values of an integer array with size 100 without writing either one gigantic line or 100 individual `print` statements...
 
 Loops, my friend!
 One of the most essential tools on the programmer's toolkit, these bad boys will not only allow you to perform actions that before seemed unachiavable, they can also do it in very few lines of code!
 
-The most basic loop in NucaScript is what is commonly referred to as a _while loop_:
+The most basic loop in NucaScript is what is commonly referred to as a `while` loop:
 
     i = 0;
 
@@ -229,13 +229,13 @@ The most basic loop in NucaScript is what is commonly referred to as a _while lo
 
     println(">> All done with the while loop!");
 
-The _while loop_ will repeat the code segment within its curly braces until the expression inside the parenthesis is no longer True! (or it might never even run the code inside the braces, if the expression was never True in the first place!)
+The `while` loop will repeat the code segment within its curly braces until the expression inside the parenthesis is no longer `True` (or it might never even run the code inside the braces, if the expression was never `True` in the first place)
 
 Be careful with these, since it is very easy to get the condition wrong or to forget your increment statement (the one inside the loop that will eventually caused the condition value to flip) and get your program stuck in an infinite loop!
 
-If it happens to you, remember, stay calm and just hit CTRL + C on your console window to interrupt the execution of the program : )
+If it happens to you, remember, stay calm and just hit _CTRL + C_ on your console window to interrupt the execution of the program : )
 
-NucaScript also has another type of loop, commonly known as a _for loop_:
+NucaScript also has another type of loop, commonly known as a `for` loop:
 
     println(">> Entering for loop!");
 
@@ -265,7 +265,7 @@ This loop type takes in three statements, in order, and separated by semicolons:
 
     i++; /*/ This syntax simply increments the value of i by 1 /*/
 
-_For loops_ are very useful when looping through arrays, or when performing a number of operations that is defined by other constants:
+`for` loops are very useful when looping through arrays, or when performing a number of operations that is defined by other constants:
 
     for (i = 0; i < 10; i++){
        int_arr[i] = i;
@@ -276,7 +276,7 @@ Once again, be mindful of the statements that define the loop so that you don't 
 
 ## **Functions**
 
-Writing all of our code on the _main_ method can become a hassle after some time, especially when we need to reuse the same bits of code over and over to perform our calculations.
+Writing all of our code on the `main` method can become a hassle after some time, especially when we need to reuse the same bits of code over and over to perform our calculations.
 
 This can be easily solved with the use of functions!
 A function is a modularized block of code with its own local variables that only mean something inside of this block. It can also take in parameters and return values, just like in mathematics!
@@ -303,7 +303,7 @@ Next we need to define the body of our function, which will contain the code tha
       return n * 2;
     }
 
-The _return_ statement will be responsible for... uh... _returning_ this function's value after its execution!
+The `return` statement will be responsible for... uh... _returning_ this function's value after its execution!
 It automatically leaves the function context and returns to where the function was previously called, placing its value on the correct spot.
 
 In this case, all our function does is take in an integer, and return its value multiplied by 2.
@@ -322,7 +322,7 @@ And we can call it like this:
 
     println(">> 10 doubled is: " + double(10));
 
-Note that every NucaScript function assumes an empty return as the last statement of the function body, in the case that it is not already a return statment.
+Note that every NucaScript function assumes an empty `return` as the last statement of the function body, in the case that it is not already a `return` statment.
 
 This means that this:
 
@@ -339,9 +339,9 @@ Is in reality interpreted by the compiler as this:
         return;
     }
 
-Which will throw a Type Mismatch exception at compile time, since this empty return is of type _void_ (no value) and the function expects an int !
+Which will throw a Type Mismatch exception at compile time, since this empty return is of type `void` (no value) and the function expects an int !
 
-You can always declare your functions as _void_ type if they don't return anything, of course!
+You can always declare your functions as `void` type if they don't return anything, of course!
 Just like they can also be defined without any parameters to take in.
 
 Note: as of NucaScript 1.0, functions cannot yet take in neither object type parameters nor arrays. Don't worry though, there are plenty of ways around it, and a future update will allow this to happen! (hopefully)
@@ -350,9 +350,9 @@ Note: as of NucaScript 1.0, functions cannot yet take in neither object type par
 
 This is where the fun really begins!
 
-Classes are a way of structuring variables and functions together in one neat little package, and we can store its information inside of variables that have the _object_ type.
+Classes are a way of structuring variables and functions together in one neat little package, and we can store its information inside of variables that have the `object` type.
 
-NucaScript objects **cannot** be _compound_; This means that a class declaration cannot contain any variable of _object_ type.
+NucaScript objects **cannot** be _compounded_; This means that a class declaration cannot contain any variable of `object` type.
 
 Don't worry, they are still very useful!
 To declare a class, we start by using the class keyword, followed by the class name and our favorite braces, the curlies:
@@ -395,7 +395,7 @@ As you can see, the this. operator is of mandatory use to denote the use of any 
 
 If it is not used, the compiler will search everywhere besides the class attributes, so be careful!
 
-Now that we have our class well defined, we can declare an _object_ variable and _instantiate_ it as MyClass!
+Now that we have our class well defined, we can declare an `object` variable and _instantiate_ it as MyClass!
 
     obj_var : MyClass;
 
@@ -409,7 +409,7 @@ It's when we tell the compiler to generate a new instance of all of the class at
 
      obj_var = new MyClass();
 
-To instantiate, we use the _new_ keyword, followed by the class name as if it was a parameterless function call.
+To instantiate, we use the `new` keyword, followed by the class name as if it was a parameterless function call.
 
 This will basically wipe out the objects state, and set all of its variables to the default values!
 
@@ -428,7 +428,7 @@ Correct, many things! Great things!
 
 ## **#DEF Statements**
 
-Since version 1.4, NucaScript allows for C-like #DEF statements!!
+Since version 1.4, NucaScript allows for C-like `#DEF` statements!!
 These MUST come right after the program name definition, and before anything else!
 You can have any amount of them as you would like (including none), and it works for all of the basic data types.
 These work by substituting the actual source code that gets parsed in real time, just like in good old C!
@@ -445,7 +445,7 @@ Here's an example, taken from `Examples/example_nuca.nuca` on this very reposito
 
     println("HI" + TABULATOR * CONSTANT_INT + CONSTANT_FLOAT * 2);
 
-As you can see, it is as easy as writing the #DEF keyword, the definition name, a semicolon, and then the value to be replaced by the name.
+As you can see, it is as easy as writing the `#DEF` keyword, the definition name, a semicolon, and then the value to be replaced by the name.
 After that, you are ready to use it in the code, making it super easy to get rid of pesky _magic numbers_, such as array sizes!
 
 P.S: Be careful with these, since they **WILL** (_currently_) replace **ANY** instance of the definition name inside of the code, **INCLUDING** ones that are inside of a string (in between quotations). I know, pretty unintuitive behavior... Already working on a _lazy_ fix, so stay tuned : )

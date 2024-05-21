@@ -164,15 +164,15 @@
 
 // SPRINT //
 
-// TODO : Add .nuca file extension type enforcing (for aesthetic reasons)
-            -> Have compiler raise an error when trying to compile any other file extension type
-
 // TODO : Get rid of C++ code injection for VM compilation
             -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
             -> Optional compilation flags:
                 -> --keep-object: Does not delete intermediate object file after VM compilation
                 -> --object-only: Only generates object file; Does not call any VM utilities
                 -> --from-object: Pass in pre-generated object file to VM; does not call any Compiler utilities
+
+// TODO : Add .nuca file extension type enforcing (for aesthetic reasons)
+            -> Have compiler raise an error when trying to compile any other file extension type
 
 // TODO : More builtin methods!
             -> math builtin methods (pow, sqrt)
