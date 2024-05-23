@@ -1,6 +1,16 @@
 ## Version Log
 
-### **Current Version:** 1.6.2
+### **Current Version:** 1.6.3
+
+- ##### 22/05/2024
+
+  - Version 1.6.3 officially released!
+    - Refactors a good chunk of the `SymbolTable` code
+      - Previously passed arrays and a crazy amount of parameters everywhere
+      - Was confusing, constantly required multiple comments to explain what each parameter or array index meant
+      - Replaced all that with a new `Symbol` object, with neatly defined attributes that should avoid further confusion
+      - Cleaned up a bunch of variable, parameter and method names pertaining to symbol-related operations
+    - Adds new top-priority Sprint TODO for doing the same with `FunctionDirectory` code
 
 - ##### 19/05/2024
 
@@ -58,7 +68,7 @@
     - Adds C-like `#DEF` statements for all basic data types!
       - Just like in C, these work by replacing the actual source code text with whatever value the definition name is coupled with
       - Currently, this **WILL** replace **ALL** instances of the definition name on the source code, **INCLUDING** those that are inside a string (within quotations)
-        - PS: This behavior will be patched as soon as I figure out a _lazy_ way to get rid of it : )
+        - P.S. & TODO: This behavior will be patched as soon as I figure out a _lazy_ way to get rid of it : )
 
 - ##### 17/11/2021
 
@@ -68,7 +78,7 @@
       - Fixes a compile time bug that allowed for typed methods to be accepted even when their return method was contained inside an impossible conditional
         - This would cause all sorts of memory leaks on runtime, even though the program would compile with no error!
         - Typed methods now require not only that the last instruction of the method is a return statement with the correct type, but also that it is contained within the topmost conditional depth of the method's scope
-        - PS: _else_ statements don't count as a conditional, so feel free to write return statements under those! (if you love yourself some redundancy :P )
+        - P.S.: _else_ statements don't count as a conditional, so feel free to write return statements under those! (if you love yourself some redundancy :P )
 
 - ##### 07/07/2021
 

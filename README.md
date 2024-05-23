@@ -4,7 +4,7 @@ An object-oriented, strongly-typed, syntactically _"C-esque"_ and semantically _
 
 Version 1.0 developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
-### **Current Version:** 1.6.2
+### **Current Version:** 1.6.3
 
 Check out the latest changes & version history in the [official NucaScript Version Log!](VERSION_LOG.md)
 
@@ -448,7 +448,7 @@ Here's an example, taken from `Examples/example_nuca.nuca` on this very reposito
 As you can see, it is as easy as writing the `#DEF` keyword, the definition name, a semicolon, and then the value to be replaced by the name.
 After that, you are ready to use it in the code, making it super easy to get rid of pesky _magic numbers_, such as array sizes!
 
-P.S: Be careful with these, since they **WILL** (_currently_) replace **ANY** instance of the definition name inside of the code, **INCLUDING** ones that are inside of a string (in between quotations). I know, pretty unintuitive behavior... Already working on a _lazy_ fix, so stay tuned : )
+P.S & TODO: Be careful with these, since they **WILL** (_currently_) replace **ANY** instance of the definition name inside of the code, **INCLUDING** ones that are inside of a string (in between quotations). I know, pretty unintuitive behavior... Already working on a _lazy_ fix, so stay tuned : )
 
 ## **Builtin Methods**
 

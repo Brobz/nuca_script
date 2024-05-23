@@ -39,19 +39,19 @@ class FunctionDirectory(object):
 
         return self.FUNCS[self.program_name].get_array_symbol_element_size(sym_id, True) # Last argument flags a last attempt for get_array_symbol_element_size; if it fails, an exception will be thrown
 
-    def get_arr_pointed(self, ptr_id, ptr_scope):
+    def get_arr_pointed_to(self, ptr_id, ptr_scope):
         if ptr_scope == "GLOBAL":
-            return self.FUNCS[self.program_name].get_arr_pointed(ptr_id, True) # Last argument flags a last attempt for get_arr_pointed; if it fails, an exception will be thrown
+            return self.FUNCS[self.program_name].get_arr_pointed_to(ptr_id, True) # Last argument flags a last attempt for get_arr_pointed_to; if it fails, an exception will be thrown
 
-        res = self.FUNCS[self.current_scope][2].get_arr_pointed(ptr_id)
+        res = self.FUNCS[self.current_scope][2].get_arr_pointed_to(ptr_id)
         if res != None:
             return res
 
-        res = self.FUNCS[ptr_scope]["FUNCS"][self.current_scope][2].get_arr_pointed(ptr_id)
+        res = self.FUNCS[ptr_scope]["FUNCS"][self.current_scope][2].get_arr_pointed_to(ptr_id)
         if res != None:
             return res
 
-        return self.FUNCS[self.program_name].get_arr_pointed(ptr_id, True) # Last argument flags a last attempt for get_arr_pointed; if it fails, an exception will be thrown
+        return self.FUNCS[self.program_name].get_arr_pointed_to(ptr_id, True) # Last argument flags a last attempt for get_arr_pointed_to; if it fails, an exception will be thrown
 
     def get_class_idx(self, cls):
         for i, context in enumerate(self.FUNCS.keys()):
@@ -70,18 +70,18 @@ class FunctionDirectory(object):
     def set_symbol_object_type(self, sym_id, obj_type, scope):
         if scope == "GLOBAL" or (sym_id not in self.FUNCS[scope]["FUNCS"][self.current_scope][2].SYMBOLS and sym_id not in self.FUNCS[scope]["SYMBOLS"].SYMBOLS):
             if self.current_scope != None and scope == "GLOBAL":
-                res = self.FUNCS[scope][self.current_scope][2].set_sym_obj_type(sym_id, obj_type)
+                res = self.FUNCS[scope][self.current_scope][2].set_symbol_object_type(sym_id, obj_type)
                 if res != None:
                     return res
 
-            self.FUNCS[self.program_name].set_sym_obj_type(sym_id, obj_type, True) # Last argument flags a last attempt for set_sym_obj_type; if it fails, an exception will be thrown
+            self.FUNCS[self.program_name].set_symbol_object_type(sym_id, obj_type, True) # Last argument flags a last attempt for set_symbol_object_type; if it fails, an exception will be thrown
 
         else:
-            res = self.FUNCS[scope]["FUNCS"][self.current_scope][2].set_sym_obj_type(sym_id, obj_type)
+            res = self.FUNCS[scope]["FUNCS"][self.current_scope][2].set_symbol_object_type(sym_id, obj_type)
             if res != None:
                 return res
 
-            self.FUNCS[scope]["SYMBOLS"].set_sym_obj_type(sym_id, obj_type, True) # Last argument flags a last attempt for set_sym_obj_type; if it fails, an exception will be thrown
+            self.FUNCS[scope]["SYMBOLS"].set_symbol_object_type(sym_id, obj_type, True) # Last argument flags a last attempt for set_symbol_object_type; if it fails, an exception will be thrown
 
 
     def get_symbol_object_type(self, sym_id, scope):
@@ -108,31 +108,31 @@ class FunctionDirectory(object):
 
         self.FUNCS[object_type]= {"SYMBOLS" : SymbolTable(object_type, self.mem_constraints, FunctionDirectory.VAR_TYPES, self.program_name), "FUNCS" : {}}
 
-    def is_sym_ptr(self, sym_id, scope):
+    def is_sym_pointer(self, sym_id, scope):
         if self.current_scope == None:
             if scope == "GLOBAL":
-                return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                return self.FUNCS[self.program_name].is_sym_pointer(sym_id)
             else:
-                is_ptr = self.FUNCS[scope]["SYMBOLS"].is_sym_ptr(sym_id)
+                is_ptr = self.FUNCS[scope]["SYMBOLS"].is_sym_pointer(sym_id)
                 if is_ptr == -1:
-                    return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                    return self.FUNCS[self.program_name].is_sym_pointer(sym_id)
                 return is_ptr
         else:
             if scope == "GLOBAL":
                 is_ptr = -1
                 if self.current_scope in self.FUNCS[scope]:
-                    is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_ptr(sym_id)
+                    is_ptr = self.FUNCS[scope][self.current_scope][2].is_sym_pointer(sym_id)
                 if is_ptr == -1:
-                    return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                    return self.FUNCS[self.program_name].is_sym_pointer(sym_id)
                 return is_ptr
             else:
                 is_ptr = -1
                 if self.current_scope in self.FUNCS[scope]["FUNCS"]: # This means we might be checking a func var
-                    is_ptr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_ptr(sym_id)
+                    is_ptr = self.FUNCS[scope]["FUNCS"][self.current_scope][2].is_sym_pointer(sym_id)
                 if is_ptr == -1:
-                    is_ptr = self.FUNCS[scope]["SYMBOLS"].is_sym_ptr(sym_id)
+                    is_ptr = self.FUNCS[scope]["SYMBOLS"].is_sym_pointer(sym_id)
                     if is_ptr == -1:
-                        return self.FUNCS[self.program_name].is_sym_ptr(sym_id)
+                        return self.FUNCS[self.program_name].is_sym_pointer(sym_id)
                 return is_ptr
 
     def is_sym_arr(self, sym_id, scope, is_class_attr):

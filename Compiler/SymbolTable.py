@@ -1,7 +1,10 @@
+from .Symbol import Symbol
+
+
 class SymbolTable(object):
     """
 
-    Basic data structure that stands at the bottom of the NucaScript compiler
+    An aggregation of Symbol objects, as well as a myriad of functionalities for manipulating them.
 
     SymbolTables are instantiaded and maintained by the FunctionDirectory class, and store all of the information needed
     to generate the memory and instructions of the virtual machine.
@@ -42,16 +45,16 @@ class SymbolTable(object):
 
     def get_array_symbol_element_size(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
-            return self.get_array_element_size(self.SYMBOLS[sym_id][5])
+            return self.get_array_element_size(self.SYMBOLS[sym_id].dimensions)
 
         if last_attempt:
             SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot get array element size for symbol " + sym_id)
 
         return None
 
-    def get_arr_pointed(self, sym_id, last_attempt = False):
+    def get_arr_pointed_to(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][8]
+            return self.SYMBOLS[sym_id].array_pointed_to
 
         if last_attempt:
             SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot get array pointed to by " + sym_id)
@@ -60,12 +63,11 @@ class SymbolTable(object):
 
     def reset_object_symbol_types(self):
         for sym_id in self.SYMBOLS:
-            self.set_sym_obj_type(sym_id, None)
+            self.set_symbol_object_type(sym_id, None)
 
-    def set_sym_obj_type(self, sym_id, obj_type, last_attempt = False):
+    def set_symbol_object_type(self, sym_id, obj_type, last_attempt = False):
         if sym_id in self.SYMBOLS:
-            self.SYMBOLS[sym_id] = (self.SYMBOLS[sym_id][0], self.SYMBOLS[sym_id][1], self.SYMBOLS[sym_id][2],
-                                    self.SYMBOLS[sym_id][3], self.SYMBOLS[sym_id][4], self.SYMBOLS[sym_id][5], self.SYMBOLS[sym_id][6], obj_type, self.SYMBOLS[sym_id][8])
+            self.SYMBOLS[sym_id].object_type = obj_type
             return True
 
         if last_attempt:
@@ -75,7 +77,7 @@ class SymbolTable(object):
 
     def get_symbol_object_type(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][7]
+            return self.SYMBOLS[sym_id].object_type
 
         if last_attempt:
             SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot get objet type for symbol " + sym_id + " in " + self.scope)
@@ -84,15 +86,15 @@ class SymbolTable(object):
 
     def is_sym_arr(self, sym_id):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][4]
+            return self.SYMBOLS[sym_id].is_array
         else:
             if self.scope == self.program_name:
                 SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot check if " + sym_id + " is an array in " + self.scope)
             return -1
 
-    def is_sym_ptr(self, sym_id):
+    def is_sym_pointer(self, sym_id):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][6]
+            return self.SYMBOLS[sym_id].is_pointer
         else:
             if self.scope == self.program_name:
                 SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot check if " + sym_id + " is a pointer in " + self.scope)
@@ -100,7 +102,7 @@ class SymbolTable(object):
 
     def get_dimensions(self, sym_id):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][5]
+            return self.SYMBOLS[sym_id].dimensions
         else:
             if self.scope == self.program_name:
                 SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot get dimensions for symbol " + sym_id + " in " + self.scope)
@@ -114,7 +116,7 @@ class SymbolTable(object):
 
     def get_mem_index(self, sym_id):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][1]
+            return self.SYMBOLS[sym_id].mem_index
         else:
             if self.scope == self.program_name:
                 SymbolTable.EXCEPTION_HANDLER.raiseException("Cannot get memory index for symbol " + sym_id + " in " + self.scope)
@@ -163,10 +165,10 @@ class SymbolTable(object):
             self.var_memory_signature[type] += 1
 
     def get_types_list(self): # FOR FUNCTION ARGUMENT VERIFICATION
-        l = []
-        for tuple in self.SYMBOLS.values():
-            l.append(tuple[0])
-        return l
+        types_list = []
+        for symbol in self.SYMBOLS.values():
+            types_list.append(symbol.data_type)
+        return types_list
 
     def get_array_element_size(self, dimensions):
         element_size = 1
@@ -179,7 +181,7 @@ class SymbolTable(object):
         if sym_id not in self.SYMBOLS:
             mem_index = self.calculate_mem_index(mem_sec_sign)
             # type, memory index, return value flag, constant flag, array flag, dimensions (in case it is an array), ptr flag, object type (in case it is an object), array pointed to (in case it is a pointer)
-            self.SYMBOLS[sym_id] = (sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None, arr_pointed)
+            self.SYMBOLS[sym_id] = Symbol(sym_id, sym_type, mem_index, is_return_value, is_cnst, is_array, dimensions, is_ptr, None, arr_pointed)
             if is_cnst:
                 self.update_const_mem_sign(sym_type, dimensions)
             elif not is_temp:
@@ -261,7 +263,7 @@ class SymbolTable(object):
 
     def type_lookup(self, sym_id, last_attempt = False):
         if sym_id in self.SYMBOLS:
-            return self.SYMBOLS[sym_id][0]
+            return self.SYMBOLS[sym_id].data_type
 
         if last_attempt:
             SymbolTable.EXCEPTION_HANDLER.raiseException("Undeclared symbol " + sym_id + " in " + self.scope)
@@ -270,7 +272,7 @@ class SymbolTable(object):
 
     def missing_parenthesis_in_func_call_check(self, in_table_id, sym_id):
         if in_table_id in self.SYMBOLS:
-            if self.SYMBOLS[in_table_id][2]: # This symbol is marked as RETURN VALUE, meaning it is used as a global storage for the function with the same name to store its return value
+            if self.SYMBOLS[in_table_id].is_return_value: # This symbol is marked as RETURN VALUE, meaning it is used as a global storage for the function with the same name to store its return value
                 SymbolTable.EXCEPTION_HANDLER.raiseException("Syntax Error: Use of function name " + sym_id + " as variable ID. (Maybe missing '()' ?)")
             return sym_id
         return None

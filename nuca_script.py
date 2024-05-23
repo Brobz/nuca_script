@@ -91,7 +91,7 @@
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS,                                              4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS - 1]               ->          Object Ints
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + MAX_OBJ_SYMBOLS,                            4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOLS - 1]           ->          Object Floats
     [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 2 * MAX_OBJ_SYMBOL,                         4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS - 1]           ->          Object Strings
-    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                        4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]           ->          Object Boooleans
+    [4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 3 * MAX_OBJ_SYMBOLS,                        4 * MAX_CONSTANTS + 10 * MAX_SYMBOLS + 10 * MAX_TMP_SYMBOLS + 4 * MAX_OBJ_SYMBOLS - 1]           ->          Object Booleans
 
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -164,6 +164,12 @@
 
 // SPRINT //
 
+// TODO: Refactor FunctionDirectory.FUNCS
+            -> It is currently a mess
+            -> Passes arrays and crazy amount of parameters everywhere
+                -> Confusing, constantly requires multiple comments to explain what each parameter or array index means
+                    -> Would be great to have a Function object with neatly defined attributes to avoid further confusion
+
 // TODO : Get rid of C++ code injection for VM compilation
             -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
             -> Optional compilation flags:
@@ -176,6 +182,10 @@
 
 // TODO : More builtin methods!
             -> math builtin methods (pow, sqrt)
+
+// TODO: Search README.md and VERSION_LOG.md for forgotten TODO tags
+            -> There is always something else to fix or improve!
+            -> If empty (doubt), just look at the IDEAS FOR FUTURE IMPROVEMENT section near the top of this file : )
 
 // TODO: Organize repo
             -> Breakup Grammar.py further (?)
@@ -265,16 +275,16 @@ def main(argv):
 
     vm_constants = []
     for id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS.keys():
-        var = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
-        if var[3] or var[7] != None: # If is constant OR object
+        symbol = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[id]
+        if symbol.is_constant or symbol.object_type != None: # If is constant OR object
             if id in SymbolTable.TRUTH: # Bool constant
-                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(SymbolTable.TRUTH.index(id)) + '"},\n'
-            elif var[7] != None:  # Object to be initialized
-                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(FUNC_DIR.get_class_idx(var[7])) + '"},\n'
+                constant_string = "\t" * 10 + "{" + str(symbol.mem_index) + ', "' + str(SymbolTable.TRUTH.index(id)) + '"},\n'
+            elif symbol.object_type != None:  # Object to be initialized
+                constant_string = "\t" * 10 + "{" + str(symbol.mem_index) + ', "' + str(FUNC_DIR.get_class_idx(symbol.object_type)) + '"},\n'
             elif isinstance(id, str): # String Constant
-                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + id[1:-1] + '"},\n'
+                constant_string = "\t" * 10 + "{" + str(symbol.mem_index) + ', "' + id[1:-1] + '"},\n'
             else: # Int / Float constant
-                constant_string = "\t" * 10 + "{" + str(var[1]) + ', "' + str(id) + '"},\n'
+                constant_string = "\t" * 10 + "{" + str(symbol.mem_index) + ', "' + str(id) + '"},\n'
             vm_constants.append(constant_string)
 
     fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)

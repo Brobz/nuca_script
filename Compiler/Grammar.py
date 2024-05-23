@@ -40,7 +40,7 @@ def p_def_statement(p):
     original_lexdata_length = len(p.lexer.lexdata)
 
     # Here we do the actual #DEF replacements, in a C-like fashion
-    # TODO: Figure out a way to NOT replace names that are inside of a string (within quotations)
+    ### TODO: Figure out a way to NOT replace names that are inside of a string (within quotations)
     #       maybe using regex?
     p.lexer.lexdata = p.lexer.lexdata.replace(def_name, def_value)
 
@@ -68,10 +68,10 @@ def p_seen_main_kwd(p):
     ''' seen_main_kwd : empty '''
     FUNC_DIR.set_main_start_addr(GLOBALS.QUAD_POINTER)
     Utils.fill_quad(0, GLOBALS.QUAD_POINTER)
-    for sym in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS:
-        symbol = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[sym]
-        if symbol[4] and symbol[7] != None: # is_arr and class_type != None
-            Utils.push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
+    for sym_id in FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS:
+        symbol = FUNC_DIR.FUNCS[FUNC_DIR.program_name].SYMBOLS[sym_id]
+        if symbol.is_array and symbol.object_type != None: # is_arr and class_type != None
+            Utils.push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym_id, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol.object_type), FUNC_DIR.get_symbol_mem_index(sym_id, SCOPES_STACK[-1], False)))
 
 def p_class(p):
     ''' CLASS : CLASS_KWD ID seen_class_id_declaration OPEN_CURLY CLASS_ATTR seen_class_attr FUNC_DEF_STAR CLOSE_CURLY '''
@@ -146,9 +146,9 @@ def p_seen_readable(p):
         else:
             EXCEPTION_HANDLER.raiseException("Type Error: Cannot read into " + id_type)
 
-    is_ptr = int(FUNC_DIR.is_sym_ptr(id, id_scope))
-    if not is_ptr:
-        is_ptr = -1
+    is_pointer = int(FUNC_DIR.is_sym_pointer(id, id_scope))
+    if not is_pointer:
+        is_pointer = -1
 
     parent_obj_dir = -1
     if id_attr and len(CLASS_INSTANCE_STACK):
@@ -157,7 +157,7 @@ def p_seen_readable(p):
             parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
 
 
-    Utils.push_to_quads(Quad("READ", parent_obj_dir, is_ptr, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
+    Utils.push_to_quads(Quad("READ", parent_obj_dir, is_pointer, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -196,12 +196,12 @@ def p_seen_func_vars(p):
 
     FUNC_DIR.set_start_addr(GLOBALS.QUAD_POINTER, SCOPES_STACK[-1])
     if SCOPES_STACK[-1] != "GLOBAL":
-        for sym in FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS:
-            symbol = FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS[sym]
-            if symbol[4] and symbol[7] != None: # is_arr and class_type != None
-                Utils.push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
-            elif symbol[7] != None:
-                Utils.push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(symbol[7]), FUNC_DIR.get_symbol_mem_index(sym, SCOPES_STACK[-1], False)))
+        for sym_id in FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS:
+            symbol = FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS[sym_id]
+            if symbol.is_array and symbol.object_type != None: # is_arr and class_type != None
+                Utils.push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym_id, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol.object_type), FUNC_DIR.get_symbol_mem_index(sym_id, SCOPES_STACK[-1], False)))
+            elif symbol.object_type != None:
+                Utils.push_to_quads(Quad("OBJ_INST", -1, FUNC_DIR.get_class_idx(symbol.object_type), FUNC_DIR.get_symbol_mem_index(sym_id, SCOPES_STACK[-1], False)))
 
 
 def p_func_param(p):

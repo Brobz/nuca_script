@@ -56,10 +56,10 @@ def get_ptr_value(left = None, right = None):
     ptr_value = -1
 
     if left != None:
-        if FUNC_DIR.is_sym_ptr(left[0], left[1]):
+        if FUNC_DIR.is_sym_pointer(left[0], left[1]):
             ptr_value = 1
     if right != None:
-        if FUNC_DIR.is_sym_ptr(right[0], right[1]):
+        if FUNC_DIR.is_sym_pointer(right[0], right[1]):
             if ptr_value > 0:
                 ptr_value = 3
             else:
@@ -275,8 +275,8 @@ def assign_to_var(push_back_operand = False):
         CLASS_INSTANCE_STACK.pop() # Remove the instantiation validation
         class_type = FUNC_DIR.get_symbol_object_type(right_operand, SCOPES_STACK[-1]) # Get the class type from the right operand of the =
         class_idx = FUNC_DIR.get_class_idx(class_type) # From that, find out what the class index is
-        if FUNC_DIR.is_sym_ptr(res, res_scope): # If we are instantiating into an array,
-            arr_pointed = FUNC_DIR.get_arr_pointed(res, res_scope) # We need to check if this array has the appropriate (if any) class type, and update it if needed
+        if FUNC_DIR.is_sym_pointer(res, res_scope): # If we are instantiating into an array,
+            arr_pointed = FUNC_DIR.get_arr_pointed_to(res, res_scope) # We need to check if this array has the appropriate (if any) class type, and update it if needed
             arr_pointed_object_type = FUNC_DIR.get_symbol_object_type(arr_pointed[0], arr_pointed[1])
             if arr_pointed_object_type != class_type:
                 EXCEPTION_HANDLER.raiseException("Type Error: " + arr_pointed_object_type + " = " + class_type)
@@ -295,14 +295,14 @@ def assign_to_var(push_back_operand = False):
             # Assigning to Object variable; Use OBJ_INST
 
             res_is_ptr = -1
-            if FUNC_DIR.is_sym_ptr(res, res_scope):
+            if FUNC_DIR.is_sym_pointer(res, res_scope):
                 res_is_ptr = 1
 
             push_to_quads(Quad("OBJ_INST", res_is_ptr, class_idx, FUNC_DIR.get_symbol_mem_index(res, res_scope, res_attr)))
     else:
         # Assigning to class variable; Use OBJ_WRITE
 
-        if FUNC_DIR.is_sym_ptr(res, res_scope):
+        if FUNC_DIR.is_sym_pointer(res, res_scope):
             res_attr = False # This is for the special case of writing to an object's array variable;
                              # Since res will contain a temporal with its value set to the obj arr var memory index,
                              # As classes do not contain temporals, we now need to use res_attr as False so that get_symbol_mem_index
@@ -326,7 +326,7 @@ def assign_to_var(push_back_operand = False):
 def parse_compound_asignment(op):
     OPERATOR_STACK.append('=')
 
-    if FUNC_DIR.is_sym_ptr(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]):
+    if FUNC_DIR.is_sym_pointer(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]):
         # Since this is an array, need to figure out the pointer from the left side of the compound assignment into a factor on the left side
         value_at_index = FUNC_DIR.next_avail(TYPE_STACK[-1], SCOPES_STACK[-1])
         if not OPERAND_STACK[-1][2]:
