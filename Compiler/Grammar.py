@@ -196,8 +196,8 @@ def p_seen_func_vars(p):
 
     FUNC_DIR.set_start_addr(GLOBALS.QUAD_POINTER, SCOPES_STACK[-1])
     if SCOPES_STACK[-1] != "GLOBAL":
-        for sym_id in FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS:
-            symbol = FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope][2].SYMBOLS[sym_id]
+        for sym_id in FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope].var_table.SYMBOLS:
+            symbol = FUNC_DIR.FUNCS[SCOPES_STACK[-1]]["FUNCS"][FUNC_DIR.current_scope].var_table.SYMBOLS[sym_id]
             if symbol.is_array and symbol.object_type != None: # is_arr and class_type != None
                 Utils.push_to_quads(Quad("USNG_AS", FUNC_DIR.get_array_element_size(sym_id, SCOPES_STACK[-1]), FUNC_DIR.get_class_idx(symbol.object_type), FUNC_DIR.get_symbol_mem_index(sym_id, SCOPES_STACK[-1], False)))
             elif symbol.object_type != None:

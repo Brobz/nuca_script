@@ -45,7 +45,7 @@ class FileIO{
               separator_index = line.find(separator);
             }
 
-            if (line.length()){ // Is there leftovers on the line?
+            if (line.length()){ // Are there leftovers on the line?
               entry_index++;
               FileIO::overflow_check(entry_index, buffer_size, file_path);
               entries[entry_index] += line; // Add them!

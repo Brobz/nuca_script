@@ -164,12 +164,6 @@
 
 // SPRINT //
 
-// TODO: Refactor FunctionDirectory.FUNCS
-            -> It is currently a mess
-            -> Passes arrays and crazy amount of parameters everywhere
-                -> Confusing, constantly requires multiple comments to explain what each parameter or array index means
-                    -> Would be great to have a Function object with neatly defined attributes to avoid further confusion
-
 // TODO : Get rid of C++ code injection for VM compilation
             -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
             -> Optional compilation flags:
@@ -177,6 +171,10 @@
                 -> --object-only: Only generates object file; Does not call any VM utilities
                 -> --from-object: Pass in pre-generated object file to VM; does not call any Compiler utilities
 
+// TODO : Refactor VM/main.cpp code
+            -> Add new Utils.cpp file, move a lot of the methods over there
+            -> Any other pertinent refactors I may come across            
+                
 // TODO : Add .nuca file extension type enforcing (for aesthetic reasons)
             -> Have compiler raise an error when trying to compile any other file extension type
 
@@ -188,6 +186,7 @@
             -> If empty (doubt), just look at the IDEAS FOR FUTURE IMPROVEMENT section near the top of this file : )
 
 // TODO: Organize repo
+            -> Further subdivide Compiler package into smaller packages (?)
             -> Breakup Grammar.py further (?)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -239,7 +238,7 @@ def main(argv):
         print(">> Parsing " + input_file_path + "...")
         parser.parse(lex_data)
 
-    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", VAR_TYPES = " + str(FunctionDirectory.VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
+    mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", VAR_TYPES = " + str(VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
 
     fill_vm_file(VM_FILE_PATH, VM_MEMORY_CONSTRAINTS_MARKER_STR, mem_constraints_str, VM_MEMORY_CONSTRAINTS_END_STR, [])
 
@@ -253,13 +252,13 @@ def main(argv):
         else:
             if context == "GLOBAL":
                 for func in FUNC_DIR.FUNCS[context].keys():
-                    mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func, context)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].var_memory_signature.values())]) + "}"
-                    temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func][2].temp_memory_signature.values())]) + "}}},\n"
+                    mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func, context)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func].var_table.var_memory_signature.values())]) + "}"
+                    temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context][func].var_table.temp_memory_signature.values())]) + "}}},\n"
                     vm_func_memory.append(mem_sign + ", " + temp_sign)
             else:
                 for func in FUNC_DIR.FUNCS[context]["FUNCS"].keys():
-                    mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func, context)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func][2].var_memory_signature.values())]) + "}"
-                    temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func][2].temp_memory_signature.values())]) + "}}},\n"
+                    mem_sign = "\t" * 10 +  "{" + str(FUNC_DIR.get_start_addr(func, context)) + ", {{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func].var_table.var_memory_signature.values())]) + "}"
+                    temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func].var_table.temp_memory_signature.values())]) + "}}},\n"
                     vm_func_memory.append(mem_sign + ", " + temp_sign)
 
     fill_vm_file(VM_FILE_PATH, VM_FUNCTION_MEMORY_MARKER_STR, VM_FUNCTION_MEMORY_START_STR, VM_FUNCTION_MEMORY_END_STR, vm_func_memory)

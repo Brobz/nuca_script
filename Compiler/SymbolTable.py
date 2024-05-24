@@ -23,6 +23,9 @@ class SymbolTable(object):
     SYMBOL_CLASSES = ["constant", "symbol", "temporal variable", "class variable"]
     MEMORY_SECTOR_SIGN = [["0", "1", "2", "3"], ["0", "1", "2", "3", "4"], ["0", "1"]]
     MEMORY_SECTOR_SHIFTS = None
+
+    # The abstract value below is initialized and set via the Bootsrapper file
+    # This ensures no messy circular dependencies and a cleaner import order
     EXCEPTION_HANDLER = None
 
     def __init__(self, scope, mem_constraints, var_types, program_name, set_truth = False):

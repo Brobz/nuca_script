@@ -1,6 +1,17 @@
 ## Version Log
 
-### **Current Version:** 1.6.3
+### **Current Version:** 1.6.4
+
+- ##### 24/05/2024
+
+  - Version 1.6.4 officially released!
+    - Refactors a good chunk of the Compiler code, especially from `FunctionDirectory`
+      - Previously passed arrays and a crazy amount of parameters everywhere
+      - Was confusing, constantly required multiple comments to explain what each parameter or array index meant
+      - Replaced all that with a new `Function` object, with neatly defined attributes that should avoid further confusion
+      - Cleaned up a bunch of variable, parameter and method names pertaining to function-related operations
+      - As promised in the previous bump notes : )
+    - Some other tiny comment & variable naming cleanups all around
 
 - ##### 22/05/2024
 

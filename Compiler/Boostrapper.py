@@ -3,6 +3,7 @@ import Libraries.ply.lex as lex
 from .ExceptionHandler import ExceptionHandler
 from .SymbolTable import SymbolTable
 from .FunctionDirectory import FunctionDirectory
+from .Function import Function
 from .Globals import Globals
 
 
@@ -189,7 +190,7 @@ lexer = lex.lex()
 ## First, lets initialize our ExceptionHandler object, which will handle excepiton raising with useful error meessages
 EXCEPTION_HANDLER = ExceptionHandler(lexer)
 
-## Then, set the reference to this exception handler object on the rest of the classes
+## Then, set the reference to this exception handler object, wherever it is needed
 FunctionDirectory.EXCEPTION_HANDLER = EXCEPTION_HANDLER
 SymbolTable.EXCEPTION_HANDLER = EXCEPTION_HANDLER
 
@@ -197,6 +198,15 @@ SymbolTable.EXCEPTION_HANDLER = EXCEPTION_HANDLER
 MAX_CONSTANTS = 10000                                        # (per type)
 MAX_SYMBOLS = MAX_TMP_SYMBOLS = MAX_OBJ_SYMBOLS = 30000      # (per type)
 MEMORY_STACK_LIMIT = 100000                                  # (to prevent recursion)
+
+## As well as the memory sector partition ordering, for each variable type
+MEMORY_SECTOR_INDICES = ["int", "float", "string", "boolean", "object"]
+VAR_TYPES = len(MEMORY_SECTOR_INDICES)
+
+## Then, set a few more references to constants in order to avoid circular dependencies
+FunctionDirectory.MEMORY_SECTOR_INDICES = MEMORY_SECTOR_INDICES
+FunctionDirectory.VAR_TYPES = VAR_TYPES
+Function.VAR_TYPES = VAR_TYPES
 
 ## Next, we initialize the FunctionDirectory object which will handle all of the parsing processes
 FUNC_DIR = FunctionDirectory([MAX_CONSTANTS, MAX_SYMBOLS, MAX_TMP_SYMBOLS, MAX_OBJ_SYMBOLS])
@@ -214,10 +224,10 @@ OBJECT_ACCESS_STACK = []
 CLASS_INSTANCE_STACK = []
 CONDITIONAL_DEPTH_STACK = []
 
-## Global Values Initialization
+## Global Values initialization
 GLOBALS = Globals()
 
-## Constants to write to VM file for C++ compilation ##
+## Constants to write to VM file for C++ compilation
 VM_FILE_PATH = "VM/main.cpp"
 
 VM_QUAD_MARKER_STR = "// QUADS //\n"
