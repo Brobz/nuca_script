@@ -38,7 +38,7 @@
         -> overloaded functions?
 
     OTHER:
-        -> atom syntactic highliter ?
+        -> VSCode syntactic highliter ?
         -> try / catch block?
         -> post-compile quad optimization ?
         -> tmp management optimization (in Avail)?
@@ -113,24 +113,24 @@
         - If an obj calls a function, we will OBJ_GOSUB to that function, setting all of the  "this" to point to its memory context, so that the function can do OBJ_READS on it
 
     // OBJ_INST //
-    Creates an instace of obj_sign signature and stores it into obj_dir
-    | OBJ_INST | -1 | obj_sign | obj_dir (locl_mem) |
+    Creates an instace of obj_sign signature and stores it into obj_addr
+    | OBJ_INST | -1 | obj_sign | obj_addr (locl_mem) |
 
     // OBJ_READ //
-    Reads from obj_var_dir in obj_dir's memory and writes it to result_dir (local_mem)
-    | OBJ_READ | obj_dir (local_mem) | obj_var_dir (obj_mem) | result_dir (local_mem) |
+    Reads from obj_var_addr in obj_addr's memory and writes it to result_addr (local_mem)
+    | OBJ_READ | obj_addr (local_mem) | obj_var_addr (obj_mem) | result_addr (local_mem) |
 
     // OBJ_WRITE //
-    Writes value_dir into obj_var_dir in obj_dir's memory
-    | OBJ_WRITE | obj_dir (local_mem) | value_dir (local_mem) | obj_var_dir (obj_mem) |
+    Writes value_addr into obj_var_addr in obj_addr's memory
+    | OBJ_WRITE | obj_addr (local_mem) | value_addr (local_mem) | obj_var_addr (obj_mem) |
 
     // OBJ_GOSUB //
-    Sets THIS_MEM to point to obj_dir, LOCAL_MEM to point to the top of the mem stack, and LOCAL_MEM retn addr to IP + 1; then sets IP to start_addr
-    | OBJ_GOSUB | -1 | obj_dir (local_mem) | start_addr (local_mem) |
+    Sets THIS_MEM to point to obj_addr, LOCAL_MEM to point to the top of the mem stack, and LOCAL_MEM retn addr to IP + 1; then sets IP to start_addr
+    | OBJ_GOSUB | -1 | obj_addr (local_mem) | start_addr (local_mem) |
 
     // USNG_AS //
     -> allows the VM to instantiate all objects of an object array to their respective class type upon program start
-    | USNG_AS | arr_size (local_mem) | class_sign (int) | object_dir (local_mem) |
+    | USNG_AS | arr_size (local_mem) | class_sign (int) | object_addr (local_mem) |
 
     //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\ //|||\\
 
@@ -151,32 +151,58 @@
     QUADS (more like HEXES):
 
     // F_OPEN //
-    Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_dir inside of parent_obj (parent_obj is -1 if null, 0 if this.)Throws error if the number of entries exceeds buffer_dim
+    Opens the file at file_path, parses it using the separator and stores each entry into the appropriate buffer_addr inside of parent_obj (parent_obj is -1 if null, 0 if this.)Throws error if the number of entries exceeds buffer_dim
     If it reahes EOF and the buffer still has available space, it inserts a "END_OF_STREAM" entry at the end, so that the user can know the file data is over.
-    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int) | buffer_dir (parent_obj's mem) |
+    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_addr (parent_obj's mem) | buffer_dim (int) |
 
     // F_WRITE //
-    Opens the file at file_path, and writes the contents of buffer_dir using the separator into it (parent_obj is -1 if null, 0 if this.)
+    Opens the file at file_path, and writes the contents of buffer_addr using the separator into it (parent_obj is -1 if null, 0 if this.)
     If one of the buffer entries has "END_OF_STREAM", entries that come after it will not be written to the file.
-    | F_OPEN | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_dim (int) | buffer_dir (parent_obj's mem) |
+    | F_WRITE | parent_obj (local_mem) | file_path (local_mem) | separator (local_mem) | buffer_addr (parent_obj's mem) | buffer_dim (int) |
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SPRINT //
 
 // TODO : Get rid of C++ code injection for VM compilation
-            -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
+            !DONE! -> Have default compilation method generate intermediate object file, C++ main reads it, stores data and deletes it
+                --> Well, kind of...
+                    --> Might be nice to have this happen in .txt (.onuca ?) file that gets properly searched for, read and parsed into data
+                        --> Would allow me to get rid of that nasty #include statement that is bound to failure in VM code
+                        --> Might be another TODO refactor down the line :P
             -> Optional compilation flags:
-                -> --keep-object: Does not delete intermediate object file after VM compilation
+                !DONE! -> --keep-object: Does not delete intermediate object file after VM compilation
+                    --> Well, kind of... again...
+                        --> Need to refacor the CLI for NucaScript ASAP!
                 -> --object-only: Only generates object file; Does not call any VM utilities
                 -> --from-object: Pass in pre-generated object file to VM; does not call any Compiler utilities
+            
+            --> Update README with proper CLI instructions
+                --> Maybe a whole CLI section is warranted now (!)
 
-// TODO : Refactor VM/main.cpp code
-            -> Add new Utils.cpp file, move a lot of the methods over there
-            -> Any other pertinent refactors I may come across            
+// TODO: Add Unit Tests!
+            -> Project is getting large
+            -> This is a must and you know it
+            -> Could start by unit testing example_nuca and tutorial_nuca outputs (both to console and to files)
+                -> Eventually evolve into UT for every single possible use case?
+                    -> Sounds boring but might be cheerful work [figuring out how to break things, and then fixing them :)]
                 
+// TODO: Bump Compiler's default MAX_CNST, MAX_TMP_SYMBOLS, MAX_SYMBOLS and MEMORY_STACK_LIMIT values
+            -> Add optional compilation flags to change these values dinamically (?)
+                --> --large: BIG memory (?)
+                --> --small: SMALL memory (?)
+                --> --max-cnst <NUM> --max-tmp <NUM> --max-sym <NUM> --max-stack <NUM>: Sets values accordingly
+                
+// TODO: Write a tic-tac-toe game (just like in the good olden days of learning python) in NucaScript as an example!
+            -> Make it just like the original! (either single or 2 player)
+            -> Computer would be smart enough to win if allowed to :)
+
 // TODO : Add .nuca file extension type enforcing (for aesthetic reasons)
             -> Have compiler raise an error when trying to compile any other file extension type
+
+// TODO : Take a look at py2exe && py2app (or other alternatives?)
+            -> Would be cool to package everything in there so that a NucaScript executable could be distributed
+            -> Might need to look at an installer or an image instead, since g++ needs to be available as well            
 
 // TODO : More builtin methods!
             -> math builtin methods (pow, sqrt)
@@ -186,6 +212,10 @@
             -> If empty (doubt), just look at the IDEAS FOR FUTURE IMPROVEMENT section near the top of this file : )
 
 // TODO: Organize repo
+            -> Cleanup nuca_script.py comments & main method (!!!)
+            -> VM Code refactor, maybe ENUMs for memory_context_signature int (?)
+            -> Breakuo VM/main.cpp further (?)
+            -> Could also look into a C++ linter for VSCode to fix all of the ugly indentantion in all of the VM code... (?)
             -> Further subdivide Compiler package into smaller packages (?)
             -> Breakup Grammar.py further (?)
 
@@ -210,10 +240,18 @@ def main(argv):
     output_file_path = None
     input_file_path = None
 
+    keep_intermediate_object_code = False
+
     while len(argv):
+        #TODO: fix this mess so that one can write reasonable NucaScript commands
         if len(argv) == 1:
             input_file_path = argv.pop()
             break
+
+        if argv[-1] == "--keep-object":
+            keep_intermediate_object_code = True
+            argv.pop()
+            continue
 
         arg = argv.pop()
         param = argv.pop()
@@ -240,7 +278,7 @@ def main(argv):
 
     mem_constraints_str = "const int MAX_CONSTANTS = " + str(MAX_CONSTANTS) + ", MAX_SYMBOLS = " + str(MAX_SYMBOLS) + ", MAX_TMP_SYMBOLS = " + str(MAX_TMP_SYMBOLS) + ", MAX_OBJ_SYMBOLS = " + str(MAX_OBJ_SYMBOLS) + ", VAR_TYPES = " + str(VAR_TYPES) + ", MEMORY_STACK_LIMIT = " + str(MEMORY_STACK_LIMIT) + ";"
 
-    fill_vm_file(VM_FILE_PATH, VM_MEMORY_CONSTRAINTS_MARKER_STR, mem_constraints_str, VM_MEMORY_CONSTRAINTS_END_STR, [])
+    fill_vm_file(INTERMEDIATE_OBJECT_CODE_PATH, VM_MEMORY_CONSTRAINTS_MARKER_STR, mem_constraints_str, VM_MEMORY_CONSTRAINTS_END_STR, [])
 
     vm_func_memory = []
     for context in FUNC_DIR.FUNCS.keys():
@@ -261,7 +299,7 @@ def main(argv):
                     temp_sign = "{" + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["FUNCS"][func].var_table.temp_memory_signature.values())]) + "}}},\n"
                     vm_func_memory.append(mem_sign + ", " + temp_sign)
 
-    fill_vm_file(VM_FILE_PATH, VM_FUNCTION_MEMORY_MARKER_STR, VM_FUNCTION_MEMORY_START_STR, VM_FUNCTION_MEMORY_END_STR, vm_func_memory)
+    fill_vm_file(INTERMEDIATE_OBJECT_CODE_PATH, VM_FUNCTION_MEMORY_MARKER_STR, VM_FUNCTION_MEMORY_START_STR, VM_FUNCTION_MEMORY_END_STR, vm_func_memory)
 
     vm_obj_memory = []
     for i, context in enumerate(FUNC_DIR.FUNCS.keys()):
@@ -269,7 +307,7 @@ def main(argv):
             mem_sign = "\t" * 10 +  '{' + str(i) + ', {' + ",".join([str(x) for x in list(FUNC_DIR.FUNCS[context]["SYMBOLS"].var_memory_signature.values())]) + "}},\n"
             vm_obj_memory.append(mem_sign)
 
-    fill_vm_file(VM_FILE_PATH, VM_OBJECT_MEMORY_MARKER_STR, VM_OBJECT_MEMORY_START_STR, VM_OBJECT_MEMORY_END_STR, vm_obj_memory)
+    fill_vm_file(INTERMEDIATE_OBJECT_CODE_PATH, VM_OBJECT_MEMORY_MARKER_STR, VM_OBJECT_MEMORY_START_STR, VM_OBJECT_MEMORY_END_STR, vm_obj_memory)
 
 
     vm_constants = []
@@ -286,20 +324,26 @@ def main(argv):
                 constant_string = "\t" * 10 + "{" + str(symbol.mem_index) + ', "' + str(id) + '"},\n'
             vm_constants.append(constant_string)
 
-    fill_vm_file(VM_FILE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)
+    fill_vm_file(INTERMEDIATE_OBJECT_CODE_PATH, VM_CONSTANTS_MARKER_STR, VM_CONSTANTS_START_STR, VM_CONSTANTS_END_STR, vm_constants)
 
 
     vm_quads = []
     for i in range(len(GLOBALS.QUADS)):
         vm_quads.append("\t" * 10 + GLOBALS.QUADS[i].get_cpp_string() + "\n")
 
-    fill_vm_file(VM_FILE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
+    fill_vm_file(INTERMEDIATE_OBJECT_CODE_PATH, VM_QUAD_MARKER_STR, VM_QUAD_START_STR, VM_QUAD_END_STR, vm_quads)
 
     if output_file_path == None:
         output_file_path = FUNC_DIR.program_name
 
+    #TODO: ADD FLAGS FOR NOT COMPILING QUITE YET (?)
     print(">> Compiling " + input_file_path + " into " + output_file_path)
-    if not os.system('g++ -std=c++11 ' + VM_FILE_PATH + ' -o ' + output_file_path):
+    
+    if not os.system('g++ -std=c++11 ' + MAIN_VM_FILE_PATH + ' -o ' + output_file_path):
+
+        if not keep_intermediate_object_code:
+            os.system("rm " + INTERMEDIATE_OBJECT_CODE_PATH)
+        
         print(">> Compilation Successfull!")
 
 ## Runs main upon invoking this script with python nuca_script.py ##

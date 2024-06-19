@@ -42,7 +42,6 @@ class MemoryContext{
         print_buffer.push_back(s);
       }
 
-
       string flush_print_buffer(){
         int buffer_size = print_buffer.size();
         string temp_string = "";

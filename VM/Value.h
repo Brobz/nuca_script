@@ -11,6 +11,7 @@ class Memory;
 
 using namespace std;
 
+enum DataType {Int, Float, String, Bool, Object, Void = -1};
 class Value{
     /*/
           The Value class is a container for all of the different types that a NucaScript value can assume.
@@ -20,7 +21,7 @@ class Value{
     /*/
     public:
 
-      int type;
+      DataType type;
 
       long long i = 0;
       long double f = 0.0;
@@ -29,31 +30,31 @@ class Value{
       Memory o;
 
       Value(){
-        type = -1;
+        type = Void;
       };
 
       Value(long long _i){
-        type = 0;
+        type = Int;
         i = _i;
       };
 
       Value(long double _f){
-        type = 1;
+        type = Float;
         f = _f;
       };
 
       Value(string _s){
-        type = 2;
+        type = String;
         s = _s;
       };
 
       Value(bool _b){
-        type = 3;
+        type = Bool;
         b = _b;
       };
 
       Value(Memory _o){
-        type = 4;
+        type = Object;
         o = _o;
       };
 
@@ -63,24 +64,24 @@ class Value{
 
       string to_str(bool is_printable = false){
         switch(type){
-          case 0: // INT
+          case Int:
           {
             return to_string(i);
           } break;
-          case 1: // FLOAT
+          case Float:
           {
             return to_string(f);
           } break;
-          case 2: // STRING
+          case String:
           {
             return s;
           } break;
-          case 3: // BOOLEAN
+          case Bool:
           {
             if (is_printable) return b ? "True" : "False";
             else return to_string(b);
           } break;
-          case 4: // OBJECT
+          case Object:
           {
             return to_string(o.signature);
           } break;
@@ -94,27 +95,27 @@ class Value{
 
       void set_i(long long _i){
         i = _i;
-        type = 0;
+        type = Int;
       }
 
       void set_f(long double _f){
         f = _f;
-        type = 1;
+        type = Float;
       }
 
       void set_s(string _s){
         s = _s;
-        type = 2;
+        type = String;
       }
 
       void set_b(bool _b){
         b = _b;
-        type = 3;
+        type = Bool;
       }
 
       void set_o(Memory _o){
         o = _o;
-        type = 4;
+        type = Object;
       }
       
       /*/ This next set of methods resolve all of the legal operations in NucaScript (as seen in the SemanticCube) /*/
@@ -688,17 +689,17 @@ class Value{
 
       Value operator-(){
         Value temp;
-        int operation_case = type;
+        DataType operation_case = type;
         switch(operation_case){
-          case 0: // -INT
+          case Int:
           {
             temp.set_i(-i);
           } break;
-          case 1: // -FLOAT
+          case Float:
           {
             temp.set_f(-f);
           } break;
-          case 2: // -STRING
+          case String:
           {
             string copy(s);
             reverse(copy.begin(), copy.end());
@@ -716,21 +717,21 @@ class Value{
 
       Value operator!(){
         Value temp;
-        int operation_case = type;
+        DataType operation_case = type;
         switch(operation_case){
-          case 0: // !INT
+          case Int:
           {
             temp.set_b(!i);
           } break;
-          case 1: // !FLOAT
+          case Float:
           {
             temp.set_b(!f);
           } break;
-          case 2: // !STRING
+          case String:
           {
             temp.set_b(!s.size());
           } break;
-          case 3: // !BOOLEAN
+          case Bool:
           {
             temp.set_b(!b);
           } break;

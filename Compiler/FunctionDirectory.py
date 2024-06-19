@@ -68,7 +68,7 @@ class FunctionDirectory(object):
             return False
 
         if cls not in self.FUNCS:
-            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: " + cls + " is not a valid Class Name")
+            FunctionDirectory.EXCEPTION_HANDLER.raiseException("Name Error: " + cls + " is not a valid Type nor Class Name")
 
     def set_symbol_object_type(self, sym_id, obj_type, scope):
         if scope == "GLOBAL" or (sym_id not in self.FUNCS[scope]["FUNCS"][self.current_scope].var_table.SYMBOLS and sym_id not in self.FUNCS[scope]["SYMBOLS"].SYMBOLS):

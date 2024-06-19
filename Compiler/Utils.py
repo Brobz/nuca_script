@@ -1,7 +1,8 @@
+import os
 from .OPCodes import OPCodes
 from .Quad import Quad
 from .SemanticCube import SemanticCube
-from .Boostrapper import ARRAY_DIMENSION_STACK, CLASS_INSTANCE_STACK, DOT_OP_STACK, EXCEPTION_HANDLER, FUNC_DIR, GLOBALS, JUMP_STACK, OBJECT_ACCESS_STACK, OPERAND_STACK, OPERATOR_STACK, SCOPES_STACK, TYPE_STACK, VM_FILE_PATH
+from .Boostrapper import ARRAY_DIMENSION_STACK, CLASS_INSTANCE_STACK, DOT_OP_STACK, EXCEPTION_HANDLER, FUNC_DIR, GLOBALS, JUMP_STACK, OBJECT_ACCESS_STACK, OPERAND_STACK, OPERATOR_STACK, SCOPES_STACK, TYPE_STACK, VM_CONSTANTS_MARKER_STR, VM_FUNCTION_MEMORY_MARKER_STR, VM_MEMORY_CONSTRAINTS_MARKER_STR, VM_OBJECT_MEMORY_MARKER_STR, VM_QUAD_MARKER_STR
 
 ## Quad Helper Functions ##
 #  a few methods to make quad manipulation easier #
@@ -180,12 +181,12 @@ def parse_var(id, is_factor, is_io = 0):
 
             else:
                 # Array as an object attribute! Use OBJ_READ
-                parent_obj_dir = -1
+                parent_obj_addr = -1
                 parent_obj_id = OBJECT_ACCESS_STACK.pop()
                 if parent_obj_id != "this_kwd":
-                    parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+                    parent_obj_addr = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
 
-                push_to_quads(Quad("OBJ_READ", parent_obj_dir,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1]), get_ptr_value([ptr_to_array_value_at_index, SCOPES_STACK[-1]], [value_at_index, SCOPES_STACK[-1]])))
+                push_to_quads(Quad("OBJ_READ", parent_obj_addr,  FUNC_DIR.get_symbol_mem_index(ptr_to_array_value_at_index, SCOPES_STACK[-1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1]), get_ptr_value([ptr_to_array_value_at_index, SCOPES_STACK[-1]], [value_at_index, SCOPES_STACK[-1]])))
 
                 OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]))
                 TYPE_STACK.append(FUNC_DIR.symbol_type_lookup(value_at_index, SCOPES_STACK[-1]))
@@ -337,12 +338,12 @@ def parse_compound_asignment(op):
 
         else:
             # Array as an object attribute! Use OBJ_READ
-            parent_obj_dir = -1
+            parent_obj_addr = -1
             parent_obj_id = CLASS_INSTANCE_STACK[-1]
             if parent_obj_id != "this_kwd":
-                parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+                parent_obj_addr = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
 
-            push_to_quads(Quad("OBJ_READ", parent_obj_dir,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1]), get_ptr_value([OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]], [value_at_index, SCOPES_STACK[-1]])))
+            push_to_quads(Quad("OBJ_READ", parent_obj_addr,  FUNC_DIR.get_symbol_mem_index(OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]), FUNC_DIR.get_symbol_mem_index(value_at_index, SCOPES_STACK[-1]), get_ptr_value([OPERAND_STACK[-1][0], OPERAND_STACK[-1][1]], [value_at_index, SCOPES_STACK[-1]])))
 
             OPERAND_STACK.append(FUNC_DIR.symbol_lookup(value_at_index, SCOPES_STACK[-1]))
 
@@ -401,6 +402,23 @@ def decision_statement():
 
 def fill_vm_file(file_path, marker_str, start_str, end_str, info):
     line_indices = []
+
+    ## If the intermediate object-code file does not exist, create it
+    if not os.path.exists(file_path):
+        with open(file_path, "w+") as f:
+            f.write("#include <vector>\n")
+            f.write("#include <map>\n")
+            f.write("using namespace std;\n")
+            f.write("\n// \t\t!!! ATENTION !!!\n\n")
+            f.write("// \tThe next few code segments are automatically generated during compilation time,\n")
+            f.write("// \tand should not be tampered with!\n")
+            f.write("// \tDoing so migh mess up the following compilation cycle!\n")
+            f.write("\n// \t\t!!! ATENTION !!!\n\n")
+            for marker_string in [VM_MEMORY_CONSTRAINTS_MARKER_STR, VM_FUNCTION_MEMORY_MARKER_STR, VM_OBJECT_MEMORY_MARKER_STR, VM_CONSTANTS_MARKER_STR, VM_QUAD_MARKER_STR]: 
+                for i in range(2):
+                    f.write(marker_string)
+                
+    
     with open(file_path, "r") as f:
         contents = f.readlines()
 
@@ -435,6 +453,6 @@ def fill_vm_file(file_path, marker_str, start_str, end_str, info):
     else:
         contents[insert_end_index] = marker_str
 
-    with open(VM_FILE_PATH, "w") as f:
+    with open(file_path, "w") as f:
         contents = "".join(contents)
         f.write(contents)

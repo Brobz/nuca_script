@@ -13,11 +13,22 @@ class MemoryContext;
 class Memory{
 
   /*/
+
         The bottom of the VM memory architecture:
         This class contains all of the values for a specific segment of memory,
         and is constantly instantiated by the MemoryContext instances that control
         the flow of memory during execution
         
+  
+
+    #                                   // Memory Signature Translation
+    #
+    #                                           0 -> INT
+    #                       0 -> CONSANT        1 -> FLOAT
+    #                       1 -> GLOBAL         2 -> STRING
+    #                       2 -> LOCAL          3 -> BOOLEAN        0 -> VAR
+    #                       3 -> CLASS          4 -> OBJECT         1 -> TMP
+  
   /*/
 
   public:

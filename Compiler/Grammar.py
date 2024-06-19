@@ -27,7 +27,7 @@ def p_def_statement(p):
     if def_value in SymbolTable.TRUTH:
         # Our DEF is, technically, a string...
         # More accurately though, it is TRUTH string, which will be representing a boolean type in nuca_script
-        # So we just set it to the according integer
+        # So we just set it to the according string
         def_value = ["False", "True"][SymbolTable.TRUTH.index(def_value)]
     elif def_value[0] == "'" and def_value[-1:] == "'":
         # Our DEF is, indeed, a proper string; Swap ecompassing '' for ""
@@ -150,14 +150,14 @@ def p_seen_readable(p):
     if not is_pointer:
         is_pointer = -1
 
-    parent_obj_dir = -1
+    parent_obj_addr = -1
     if id_attr and len(CLASS_INSTANCE_STACK):
         parent_obj_id = CLASS_INSTANCE_STACK.pop()
         if parent_obj_id != "this_kwd":
-            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
+            parent_obj_addr = FUNC_DIR.get_symbol_mem_index(parent_obj_id, SCOPES_STACK[-1])
 
 
-    Utils.push_to_quads(Quad("READ", parent_obj_dir, is_pointer, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
+    Utils.push_to_quads(Quad("READ", parent_obj_addr, is_pointer, FUNC_DIR.get_symbol_mem_index(FUNC_DIR.symbol_lookup(id, id_scope, id_attr), id_scope, id_attr)))
 
 def p_global_var(p):
     ''' GLOBAL_VAR : VAR_LIST_STAR '''
@@ -252,15 +252,15 @@ def p_open(p):
     file_path = p[8]
     separator = p[11]
 
-    parent_obj_dir = -1 # This means, just use the current context!
+    parent_obj_addr = -1 # This means, just use the current context!
     if buffer[2] and len(CLASS_INSTANCE_STACK):
         parent_obj = CLASS_INSTANCE_STACK.pop()
         if parent_obj != "this_kwd":
-            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
+            parent_obj_addr = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
         else:
-            parent_obj_dir = 0 # This means, use this. reference !
+            parent_obj_addr = 0 # This means, use this. reference !
 
-    Utils.push_to_quads(Quad("F_OPEN", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer[0], buffer[1], buffer[2]), buffer_dimension))
+    Utils.push_to_quads(Quad("F_OPEN", parent_obj_addr, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer[0], buffer[1], buffer[2]), buffer_dimension))
 
 def p_seen_open_buffer(p):
     ''' seen_open_buffer : empty '''
@@ -292,15 +292,15 @@ def p_write(p):
     file_path = p[8]
     separator = p[11]
 
-    parent_obj_dir = -1 # This means, just use the current context!
+    parent_obj_addr = -1 # This means, just use the current context!
     if buffer[2] and len(CLASS_INSTANCE_STACK):
         parent_obj = CLASS_INSTANCE_STACK.pop()
         if parent_obj != "this_kwd":
-            parent_obj_dir = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
+            parent_obj_addr = FUNC_DIR.get_symbol_mem_index(parent_obj, SCOPES_STACK[-1]) # This means, use parent_obj!
         else:
-            parent_obj_dir = 0 # This means, use this. reference !
+            parent_obj_addr = 0 # This means, use this. reference !
 
-    Utils.push_to_quads(Quad("F_WRITE", parent_obj_dir, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer[0], buffer[1], buffer[2]), buffer_dimension))
+    Utils.push_to_quads(Quad("F_WRITE", parent_obj_addr, FUNC_DIR.get_symbol_mem_index(file_path[0], file_path[1], file_path[2]), FUNC_DIR.get_symbol_mem_index(separator[0], separator[1], separator[2]), FUNC_DIR.get_symbol_mem_index(buffer[0], buffer[1], buffer[2]), buffer_dimension))
 
 def p_seen_write_buffer(p):
     ''' seen_write_buffer : empty '''
@@ -972,7 +972,7 @@ def p_seen_func_call_id(p):
     DOT_OP_STACK.append("|ARG_WALL|") # Stack Fake Wall
     OBJECT_ACCESS_STACK.append("|ARG_WALL|") # Stack Fake Wall
 
-    func_type = FUNC_DIR.func_type_lookup(p[-1], DOT_OP_STACK[-2])
+    FUNC_DIR.func_type_lookup(p[-1], DOT_OP_STACK[-2])
 
     Utils.push_to_quads(Quad("ERA", -1, -1, FUNC_DIR.get_start_addr(p[-1], DOT_OP_STACK[-2])))
 
@@ -1126,10 +1126,10 @@ def p_repetition(p):
 
 def p_conditional_rep(p):
     ''' CONDITIONAL_REP : WHILE_KWD seen_while_kwd OPEN_PARENTHESIS EXPRESSION CLOSE_PARENTHESIS seen_while_exp OPEN_CURLY entered_condition STATEMENT_STAR CLOSE_CURLY left_condition '''
-    end_dir = JUMP_STACK.pop()
-    return_dir = JUMP_STACK.pop()
-    Utils.push_to_quads(Quad("GOTO", -1, -1, return_dir))
-    Utils.fill_quad(end_dir, GLOBALS.QUAD_POINTER)
+    end_addr = JUMP_STACK.pop()
+    return_addr = JUMP_STACK.pop()
+    Utils.push_to_quads(Quad("GOTO", -1, -1, return_addr))
+    Utils.fill_quad(end_addr, GLOBALS.QUAD_POINTER)
 
 def p_seen_while_kwd(p):
     ''' seen_while_kwd : empty '''
@@ -1141,18 +1141,18 @@ def p_seen_while_exp(p):
 
 def p_unconditional_rep(p):
     ''' UNCONDITIONAL_REP : FOR_KWD OPEN_PARENTHESIS VAR seen_for_kwd EQUALS EXPRESSION seen_for_start_exp SEMI_COLON EXPRESSION seen_for_end_exp SEMI_COLON FOR_INCR_STATEMENT seen_for_incr_exp CLOSE_PARENTHESIS OPEN_CURLY entered_condition STATEMENT_STAR CLOSE_CURLY left_condition '''
-    swap_end_dir = JUMP_STACK.pop()
-    swap_start_dir = JUMP_STACK.pop()
-    end_dir = JUMP_STACK.pop()
-    loop_dir = JUMP_STACK.pop()
+    swap_end_addr = JUMP_STACK.pop()
+    swap_start_addr = JUMP_STACK.pop()
+    end_addr = JUMP_STACK.pop()
+    loop_addr = JUMP_STACK.pop()
 
-    incr_res = OPERAND_STACK.pop()
+    OPERAND_STACK.pop() ## Pops result of the increment statement out of stack (we won't be needing it)
 
-    for i in range(swap_start_dir, swap_end_dir):
-        Utils.swap_quads(swap_start_dir, GLOBALS.QUAD_POINTER) # This ensures that the increment statement will execute at the end of the for loop, and not at the start!
+    for i in range(swap_start_addr, swap_end_addr):
+        Utils.swap_quads(swap_start_addr, GLOBALS.QUAD_POINTER) # This ensures that the increment statement will execute at the end of the for loop, and not at the start!
 
-    Utils.push_to_quads(Quad("GOTO", -1, -1, loop_dir))
-    Utils.fill_quad(end_dir, GLOBALS.QUAD_POINTER)
+    Utils.push_to_quads(Quad("GOTO", -1, -1, loop_addr))
+    Utils.fill_quad(end_addr, GLOBALS.QUAD_POINTER)
 
 def p_seen_for_kwd(p):
     ''' seen_for_kwd : empty '''

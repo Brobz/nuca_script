@@ -1,6 +1,34 @@
 ## Version Log
 
-### **Current Version:** 1.6.4
+### **Current Version:** 1.7.0
+
+- ##### 19/06/2024
+
+  - Version 1.7.0 officially released!
+    - Major compilation pipeline changes!
+      - Previously, the NucaScript would write the generated intermediate object code directly into `VM/main.cpp` after every compilation cycle in order to generate the final executable output.
+      - Initially, this seemed (to me, at least) clever and efficient, however after some further consideration, several cons began showing up, such as constant gigantic git diffs in that file, and the inabillity to easily add more custom NucaScript CLI commands that have to do with the intermediate object code.
+      - This version bump begins the shift towards having the IOC be written into a different file and imported into the VM. After the exectuable is generated, the IOC file is deleted. It is not final, but prepares for a futher overhaul! (stay tuned)
+      - As of now, the IOC is still written directly into C++ code (just not into `main.cpp`), but the plan is have it be written as text and parsed accordingly by the VM.
+      - A new CLI argument has been added: `--keep-object`
+      - When used, NucaScript does not delete intermediate object file after the VM generates its executable output (current default behavior)
+      - More CLI arguments (and a whole CLI overhaul) are also planned for the future! (stay tuned)
+    - Major Bug fix!
+      - Fixed a very relevant (but hard to find) bug that has probably been plaguing NucaScript since its conception.
+      - The bug consisted of an extra (unwanted) `IP` (_Instruction Pointer_) increment during OP 13 (the `!` (_not_) operator) in the VM execution cycle.
+      - This meant the VM would always skip whatever OP came next in the QUAD list after every single `!` (_not_) operation. Ouch!
+      - Lucky I caught it! (found by trying to print a `!bool` directly and never getting any output to the console). Talk about "findng a needle in a haystack"!
+    - VM Code cleanup!
+      - Added a new `Utils.cpp` file, cleaned up a lot of `main.cpp` code
+      - In `Value.cpp`, added an ENUM for the `type` attribute (was previously an int, and had lots of comments thrown around)
+      - Same (ENUM) thing for `OPCodes` in `main.cpp`
+    - General Cleanups & Refactors!
+      - A bunch of stale variable name refactoring
+      - Some other small cleanups (unreferenced variables when popping stacks, comment & in-file documentation errors)
+      - Updated README NucaScript Synopsis!
+    - New Sprint TODO ideas!
+      - It's getting busy, I am excited for NucaScript's future!
+      - Stay tuned : )
 
 - ##### 24/05/2024
 

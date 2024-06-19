@@ -1,10 +1,10 @@
 # NucaScript
 
-An object-oriented, strongly-typed, syntactically _"C-esque"_ and semantically _"pythonesque"_ string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program without the need for an intermediate object code file.
+An object-oriented, strongly-typed, syntactically _"C-esque"_ and semantically _"pythonesque"_ string manipulation and file I/O centered language that uses python and PLY to compile down to a C++ virtual machine, generating an executable output of the program -- without the need for an intermediate object code file during runtime.
 
 Version 1.0 developed in about 10 weeks as the final project of the Compiler Design class at ITESM.
 
-### **Current Version:** 1.6.4
+### **Current Version:** 1.7.0
 
 Check out the latest changes & version history in the [official NucaScript Version Log!](VERSION_LOG.md)
 

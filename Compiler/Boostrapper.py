@@ -228,7 +228,8 @@ CONDITIONAL_DEPTH_STACK = []
 GLOBALS = Globals()
 
 ## Constants to write to VM file for C++ compilation
-VM_FILE_PATH = "VM/main.cpp"
+INTERMEDIATE_OBJECT_CODE_PATH = "VM/intermediate-object-nuca.cpp"
+MAIN_VM_FILE_PATH = "VM/main.cpp"
 
 VM_QUAD_MARKER_STR = "// QUADS //\n"
 VM_QUAD_START_STR = "const vector<vector<int>> QUADS = {\n"
